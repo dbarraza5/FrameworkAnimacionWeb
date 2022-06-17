@@ -13,10 +13,10 @@ class ListadoElemento extends Component{
             lista_checkbox.push(
                 <div className="row">
                     <div className="col">
-                        <ElementoCheckBox obj={lista_elemento[i]}/>
+                        <ElementoCheckBox obj={lista_elemento[i]} seleccionarObjeto={this.props.seleccionarObjeto}/>
                     </div>
                     <div className="col">
-                        <ElementoCheckBox obj={lista_elemento[i+1]}/>
+                        <ElementoCheckBox obj={lista_elemento[i+1]} seleccionarObjeto={this.props.seleccionarObjeto}/>
                     </div>
                 </div>
             )
@@ -25,7 +25,7 @@ class ListadoElemento extends Component{
             lista_checkbox.push(
                 <div className="row">
                     <div className="col">
-                        <ElementoCheckBox obj={lista_elemento[lista_elemento.length - 1]}/>
+                        <ElementoCheckBox obj={lista_elemento[lista_elemento.length - 1]} seleccionarObjeto={this.props.seleccionarObjeto}/>
                     </div>
                     <div className="col">
                     </div>
@@ -33,7 +33,6 @@ class ListadoElemento extends Component{
             )
         }
         //<p>{lista_elemento[i].ID} - {lista_elemento[i+1].ID}</p>
-        console.log(lista_checkbox)
         return(
             <div>
                 {lista_checkbox}

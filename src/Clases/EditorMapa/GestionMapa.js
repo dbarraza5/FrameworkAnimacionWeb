@@ -166,7 +166,7 @@ class GestionMapa{
     }
 
 
-    get_attr_value = (id_elemento, nombre_attr)=>{
+    get_value_attr = (id_elemento, nombre_attr)=>{
         const arr = this.elementos_mapa.filter(e=>e.ID ===id_elemento)
         if(arr.length>0){
             const elemento = arr[0]
@@ -175,6 +175,15 @@ class GestionMapa{
             }
         }
         return null
+    }
+
+    set_value_attr = (id_elemento, nombre_attr, valor)=>{
+        this.elementos_mapa = this.elementos_mapa.map((element)=>{
+            if(element.ID === id_elemento){
+                element.atributos = {...element.atributos, [nombre_attr]: valor}
+            }
+            return element
+        })
     }
 
 

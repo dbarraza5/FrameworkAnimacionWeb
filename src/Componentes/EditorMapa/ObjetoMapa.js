@@ -32,7 +32,8 @@ class ObjetoMapa extends Component{
                         <div className="card text-bg-light mb-3" style={style}>
                             <div className="card-header">Listado Objetos</div>
                             <div className="card-body">
-                                <ListadoElemento lista_elemento={lista_elemento}/>
+                                <ListadoElemento lista_elemento={lista_elemento}
+                                                 seleccionarObjeto={this.props.seleccionarObjeto}/>
                             </div>
                         </div>
                     </div>

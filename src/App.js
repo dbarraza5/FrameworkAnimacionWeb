@@ -16,9 +16,7 @@ import {Component} from "react";
 
 class App extends Component {
 
-    state = {
-        mapa: new GestionMapa(),
-    }
+
     constructor() {
         super();
         //this.mapa = new GestionMapa();
@@ -28,7 +26,7 @@ class App extends Component {
         //const mapa= new GestionMapa()
         return(
             <div className="container-xxl">
-                <Editor mapa={this.state.mapa}/>
+                <Editor/>
             </div>
         );
     }

@@ -6,7 +6,7 @@ class ElementoCheckBox extends Component{
         return (
             <div className="form-check">
                 <input className="form-check-input" type="checkbox" value="" id={"check-objeto-"+ obj.ID }
-                       onChange="setPropiedadObjeto('{{ obj.ID }}')" autoComplete="off"/>
+                       onChange={event => this.props.seleccionarObjeto(event.target.checked, obj.ID)} autoComplete="off"/>
                     <label className="form-check-label" htmlFor={"check-objeto-"+ obj.ID }>
                         {obj.ID}
                     </label>
