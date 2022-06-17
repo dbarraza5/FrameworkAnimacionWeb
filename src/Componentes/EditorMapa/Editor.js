@@ -30,8 +30,20 @@ class Editor extends Component{
         console.log("id_objeto: ",id_objeto, " check: ", seleccionado)
         if (seleccionado){
             const mapa_ = this.state.mapa
-            mapa_.id_obj_select = id_objeto
-            this.setState({'mapa': mapa_})
+            const resultado = mapa_.filter_by_id_elemento(id_objeto)
+            if(resultado.length >0){
+                const obj = resultado[0]
+                console.log(obj)
+                mapa_.id_obj_select = id_objeto
+                this.setState({'mapa': mapa_})
+                const id = "#v-pills-"+obj.TIPO;
+                console.log(id)
+                const id_comp = '#objetos_tab button[data-bs-target="'+id+'"]';
+                console.log(id_comp)
+                const triggerEl = document.querySelector(id_comp);
+                triggerEl.click();
+            }
+
         }
     }
 

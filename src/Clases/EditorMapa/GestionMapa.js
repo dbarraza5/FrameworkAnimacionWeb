@@ -162,7 +162,7 @@ class GestionMapa{
                 }
             }
         ]
-        this.id_obj_select = "psnj18";
+        this.id_obj_select = null//"psnj18";
     }
 
 
