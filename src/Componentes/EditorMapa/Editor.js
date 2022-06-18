@@ -27,19 +27,15 @@ class Editor extends Component{
     }
 
     seleccionarObjeto = (seleccionado, id_objeto)=>{
-        console.log("id_objeto: ",id_objeto, " check: ", seleccionado)
         if (seleccionado){
             const mapa_ = this.state.mapa
             const resultado = mapa_.filter_by_id_elemento(id_objeto)
             if(resultado.length >0){
                 const obj = resultado[0]
-                console.log(obj)
                 mapa_.id_obj_select = id_objeto
                 this.setState({'mapa': mapa_})
                 const id = "#v-pills-"+obj.TIPO;
-                console.log(id)
                 const id_comp = '#objetos_tab button[data-bs-target="'+id+'"]';
-                console.log(id_comp)
                 const triggerEl = document.querySelector(id_comp);
                 triggerEl.click();
             }
@@ -51,8 +47,35 @@ class Editor extends Component{
         console.log("id3: "+id_elemento+ " | attr: "+nombre_attr+ " | value: "+valor)
         this.state.mapa.set_value_attr(id_elemento, nombre_attr, valor)
         this.setState({mapa: this.state.mapa})
-        this.state.lienzo.actualizarLienzo(this.state.mapa.elementos_mapa, this.state.mapa.des_mapa)
+        this.state.lienzo.actualizarLienzo(this.state.mapa.elementos_mapa,
+            this.state.mapa.des_mapa)
         //console.log(this.state.mapa)
+    }
+
+    agregar_elemento = (tipo_elemento)=>{
+        console.log("agregando un elemento de tipo: ", tipo_elemento)
+        const mapa = this.state.mapa
+        const elemento = mapa.create_elemento(tipo_elemento)
+        if(elemento != null){
+            if(tipo_elemento === "PERSONAJE"){
+                elemento.atributos.x = 10
+                elemento.atributos.y = 10
+                elemento.atributos.ancho = 10
+                elemento.atributos.largo = 10
+            }
+
+            if(tipo_elemento === "PLATAFORMA"){
+                elemento.atributos.x = 50
+                elemento.atributos.y = 50
+                elemento.atributos.ancho = 50
+                elemento.atributos.largo = 10
+            }
+            mapa.elementos_mapa.push(elemento)
+            this.setState({mapa: mapa})
+            this.state.lienzo.actualizarLienzo(mapa.elementos_mapa,
+                mapa.des_mapa)
+        }
+
     }
     render(){
         return (
@@ -60,7 +83,8 @@ class Editor extends Component{
                 <div className="col">
                     <NavEditor>
                         <ObjetoMapa mapa={this.state.mapa} edit_elemento_attr={this.edit_elemento_attr}
-                                    seleccionarObjeto={this.seleccionarObjeto}/>
+                                    seleccionarObjeto={this.seleccionarObjeto}
+                                    agregar_elemento = {this.agregar_elemento}/>
                     </NavEditor>
                 </div>
                 <div className="col">

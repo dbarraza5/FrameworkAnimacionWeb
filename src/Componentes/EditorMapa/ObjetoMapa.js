@@ -14,7 +14,7 @@ class ObjetoMapa extends Component{
         const lista_elemento = this.props.mapa.elementos_mapa.filter((e)=> f.includes(e.TIPO) )
         return(
             <div>
-                <SelectInstancias meta_objetos={meta_objetos}/>
+                <SelectInstancias meta_objetos={meta_objetos} agregar_elemento={this.props.agregar_elemento}/>
                 <br/>
                 <div className="row">
                     <div className="col">
