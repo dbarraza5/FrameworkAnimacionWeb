@@ -59,15 +59,22 @@ class PropiedadElemento extends Component{
                                                 )
                                             }
                                             if(tipo === "TIPO_BOOL"){
-                                                const id_input = obj.nombre+"-"+name_attr
+                                                const id_input = obj.nombre+"-"+name_attr+"-"+tipo
                                                 const seleccionado = parseInt(valor)
+                                                const checked = {
+                                                }
+                                                if(seleccionado===1){
+                                                    checked['checked'] = 'checked'
+                                                }
+
                                                 return (
                                                     <div className="mb-2">
                                                         <input className="form-check-input" type="checkbox" value=""
-                                                               id={id_input}
+                                                               id={id_input} key={"checkbox-"+id_input}
                                                                onChange={(e)=>
-                                                                  this.props.edit_elemento_attr(this.props.id_seleccionado, name_attr, e.target.checked)}
-                                                               autoComplete="off" checked={seleccionado === 1? 'checked': ''}/>
+                                                                  this.props.edit_elemento_attr(this.props.id_seleccionado, name_attr,
+                                                                      parseInt(e.target.checked*1))}
+                                                               autoComplete="off" {...checked}/>
                                                         <label className="form-check-label"
                                                                htmlFor={id_input}>
                                                             {name_attr}

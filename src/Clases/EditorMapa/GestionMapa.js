@@ -37,9 +37,9 @@ class GestionMapa{
                     "y": "380",
                     "ancho": "20",
                     "largo": "20",
-                    "protagonista": "1",
+                    "protagonista": "0",
                     "manipula_otros": "0",
-                    "visible": "1",
+                    "visible": "0",
                     "solido": "0",
                     "activo": "1"
                 }

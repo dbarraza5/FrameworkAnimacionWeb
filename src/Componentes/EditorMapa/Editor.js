@@ -32,6 +32,7 @@ class Editor extends Component{
             const resultado = mapa_.filter_by_id_elemento(id_objeto)
             if(resultado.length >0){
                 const obj = resultado[0]
+                console.log(obj)
                 mapa_.id_obj_select = id_objeto
                 this.setState({'mapa': mapa_})
                 const id = "#v-pills-"+obj.TIPO;
