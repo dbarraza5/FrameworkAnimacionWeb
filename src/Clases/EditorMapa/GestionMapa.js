@@ -144,7 +144,7 @@ class GestionMapa{
                     "manipula_otros": "TIPO_BOOL",
                     "visible": "TIPO_BOOL",
                     "solido": "TIPO_BOOL",
-                    "activo": "TIPO_BOOL"
+                    "activo": "TIPO_BOOL",
                 }
             },
             {

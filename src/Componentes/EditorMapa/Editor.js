@@ -5,6 +5,9 @@ import GestionMapa from "../../Clases/EditorMapa/GestionMapa";
 import GestionLienzo from "../../Clases/EditorMapa/GestionLienzo";
 import {LienzoComponent, getMousePos} from "./LienzoComponent";
 
+const style = {
+
+}
 
 class Editor extends Component{
     state = {
@@ -89,7 +92,12 @@ class Editor extends Component{
                     </NavEditor>
                 </div>
                 <div className="col">
-                    <LienzoComponent eventMoveMouse={this.eventMoveMouse}/>
+                    <div className="card text-bg-light mb-3" style={style}>
+                        <div className="card-header">Mapa</div>
+                        <div className="card-body">
+                            <LienzoComponent eventMoveMouse={this.eventMoveMouse}/>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
