@@ -2,7 +2,8 @@ import logo from './logo.svg';
 import './App.css';
 import Editor from "./Componentes/EditorMapa/Editor";
 import GestionMapa from "./Clases/EditorMapa/GestionMapa"
-import {Component} from "react";
+import React, {Component} from "react";
+import EditorAnimacion from "./Componentes/EditorAnimacion/EditorAnimacion";
 
 /*function App() {
 
@@ -26,7 +27,7 @@ class App extends Component {
         //const mapa= new GestionMapa()
         return(
             <div className="container-xxl">
-                <Editor/>
+                <EditorAnimacion/>
             </div>
         );
     }
