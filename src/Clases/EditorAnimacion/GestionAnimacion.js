@@ -151,6 +151,19 @@ class GestionAnimacion{
         ]
     }
 
+    borrar_grupo(nombre){
+        const tam_lista = this.grupos_figuras.length;
+        this.grupos_figuras = this.grupos_figuras.filter((g)=>{
+            if(g.nombre != nombre){
+                return true;
+            }
+            return false;
+        })
+        if(tam_lista>this.grupos_figuras.length){
+            this.cambiar_dependencias_nombre_grupo(nombre, "root")
+        }
+    }
+
     crear_grupo(nombre){
         const lista_nombre = this.get_lista_nombres_grupos();
         if(!lista_nombre.includes(nombre)){
@@ -206,6 +219,8 @@ class GestionAnimacion{
     get_lista_nombres_grupos(){
         return this.grupos_figuras.reduce((anterior, actual) =>anterior.concat(actual.nombre), [])
     }
+
+
 }
 
 export default GestionAnimacion

@@ -53,7 +53,7 @@ function PropiedadGrupoFiguras(props){
             <label htmlFor={"id_seleccion_grupo_"+grupo.nombre}
                    className="form-label">Seleccion de grupo raiz</label>
             <select id={"id_seleccion_grupo_"+grupo.nombre} className="form-select" aria-label="seleccione un objeto..."
-                    autoComplete="off" onChange={(e)=>console.log("cambiar figura")}>
+                    autoComplete="off" onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "nodo_padre", e.target.value)}>
                 <option>root</option>
                 {list_nombre_grupos.map((nombre)=>{
                     if(nombre === grupo_selecionado){
