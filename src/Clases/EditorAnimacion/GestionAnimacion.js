@@ -151,7 +151,19 @@ class GestionAnimacion{
         ]
     }
 
+    cambiar_dependencias_nombre_grupo(nombre_actual, nombre_nuevo){
+        this.grupos_figuras = this.grupos_figuras.map((grupo)=>{
+            if(grupo.nodo_padre === nombre_actual){
+                return {...grupo, nodo_padre:nombre_nuevo};
+            }
+            return grupo;
+        })
+    }
+
     set_atributo_grupo(nombre, atributo, valor){
+        if(atributo === "nombre"){
+            this.cambiar_dependencias_nombre_grupo(nombre, valor);
+        }
         this.grupos_figuras = this.grupos_figuras.map((g) => {
             if(g.nombre === nombre){
                 return { ...g, [atributo]: valor}

@@ -51,7 +51,7 @@ function PropiedadGrupoFiguras(props){
         const grupo_selecionado = grupo.nodo_padre;
         seleccion_grupo = (<div className="mb-3">
             <label htmlFor={"id_seleccion_grupo_"+grupo.nombre}
-                   className="form-label">Seleccion de grupo</label>
+                   className="form-label">Seleccion de grupo raiz</label>
             <select id={"id_seleccion_grupo_"+grupo.nombre} className="form-select" aria-label="seleccione un objeto..."
                     autoComplete="off" onChange={(e)=>console.log("cambiar figura")}>
                 <option>root</option>
