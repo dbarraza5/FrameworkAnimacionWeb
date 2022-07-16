@@ -17,7 +17,7 @@ function GestionGrupos(props){
                 <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne"
                      data-bs-parent="#accordionExample">
                     <div className="accordion-body">
-                        <CrearGrupo/>
+                        <CrearGrupo {...props}/>
                     </div>
                 </div>
             </div>

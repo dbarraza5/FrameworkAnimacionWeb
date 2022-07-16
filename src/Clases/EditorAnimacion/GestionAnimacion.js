@@ -151,6 +151,37 @@ class GestionAnimacion{
         ]
     }
 
+    crear_grupo(nombre){
+        const lista_nombre = this.get_lista_nombres_grupos();
+        if(!lista_nombre.includes(nombre)){
+            return {
+                nombre: nombre,
+                nodo_padre: "root",
+                tiempo_inicial: 0,
+                tiempo_final: 5000,
+                ciclo: 0,
+                color: "#285de3",
+                cx: 0,
+                cy: 0,
+                capa: 0,
+                grupo_movimientos: [],
+
+                lista_figuras: [
+                ],
+            }
+        }
+        return null;
+    }
+
+    agregar_grupo_nuevo(nombre){
+        const grupo_ = this.crear_grupo(nombre)
+        if(grupo_ != null){
+            this.grupos_figuras.push(grupo_);
+            return true;
+        }
+        return false
+    }
+
     cambiar_dependencias_nombre_grupo(nombre_actual, nombre_nuevo){
         this.grupos_figuras = this.grupos_figuras.map((grupo)=>{
             if(grupo.nodo_padre === nombre_actual){
