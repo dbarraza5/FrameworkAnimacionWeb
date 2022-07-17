@@ -18,8 +18,6 @@ function PropiedadGrupoFiguras(props){
         return grupo.nombre !== e;
     })
 
-
-
     const cambioPropiedadGrupo = (nombre, atributo, valor)=>{
         let validacion = true;
 
@@ -37,9 +35,7 @@ function PropiedadGrupoFiguras(props){
         console.log(valor)
         console.log(props.animacion)
     }
-
-
-
+    
     useEffect(() => {
         // Your code here
     }, []);

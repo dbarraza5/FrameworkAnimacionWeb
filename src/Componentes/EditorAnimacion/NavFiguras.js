@@ -2,9 +2,9 @@ import ButtonNav from "../EditorMapa/ButtonNav";
 import ListaGrupos from "./ListaGrupos";
 import SeleccionFigura from "./SeleccionFigura";
 import GestionGrupos from "./GestionGrupos";
+import GestionFiguras from "./GestionFiguras";
 
 function NavFiguras(props){
-    let meta_figuras = props.animacion.meta_figuras;
     return (<div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item" role="presentation">
@@ -33,7 +33,7 @@ function NavFiguras(props){
             <div className="tab-pane fade" id="contact-tab-pane1" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                <SeleccionFigura meta_figuras={meta_figuras} agregar_elemento={()=>console.log("aver que no pasa nada")}/>
+                <GestionFiguras {...props}/>
             </div>
         </div>
     </div>)

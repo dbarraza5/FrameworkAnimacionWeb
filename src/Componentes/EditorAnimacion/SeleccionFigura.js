@@ -2,12 +2,12 @@
 function SeleccionFigura(props){
     let meta_figuras = props.meta_figuras
     return(<div id="opciones" className="row">
-        <div className="d-grid gap-3">
-            <label htmlFor="id_seleccion_objetos"
-                   className="form-label">Seleccion de opciones</label>
+        <label htmlFor="id_seleccion_objetos"
+               className="form-label">Seleccion de figura</label>
+        <div className="input-group mb-3">
+
             <select id="id_seleccion_objetos" className="form-select" aria-label="seleccione un objeto..."
                     autoComplete="off" onChange={(e)=>console.log("cambiar figura")}>
-                <option>...</option>
                 {meta_figuras.map((fig)=>{
                     return <option value={fig.nombre}>{fig.nombre}</option>
                 })}
