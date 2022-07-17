@@ -1,8 +1,8 @@
-import ButtonNav from "../EditorMapa/ButtonNav";
-import ListaGrupos from "./ListaGrupos";
-import SeleccionFigura from "./SeleccionFigura";
-import GestionGrupos from "./GestionGrupos";
-import GestionFiguras from "./GestionFiguras";
+import ButtonNav from "../../EditorMapa/ButtonNav";
+import ListaGrupos from "./EditarGrupo/ListaGrupos";
+import SeleccionFigura from "./GestionFiguras/SeleccionFigura";
+import GestionGrupos from "./GestionGrupos/GestionGrupos";
+import GestionFiguras from "./GestionFiguras/GestionFiguras";
 
 function NavFiguras(props){
     return (<div>

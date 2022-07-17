@@ -1,5 +1,5 @@
 import CrearGrupo from "./CrearGrupo";
-import ListaGrupos from "./ListaGrupos";
+import ListaGrupos from "../EditarGrupo/ListaGrupos";
 import TablaGrupos from "./TablaGrupos";
 
 function GestionGrupos(props){

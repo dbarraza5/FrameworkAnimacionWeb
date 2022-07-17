@@ -5,9 +5,9 @@ class EditorAnimacion extends Component{
 }*/
 
 import NavEditorAnimacion from "./NavEditorAnimacion";
-import SeleccionFigura from "./SeleccionFigura";
+import SeleccionFigura from "./SeccionFiguras/GestionFiguras/SeleccionFigura";
 import {useState} from "react";
-import EdicionFiguras from "./EdicionFiguras";
+import EdicionFiguras from "./SeccionFiguras/EdicionFiguras";
 import GestionAnimacion from "../../Clases/EditorAnimacion/GestionAnimacion";
 
 const style = {
