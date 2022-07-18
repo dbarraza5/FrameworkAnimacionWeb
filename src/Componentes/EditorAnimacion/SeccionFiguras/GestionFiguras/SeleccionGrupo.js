@@ -5,7 +5,7 @@ function SeleccionGrupo(props){
             <label htmlFor="id_seleccion_objetos"
                    className="form-label">Seleccion de grupo</label>
             <select id="id_seleccion_objetos" className="form-select" aria-label="seleccione un objeto..."
-                    autoComplete="off" onChange={(e)=>console.log("cambiar figura")}>
+                    autoComplete="off" onChange={(e)=>props.setNombreGrupo(e.target.value)}>
                 {lista_grupos.map((nombre)=>{
                     return <option value={nombre}>{nombre}</option>
                 })}

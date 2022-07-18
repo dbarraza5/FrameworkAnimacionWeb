@@ -78,6 +78,7 @@ class GestionAnimacion{
 
                 lista_figuras: [
                     {
+                        nombre:"fr1",
                         tipo_figura: "RECTA",
                         atributos: {
                             x1: "1",
@@ -104,6 +105,7 @@ class GestionAnimacion{
 
                 lista_figuras: [
                     {
+                        nombre:"fp1",
                         tipo_figura: "PUNTO",
                         atributos: {
                             cx: "10",
@@ -126,6 +128,7 @@ class GestionAnimacion{
 
                 lista_figuras: [
                     {
+                        nombre:"fp1",
                         tipo_figura: "PUNTO",
                         atributos: {
                             cx: "10",
@@ -149,6 +152,16 @@ class GestionAnimacion{
                 ]
             }
         ]
+    }
+
+    getMetaFigura(tipo_figura){
+        const fig = this.meta_figuras.filter((f)=>{
+            return f.nombre === tipo_figura
+        })
+        if(fig.length>0){
+            return fig[0];
+        }
+        return null;
     }
 
     borrar_grupo(nombre){

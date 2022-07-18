@@ -7,7 +7,7 @@ function SeleccionFigura(props){
         <div className="input-group mb-3">
 
             <select id="id_seleccion_objetos" className="form-select" aria-label="seleccione un objeto..."
-                    autoComplete="off" onChange={(e)=>console.log("cambiar figura")}>
+                    autoComplete="off" onChange={(e)=>props.setTipoFigura(e.target.value)}>
                 {meta_figuras.map((fig)=>{
                     return <option value={fig.nombre}>{fig.nombre}</option>
                 })}
