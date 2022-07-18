@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
+import InputEnteroPropiedadGrupo from "./InputEnteroPropiedadGrupo";
 
 function PropiedadGrupoFiguras(props){
     let grupo = props.grupo;
@@ -45,9 +46,9 @@ function PropiedadGrupoFiguras(props){
 
     if(grupo.nombre !== "default"){
         const grupo_selecionado = grupo.nodo_padre;
-        seleccion_grupo = (<div className="mb-3">
+        seleccion_grupo = (<div className="input-group input-group-sm mb-3">
             <label htmlFor={"id_seleccion_grupo_"+grupo.nombre}
-                   className="form-label">Seleccion de grupo raiz</label>
+                   className="input-group-text">Grupo raiz</label>
             <select id={"id_seleccion_grupo_"+grupo.nombre} className="form-select" aria-label="seleccione un objeto..."
                     autoComplete="off" onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "nodo_padre", e.target.value)}>
                 <option>root</option>
@@ -63,30 +64,20 @@ function PropiedadGrupoFiguras(props){
 
 
     return(<div>
-        <div className="mb-3">
-            <label htmlFor="exampleFormControlInput1" className="form-label">Nombre grupo</label>
-            <input type="text" className="form-control" value={grupo.nombre}
-                   onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "nombre", e.target.value)}
-                   id={"nombre-grupo-"+grupo.nombre} {...desactivar}/>
-        </div>
-
+        <InputEnteroPropiedadGrupo nombre_input="Nombre grupo" valor={grupo.nombre} tipo="nombre"
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo}
+                                   desactivar={desactivar}/>
         {seleccion_grupo}
 
-        <div className="mb-3">
-            <label htmlFor="exampleFormControlInput1" className="form-label">Tiempo Inicial</label>
-            <input type="number" className="form-control" value={grupo.tiempo_inicial}
-                   onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "tiempo_inicial", e.target.value)}
-                   id={"tiempo_inicial-grupo-"+grupo.nombre}/>
-        </div>
+        <InputEnteroPropiedadGrupo nombre_input="Tiempo Inicial" valor={grupo.tiempo_inicial} tipo="tiempo_inicial"
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
 
-        <div className="mb-3">
-            <label htmlFor="exampleFormControlInput1" className="form-label">Tiempo Final</label>
-            <input type="number" className="form-control" value={grupo.tiempo_final}
-                   onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "tiempo_final", e.target.value)}
-                   id={"tiempo_final-grupo-"+grupo.nombre}/>
-        </div>
+        <InputEnteroPropiedadGrupo nombre_input="Tiempo Final"
+                                   valor={grupo.tiempo_final}
+                                   tipo="tiempo_final"
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
 
-        <div className="mb-3">
+        <div className="input-group input-group-sm mb-3">
             <div className="form-check">
                 <input className="form-check-input" type="checkbox" value=""
                        id="flexCheckDefault" {...checked}
@@ -98,29 +89,24 @@ function PropiedadGrupoFiguras(props){
             </div>
         </div>
 
-        <div className="mb-3">
-            <label htmlFor="exampleFormControlInput1" className="form-label">Centro x</label>
-            <input type="number" className="form-control" value={grupo.cx}
-                   onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "cx", e.target.value)}
-                   id={"cx-grupo-"+grupo.nombre}/>
-        </div>
+        <InputEnteroPropiedadGrupo nombre_input="Centro x"
+                                   valor={grupo.cx}
+                                   tipo="cx"
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
 
-        <div className="mb-3">
-            <label htmlFor="exampleFormControlInput1" className="form-label">Centro y</label>
-            <input type="number" className="form-control" value={grupo.cy}
-                   onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "cy", e.target.value)}
-                   id={"cy-grupo-"+grupo.nombre}/>
-        </div>
+        <InputEnteroPropiedadGrupo nombre_input="Centro y"
+                                   valor={grupo.cy}
+                                   tipo="cy"
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
 
-        <div className="mb-3">
-            <label htmlFor="exampleFormControlInput1" className="form-label">Capa</label>
-            <input type="number" className="form-control" value={grupo.capa} min="0" max="10"
-                   id={"capa-grupo-"+grupo.nombre} key={"capa-grupo-"+grupo.nombre}
-                   onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "capa", e.target.value)}/>
-        </div>
 
-        <div className="mb-3">
-            <label htmlFor="exampleFormControlInput1" className="form-label">Color</label>
+        <InputEnteroPropiedadGrupo nombre_input="Capa"
+                                   valor={grupo.capa}
+                                   tipo="capa"
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
+
+        <div className="input-group input-group-sm mb-3">
+            <label htmlFor="exampleFormControlInput1" className="input-group-text">Color</label>
             <input type="color" className="form-control" value={grupo.color}
                    onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "color", e.target.value)}
                    id={"color-grupo-"+grupo.nombre}/>
