@@ -128,13 +128,25 @@ class GestionAnimacion{
 
                 lista_figuras: [
                     {
-                        nombre:"fp1",
+                        nombre:"fp213",
                         tipo_figura: "PUNTO",
                         atributos: {
                             cx: "10",
                             cy: "10",
                         }
                     },
+                    {
+                        nombre:"fr15",
+                        tipo_figura: "RECTA",
+                        atributos: {
+                            x1: "1",
+                            y1: "1",
+                            x2: "5",
+                            y2: "5",
+                            cx: "7",
+                            cy: "7",
+                        }
+                    }
                 ],
             }
         ]
@@ -177,6 +189,17 @@ class GestionAnimacion{
         }
     }
 
+    borrar_figura(nombre_grupo, nombre_figura){
+        this.grupos_figuras = this.grupos_figuras.map((g)=>{
+            if(g.nombre === nombre_grupo){
+                g.lista_figuras = g.lista_figuras.filter((fig)=>{
+                    return fig.nombre !== nombre_figura
+                })
+            }
+            return g;
+        })
+    }
+
     crear_grupo(nombre){
         const lista_nombre = this.get_lista_nombres_grupos();
         if(!lista_nombre.includes(nombre)){
@@ -197,6 +220,62 @@ class GestionAnimacion{
             }
         }
         return null;
+    }
+
+    crear_id_figura(nombre_grupo, tipo_figura){
+        const grupos = this.grupos_figuras.filter((g)=>{
+            return g.nombre === nombre_grupo
+        })
+        if(grupos.length>0){
+            const grupo = grupos[0]
+            const lista_nombre_fig = grupo.lista_figuras.map((f)=>f.nombre)
+            let id_encontrado = false;
+            let id_temp = ""
+            const prefix=tipo_figura.toLowerCase().substr(0, 3)
+            let contador=0;
+            while(!id_encontrado){
+                id_temp = "f"+prefix+contador;
+                if(!lista_nombre_fig.includes(id_temp)){
+                    console.log(id_temp)
+                    return id_temp;
+                }
+                contador+=1;
+                if(contador>1000)
+                    break;
+            }
+            return null
+        }
+    }
+
+    crear_figura(nombre_grupo, tipo_figura){
+        const id_figura = this.crear_id_figura(nombre_grupo, tipo_figura)
+        let figura = null;
+        switch (tipo_figura){
+            case "PUNTO":
+                figura = {
+                    nombre:id_figura,
+                    tipo_figura: tipo_figura,
+                    atributos: {
+                        cx: "0",
+                        cy: "0",
+                    }
+                }
+                break;
+            case "RECTA":
+                figura = {
+                    nombre:id_figura,
+                    tipo_figura: tipo_figura,
+                    atributos: {
+                        x1: "0",
+                        y1: "0",
+                        x2: "5",
+                        y2: "5",
+                        cx: "10",
+                        cy: "10",
+                    }
+                }
+                break;
+        }
     }
 
     agregar_grupo_nuevo(nombre){
@@ -233,7 +312,15 @@ class GestionAnimacion{
         return this.grupos_figuras.reduce((anterior, actual) =>anterior.concat(actual.nombre), [])
     }
 
-
+    getGrupo(nombre_grupo){
+        const grupo = this.grupos_figuras.filter((g)=>{
+            return g.nombre===nombre_grupo
+        })
+        if(grupo.length>0){
+            return grupo[0]
+        }
+        return null;
+    }
 }
 
 export default GestionAnimacion

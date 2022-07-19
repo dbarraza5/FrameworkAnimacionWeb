@@ -12,7 +12,7 @@ function SeleccionFigura(props){
                     return <option value={fig.nombre}>{fig.nombre}</option>
                 })}
             </select>
-            <button type="button" onClick={(e)=>console.log("agregar figuras")}
+            <button type="button" onClick={(e)=>props.agregar_figura()}
                     className="btn btn-outline-info">Agregar</button>
         </div>
     </div>)

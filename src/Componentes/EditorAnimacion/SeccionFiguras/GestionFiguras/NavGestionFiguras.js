@@ -22,7 +22,8 @@ function NavGestionFiguras(props){
             </div>
             <div className="tab-pane fade" id="administrar-tab-pane" role="tabpanel"
                  aria-labelledby="profile-tab"
-                 tabIndex="1">2
+                 tabIndex="1">
+                {props.tabla_figuras}
             </div>
         </div>
     </div>)
