@@ -3,32 +3,32 @@ class GestionAnimacion{
     meta_figuras = [
         {
             nombre: "PUNTO",
-            atributos:{
-                cx: "TIPO_INT",
-                cy: "TIPO_INT",
-            }
+            atributos:[
+                {nombre:"cx",tipo: "TIPO_INT", valor_defecto: 0},
+                {nombre:"cy",tipo: "TIPO_INT", valor_defecto: 0},
+            ]
 
         },
         {
             nombre: "RECTA",
-            atributos: {
-                x1: "TIPO_INT",
-                y1: "TIPO_INT",
-                x2: "TIPO_INT",
-                y2: "TIPO_INT",
-                cx: "TIPO_INT",
-                cy: "TIPO_INT",
-            }
+            atributos: [
+                {nombre:"x1", tipo: "TIPO_INT", valor_defecto: 0},
+                {nombre:"y1", tipo: "TIPO_INT", valor_defecto: 0},
+                {nombre:"x2", tipo: "TIPO_INT", valor_defecto: 5},
+                {nombre:"y2", tipo: "TIPO_INT", valor_defecto: 5},
+                {nombre:"cx", tipo: "TIPO_INT", valor_defecto: 0},
+                {nombre:"cy", tipo: "TIPO_INT", valor_defecto: 0},
+            ]
 
         },
         {
             nombre: "CIRCULO",
-            atributos: {
-                radiox: "TIPO_INT",
-                radioy: "TIPO_INT",
-                cx: "TIPO_INT",
-                cy: "TIPO_INT",
-            }
+            atributos: [
+                {nombre:"radiox", tipo: "TIPO_INT", valor_defecto: 10},
+                {nombre:"radioy", tipo: "TIPO_INT", valor_defecto: 10},
+                {nombre:"cx", tipo: "TIPO_INT", valor_defecto: 0},
+                {nombre:"cy", tipo: "TIPO_INT", valor_defecto: 0},
+            ]
         },
     ]
 
@@ -249,33 +249,30 @@ class GestionAnimacion{
 
     crear_figura(nombre_grupo, tipo_figura){
         const id_figura = this.crear_id_figura(nombre_grupo, tipo_figura)
-        let figura = null;
-        switch (tipo_figura){
-            case "PUNTO":
-                figura = {
-                    nombre:id_figura,
-                    tipo_figura: tipo_figura,
-                    atributos: {
-                        cx: "0",
-                        cy: "0",
-                    }
-                }
-                break;
-            case "RECTA":
-                figura = {
-                    nombre:id_figura,
-                    tipo_figura: tipo_figura,
-                    atributos: {
-                        x1: "0",
-                        y1: "0",
-                        x2: "5",
-                        y2: "5",
-                        cx: "10",
-                        cy: "10",
-                    }
-                }
-                break;
-        }
+        let figura = {
+            nombre: id_figura,
+            'tipo_figura': tipo_figura,
+            atributos:{}
+        };
+
+        const des_fig = this.meta_figuras.filter((f)=>f.nombre===tipo_figura)[0]
+
+        des_fig.atributos.map((attr)=>{
+            figura.atributos[attr.nombre] = attr.valor_defecto;
+        })
+        console.log(figura)
+        this.agregar_figura_grupo(nombre_grupo, figura);
+        return figura;
+    }
+
+    agregar_figura_grupo(nombre_grupo, figura){
+        this.grupos_figuras = this.grupos_figuras.map((g)=>{
+            if(g.nombre === nombre_grupo){
+                g.lista_figuras.push(figura)
+                return g
+            }
+            return g;
+        })
     }
 
     agregar_grupo_nuevo(nombre){
