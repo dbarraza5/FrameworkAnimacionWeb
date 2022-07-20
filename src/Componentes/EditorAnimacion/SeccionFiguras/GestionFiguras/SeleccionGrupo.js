@@ -7,7 +7,11 @@ function SeleccionGrupo(props){
             <select id="id_seleccion_objetos" className="form-select" aria-label="seleccione un objeto..."
                     autoComplete="off" onChange={(e)=>props.setNombreGrupo(e.target.value)}>
                 {lista_grupos.map((nombre)=>{
-                    return <option value={nombre}>{nombre}</option>
+                    if(props.nombre_grupo === nombre){
+                        return <option value={nombre} selected="selected">{nombre}</option>
+                    }else{
+                        return <option value={nombre}>{nombre}</option>
+                    }
                 })}
             </select>
         </div>

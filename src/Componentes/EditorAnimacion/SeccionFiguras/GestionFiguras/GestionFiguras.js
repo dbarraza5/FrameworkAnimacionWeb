@@ -14,6 +14,13 @@ function GestionFiguras(props){
     const [nombre_figura, setNombreFigura] = useState(null);
     const [figura, setFigura] = useState(null)
 
+    // control de error al cambiar el nombre del grupo
+    const lista_nom_grupos = props.animacion.get_lista_nombres_grupos()
+    if(!lista_nom_grupos.includes(nombre_grupo)){
+        setNombreGrupo("default")
+
+    }
+
     const agregar_figura=()=>{
         const f = props.animacion.crear_figura(nombre_grupo, tipo_figura)
         setFigura(f)
@@ -53,7 +60,7 @@ function GestionFiguras(props){
         <br/>
         <div className="row">
             <div className="col">
-                <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo}/>
+                <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo} nombre_grupo={nombre_grupo}/>
             </div>
             <div className="col">
                 <SeleccionFigura meta_figuras={meta_figuras} setTipoFigura={cambiar_tipo_figura}

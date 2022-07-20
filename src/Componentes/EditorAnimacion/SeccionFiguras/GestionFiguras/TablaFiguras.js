@@ -7,18 +7,19 @@ function TablaFiguras(props){
         props.setAnimacion({"edicion": props.animacion})
     }
 
-    return(
-        <table className="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">nombre</th>
-                <th scope="col">tipo</th>
-                <th scope="col">visible</th>
-                <th scope="col">operaciones</th>
-            </tr>
-            </thead>
-            <tbody>
+    if(grupo!=null){
+        return(
+            <table className="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">nombre</th>
+                    <th scope="col">tipo</th>
+                    <th scope="col">visible</th>
+                    <th scope="col">operaciones</th>
+                </tr>
+                </thead>
+                <tbody>
                 {grupo.lista_figuras.map((fig, index)=>{
                     return(<tr>
                         <th scope="row">{index+1}</th>
@@ -45,8 +46,12 @@ function TablaFiguras(props){
                     </tr>)
                 })}
 
-            </tbody>
-        </table>
-    )
+                </tbody>
+            </table>
+        )
+    }
+    return(<div> sin grupo</div>)
+
+
 }
 export default TablaFiguras;
