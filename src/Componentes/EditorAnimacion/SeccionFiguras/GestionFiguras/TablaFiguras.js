@@ -32,7 +32,7 @@ function TablaFiguras(props){
                         </td>
                         <td>
                             <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
-                                <button type="button" className="btn btn-outline-primary" onClick={()=>console.log("sdfdsf")}>
+                                <button type="button" className="btn btn-outline-primary" onClick={()=>props.selet_figura_editar(fig.nombre, fig.tipo_figura)}>
                                     <i className="bi bi-pencil"></i>
                                 </button>
                                 <button type="button" className="btn btn-outline-primary"><i className="bi bi-files"></i></button>

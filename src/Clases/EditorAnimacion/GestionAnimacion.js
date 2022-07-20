@@ -132,7 +132,7 @@ class GestionAnimacion{
                         tipo_figura: "PUNTO",
                         atributos: {
                             cx: "10",
-                            cy: "10",
+                            cy: "120",
                         }
                     },
                     {
@@ -270,6 +270,49 @@ class GestionAnimacion{
             if(g.nombre === nombre_grupo){
                 g.lista_figuras.push(figura)
                 return g
+            }
+            return g;
+        })
+    }
+
+    get_figura(nombre_grupo, nombre_figura){
+        const grupo = this.grupos_figuras.filter((g)=>{
+            return g.nombre===nombre_grupo
+        })
+        if(grupo.length>0){
+            const figura = grupo[0].lista_figuras.filter((f)=>f.nombre===nombre_figura)
+            if(figura.length>0){
+                return figura[0]
+            }
+        }
+        return null;
+    }
+
+    set_figura(nombre_grupo, figura_){
+        this.grupos_figuras = this.grupos_figuras.map((g)=>{
+            if(g.nombre === nombre_grupo){
+                g.lista_figuras.map((figura)=>{
+                    if(figura.nombre === figura.nombre){
+                        return figura_
+                    }
+                    return figura;
+                })
+                return g;
+            }
+            return g;
+        })
+    }
+
+    set_atributo_figura(nombre_grupo, nombre_figura, nombre_atributo, valor){
+        this.grupos_figuras = this.grupos_figuras.map((g)=>{
+            if(g.nombre === nombre_grupo){
+                g.lista_figuras.map((figura)=>{
+                    if(figura.nombre === nombre_figura){
+                        figura.atributos[nombre_atributo] = parseInt(valor);
+                    }
+                    return figura;
+                })
+                return g;
             }
             return g;
         })

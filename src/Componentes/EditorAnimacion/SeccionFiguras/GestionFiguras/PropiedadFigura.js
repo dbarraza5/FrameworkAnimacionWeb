@@ -24,10 +24,12 @@ function PropiedadFigura(props) {
         console.log("valor2: ", valor2)
         lista_input.push(<div className="row">
             <div className="col">
-                <InputAtributoFigura id={id1} name_attr={lista_atributos[i].nombre} valor={valor1}/>
+                <InputAtributoFigura id={id1} name_attr={lista_atributos[i].nombre} valor={valor1}
+                                     cambio_atributo_figura={props.cambio_atributo_figura}/>
             </div>
             <div className="col">
-                <InputAtributoFigura id={id2} name_attr={lista_atributos[i+1].nombre} valor={valor2}/>
+                <InputAtributoFigura id={id2} name_attr={lista_atributos[i+1].nombre} valor={valor2}
+                                     cambio_atributo_figura={props.cambio_atributo_figura}/>
             </div>
         </div>)
     }
@@ -37,7 +39,8 @@ function PropiedadFigura(props) {
         const id = "id_"+props.nombre_grupo+nombre_figura+props.tipo_figura+ultimo_nombre
         lista_input.push(<div className="row">
             <div className="col">
-                <InputAtributoFigura id={id} name_attr={ultimo_nombre} valor={valor1}/>
+                <InputAtributoFigura id={id} name_attr={ultimo_nombre} valor={valor1}
+                                     cambio_atributo_figura={props.cambio_atributo_figura}/>
             </div>
             <div className="col">
 

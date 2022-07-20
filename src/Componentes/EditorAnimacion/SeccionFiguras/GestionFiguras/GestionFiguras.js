@@ -30,6 +30,25 @@ function GestionFiguras(props){
         setTipoFigura(tipo_figura_)
     }
 
+    const cambio_atributo_figura=(nombre_attr, valor)=>{
+        console.log("Cambio atributos")
+        console.log(nombre_attr+"_"+valor)
+        figura.atributos[nombre_attr] = parseInt(valor);
+        props.animacion.set_figura(nombre_grupo, figura)
+        props.setAnimacion({"edicion": props.animacion})
+        setFigura({...figura})
+        console.log(figura)
+    }
+
+    const selet_figura_editar=(nombre_figura_, tipo_figura_)=>{
+        console.log("vamos aver "+nombre_figura_)
+        const fig_ = props.animacion.get_figura(nombre_grupo, nombre_figura_)
+        setTipoFigura(tipo_figura_)
+        setFigura(fig_)
+        const tab_figura = document.getElementById("btn-propiedad-tab");
+        tab_figura.click();
+    }
+
     return(<div>
         <br/>
         <div className="row">
@@ -38,7 +57,7 @@ function GestionFiguras(props){
             </div>
             <div className="col">
                 <SeleccionFigura meta_figuras={meta_figuras} setTipoFigura={cambiar_tipo_figura}
-                                 agregar_figura={agregar_figura}/>
+                                 agregar_figura={agregar_figura} tipo_figura={tipo_figura}/>
             </div>
         </div>
         <br/>
@@ -47,10 +66,13 @@ function GestionFiguras(props){
                                                tipo_figura={tipo_figura}
                                                nombre_figura={nombre_figura}
                                                 animacion={props.animacion}
-                                                figura={figura}/>}
+                                                figura={figura}
+                                               cambio_atributo_figura={cambio_atributo_figura}
+            />}
             tabla_figuras ={<TablaFiguras nombre_grupo = {nombre_grupo}
                                           animacion={props.animacion}
                                           setAnimacion={props.setAnimacion}
+                                          selet_figura_editar = {selet_figura_editar}
             />}
         />
     </div>)
