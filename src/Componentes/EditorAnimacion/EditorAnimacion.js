@@ -6,9 +6,10 @@ class EditorAnimacion extends Component{
 
 import NavEditorAnimacion from "./NavEditorAnimacion";
 import SeleccionFigura from "./SeccionFiguras/GestionFiguras/SeleccionFigura";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import EdicionFiguras from "./SeccionFiguras/EdicionFiguras";
 import GestionAnimacion from "../../Clases/EditorAnimacion/GestionAnimacion";
+import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
 
 const style = {
 
@@ -18,29 +19,31 @@ const data_set = {nombre: "daniel"}
 function EditorAnimacion() {
 
     const [animacion, setAnimacion] = useState({edicion: new GestionAnimacion()});
-    const [test_name, func_test] = useState(data_set);
-    const test1 =()=>{
 
-        animacion.edicion.grupos_figuras[0].nombre="aver";
-        setAnimacion({edicion: animacion.edicion})
-        //func_test({nombre: "dark"})
-        console.log("cambiendo la niamcion!!!!!")
-        console.log(animacion)
+    useEffect(() => {
+        const liezo = new GestionLienzoAnimacion()
+        liezo.actualizarLienzo(animacion.edicion)
+    });
+
+    const editar_animacion=(animacion_)=>{
+        setAnimacion(animacion_)
+        const liezo = new GestionLienzoAnimacion()
+        liezo.actualizarLienzo(animacion_.edicion)
     }
+
 
     return (<div className="row">
         <div className="col">
             <NavEditorAnimacion>
-                <EdicionFiguras animacion={animacion.edicion} setAnimacion={setAnimacion}/>
+                <EdicionFiguras animacion={animacion.edicion} setAnimacion={editar_animacion}/>
             </NavEditorAnimacion>
         </div>
         <div className="col">
             <div className="card text-bg-light mb-3" style={style}>
                 <div className="card-header">Animación</div>
                 <div className="card-body">
-                    {test_name.nombre} <br/>
-                    {animacion.edicion.grupos_figuras[0].nombre}<br/>
-                    <button onClick={test1}>prueba</button>
+                    <canvas id="lienzo-animacion" onMouseMove={(e)=>1}
+                            width="600" height="600" style={style}></canvas>
                 </div>
             </div>
         </div>

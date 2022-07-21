@@ -112,6 +112,18 @@ class GestionAnimacion{
                             cy: "10",
                         }
                     },
+                    {
+                        nombre:"fr152",
+                        tipo_figura: "RECTA",
+                        atributos: {
+                            x1: "1",
+                            y1: "1",
+                            x2: "15",
+                            y2: "15",
+                            cx: "20",
+                            cy: "20",
+                        }
+                    }
                 ],
             },
             {
@@ -141,10 +153,10 @@ class GestionAnimacion{
                         atributos: {
                             x1: "1",
                             y1: "1",
-                            x2: "5",
-                            y2: "5",
-                            cx: "7",
-                            cy: "7",
+                            x2: "15",
+                            y2: "15",
+                            cx: "20",
+                            cy: "20",
                         }
                     }
                 ],
@@ -236,7 +248,7 @@ class GestionAnimacion{
             while(!id_encontrado){
                 id_temp = "f"+prefix+contador;
                 if(!lista_nombre_fig.includes(id_temp)){
-                    console.log(id_temp)
+                    //console.log(id_temp)
                     return id_temp;
                 }
                 contador+=1;
@@ -260,7 +272,7 @@ class GestionAnimacion{
         des_fig.atributos.map((attr)=>{
             figura.atributos[attr.nombre] = attr.valor_defecto;
         })
-        console.log(figura)
+        //console.log(figura)
         this.agregar_figura_grupo(nombre_grupo, figura);
         return figura;
     }

@@ -31,6 +31,7 @@ function PropiedadGrupoFiguras(props){
             props.animacion.set_atributo_grupo(nombre, atributo, valor);
             props.setAnimacion({"edicion":props.animacion})
         }
+        console.log("[===========cambio de propiedades del gruo======================]")
         console.log(nombre)
         console.log(atributo)
         console.log(valor)
@@ -64,18 +65,20 @@ function PropiedadGrupoFiguras(props){
 
 
     return(<div>
-        <InputEnteroPropiedadGrupo nombre_input="Nombre grupo" valor={grupo.nombre} tipo="nombre"
+        <InputEnteroPropiedadGrupo nombre_input="Nombre grupo" valor={grupo.nombre} tipo="nombre" tipo_entrada="text"
                                    cambioPropiedadGrupo={cambioPropiedadGrupo}
-                                   desactivar={desactivar}/>
+                                   desactivar={desactivar}
+                                   nombre_grupo={grupo.nombre}
+        />
         {seleccion_grupo}
 
         <InputEnteroPropiedadGrupo nombre_input="Tiempo Inicial" valor={grupo.tiempo_inicial} tipo="tiempo_inicial"
-                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
 
         <InputEnteroPropiedadGrupo nombre_input="Tiempo Final"
                                    valor={grupo.tiempo_final}
                                    tipo="tiempo_final"
-                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
 
         <div className="input-group input-group-sm mb-3">
             <div className="form-check">
@@ -92,18 +95,18 @@ function PropiedadGrupoFiguras(props){
         <InputEnteroPropiedadGrupo nombre_input="Centro x"
                                    valor={grupo.cx}
                                    tipo="cx"
-                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
 
         <InputEnteroPropiedadGrupo nombre_input="Centro y"
                                    valor={grupo.cy}
                                    tipo="cy"
-                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
 
 
         <InputEnteroPropiedadGrupo nombre_input="Capa"
                                    valor={grupo.capa}
                                    tipo="capa"
-                                   cambioPropiedadGrupo={cambioPropiedadGrupo}/>
+                                   cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
 
         <div className="input-group input-group-sm mb-3">
             <label htmlFor="exampleFormControlInput1" className="input-group-text">Color</label>
