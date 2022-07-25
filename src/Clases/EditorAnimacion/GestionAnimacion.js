@@ -113,6 +113,16 @@ class GestionAnimacion{
                         }
                     },
                     {
+                        nombre:"fc1",
+                        tipo_figura: "CIRCULO",
+                        atributos: {
+                            cx: "10",
+                            cy: "22",
+                            radiox: "23",
+                            radioy: "10"
+                        }
+                    },
+                    {
                         nombre:"fr152",
                         tipo_figura: "RECTA",
                         atributos: {
