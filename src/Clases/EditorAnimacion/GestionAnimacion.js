@@ -383,6 +383,30 @@ class GestionAnimacion{
         }
         return null;
     }
+
+    get_nombres_grupos_hijos(nombre_grupo){
+        let lista = this.grupos_figuras.filter((grupo)=>grupo.nodo_padre===nombre_grupo)
+        let lista_nombres = lista.map((g)=>g.nombre)
+        return lista_nombres
+    }
+
+    estructura_arbol_grupos(nombre_grupo="root"){
+        let lista_grupo = this.get_nombres_grupos_hijos(nombre_grupo)
+        let lista_nodos = []
+        console.log(lista_grupo)
+        if(lista_grupo.length===0){
+            return {
+                text: nombre_grupo
+            }
+        }
+        for (let i=0; i<lista_grupo.length; i++){
+            lista_nodos.push(this.estructura_arbol_grupos(lista_grupo[i]))
+        }
+        return {
+            text:nombre_grupo,
+            nodes: lista_nodos
+        }
+    }
 }
 
 export default GestionAnimacion

@@ -3,6 +3,9 @@ import ListaGrupos from "./EditarGrupo/ListaGrupos";
 import SeleccionFigura from "./GestionFiguras/SeleccionFigura";
 import GestionGrupos from "./GestionGrupos/GestionGrupos";
 import GestionFiguras from "./GestionFiguras/GestionFiguras";
+import TreeViewElement from "../../TreeView/TreeViewElement";
+import GestionGruposLienzo from "./GestionGrupoLienzo/GestionGruposLienzo";
+
 
 function NavFiguras(props){
     return (<div>
@@ -15,6 +18,9 @@ function NavFiguras(props){
             </li>
             <li className="nav-item" role="presentation">
                 <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1">Figuras</ButtonNav>
+            </li>
+            <li className="nav-item" role="presentation">
+                <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel">Mover</ButtonNav>
             </li>
         </ul>
         <div className="tab-content" id="myTabContent">
@@ -34,6 +40,11 @@ function NavFiguras(props){
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
                 <GestionFiguras {...props}/>
+            </div>
+            <div className="tab-pane fade" id="puntero-tab-panel" role="tabpanel"
+                 aria-labelledby="contact-tab1"
+                 tabIndex="2">
+                <GestionGruposLienzo {...props}/>
             </div>
         </div>
     </div>)
