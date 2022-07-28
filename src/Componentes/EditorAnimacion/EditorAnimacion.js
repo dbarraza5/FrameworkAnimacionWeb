@@ -10,10 +10,9 @@ import {useEffect, useState} from "react";
 import EdicionFiguras from "./SeccionFiguras/EdicionFiguras";
 import GestionAnimacion from "../../Clases/EditorAnimacion/GestionAnimacion";
 import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
+import Lienzo from "./Lienzo";
 
-const style = {
 
-}
 const gestion_animacion  = new GestionAnimacion();
 const data_set = {nombre: "daniel"}
 function EditorAnimacion() {
@@ -39,11 +38,10 @@ function EditorAnimacion() {
             </NavEditorAnimacion>
         </div>
         <div className="col">
-            <div className="card text-bg-light mb-3" style={style}>
+            <div className="card text-bg-light mb-3">
                 <div className="card-header">Animación</div>
                 <div className="card-body">
-                    <canvas id="lienzo-animacion" onMouseMove={(e)=>1}
-                            width="600" height="600" style={style}></canvas>
+                    <Lienzo/>
                 </div>
             </div>
         </div>

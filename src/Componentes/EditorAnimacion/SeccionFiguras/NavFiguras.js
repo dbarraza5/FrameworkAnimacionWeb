@@ -20,7 +20,7 @@ function NavFiguras(props){
                 <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1">Figuras</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
-                <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel">Mover</ButtonNav>
+                <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel">Lienzo</ButtonNav>
             </li>
         </ul>
         <div className="tab-content" id="myTabContent">

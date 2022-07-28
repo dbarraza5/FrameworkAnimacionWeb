@@ -1,4 +1,5 @@
 import InputAtributoFigura from "./InputAtributoFigura";
+import SelectAtributo from "./SelectAtributo";
 
 function PropiedadFigura(props) {
     const des_figura = props.animacion.getMetaFigura(props.tipo_figura)
@@ -63,6 +64,36 @@ function PropiedadFigura(props) {
                 <td>{props.tipo_figura}</td>
                 <td>{props.nombre_grupo}</td>
             </tr>
+            </tbody>
+        </table>
+
+
+        <table className="table">
+            <thead>
+            <tr>
+                <th scope="col">Dispositivo</th>
+                <th scope="col">X</th>
+                <th scope="col">Y</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td scope="row">Mouse Position</td>
+                    <td>
+                        <SelectAtributo lista_atributos={lista_atributos}/>
+                    </td>
+                    <td>
+                        <SelectAtributo lista_atributos={lista_atributos}/>
+                    </td>
+                </tr>
+                <tr>
+                    <td scope="row">Mouse scroll</td>
+                    <td>
+                        <SelectAtributo lista_atributos={lista_atributos}/>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
             </tbody>
         </table>
 
