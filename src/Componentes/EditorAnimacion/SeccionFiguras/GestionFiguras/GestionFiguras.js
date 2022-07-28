@@ -59,29 +59,28 @@ function GestionFiguras(props){
     return(<div>
         <br/>
         <div className="row">
-            <div className="col">
+            <div className="col-4">
                 <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo} nombre_grupo={nombre_grupo}/>
-            </div>
-            <div className="col">
                 <SeleccionFigura meta_figuras={meta_figuras} setTipoFigura={cambiar_tipo_figura}
                                  agregar_figura={agregar_figura} tipo_figura={tipo_figura}/>
             </div>
+            <div className="col-8">
+                <NavGestionFiguras
+                    propiedad_figura={<PropiedadFigura nombre_grupo = {nombre_grupo}
+                                                       tipo_figura={tipo_figura}
+                                                       nombre_figura={nombre_figura}
+                                                       animacion={props.animacion}
+                                                       figura={figura}
+                                                       cambio_atributo_figura={cambio_atributo_figura}
+                    />}
+                    tabla_figuras ={<TablaFiguras nombre_grupo = {nombre_grupo}
+                                                  animacion={props.animacion}
+                                                  setAnimacion={props.setAnimacion}
+                                                  selet_figura_editar = {selet_figura_editar}
+                    />}
+                />
+            </div>
         </div>
-        <br/>
-        <NavGestionFiguras
-            propiedad_figura={<PropiedadFigura nombre_grupo = {nombre_grupo}
-                                               tipo_figura={tipo_figura}
-                                               nombre_figura={nombre_figura}
-                                                animacion={props.animacion}
-                                                figura={figura}
-                                               cambio_atributo_figura={cambio_atributo_figura}
-            />}
-            tabla_figuras ={<TablaFiguras nombre_grupo = {nombre_grupo}
-                                          animacion={props.animacion}
-                                          setAnimacion={props.setAnimacion}
-                                          selet_figura_editar = {selet_figura_editar}
-            />}
-        />
     </div>)
 }
 
