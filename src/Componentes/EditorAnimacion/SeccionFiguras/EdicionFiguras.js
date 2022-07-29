@@ -19,7 +19,6 @@ function EdicionFiguras(props){
 
     return(
         <div>
-
             <br/>
             <div className="row">
                 <NavFiguras animacion={props.animacion} setAnimacion={props.setAnimacion}/>

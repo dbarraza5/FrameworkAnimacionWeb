@@ -18,6 +18,7 @@ const data_set = {nombre: "daniel"}
 function EditorAnimacion() {
 
     const [animacion, setAnimacion] = useState({edicion: new GestionAnimacion()});
+    //const []
 
     useEffect(() => {
         const liezo = new GestionLienzoAnimacion()
