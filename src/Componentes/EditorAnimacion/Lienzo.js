@@ -31,7 +31,7 @@ function Lienzo(props){
         console.log("salida al lienzo")
     }
 
-    return(<canvas id="lienzo-animacion"
+    return(<canvas {...props}
                    onMouseMove={(e)=>eventoMouseMove(e)}
                    onMouseUp={(e)=>eventoMouseUp(e)}
                    onMouseDown={(e)=>eventoMouseDown(e)}

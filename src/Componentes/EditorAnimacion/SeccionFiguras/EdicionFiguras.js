@@ -5,6 +5,7 @@ import SeleccionFigura from "./GestionFiguras/SeleccionFigura";
 import {useEffect} from "react";
 import Graph from "react-graph-vis";
 import NavFiguras from "./NavFiguras";
+import Lienzo from "../Lienzo";
 
 function EdicionFiguras(props){
 
@@ -21,7 +22,18 @@ function EdicionFiguras(props){
         <div>
             <br/>
             <div className="row">
-                <NavFiguras animacion={props.animacion} setAnimacion={props.setAnimacion}/>
+                <div className="col">
+                    <NavFiguras animacion={props.animacion} setAnimacion={props.setAnimacion}/>
+                </div>
+                <div className="col">
+                    <div className="card text-bg-light mb-3">
+                        <div className="card-header">Animación</div>
+                        <div className="card-body">
+                            <Lienzo id="lienzo-animacion"/>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     )

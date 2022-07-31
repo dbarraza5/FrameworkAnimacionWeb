@@ -33,19 +33,9 @@ function EditorAnimacion() {
 
 
     return (<div className="row">
-        <div className="col">
-            <NavEditorAnimacion>
-                <EdicionFiguras animacion={animacion.edicion} setAnimacion={editar_animacion}/>
-            </NavEditorAnimacion>
-        </div>
-        <div className="col">
-            <div className="card text-bg-light mb-3">
-                <div className="card-header">Animación</div>
-                <div className="card-body">
-                    <Lienzo/>
-                </div>
-            </div>
-        </div>
+        <NavEditorAnimacion>
+            <EdicionFiguras animacion={animacion.edicion} setAnimacion={editar_animacion}/>
+        </NavEditorAnimacion>
     </div>)
 }
 
