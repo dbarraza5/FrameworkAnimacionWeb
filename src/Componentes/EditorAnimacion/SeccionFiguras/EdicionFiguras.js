@@ -9,8 +9,12 @@ import Lienzo from "../Lienzo";
 
 function EdicionFiguras(props){
 
-    let grupos = props.animacion.grupos_figuras;
-    console.log(grupos)
+    //let grupos = props.animacion.grupos_figuras;
+    const eventoLienzoFigura = props.eventoLienzoFigura;
+
+    const editar_animacion=()=>{
+        console.log(props.eventoLienzoFigura)
+    }
 
     useEffect(() => {
         // Your code here
@@ -23,13 +27,15 @@ function EdicionFiguras(props){
             <br/>
             <div className="row">
                 <div className="col">
-                    <NavFiguras animacion={props.animacion} setAnimacion={props.setAnimacion}/>
+                    <NavFiguras animacion={props.animacion} setAnimacion={props.setAnimacion}
+                                eventoLienzoFigura = {eventoLienzoFigura} setEventLienzoFigura={props.setEventLienzoFigura}/>
                 </div>
                 <div className="col">
                     <div className="card text-bg-light mb-3">
                         <div className="card-header">Animación</div>
                         <div className="card-body">
-                            <Lienzo id="lienzo-animacion"/>
+                            <Lienzo lienzo = {eventoLienzoFigura} id="lienzo-animacion" editar_animacion={editar_animacion}
+                                    setEventLienzoFigura={props.setEventLienzoFigura}/>
                         </div>
                     </div>
                 </div>

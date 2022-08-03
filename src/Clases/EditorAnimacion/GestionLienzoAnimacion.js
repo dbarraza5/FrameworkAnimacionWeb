@@ -1,16 +1,19 @@
 
 class GestionLienzoAnimacion{
+
     constructor(){
-        this.canvas = document.getElementById("lienzo-animacion");
+        this.id_canvas = "lienzo-animacion"
         this.x = 0;
         this.y = 0;
+        //this.var_1 = 9999
         //console.log(this.canvas)
         //this.canvas.addEventListener('mousemove', eventMoveMouse)//.on("mousemove", eventMoveMouse);
     }
 
     actualizarLienzo(animacion){
-        const ctx = this.canvas.getContext('2d');
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const canvas = document.getElementById(this.id_canvas);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         const lista_grupo_root = animacion.grupos_figuras.filter((g)=>g.nodo_padre==="root")
         for(let i=0; i<lista_grupo_root.length; i++){
             const grupo = lista_grupo_root[i]

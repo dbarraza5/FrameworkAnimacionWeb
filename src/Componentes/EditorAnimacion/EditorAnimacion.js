@@ -11,30 +11,35 @@ import EdicionFiguras from "./SeccionFiguras/EdicionFiguras";
 import GestionAnimacion from "../../Clases/EditorAnimacion/GestionAnimacion";
 import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
 import Lienzo from "./Lienzo";
+import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
 
 
-const gestion_animacion  = new GestionAnimacion();
-const data_set = {nombre: "daniel"}
+
+
 function EditorAnimacion() {
 
     const [animacion, setAnimacion] = useState({edicion: new GestionAnimacion()});
-    //const []
+    const [lienzo, setAlienzo] = useState(new GestionLienzoAnimacion());
+    const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura())
 
     useEffect(() => {
-        const liezo = new GestionLienzoAnimacion()
-        liezo.actualizarLienzo(animacion.edicion)
+        //const liezo = new GestionLienzoAnimacion()
+        console.log(lienzo)
+        lienzo.actualizarLienzo(animacion.edicion)
     });
 
     const editar_animacion=(animacion_)=>{
         setAnimacion(animacion_)
-        const liezo = new GestionLienzoAnimacion()
-        liezo.actualizarLienzo(animacion_.edicion)
+        //const liezo = new GestionLienzoAnimacion()
+        //lienzo.actualizarLienzo(animacion_.edicion)
     }
 
 
     return (<div className="row">
         <NavEditorAnimacion>
-            <EdicionFiguras animacion={animacion.edicion} setAnimacion={editar_animacion}/>
+            <EdicionFiguras animacion={animacion.edicion} setAnimacion={editar_animacion}
+                            eventoLienzoFigura ={eventoLienzoFigura} setEventLienzoFigura={setEventLienzoFigura}
+            />
         </NavEditorAnimacion>
     </div>)
 }

@@ -68,35 +68,6 @@ function PropiedadFigura(props) {
         </table>
 
 
-        <table className="table">
-            <thead>
-            <tr>
-                <th scope="col">Dispositivo</th>
-                <th scope="col">X</th>
-                <th scope="col">Y</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td scope="row">Mouse Position</td>
-                    <td>
-                        <SelectAtributo lista_atributos={lista_atributos}/>
-                    </td>
-                    <td>
-                        <SelectAtributo lista_atributos={lista_atributos}/>
-                    </td>
-                </tr>
-                <tr>
-                    <td scope="row">Mouse scroll</td>
-                    <td>
-                        <SelectAtributo lista_atributos={lista_atributos}/>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
         <div className="card text-bg-light mb-3" >
             <div className="card-header">Atributos</div>
             <div className="card-body">
