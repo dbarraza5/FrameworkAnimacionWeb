@@ -39,7 +39,7 @@ class ControlEventoLienzoFigura{
     id_figura_selec = null;
     id_grupo_selec = null;
 
-
+    lista_id_figuras = []
 
 }
 
