@@ -25,7 +25,7 @@ class Editor extends Component{
         let pos = getMousePos(document.getElementById("lienzo-editor"), e);
         let x1 = parseInt(pos.x);
         let y1 = parseInt(pos.y);
-        console.log(x1, y1)
+        //console.log(x1, y1)
         //lienzo.moverElemento(x1, y1);
     }
 

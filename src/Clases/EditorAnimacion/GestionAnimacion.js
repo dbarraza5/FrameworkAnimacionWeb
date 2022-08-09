@@ -14,8 +14,8 @@ class GestionAnimacion{
             atributos: [
                 {nombre:"x1", tipo: "TIPO_INT", valor_defecto: 0},
                 {nombre:"y1", tipo: "TIPO_INT", valor_defecto: 0},
-                {nombre:"x2", tipo: "TIPO_INT", valor_defecto: 5},
-                {nombre:"y2", tipo: "TIPO_INT", valor_defecto: 5},
+                {nombre:"x2", tipo: "TIPO_INT", valor_defecto: 40},
+                {nombre:"y2", tipo: "TIPO_INT", valor_defecto: 0},
                 {nombre:"cx", tipo: "TIPO_INT", valor_defecto: 0},
                 {nombre:"cy", tipo: "TIPO_INT", valor_defecto: 0},
             ]

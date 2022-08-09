@@ -13,7 +13,9 @@ function EdicionFiguras(props){
     const eventoLienzoFigura = props.eventoLienzoFigura;
 
     const editar_animacion=()=>{
-        console.log(props.eventoLienzoFigura)
+        //console.log(props.gestionLienzo)
+        props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.animacion, props.setAnimacion)
+        /*console.log(props.eventoLienzoFigura)
         const nombre_grupo = props.eventoLienzoFigura.id_grupo_selec;
         const nombre_figura = props.eventoLienzoFigura.id_figura_selec;
         if(props.eventoLienzoFigura.mouse_click_down){
@@ -29,8 +31,7 @@ function EdicionFiguras(props){
                 console.log(fig_)
                 console.log(grupo_)
             }
-        }
-
+        }*/
 
     }
 
@@ -45,8 +46,7 @@ function EdicionFiguras(props){
             <br/>
             <div className="row">
                 <div className="col">
-                    <NavFiguras animacion={props.animacion} setAnimacion={props.setAnimacion}
-                                eventoLienzoFigura = {eventoLienzoFigura} setEventLienzoFigura={props.setEventLienzoFigura}/>
+                    <NavFiguras {...props}/>
                 </div>
                 <div className="col">
                     <div className="card text-bg-light mb-3">

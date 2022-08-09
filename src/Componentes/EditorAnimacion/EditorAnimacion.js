@@ -19,13 +19,13 @@ import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEvent
 function EditorAnimacion() {
 
     const [animacion, setAnimacion] = useState({edicion: new GestionAnimacion()});
-    const [lienzo, setAlienzo] = useState(new GestionLienzoAnimacion());
+    const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion());
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura())
 
     useEffect(() => {
         //const liezo = new GestionLienzoAnimacion()
-        console.log(lienzo)
-        lienzo.actualizarLienzo(animacion.edicion)
+        //console.log(gestionLienzo)
+        gestionLienzo.actualizarLienzo(animacion.edicion)
     });
 
     const editar_animacion=(animacion_)=>{
@@ -39,6 +39,7 @@ function EditorAnimacion() {
         <NavEditorAnimacion>
             <EdicionFiguras animacion={animacion.edicion} setAnimacion={editar_animacion}
                             eventoLienzoFigura ={eventoLienzoFigura} setEventLienzoFigura={setEventLienzoFigura}
+                            gestionLienzo ={gestionLienzo} setGestionLienzo={setGestionLienzo}
             />
         </NavEditorAnimacion>
     </div>)
