@@ -104,7 +104,11 @@ class GestionLienzoAnimacion{
                     setAnimacion({"edicion": animacion})
                 }
 
-                if(eventoLienzoFigura.mouse_click_up && this.mover_figura !== MOVER_NADA){
+                if(eventoLienzoFigura.mouse_click_up && (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2)){
+                    this.mover_figura = MOVER_NADA;
+                }
+
+                if(eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_CENTRO_FIGURA ){
                     this.mover_figura = MOVER_NADA;
                 }
             }
