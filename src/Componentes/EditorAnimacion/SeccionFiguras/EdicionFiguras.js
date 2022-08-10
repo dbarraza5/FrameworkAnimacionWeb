@@ -15,23 +15,7 @@ function EdicionFiguras(props){
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
         props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.animacion, props.setAnimacion)
-        /*console.log(props.eventoLienzoFigura)
-        const nombre_grupo = props.eventoLienzoFigura.id_grupo_selec;
-        const nombre_figura = props.eventoLienzoFigura.id_figura_selec;
-        if(props.eventoLienzoFigura.mouse_click_down){
-            if(props.eventoLienzoFigura.categoria_trabajo === 0){
-                const grupo_ = props.animacion.getGrupo(nombre_grupo)
-                const fig_ = props.animacion.get_figura(nombre_grupo, nombre_figura)
-                let x = props.eventoLienzoFigura.mouse_x-grupo_.cx;
-                let y = props.eventoLienzoFigura.mouse_y-grupo_.cy;
-                fig_.atributos["cx"] = x;
-                fig_.atributos["cy"] = y;
-                props.animacion.set_figura(nombre_grupo, fig_)
-                props.setAnimacion({"edicion": props.animacion})
-                console.log(fig_)
-                console.log(grupo_)
-            }
-        }*/
+        eventoLienzoFigura.reset()
 
     }
 

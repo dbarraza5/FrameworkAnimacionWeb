@@ -28,6 +28,7 @@ function GestionFiguras(props){
         props.gestionLienzo.categoria_trabajo = 0;
         props.gestionLienzo.id_grupo_selec = nombre_grupo;
         props.gestionLienzo.id_figura_selec = f.nombre;
+        props.gestionLienzo.mover_figura = 1
         props.setGestionLienzo(props.gestionLienzo)
     }
 

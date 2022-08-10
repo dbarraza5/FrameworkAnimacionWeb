@@ -32,6 +32,7 @@ function Lienzo(props){
         console.log("apretar click")
         props.lienzo.mouse_click_down=true;
         props.lienzo.mouse_click_up=false;
+        props.lienzo.mouse_only_click = true;
         props.setEventLienzoFigura(props.lienzo);
         props.editar_animacion()
     }

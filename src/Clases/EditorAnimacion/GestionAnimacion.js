@@ -12,12 +12,12 @@ class GestionAnimacion{
         {
             nombre: "RECTA",
             atributos: [
-                {nombre:"x1", tipo: "TIPO_INT", valor_defecto: 0},
+                {nombre:"x1", tipo: "TIPO_INT", valor_defecto: -20},
                 {nombre:"y1", tipo: "TIPO_INT", valor_defecto: 0},
-                {nombre:"x2", tipo: "TIPO_INT", valor_defecto: 40},
+                {nombre:"x2", tipo: "TIPO_INT", valor_defecto: 20},
                 {nombre:"y2", tipo: "TIPO_INT", valor_defecto: 0},
-                {nombre:"cx", tipo: "TIPO_INT", valor_defecto: 0},
-                {nombre:"cy", tipo: "TIPO_INT", valor_defecto: 0},
+                {nombre:"cx", tipo: "TIPO_INT", valor_defecto: 200},
+                {nombre:"cy", tipo: "TIPO_INT", valor_defecto: 200},
             ]
 
         },

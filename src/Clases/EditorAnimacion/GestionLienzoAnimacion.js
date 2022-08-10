@@ -5,6 +5,11 @@ const TRABAJO_FIGURAS = 1;
 const TRABAJO_GRUPO = 2;
 const TRABAJO_GRUPOS = 3;
 
+const MOVER_NADA = 0
+const MOVER_CENTRO_FIGURA = 1;
+const MOVER_RECTA_PUNTO1 = 2;
+const MOVER_RECTA_PUNTO2 = 3;
+
 
 class GestionLienzoAnimacion{
 
@@ -14,6 +19,13 @@ class GestionLienzoAnimacion{
     id_grupo_selec = null;
 
     lista_id_figuras = []
+
+    puntero = {
+        x: 0,
+        y: 0,
+        w: 10,
+        h: 10
+    }
 
     p1_recta = {
         x: 0,
@@ -29,6 +41,8 @@ class GestionLienzoAnimacion{
         h: 5
     }
 
+    mover_figura = MOVER_NADA;
+
     constructor(){
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
@@ -42,17 +56,56 @@ class GestionLienzoAnimacion{
     procesarEventoLienzo(eventoLienzoFigura, animacion, setAnimacion){
         const nombre_grupo = this.id_grupo_selec;
         const nombre_figura = this.id_figura_selec;
-        if(eventoLienzoFigura.mouse_click_down){
-            if(this.categoria_trabajo === 0){
-                const grupo_ = animacion.getGrupo(nombre_grupo)
-                if(grupo_ != null){
-                    const fig_ = animacion.get_figura(nombre_grupo, nombre_figura)
+        this.puntero.x = eventoLienzoFigura.mouse_x;
+        this.puntero.y = eventoLienzoFigura.mouse_y;
+
+        if(this.categoria_trabajo === 0){
+            const grupo_ = animacion.getGrupo(nombre_grupo)
+            if(grupo_ != null){
+                const fig_ = animacion.get_figura(nombre_grupo, nombre_figura)
+
+                if(fig_.tipo_figura === "RECTA"){// && this.mover_figura === MOVER_NADA){
+                    const x1 = parseInt(fig_.atributos.x1)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
+                    const y1 = parseInt(fig_.atributos.y1)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
+                    const x2 = parseInt(fig_.atributos.x2)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
+                    const y2 = parseInt(fig_.atributos.y2)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
+                    this.actualizarPuntosRectas(x1, y1, x2, y2)
+
+                    if (rectsColliding(this.puntero, this.p1_recta) && eventoLienzoFigura.mouse_only_click){
+                        console.log("MOVER EL PUNTO 1")
+                        this.mover_figura = MOVER_RECTA_PUNTO1;
+                    }
+                    if (rectsColliding(this.puntero, this.p2_recta) && eventoLienzoFigura.mouse_only_click){
+                        console.log("MOVER EL PUNTO 2")
+                        this.mover_figura = MOVER_RECTA_PUNTO2;
+                    }
+                }
+
+                if(this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2){
+                    let x = eventoLienzoFigura.mouse_x-grupo_.cx -fig_.atributos.cx;
+                    let y = eventoLienzoFigura.mouse_y-grupo_.cy -fig_.atributos.cy;
+                    if(this.mover_figura === MOVER_RECTA_PUNTO1){
+                        fig_.atributos["x1"] = x;
+                        fig_.atributos["y1"] = y;
+                    }else{
+                        fig_.atributos["x2"] = x;
+                        fig_.atributos["y2"] = y;
+                    }
+                    animacion.set_figura(nombre_grupo, fig_)
+                    setAnimacion({"edicion": animacion})
+                }
+
+                if(this.mover_figura === MOVER_CENTRO_FIGURA){
                     let x = eventoLienzoFigura.mouse_x-grupo_.cx;
                     let y = eventoLienzoFigura.mouse_y-grupo_.cy;
                     fig_.atributos["cx"] = x;
                     fig_.atributos["cy"] = y;
                     animacion.set_figura(nombre_grupo, fig_)
                     setAnimacion({"edicion": animacion})
+                }
+
+                if(eventoLienzoFigura.mouse_click_up && this.mover_figura !== MOVER_NADA){
+                    this.mover_figura = MOVER_NADA;
                 }
             }
         }
@@ -175,6 +228,10 @@ function dibujar_rectangulo(ctx, color, x, y, w, h){
     ctx.strokeStyle  = color;
     ctx.rect(x, y, w, h);
     ctx.stroke();
+}
+
+function rectsColliding(r1,r2){
+    return !(r1.x>r2.x+r2.w || r1.x+r1.w<r2.x || r1.y>r2.y+r2.h || r1.y+r1.h<r2.y);
 }
 
 export default GestionLienzoAnimacion
