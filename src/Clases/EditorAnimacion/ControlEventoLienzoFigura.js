@@ -10,6 +10,8 @@ class ControlEventoLienzoFigura{
     mouse_click_up = false;
     mouse_only_click = false;
 
+    stack_event_teclado = []
+
     reset(){
         this.mouse_only_click = false;
     }

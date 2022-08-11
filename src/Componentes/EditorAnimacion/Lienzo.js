@@ -52,12 +52,29 @@ function Lienzo(props){
         props.editar_animacion()
     }
 
+    const eventoKeyDown=(e)=>{
+        const name = e.key;
+        const  code = e.code;
+        console.log(name)
+        console.log(code)
+    }
+
+    const eventoKeyUp=(e)=>{
+        const name = e.key;
+        const  code = e.code;
+        console.log(name)
+        console.log(code)
+    }
+
     return(<canvas {...props}
                    onMouseMove={(e)=>eventoMouseMove(e)}
                    onMouseUp={(e)=>eventoMouseUp(e)}
                    onMouseDown={(e)=>eventoMouseDown(e)}
                    onMouseOver={(e)=>eventoMouseEntrada(e)}
                    onMouseOut={(e)=>eventoMouseSalida(e)}
+                   tabIndex="0"
+                   onKeyDown={(e)=>eventoKeyDown(e)}
+                   onKeyUp={(e)=>eventoKeyUp(e)}
                    width="600" height="600" style={style}></canvas>)
 }
 

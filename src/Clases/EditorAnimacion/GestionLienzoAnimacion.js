@@ -49,6 +49,13 @@ class GestionLienzoAnimacion{
         h: 5
     }
 
+    p_centro = {
+        x: 0,
+        y: 0,
+        w: 5,
+        h: 5
+    }
+
     mover_figura = MOVER_NADA;
 
     constructor(){
@@ -69,6 +76,7 @@ class GestionLienzoAnimacion{
 
         if(this.categoria_trabajo === 0){
             const grupo_ = animacion.getGrupo(nombre_grupo)
+            let mover_centro_figura = false
             if(grupo_ != null){
                 const fig_ = animacion.get_figura(nombre_grupo, nombre_figura)
 
@@ -100,6 +108,16 @@ class GestionLienzoAnimacion{
                     if (rectsColliding(this.puntero, this.p_circulo)){
                         console.log("MOVER RADIO CIRCULO")
                         this.mover_figura = MOVER_RADIO_CIRCULO;
+                    }else{
+                        if(this.mover_figura !== MOVER_CENTRO_FIGURA){
+                            this.p_centro.x = x -2
+                            this.p_centro.y = y -2
+                            if (rectsColliding(this.puntero, this.p_centro)){
+                                console.log("MOVER  CIRCULO")
+                                this.mover_figura = MOVER_CENTRO_FIGURA;
+                                mover_centro_figura = true;
+                            }
+                        }
                     }
                 }
 
@@ -127,7 +145,7 @@ class GestionLienzoAnimacion{
                     }
                 }
 
-                if(this.mover_figura === MOVER_CENTRO_FIGURA){
+                if(this.mover_figura === MOVER_CENTRO_FIGURA ){
                     let x = eventoLienzoFigura.mouse_x-grupo_.cx;
                     let y = eventoLienzoFigura.mouse_y-grupo_.cy;
                     fig_.atributos["cx"] = x;
@@ -140,7 +158,7 @@ class GestionLienzoAnimacion{
                     this.mover_figura = MOVER_NADA;
                 }
 
-                if(eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_CENTRO_FIGURA ){
+                if(eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_CENTRO_FIGURA && mover_centro_figura == false){
                     this.mover_figura = MOVER_NADA;
                 }
                 if(eventoLienzoFigura.mouse_click_up && this.mover_figura === MOVER_RADIO_CIRCULO ){
@@ -201,6 +219,12 @@ class GestionLienzoAnimacion{
                         this.p_circulo.y = y-2
                         dibujar_rectangulo(ctx, "#39ff14", this.p_circulo.x, this.p_circulo.y,
                             this.p_circulo.w, this.p_circulo.h)
+
+
+                        this.p_centro.x = x -2
+                        this.p_centro.y = y -2
+                        dibujar_rectangulo(ctx, "#39ff14", this.p_centro.x, this.p_centro.y,
+                            this.p_centro.w, this.p_centro.h)
                     }
                 }
             }
