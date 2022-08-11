@@ -9,6 +9,7 @@ const MOVER_NADA = 0
 const MOVER_CENTRO_FIGURA = 1;
 const MOVER_RECTA_PUNTO1 = 2;
 const MOVER_RECTA_PUNTO2 = 3;
+const MOVER_RADIO_CIRCULO = 4;
 
 
 class GestionLienzoAnimacion{
@@ -41,6 +42,13 @@ class GestionLienzoAnimacion{
         h: 5
     }
 
+    p_circulo = {
+        x: 0,
+        y: 0,
+        w: 5,
+        h: 5
+    }
+
     mover_figura = MOVER_NADA;
 
     constructor(){
@@ -64,20 +72,34 @@ class GestionLienzoAnimacion{
             if(grupo_ != null){
                 const fig_ = animacion.get_figura(nombre_grupo, nombre_figura)
 
-                if(fig_.tipo_figura === "RECTA"){// && this.mover_figura === MOVER_NADA){
+                if(fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click){// && this.mover_figura === MOVER_NADA){
                     const x1 = parseInt(fig_.atributos.x1)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
                     const y1 = parseInt(fig_.atributos.y1)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
                     const x2 = parseInt(fig_.atributos.x2)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
                     const y2 = parseInt(fig_.atributos.y2)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
                     this.actualizarPuntosRectas(x1, y1, x2, y2)
 
-                    if (rectsColliding(this.puntero, this.p1_recta) && eventoLienzoFigura.mouse_only_click){
+                    if (rectsColliding(this.puntero, this.p1_recta)){
                         console.log("MOVER EL PUNTO 1")
                         this.mover_figura = MOVER_RECTA_PUNTO1;
                     }
-                    if (rectsColliding(this.puntero, this.p2_recta) && eventoLienzoFigura.mouse_only_click){
+                    if (rectsColliding(this.puntero, this.p2_recta)){
                         console.log("MOVER EL PUNTO 2")
                         this.mover_figura = MOVER_RECTA_PUNTO2;
+                    }
+                }
+
+                if(fig_.tipo_figura === "CIRCULO" && eventoLienzoFigura.mouse_only_click){
+                    const x = parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
+                    const y = parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
+                    const rx = parseInt(fig_.atributos.radiox);
+
+                    this.p_circulo.x = x+rx+2
+                    this.p_circulo.y = y-2
+
+                    if (rectsColliding(this.puntero, this.p_circulo)){
+                        console.log("MOVER RADIO CIRCULO")
+                        this.mover_figura = MOVER_RADIO_CIRCULO;
                     }
                 }
 
@@ -95,6 +117,16 @@ class GestionLienzoAnimacion{
                     setAnimacion({"edicion": animacion})
                 }
 
+                if(this.mover_figura === MOVER_RADIO_CIRCULO){
+                    let radio_ = eventoLienzoFigura.mouse_x-grupo_.cx -fig_.atributos.cx;
+                    if(radio_>0){
+                        fig_.atributos["radiox"] = radio_;
+                        fig_.atributos["radioy"] = radio_;
+                        animacion.set_figura(nombre_grupo, fig_)
+                        setAnimacion({"edicion": animacion})
+                    }
+                }
+
                 if(this.mover_figura === MOVER_CENTRO_FIGURA){
                     let x = eventoLienzoFigura.mouse_x-grupo_.cx;
                     let y = eventoLienzoFigura.mouse_y-grupo_.cy;
@@ -109,6 +141,9 @@ class GestionLienzoAnimacion{
                 }
 
                 if(eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_CENTRO_FIGURA ){
+                    this.mover_figura = MOVER_NADA;
+                }
+                if(eventoLienzoFigura.mouse_click_up && this.mover_figura === MOVER_RADIO_CIRCULO ){
                     this.mover_figura = MOVER_NADA;
                 }
             }
@@ -160,6 +195,13 @@ class GestionLienzoAnimacion{
                     const rx = parseInt(figura.atributos.radiox);
                     const ry = parseInt(figura.atributos.radioy);
                     bibujar_circulo(ctx, grupo.color, x, y, rx, ry)
+
+                    if(grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec){
+                        this.p_circulo.x = x+rx
+                        this.p_circulo.y = y-2
+                        dibujar_rectangulo(ctx, "#39ff14", this.p_circulo.x, this.p_circulo.y,
+                            this.p_circulo.w, this.p_circulo.h)
+                    }
                 }
             }
         }
