@@ -90,10 +90,19 @@ class GestionLienzoAnimacion{
                     if (rectsColliding(this.puntero, this.p1_recta)){
                         console.log("MOVER EL PUNTO 1")
                         this.mover_figura = MOVER_RECTA_PUNTO1;
-                    }
+                    }else
                     if (rectsColliding(this.puntero, this.p2_recta)){
                         console.log("MOVER EL PUNTO 2")
                         this.mover_figura = MOVER_RECTA_PUNTO2;
+                    }else
+                    if(this.mover_figura !== MOVER_CENTRO_FIGURA){
+                        this.p_centro.x = parseInt((x1 + x2)/2)-2
+                        this.p_centro.y = parseInt((y1 + y2)/2)-2
+                        if (rectsColliding(this.puntero, this.p_centro)){
+                            console.log("MOVER  RECTA")
+                            this.mover_figura = MOVER_CENTRO_FIGURA;
+                            mover_centro_figura = true;
+                        }
                     }
                 }
 
@@ -127,6 +136,8 @@ class GestionLienzoAnimacion{
                     if(this.mover_figura === MOVER_RECTA_PUNTO1){
                         fig_.atributos["x1"] = x;
                         fig_.atributos["y1"] = y;
+                        //this.p_centro.x = parseInt((x + x2)/2)-2
+                        //this.p_centro.y = parseInt((y + y2)/2)-2
                     }else{
                         fig_.atributos["x2"] = x;
                         fig_.atributos["y2"] = y;
@@ -198,6 +209,13 @@ class GestionLienzoAnimacion{
 
                         dibujar_rectangulo(ctx, "#39ff14", this.p2_recta.x, this.p2_recta.y,
                             this.p2_recta.w, this.p2_recta.h)
+
+                        this.p_centro.x = parseInt((x1 + x2)/2)-2
+                        this.p_centro.y = parseInt((y1 + y2)/2)-2
+                        dibujar_rectangulo(ctx, "#39ff14", this.p_centro.x, this.p_centro.y,
+                            this.p_centro.w, this.p_centro.h)
+                        //this->xc=(this->p1x+this->p2x)/2;
+                        //this->yc=(this->p1y+this->p2y)/2;
                     }
                 }
 
