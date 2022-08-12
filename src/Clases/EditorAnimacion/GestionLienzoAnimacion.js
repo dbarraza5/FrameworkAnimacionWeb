@@ -133,11 +133,17 @@ class GestionLienzoAnimacion{
                 if(this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2){
                     let x = eventoLienzoFigura.mouse_x-grupo_.cx -fig_.atributos.cx;
                     let y = eventoLienzoFigura.mouse_y-grupo_.cy -fig_.atributos.cy;
+
+                    const x1 = parseInt(fig_.atributos.x1)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
+                    const y1 = parseInt(fig_.atributos.y1)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
+                    const x2 = parseInt(fig_.atributos.x2)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
+                    const y2 = parseInt(fig_.atributos.y2)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
+
                     if(this.mover_figura === MOVER_RECTA_PUNTO1){
                         fig_.atributos["x1"] = x;
                         fig_.atributos["y1"] = y;
-                        //this.p_centro.x = parseInt((x + x2)/2)-2
-                        //this.p_centro.y = parseInt((y + y2)/2)-2
+                        fig_.atributos["cx"] = parseInt((x + x2)/2)-2
+                        fig_.atributos["cy"] = parseInt((y + y2)/2)-2
                     }else{
                         fig_.atributos["x2"] = x;
                         fig_.atributos["y2"] = y;
@@ -159,8 +165,20 @@ class GestionLienzoAnimacion{
                 if(this.mover_figura === MOVER_CENTRO_FIGURA ){
                     let x = eventoLienzoFigura.mouse_x-grupo_.cx;
                     let y = eventoLienzoFigura.mouse_y-grupo_.cy;
-                    fig_.atributos["cx"] = x;
-                    fig_.atributos["cy"] = y;
+                    if(fig_.tipo_figura === "RECTA"){
+                        const x1 = parseInt(fig_.atributos.x1)+x;
+                        const y1 = parseInt(fig_.atributos.y1)+y;
+                        const x2 = parseInt(fig_.atributos.x2)+x;
+                        const y2 = parseInt(fig_.atributos.y2)+y;
+                        fig_.atributos["x1"] = x1;
+                        fig_.atributos["y1"] = y1;
+                        fig_.atributos["x2"] = x2;
+                        fig_.atributos["y2"] = y2;
+                    }else{
+
+                        fig_.atributos["cx"] = x;
+                        fig_.atributos["cy"] = y;
+                    }
                     animacion.set_figura(nombre_grupo, fig_)
                     setAnimacion({"edicion": animacion})
                 }
@@ -197,10 +215,10 @@ class GestionLienzoAnimacion{
             for(let j=0; j<grupo.lista_figuras.length; j++){
                 const figura = grupo.lista_figuras[j];
                 if(figura.tipo_figura === "RECTA"){
-                    const x1 = parseInt(figura.atributos.x1)+parseInt(figura.atributos.cx) +parseInt(grupo.cx);
-                    const y1 = parseInt(figura.atributos.y1)+parseInt(figura.atributos.cy) +parseInt(grupo.cy);
-                    const x2 = parseInt(figura.atributos.x2)+parseInt(figura.atributos.cx) +parseInt(grupo.cx);
-                    const y2 = parseInt(figura.atributos.y2)+parseInt(figura.atributos.cy) +parseInt(grupo.cy);
+                    const x1 = parseInt(figura.atributos.x1) +parseInt(grupo.cx);
+                    const y1 = parseInt(figura.atributos.y1) +parseInt(grupo.cy);
+                    const x2 = parseInt(figura.atributos.x2) +parseInt(grupo.cx);
+                    const y2 = parseInt(figura.atributos.y2) +parseInt(grupo.cy);
                     dibujar_linea(ctx, grupo.color, x1, y1, x2, y2)
                     if(grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec){
                         this.actualizarPuntosRectas(x1, y1, x2, y2)
