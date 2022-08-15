@@ -131,13 +131,12 @@ class GestionLienzoAnimacion{
                 }
 
                 if(this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2){
-                    let x = eventoLienzoFigura.mouse_x-grupo_.cx -fig_.atributos.cx;
+                    let x = eventoLienzoFigura.mouse_x-grupo_.cx-fig_.atributos.cx;
                     let y = eventoLienzoFigura.mouse_y-grupo_.cy -fig_.atributos.cy;
                     if(this.mover_figura === MOVER_RECTA_PUNTO1){
                         fig_.atributos["x1"] = x;
                         fig_.atributos["y1"] = y;
-                        //this.p_centro.x = parseInt((x + x2)/2)-2
-                        //this.p_centro.y = parseInt((y + y2)/2)-2
+
                     }else{
                         fig_.atributos["x2"] = x;
                         fig_.atributos["y2"] = y;
@@ -162,6 +161,7 @@ class GestionLienzoAnimacion{
                     fig_.atributos["cx"] = x;
                     fig_.atributos["cy"] = y;
                     animacion.set_figura(nombre_grupo, fig_)
+                    
                     setAnimacion({"edicion": animacion})
                 }
 

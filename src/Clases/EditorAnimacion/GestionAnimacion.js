@@ -315,6 +315,9 @@ class GestionAnimacion{
             if(g.nombre === nombre_grupo){
                 g.lista_figuras.map((figura)=>{
                     if(figura.nombre === figura.nombre){
+                        if(figura.tipo_figura === "RECTA"){
+                            return this.set_recta(figura)
+                        }
                         return figura_
                     }
                     return figura;
@@ -323,6 +326,30 @@ class GestionAnimacion{
             }
             return g;
         })
+    }
+
+    set_recta(recta){
+        if(true){
+            const x1 = parseInt(recta.atributos.x1);
+            const y1 = parseInt(recta.atributos.y1);
+            const x2 = parseInt(recta.atributos.x2);
+            const y2 = parseInt(recta.atributos.y2);
+
+            const cx_ = parseInt((x1 + x2)/2)
+            const cy_ = parseInt((y1 + y2)/2)
+
+            const x1_ = x1 - cx_;
+            const y1_ = y1 - cy_;
+            const x2_ = x2 - cx_;
+            const y2_ = y2 - cy_;
+            recta.atributos["x1"] = x1_;
+            recta.atributos["y1"] = y1_;
+            recta.atributos["x2"] = x2_;
+            recta.atributos["y2"] = y2_;
+            recta.atributos["cx"] = recta.atributos.cx+cx_;
+            recta.atributos["cy"] = recta.atributos.cy+cy_;
+        }
+        return recta
     }
 
     set_atributo_figura(nombre_grupo, nombre_figura, nombre_atributo, valor){
@@ -408,5 +435,7 @@ class GestionAnimacion{
         }
     }
 }
+
+
 
 export default GestionAnimacion
