@@ -58,6 +58,10 @@ class GestionLienzoAnimacion{
 
     mover_figura = MOVER_NADA;
 
+    mouse_x_anterior = 0
+    mouse_y_anterior = 0
+    recta_aux = null
+
     constructor(){
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
@@ -68,23 +72,39 @@ class GestionLienzoAnimacion{
 
     }
 
+    seleccionarFiguraMover(animacion, nombre_figura_, nombre_grupo_){
+        this.categoria_trabajo = TRABAJO_FIGURA;
+        this.id_grupo_selec = nombre_grupo_;
+        this.id_figura_selec = nombre_figura_;
+        this.mover_figura = MOVER_CENTRO_FIGURA;
+
+        const fig_ = animacion.get_figura(nombre_grupo_, nombre_figura_)
+        console.log(fig_)
+        if(fig_.tipo_figura === "RECTA"){
+            this.recta_aux = {...fig_};
+            this.recta_aux.atributos={...fig_.atributos}
+            console.log("seleccionado 21121212")
+        }
+    }
+
     procesarEventoLienzo(eventoLienzoFigura, animacion, setAnimacion){
         const nombre_grupo = this.id_grupo_selec;
         const nombre_figura = this.id_figura_selec;
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
 
-        if(this.categoria_trabajo === 0){
+        if(this.categoria_trabajo === TRABAJO_FIGURA){
+            console.log("TRABAJO_FIGURA")
             const grupo_ = animacion.getGrupo(nombre_grupo)
             let mover_centro_figura = false
             if(grupo_ != null){
                 const fig_ = animacion.get_figura(nombre_grupo, nombre_figura)
 
                 if(fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click){// && this.mover_figura === MOVER_NADA){
-                    const x1 = parseInt(fig_.atributos.x1)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
-                    const y1 = parseInt(fig_.atributos.y1)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
-                    const x2 = parseInt(fig_.atributos.x2)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
-                    const y2 = parseInt(fig_.atributos.y2)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
+                    const x1 = parseInt(fig_.atributos.x1) +parseInt(grupo_.cx);
+                    const y1 = parseInt(fig_.atributos.y1)+parseInt(grupo_.cy);
+                    const x2 = parseInt(fig_.atributos.x2)+parseInt(grupo_.cx);
+                    const y2 = parseInt(fig_.atributos.y2) +parseInt(grupo_.cy);
                     this.actualizarPuntosRectas(x1, y1, x2, y2)
 
                     if (rectsColliding(this.puntero, this.p1_recta)){
@@ -98,8 +118,13 @@ class GestionLienzoAnimacion{
                     if(this.mover_figura !== MOVER_CENTRO_FIGURA){
                         this.p_centro.x = parseInt((x1 + x2)/2)-2
                         this.p_centro.y = parseInt((y1 + y2)/2)-2
+                        /*this.mouse_x_anterior = eventoLienzoFigura.mouse_x
+                        this.mouse_y_anterior = eventoLienzoFigura.mouse_y*/
+
                         if (rectsColliding(this.puntero, this.p_centro)){
                             console.log("MOVER  RECTA")
+                            this.recta_aux = {...fig_};
+                            this.recta_aux.atributos={...fig_.atributos}
                             this.mover_figura = MOVER_CENTRO_FIGURA;
                             mover_centro_figura = true;
                         }
@@ -142,8 +167,8 @@ class GestionLienzoAnimacion{
                     if(this.mover_figura === MOVER_RECTA_PUNTO1){
                         fig_.atributos["x1"] = x;
                         fig_.atributos["y1"] = y;
-                        fig_.atributos["cx"] = parseInt((x + x2)/2)-2
-                        fig_.atributos["cy"] = parseInt((y + y2)/2)-2
+                        //fig_.atributos["cx"] = parseInt((x + x2)/2)-2
+                        //fig_.atributos["cy"] = parseInt((y + y2)/2)-2
                     }else{
                         fig_.atributos["x2"] = x;
                         fig_.atributos["y2"] = y;
@@ -163,17 +188,25 @@ class GestionLienzoAnimacion{
                 }
 
                 if(this.mover_figura === MOVER_CENTRO_FIGURA ){
-                    let x = eventoLienzoFigura.mouse_x-grupo_.cx;
-                    let y = eventoLienzoFigura.mouse_y-grupo_.cy;
+                    console.log("MOVER_CENTRO_FIGURA")
+                    let x = (eventoLienzoFigura.mouse_x)-grupo_.cx;
+                    let y = (eventoLienzoFigura.mouse_y)-grupo_.cy;
                     if(fig_.tipo_figura === "RECTA"){
-                        const x1 = parseInt(fig_.atributos.x1)+x;
-                        const y1 = parseInt(fig_.atributos.y1)+y;
-                        const x2 = parseInt(fig_.atributos.x2)+x;
-                        const y2 = parseInt(fig_.atributos.y2)+y;
+                        /*const x1 = parseInt(this.recta_aux.atributos.x1)+x;
+                        const y1 = parseInt(this.recta_aux.atributos.y1)+y;
+                        const x2 = parseInt(this.recta_aux.atributos.x2)+x;
+                        const y2 = parseInt(this.recta_aux.atributos.y2)+y;
+                        */
+                        const x1 = parseInt(this.recta_aux.atributos.x1)+x;
+                        const y1 = parseInt(this.recta_aux.atributos.y1)+y;
+                        const x2 = parseInt(this.recta_aux.atributos.x2)+x;
+                        const y2 = parseInt(this.recta_aux.atributos.y2)+y;
                         fig_.atributos["x1"] = x1;
                         fig_.atributos["y1"] = y1;
                         fig_.atributos["x2"] = x2;
                         fig_.atributos["y2"] = y2;
+                        console.log(fig_)
+                        console.log(this.recta_aux)
                     }else{
 
                         fig_.atributos["cx"] = x;
