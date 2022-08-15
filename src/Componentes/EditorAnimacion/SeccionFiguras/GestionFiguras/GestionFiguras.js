@@ -25,10 +25,7 @@ function GestionFiguras(props){
         const f = props.animacion.crear_figura(nombre_grupo, tipo_figura)
         setFigura(f)
         props.setAnimacion({"edicion": props.animacion})
-        props.gestionLienzo.categoria_trabajo = 0;
-        props.gestionLienzo.id_grupo_selec = nombre_grupo;
-        props.gestionLienzo.id_figura_selec = f.nombre;
-        props.gestionLienzo.mover_figura = 1
+        props.gestionLienzo.seleccionarFiguraMover(f.nombre, nombre_grupo)
         props.setGestionLienzo(props.gestionLienzo)
     }
 

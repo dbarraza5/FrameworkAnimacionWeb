@@ -68,13 +68,21 @@ class GestionLienzoAnimacion{
 
     }
 
+    seleccionarFiguraMover(nombre_figura_, nombre_grupo_){
+        this.categoria_trabajo = TRABAJO_FIGURA;
+        this.id_grupo_selec = nombre_grupo_;
+        this.id_figura_selec = nombre_figura_;
+        this.mover_figura = MOVER_CENTRO_FIGURA;
+    }
+
     procesarEventoLienzo(eventoLienzoFigura, animacion, setAnimacion){
         const nombre_grupo = this.id_grupo_selec;
         const nombre_figura = this.id_figura_selec;
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
 
-        if(this.categoria_trabajo === 0){
+        if(this.categoria_trabajo === TRABAJO_FIGURA){
+            console.log("TRABAJO_FIGURA")
             const grupo_ = animacion.getGrupo(nombre_grupo)
             let mover_centro_figura = false
             if(grupo_ != null){
@@ -173,7 +181,6 @@ class GestionLienzoAnimacion{
                     fig_.atributos["cx"] = x;
                     fig_.atributos["cy"] = y;
                     animacion.set_figura(nombre_grupo, fig_)
-                    
                     setAnimacion({"edicion": animacion})
                 }
 
