@@ -130,6 +130,18 @@ class GestionLienzoAnimacion{
                     }
                 }
 
+                if(fig_.tipo_figura === "PUNTO" && eventoLienzoFigura.mouse_only_click){
+                    const x = parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
+                    const y = parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
+                    this.p_centro.x = x -2
+                    this.p_centro.y = y -2
+                    if (this.mover_figura !== MOVER_CENTRO_FIGURA && rectsColliding(this.puntero, this.p_centro)){
+                        console.log("MOVER  PUNTO")
+                        this.mover_figura = MOVER_CENTRO_FIGURA;
+                        mover_centro_figura = true;
+                    }
+                }
+
                 if(this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2){
                     let x = eventoLienzoFigura.mouse_x-grupo_.cx-fig_.atributos.cx;
                     let y = eventoLienzoFigura.mouse_y-grupo_.cy -fig_.atributos.cy;
@@ -223,6 +235,12 @@ class GestionLienzoAnimacion{
                     const x = parseInt(figura.atributos.cx) +parseInt(grupo.cx);
                     const y = parseInt(figura.atributos.cy) +parseInt(grupo.cy);
                     dibujar_punto(ctx, grupo.color, x, y)
+                    if(grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec){
+                        this.p_centro.x = x -2
+                        this.p_centro.y = y -2
+                        dibujar_rectangulo(ctx, "#39ff14", this.p_centro.x, this.p_centro.y,
+                            this.p_centro.w, this.p_centro.h)
+                    }
                 }
 
                 if(figura.tipo_figura === "CIRCULO"){

@@ -329,26 +329,24 @@ class GestionAnimacion{
     }
 
     set_recta(recta){
-        if(true){
-            const x1 = parseInt(recta.atributos.x1);
-            const y1 = parseInt(recta.atributos.y1);
-            const x2 = parseInt(recta.atributos.x2);
-            const y2 = parseInt(recta.atributos.y2);
+        const x1 = parseInt(recta.atributos.x1);
+        const y1 = parseInt(recta.atributos.y1);
+        const x2 = parseInt(recta.atributos.x2);
+        const y2 = parseInt(recta.atributos.y2);
 
-            const cx_ = parseInt((x1 + x2)/2)
-            const cy_ = parseInt((y1 + y2)/2)
+        const cx_ = parseInt((x1 + x2)/2)
+        const cy_ = parseInt((y1 + y2)/2)
 
-            const x1_ = x1 - cx_;
-            const y1_ = y1 - cy_;
-            const x2_ = x2 - cx_;
-            const y2_ = y2 - cy_;
-            recta.atributos["x1"] = x1_;
-            recta.atributos["y1"] = y1_;
-            recta.atributos["x2"] = x2_;
-            recta.atributos["y2"] = y2_;
-            recta.atributos["cx"] = recta.atributos.cx+cx_;
-            recta.atributos["cy"] = recta.atributos.cy+cy_;
-        }
+        const x1_ = x1 - cx_;
+        const y1_ = y1 - cy_;
+        const x2_ = x2 - cx_;
+        const y2_ = y2 - cy_;
+        recta.atributos["x1"] = x1_;
+        recta.atributos["y1"] = y1_;
+        recta.atributos["x2"] = x2_;
+        recta.atributos["y2"] = y2_;
+        recta.atributos["cx"] = recta.atributos.cx+cx_;
+        recta.atributos["cy"] = recta.atributos.cy+cy_;
         return recta
     }
 
