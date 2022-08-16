@@ -341,13 +341,15 @@ class GestionAnimacion{
         const y1_ = y1 - cy_;
         const x2_ = x2 - cx_;
         const y2_ = y2 - cy_;
-        recta.atributos["x1"] = x1_;
-        recta.atributos["y1"] = y1_;
-        recta.atributos["x2"] = x2_;
-        recta.atributos["y2"] = y2_;
-        recta.atributos["cx"] = recta.atributos.cx+cx_;
-        recta.atributos["cy"] = recta.atributos.cy+cy_;
-        return recta
+        const recta_nueva = {...recta}
+        recta_nueva.atributos={}
+        recta_nueva.atributos["x1"] = x1_;
+        recta_nueva.atributos["y1"] = y1_;
+        recta_nueva.atributos["x2"] = x2_;
+        recta_nueva.atributos["y2"] = y2_;
+        recta_nueva.atributos["cx"] = recta.atributos.cx+cx_;
+        recta_nueva.atributos["cy"] = recta.atributos.cy+cy_;
+        return recta_nueva
     }
 
     set_atributo_figura(nombre_grupo, nombre_figura, nombre_atributo, valor){

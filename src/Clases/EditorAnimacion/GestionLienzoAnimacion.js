@@ -28,6 +28,15 @@ class GestionLienzoAnimacion{
         h: 10
     }
 
+    puntero_seleccion = {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0
+    }
+
+    seleccion_figuras = false;
+
     p1_recta = {
         x: 0,
         y: 0,
@@ -62,10 +71,6 @@ class GestionLienzoAnimacion{
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
         this.y = 0;
-        //this.var_1 = 9999
-        //console.log(this.canvas)
-        //this.canvas.addEventListener('mousemove', eventMoveMouse)//.on("mousemove", eventMoveMouse);
-
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_){
@@ -80,6 +85,29 @@ class GestionLienzoAnimacion{
         const nombre_figura = this.id_figura_selec;
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
+
+        if(this.categoria_trabajo === TRABAJO_NONE){
+            if(eventoLienzoFigura.mouse_sobre_lienzo){
+                if(eventoLienzoFigura.mouse_click_down){
+                    if(eventoLienzoFigura.mouse_only_click){
+                        this.puntero_seleccion.x= eventoLienzoFigura.mouse_x;
+                        this.puntero_seleccion.y= eventoLienzoFigura.mouse_y;
+                        this.seleccion_figuras = true;
+                    }
+                    this.puntero_seleccion.w= eventoLienzoFigura.mouse_x - this.puntero_seleccion.x;
+                    this.puntero_seleccion.h= eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
+                    this.actualizarLienzo(animacion)
+                }
+                if(eventoLienzoFigura.mouse_click_up){
+                    this.seleccion_figuras = false
+                    this.actualizarLienzo(animacion)
+                }
+            }else{
+                this.seleccion_figuras = false
+                this.actualizarLienzo(animacion)
+            }
+        }
+
 
         if(this.categoria_trabajo === TRABAJO_FIGURA){
             console.log("TRABAJO_FIGURA")
@@ -206,6 +234,58 @@ class GestionLienzoAnimacion{
         this.p2_recta.y = y2 - this.p2_recta.h/2;
     }
 
+    imprimir_recta(ctx, figura, grupo,color_, seleccion=false, color_seleccion="#39ff14"){
+        const x1 = parseInt(figura.atributos.x1)+parseInt(figura.atributos.cx) +parseInt(grupo.cx);
+        const y1 = parseInt(figura.atributos.y1)+parseInt(figura.atributos.cy) +parseInt(grupo.cy);
+        const x2 = parseInt(figura.atributos.x2)+parseInt(figura.atributos.cx) +parseInt(grupo.cx);
+        const y2 = parseInt(figura.atributos.y2)+parseInt(figura.atributos.cy) +parseInt(grupo.cy);
+        dibujar_linea(ctx, color_, x1, y1, x2, y2)
+        if(seleccion){
+            this.actualizarPuntosRectas(x1, y1, x2, y2)
+            dibujar_rectangulo(ctx, color_seleccion, this.p1_recta.x, this.p1_recta.y,
+                this.p1_recta.w, this.p1_recta.h)
+
+            dibujar_rectangulo(ctx, color_seleccion, this.p2_recta.x, this.p2_recta.y,
+                this.p2_recta.w, this.p2_recta.h)
+
+            this.p_centro.x = parseInt((x1 + x2)/2)-2
+            this.p_centro.y = parseInt((y1 + y2)/2)-2
+            dibujar_rectangulo(ctx, color_seleccion, this.p_centro.x, this.p_centro.y,
+                this.p_centro.w, this.p_centro.h)
+        }
+    }
+
+    imprimir_circulo(ctx, figura, grupo,color_, seleccion=false, color_seleccion="#39ff14"){
+        const x = parseInt(figura.atributos.cx) +parseInt(grupo.cx);
+        const y = parseInt(figura.atributos.cy) +parseInt(grupo.cy);
+        const rx = parseInt(figura.atributos.radiox);
+        const ry = parseInt(figura.atributos.radioy);
+        bibujar_circulo(ctx, color_, x, y, rx, ry)
+
+        if(seleccion){
+            this.p_circulo.x = x+rx
+            this.p_circulo.y = y-2
+            dibujar_rectangulo(ctx, color_seleccion, this.p_circulo.x, this.p_circulo.y,
+                this.p_circulo.w, this.p_circulo.h)
+            this.p_centro.x = x -2
+            this.p_centro.y = y -2
+            dibujar_rectangulo(ctx, color_seleccion, this.p_centro.x, this.p_centro.y,
+                this.p_centro.w, this.p_centro.h)
+        }
+    }
+
+    imprimir_punto(ctx, figura, grupo,color_, seleccion=false, color_seleccion="#39ff14"){
+        const x = parseInt(figura.atributos.cx) +parseInt(grupo.cx);
+        const y = parseInt(figura.atributos.cy) +parseInt(grupo.cy);
+        dibujar_punto(ctx, color_, x, y)
+        if(seleccion){
+            this.p_centro.x = x -2
+            this.p_centro.y = y -2
+            dibujar_rectangulo(ctx, color_seleccion, this.p_centro.x, this.p_centro.y,
+                this.p_centro.w, this.p_centro.h)
+        }
+    }
+
     actualizarLienzo(animacion){
         const canvas = document.getElementById(this.id_canvas);
         const ctx = canvas.getContext('2d');
@@ -215,63 +295,25 @@ class GestionLienzoAnimacion{
             const grupo = lista_grupo_root[i]
             for(let j=0; j<grupo.lista_figuras.length; j++){
                 const figura = grupo.lista_figuras[j];
+                const seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
                 if(figura.tipo_figura === "RECTA"){
-                    const x1 = parseInt(figura.atributos.x1)+parseInt(figura.atributos.cx) +parseInt(grupo.cx);
-                    const y1 = parseInt(figura.atributos.y1)+parseInt(figura.atributos.cy) +parseInt(grupo.cy);
-                    const x2 = parseInt(figura.atributos.x2)+parseInt(figura.atributos.cx) +parseInt(grupo.cx);
-                    const y2 = parseInt(figura.atributos.y2)+parseInt(figura.atributos.cy) +parseInt(grupo.cy);
-                    dibujar_linea(ctx, grupo.color, x1, y1, x2, y2)
-                    if(grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec){
-                        this.actualizarPuntosRectas(x1, y1, x2, y2)
-                        dibujar_rectangulo(ctx, "#39ff14", this.p1_recta.x, this.p1_recta.y,
-                            this.p1_recta.w, this.p1_recta.h)
-
-                        dibujar_rectangulo(ctx, "#39ff14", this.p2_recta.x, this.p2_recta.y,
-                            this.p2_recta.w, this.p2_recta.h)
-
-                        this.p_centro.x = parseInt((x1 + x2)/2)-2
-                        this.p_centro.y = parseInt((y1 + y2)/2)-2
-                        dibujar_rectangulo(ctx, "#39ff14", this.p_centro.x, this.p_centro.y,
-                            this.p_centro.w, this.p_centro.h)
-                        //this->xc=(this->p1x+this->p2x)/2;
-                        //this->yc=(this->p1y+this->p2y)/2;
-                    }
+                    this.imprimir_recta(ctx, figura, grupo, grupo.color, seleccion);
                 }
 
                 if(figura.tipo_figura === "PUNTO"){
-                    const x = parseInt(figura.atributos.cx) +parseInt(grupo.cx);
-                    const y = parseInt(figura.atributos.cy) +parseInt(grupo.cy);
-                    dibujar_punto(ctx, grupo.color, x, y)
-                    if(grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec){
-                        this.p_centro.x = x -2
-                        this.p_centro.y = y -2
-                        dibujar_rectangulo(ctx, "#39ff14", this.p_centro.x, this.p_centro.y,
-                            this.p_centro.w, this.p_centro.h)
-                    }
+                    this.imprimir_punto(ctx, figura, grupo, grupo.color, seleccion);
                 }
 
                 if(figura.tipo_figura === "CIRCULO"){
-                    const x = parseInt(figura.atributos.cx) +parseInt(grupo.cx);
-                    const y = parseInt(figura.atributos.cy) +parseInt(grupo.cy);
-                    const rx = parseInt(figura.atributos.radiox);
-                    const ry = parseInt(figura.atributos.radioy);
-                    bibujar_circulo(ctx, grupo.color, x, y, rx, ry)
-
-                    if(grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec){
-                        this.p_circulo.x = x+rx
-                        this.p_circulo.y = y-2
-                        dibujar_rectangulo(ctx, "#39ff14", this.p_circulo.x, this.p_circulo.y,
-                            this.p_circulo.w, this.p_circulo.h)
-
-
-                        this.p_centro.x = x -2
-                        this.p_centro.y = y -2
-                        dibujar_rectangulo(ctx, "#39ff14", this.p_centro.x, this.p_centro.y,
-                            this.p_centro.w, this.p_centro.h)
-                    }
+                    this.imprimir_circulo(ctx, figura, grupo, grupo.color, seleccion);
                 }
             }
         }
+        if(this.seleccion_figuras){
+            dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
+                this.puntero_seleccion.w, this.puntero_seleccion.h)
+        }
+
     }
 };
 
