@@ -108,15 +108,18 @@ class GestionLienzoAnimacion{
             }
         }
 
+        if(this.seleccion_figuras){
+
+        }
+
 
         if(this.categoria_trabajo === TRABAJO_FIGURA){
-            console.log("TRABAJO_FIGURA")
             const grupo_ = animacion.getGrupo(nombre_grupo)
             let mover_centro_figura = false
             if(grupo_ != null){
                 const fig_ = animacion.get_figura(nombre_grupo, nombre_figura)
 
-                if(fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click){// && this.mover_figura === MOVER_NADA){
+                if(fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click){
                     const x1 = parseInt(fig_.atributos.x1)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
                     const y1 = parseInt(fig_.atributos.y1)+parseInt(fig_.atributos.cy) +parseInt(grupo_.cy);
                     const x2 = parseInt(fig_.atributos.x2)+parseInt(fig_.atributos.cx) +parseInt(grupo_.cx);
@@ -295,17 +298,20 @@ class GestionLienzoAnimacion{
             const grupo = lista_grupo_root[i]
             for(let j=0; j<grupo.lista_figuras.length; j++){
                 const figura = grupo.lista_figuras[j];
-                const seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
-                if(figura.tipo_figura === "RECTA"){
-                    this.imprimir_recta(ctx, figura, grupo, grupo.color, seleccion);
-                }
+                let seleccion = null;
+                if(this.categoria_trabajo === TRABAJO_FIGURA){
+                    seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
+                    if(figura.tipo_figura === "RECTA"){
+                        this.imprimir_recta(ctx, figura, grupo, grupo.color, seleccion);
+                    }
 
-                if(figura.tipo_figura === "PUNTO"){
-                    this.imprimir_punto(ctx, figura, grupo, grupo.color, seleccion);
-                }
+                    if(figura.tipo_figura === "PUNTO"){
+                        this.imprimir_punto(ctx, figura, grupo, grupo.color, seleccion);
+                    }
 
-                if(figura.tipo_figura === "CIRCULO"){
-                    this.imprimir_circulo(ctx, figura, grupo, grupo.color, seleccion);
+                    if(figura.tipo_figura === "CIRCULO"){
+                        this.imprimir_circulo(ctx, figura, grupo, grupo.color, seleccion);
+                    }
                 }
             }
         }

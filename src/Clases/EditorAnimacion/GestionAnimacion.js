@@ -314,11 +314,12 @@ class GestionAnimacion{
         this.grupos_figuras = this.grupos_figuras.map((g)=>{
             if(g.nombre === nombre_grupo){
                 g.lista_figuras.map((figura)=>{
-                    if(figura.nombre === figura.nombre){
-                        if(figura.tipo_figura === "RECTA"){
-                            return this.set_recta(figura)
+                    if(figura.nombre === figura_.nombre){
+                        if(figura_.tipo_figura === "RECTA"){
+                            //console.log(figura_)
+                            return this.set_recta(figura_)
                         }
-                        return figura_
+                        return this.duplicar_figura(figura_)
                     }
                     return figura;
                 })
@@ -326,6 +327,10 @@ class GestionAnimacion{
             }
             return g;
         })
+    }
+
+    duplicar_figura(figura){
+        return JSON.parse(JSON.stringify(figura))
     }
 
     set_recta(recta){
@@ -341,15 +346,16 @@ class GestionAnimacion{
         const y1_ = y1 - cy_;
         const x2_ = x2 - cx_;
         const y2_ = y2 - cy_;
-        const recta_nueva = {...recta}
-        recta_nueva.atributos={}
-        recta_nueva.atributos["x1"] = x1_;
-        recta_nueva.atributos["y1"] = y1_;
-        recta_nueva.atributos["x2"] = x2_;
-        recta_nueva.atributos["y2"] = y2_;
-        recta_nueva.atributos["cx"] = recta.atributos.cx+cx_;
-        recta_nueva.atributos["cy"] = recta.atributos.cy+cy_;
-        return recta_nueva
+        //let recta_nueva = this.duplicar_figura(recta)
+        //recta_nueva["atributos"]={...(recta.atributos)}
+        recta.atributos["x1"] = x1_;
+        recta.atributos["y1"] = y1_;
+        recta.atributos["x2"] = x2_;
+        recta.atributos["y2"] = y2_;
+        recta.atributos["cx"] = recta.atributos.cx+cx_;
+        recta.atributos["cy"] = recta.atributos.cy+cy_;
+        //console.log(recta_nueva)
+        return recta
     }
 
     set_atributo_figura(nombre_grupo, nombre_figura, nombre_atributo, valor){
