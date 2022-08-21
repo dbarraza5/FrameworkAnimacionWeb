@@ -426,7 +426,7 @@ class GestionAnimacion{
     estructura_arbol_grupos(nombre_grupo="root"){
         let lista_grupo = this.get_nombres_grupos_hijos(nombre_grupo)
         let lista_nodos = []
-        console.log(lista_grupo)
+        //console.log(lista_grupo)
         if(lista_grupo.length===0){
             return {
                 text: nombre_grupo
