@@ -50,13 +50,17 @@ function Lienzo(props){
         props.lienzo.mouse_mueve_sobre_lienzo = false;
         props.setEventLienzoFigura(props.lienzo);
         props.editar_animacion()
+        props.lienzo.stack_event_teclado = []
     }
 
     const eventoKeyDown=(e)=>{
         const name = e.key;
         const  code = e.code;
-        console.log(name)
-        console.log(code)
+        if(!props.lienzo.stack_event_teclado.includes(code)){
+            props.lienzo.stack_event_teclado.push(code)
+        }
+        console.log(props.lienzo.stack_event_teclado)
+        props.editar_animacion()
     }
 
     const eventoKeyUp=(e)=>{
@@ -64,6 +68,8 @@ function Lienzo(props){
         const  code = e.code;
         console.log(name)
         console.log(code)
+        props.lienzo.stack_event_teclado = props.lienzo.stack_event_teclado.filter((v)=>v!==code)
+        props.editar_animacion()
     }
 
     return(<canvas {...props}

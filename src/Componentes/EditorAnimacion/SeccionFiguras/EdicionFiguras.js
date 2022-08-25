@@ -16,7 +16,6 @@ function EdicionFiguras(props){
         //console.log(props.gestionLienzo)
         props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.animacion, props.setAnimacion)
         eventoLienzoFigura.reset()
-
     }
 
     useEffect(() => {

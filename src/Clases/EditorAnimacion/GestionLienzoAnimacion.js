@@ -1,6 +1,6 @@
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
-const TRABAJO_FIGURAS = 1;
+const TRABAJO_LISTA_FIGURAS = 1;
 const TRABAJO_GRUPO = 2;
 const TRABAJO_GRUPOS = 3;
 
@@ -9,6 +9,10 @@ const MOVER_CENTRO_FIGURA = 1;
 const MOVER_RECTA_PUNTO1 = 2;
 const MOVER_RECTA_PUNTO2 = 3;
 const MOVER_RADIO_CIRCULO = 4;
+
+const MOVER_CENTROS_FIGURAS = 5;
+const MOVER_ROTAR_FIGURAS = 6;
+const MOVER_INFLAR_FIGURAS = 7;
 
 
 class GestionLienzoAnimacion {
@@ -66,6 +70,17 @@ class GestionLienzoAnimacion {
 
     mover_figura = MOVER_NADA;
 
+    mover_centros = {
+        centro_x: 0,
+        centro_y: 0,
+        inf_hor: 0,
+        sup_hor: 0,
+        inf_ver: 0,
+        sup_ver: 0,
+        ancho: 0,
+        alto: 0,
+    }
+
     constructor() {
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
@@ -79,6 +94,13 @@ class GestionLienzoAnimacion {
         this.mover_figura = MOVER_CENTRO_FIGURA;
     }
 
+    seleccionarFigurasTransformar(nombre_grupo_) {
+        this.categoria_trabajo = TRABAJO_LISTA_FIGURAS;
+        this.id_grupo_selec = nombre_grupo_;
+        //this.id_figura_selec = nombre_figura_;
+        //this.mover_figura = MOVER_CENTRO_FIGURA;
+    }
+
     procesarSeleccionPuntero(eventoLienzoFigura, animacion){
         let nombre_grupo = this.id_grupo_selec;
         let nombre_figura = this.id_figura_selec;
@@ -87,7 +109,6 @@ class GestionLienzoAnimacion {
         this.puntero.y = eventoLienzoFigura.mouse_y;
         console.log(this.mover_figura)
         if (this.mover_figura === MOVER_NADA) {//this.categoria_trabajo === TRABAJO_NONE
-            console.log("SELECIONAR ALGO ")
             if (eventoLienzoFigura.mouse_sobre_lienzo) {
                 if (eventoLienzoFigura.mouse_click_down) {
                     if (eventoLienzoFigura.mouse_only_click) {
@@ -98,22 +119,21 @@ class GestionLienzoAnimacion {
                     }
                     this.puntero_seleccion.w = eventoLienzoFigura.mouse_x - this.puntero_seleccion.x;
                     this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
-                    console.log("apretar mouse")
                     console.log(this.puntero_seleccion)
-                    //this.actualizarLienzo(animacion)
                 }
                 if (eventoLienzoFigura.mouse_click_up) {
-                    console.log("desapretar mouse")
-                    this.seleccion_figuras = false
-                    if(this.lista_id_figuras.length == 1){
+                    if(this.lista_id_figuras.length == 1 && this.seleccion_figuras){
                         console.log(this.puntero_seleccion)
+                        this.seleccion_figuras = false
                         this.seleccionarFiguraMover(this.lista_id_figuras[0], nombre_grupo)
                     }
-                    //this.actualizarLienzo(animacion)
+                    if(this.lista_id_figuras.length>1 && this.seleccion_figuras){
+                        this.seleccion_figuras = false
+                        this.seleccionarFigurasTransformar(nombre_grupo)
+                    }
                 }
             } else {
                 this.seleccion_figuras = false
-                //this.actualizarLienzo(animacion)
             }
 
         }
@@ -135,12 +155,28 @@ class GestionLienzoAnimacion {
                         this.actualizarPuntosCirculo(figura, grupo)
                     }
                     if(rectsColliding(this.puntero_seleccion, this.p_centro)){
+                        console.log("COLISION!!!!")
+                        console.log(this.puntero_seleccion)
                         if(!this.lista_id_figuras.includes(figura.nombre)){
                             this.lista_id_figuras.push(figura.nombre);
                         }
                     }
                 }
             }
+        }
+        this.actualizarLienzo(animacion)
+    }
+
+    procesarTrabajoListaFiguras(eventoLienzoFigura, animacion, setAnimacion){
+
+        if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ")){
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
+                this.mover_figura = MOVER_CENTROS_FIGURAS;
+            }
+        }
+
+        if(this.mover_figura === MOVER_CENTROS_FIGURAS){
+            console.log("MOVER GRUPO DE FIGURAS")
         }
     }
 
@@ -237,12 +273,13 @@ class GestionLienzoAnimacion {
     }
 
     procesarEventoLienzo(eventoLienzoFigura, animacion, setAnimacion) {
-
-
         if (this.categoria_trabajo === TRABAJO_FIGURA) {
             this.procesarTrabajoFigura(eventoLienzoFigura, animacion, setAnimacion)
         }
 
+        if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
+            this.procesarTrabajoListaFiguras(eventoLienzoFigura, animacion, setAnimacion)
+        }
         this.procesarSeleccionPuntero(eventoLienzoFigura, animacion);
     }
 
@@ -337,7 +374,7 @@ class GestionLienzoAnimacion {
                 const figura = grupo.lista_figuras[j];
                 let seleccion = null;
                 let color_figura = grupo.color;
-                if (this.categoria_trabajo === TRABAJO_FIGURA) {
+                if (this.categoria_trabajo === TRABAJO_FIGURA || this.categoria_trabajo === TRABAJO_LISTA_FIGURAS) {
                     seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
                     if(this.lista_id_figuras.includes(figura.nombre)){
                         color_figura = "#ff00a1";
@@ -357,10 +394,121 @@ class GestionLienzoAnimacion {
             }
         }
         if (this.seleccion_figuras) {
+            console.log(this.seleccion_figuras)
             dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
                 this.puntero_seleccion.w, this.puntero_seleccion.h)
         }
 
+        if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
+
+            this.calcularCenTroFiguras(animacion)
+            console.log(this.lista_id_figuras)
+            console.log(this.mover_centros)
+            dibujar_rectangulo(ctx, "#14f7ff", this.mover_centros.inf_hor, this.mover_centros.inf_ver,
+                this.mover_centros.ancho, this.mover_centros.alto)
+            dibujar_rectangulo(ctx, "#14f7ff", this.mover_centros.centro_x, this.mover_centros.centro_y,
+                this.p_centro.w, this.p_centro.h)
+        }
+
+    }
+
+    calcularCenTroFiguras(animacion) {
+        let nombre_grupo = this.id_grupo_selec;
+        const grupo = animacion.getGrupo(nombre_grupo)
+        if (grupo != null) {
+            let inf_hor = Number.POSITIVE_INFINITY;
+            let inf_ver = Number.POSITIVE_INFINITY;
+            let sup_hor = Number.NEGATIVE_INFINITY;
+            let sup_ver = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                const figura = grupo.lista_figuras[j];
+                if (this.lista_id_figuras.includes(figura.nombre)){
+
+
+                    if (figura.tipo_figura === "RECTA") {
+                        const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+                        const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+                        const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+                        const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+                        console.log(x1, y1)
+                        if(inf_hor > x1){
+                            inf_hor = x1
+                        }
+                        if(sup_hor < x1){
+                            sup_hor = x1
+                        }
+
+                        if(inf_hor > x2){
+                            inf_hor = x2
+                        }
+                        if(sup_hor < x2){
+                            sup_hor = x2
+                        }
+                        //----------------------------------------
+                        if(inf_ver > y1){
+                            inf_ver = y1
+                        }
+                        if(inf_ver > y2){
+                            inf_ver = y2
+                        }
+
+                        if(sup_ver < y1){
+                            sup_ver = y1
+                        }
+                        if(sup_ver < y2){
+                            sup_ver = y2
+                        }
+
+                    }
+
+                    if (figura.tipo_figura === "PUNTO") {
+                        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+                        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+                        if(inf_hor > x){
+                            inf_hor = x
+                        }
+                        if(sup_hor < x){
+                            sup_hor = x
+                        }
+                        if(inf_ver > y){
+                            inf_ver = y
+                        }
+                        if(sup_ver < y){
+                            sup_ver = y
+                        }
+                    }
+
+                    if (figura.tipo_figura === "CIRCULO") {
+
+                        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+                        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+                        const rx = parseInt(figura.atributos.radiox);
+                        const ry = parseInt(figura.atributos.radioy);
+                        if(inf_hor > x-rx){
+                            inf_hor = x-rx
+                        }
+                        if(sup_hor < x+rx){
+                            sup_hor = x+rx
+                        }
+                        if(inf_ver > y-ry){
+                            inf_ver = y-ry
+                        }
+                        if(sup_ver < y+ry){
+                            sup_ver = y+ry
+                        }
+                    }
+                }
+            }
+            console.log("inforrr: ",inf_hor)
+            this.mover_centros.inf_hor = inf_hor;
+            this.mover_centros.sup_hor = sup_hor;
+            this.mover_centros.inf_ver = inf_ver;
+            this.mover_centros.sup_ver = sup_ver;
+            this.mover_centros.ancho = (sup_hor-inf_hor);
+            this.mover_centros.alto = (sup_ver-inf_ver);
+            this.mover_centros.centro_x = inf_hor+(sup_hor-inf_hor)/2;
+            this.mover_centros.centro_y = inf_ver+(sup_ver-inf_ver)/2;
+        }
     }
 };
 
@@ -428,7 +576,21 @@ function dibujar_rectangulo(ctx, color, x, y, w, h) {
 }
 
 function rectsColliding(r1, r2) {
-    return !(r1.x > r2.x + r2.w || r1.x + r1.w < r2.x || r1.y > r2.y + r2.h || r1.y + r1.h < r2.y);
+    if(r1.w === 0 || r1.h === 0 || r2.w === 0 || r2.h === 0){
+        return false;
+    }
+   let r_1 = {...r1}
+   if(r_1.w < 0){
+       r_1.x+=r_1.w;
+       r_1.w = r_1.w*-1
+    }
+
+    if(r_1.h < 0){
+        r_1.y+=r_1.h;
+        r_1.h = r_1.h*-1
+    }
+
+    return !(r_1.x > r2.x + r2.w || r_1.x + r_1.w < r2.x || r_1.y > r2.y + r2.h || r_1.y + r_1.h < r2.y);
 }
 
 export default GestionLienzoAnimacion
