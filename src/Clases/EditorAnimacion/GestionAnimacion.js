@@ -329,6 +329,14 @@ class GestionAnimacion{
         })
     }
 
+    duplicar_lista_figuras(nombre_grupo, lista_id_figuras){
+        const grupo = this.getGrupo(nombre_grupo);
+        const lista_figuras = grupo.lista_figuras.filter((e)=>lista_id_figuras.includes(e.nombre));
+        return lista_figuras.map((f)=>{
+            return this.duplicar_figura(f)
+        })
+    }
+
     duplicar_figura(figura){
         return JSON.parse(JSON.stringify(figura))
     }

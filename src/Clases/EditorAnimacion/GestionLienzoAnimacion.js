@@ -70,6 +70,7 @@ class GestionLienzoAnimacion {
 
     mover_figura = MOVER_NADA;
 
+    copia_lista_figuras = []
     mover_centros = {
         centro_x: 0,
         centro_y: 0,
@@ -129,6 +130,7 @@ class GestionLienzoAnimacion {
                     }
                     if(this.lista_id_figuras.length>1 && this.seleccion_figuras){
                         this.seleccion_figuras = false
+                        this.calcularCenTroFiguras(animacion)
                         this.seleccionarFigurasTransformar(nombre_grupo)
                     }
                 }
@@ -176,7 +178,25 @@ class GestionLienzoAnimacion {
         }
 
         if(this.mover_figura === MOVER_CENTROS_FIGURAS){
-            console.log("MOVER GRUPO DE FIGURAS")
+            console.log("MOVER CENTRO DE FIGURAS")
+            let nombre_grupo = this.id_grupo_selec;
+            const grupo = animacion.getGrupo(nombre_grupo)
+            let x = eventoLienzoFigura.mouse_x - grupo.cx;
+            let y = eventoLienzoFigura.mouse_y - grupo.cy;
+            let x_move =  x- this.mover_centros.centro_x;
+            let y_move = y- this.mover_centros.centro_y;
+            for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                const figura = grupo.lista_figuras[j];
+                if (this.lista_id_figuras.includes(figura.nombre)){
+                    let f_copia = this.copia_lista_figuras.filter((f)=>f.nombre===figura.nombre)[0]
+                    figura.atributos.cx = f_copia.atributos.cx + x_move;
+                    figura.atributos.cy = f_copia.atributos.cy + y_move;
+                }
+            }
+
+            if(eventoLienzoFigura.mouse_click_down){
+                this.mover_figura = MOVER_NADA
+            }
         }
     }
 
@@ -355,7 +375,7 @@ class GestionLienzoAnimacion {
     imprimir_punto(ctx, figura, grupo, color_, seleccion = false, color_seleccion = "#39ff14") {
         const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
         const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-        dibujar_punto(ctx, color_, x, y)
+        dibujar_punto(ctx, color_, x, y, 2)
         if (seleccion) {
             this.actualizarPuntoCentro(figura, grupo)
             dibujar_rectangulo(ctx, color_seleccion, this.p_centro.x, this.p_centro.y,
@@ -400,10 +420,6 @@ class GestionLienzoAnimacion {
         }
 
         if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
-
-            this.calcularCenTroFiguras(animacion)
-            console.log(this.lista_id_figuras)
-            console.log(this.mover_centros)
             dibujar_rectangulo(ctx, "#14f7ff", this.mover_centros.inf_hor, this.mover_centros.inf_ver,
                 this.mover_centros.ancho, this.mover_centros.alto)
             dibujar_rectangulo(ctx, "#14f7ff", this.mover_centros.centro_x, this.mover_centros.centro_y,
@@ -416,6 +432,10 @@ class GestionLienzoAnimacion {
         let nombre_grupo = this.id_grupo_selec;
         const grupo = animacion.getGrupo(nombre_grupo)
         if (grupo != null) {
+            this.copia_lista_figuras = animacion.duplicar_lista_figuras(nombre_grupo, this.lista_id_figuras)
+            console.log("LISTA FIGURAS DUPLICADOS")
+            console.log(this.copia_lista_figuras)
+
             let inf_hor = Number.POSITIVE_INFINITY;
             let inf_ver = Number.POSITIVE_INFINITY;
             let sup_hor = Number.NEGATIVE_INFINITY;
@@ -423,59 +443,30 @@ class GestionLienzoAnimacion {
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
                 const figura = grupo.lista_figuras[j];
                 if (this.lista_id_figuras.includes(figura.nombre)){
-
-
                     if (figura.tipo_figura === "RECTA") {
                         const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
                         const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
                         const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
                         const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
                         console.log(x1, y1)
-                        if(inf_hor > x1){
-                            inf_hor = x1
-                        }
-                        if(sup_hor < x1){
-                            sup_hor = x1
-                        }
+                        inf_hor = Math.min(...[x1, x2, inf_hor])
+                        sup_hor = Math.max(...[x1, x2, sup_hor])
 
-                        if(inf_hor > x2){
-                            inf_hor = x2
-                        }
-                        if(sup_hor < x2){
-                            sup_hor = x2
-                        }
                         //----------------------------------------
-                        if(inf_ver > y1){
-                            inf_ver = y1
-                        }
-                        if(inf_ver > y2){
-                            inf_ver = y2
-                        }
-
-                        if(sup_ver < y1){
-                            sup_ver = y1
-                        }
-                        if(sup_ver < y2){
-                            sup_ver = y2
-                        }
-
+                        inf_ver = Math.min(...[y1, y2, inf_ver])
+                        sup_ver = Math.max(...[y1, y2, sup_ver])
                     }
 
                     if (figura.tipo_figura === "PUNTO") {
                         const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
                         const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-                        if(inf_hor > x){
-                            inf_hor = x
-                        }
-                        if(sup_hor < x){
-                            sup_hor = x
-                        }
-                        if(inf_ver > y){
-                            inf_ver = y
-                        }
-                        if(sup_ver < y){
-                            sup_ver = y
-                        }
+
+                        inf_hor = Math.min(...[x, inf_hor])
+                        sup_hor = Math.max(...[x, sup_hor])
+                        //----------------------------------------
+                        inf_ver = Math.min(...[y, inf_ver])
+                        sup_ver = Math.max(...[y, sup_ver])
+                  
                     }
 
                     if (figura.tipo_figura === "CIRCULO") {
@@ -484,22 +475,15 @@ class GestionLienzoAnimacion {
                         const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
                         const rx = parseInt(figura.atributos.radiox);
                         const ry = parseInt(figura.atributos.radioy);
-                        if(inf_hor > x-rx){
-                            inf_hor = x-rx
-                        }
-                        if(sup_hor < x+rx){
-                            sup_hor = x+rx
-                        }
-                        if(inf_ver > y-ry){
-                            inf_ver = y-ry
-                        }
-                        if(sup_ver < y+ry){
-                            sup_ver = y+ry
-                        }
+
+                        inf_hor = Math.min(...[x-rx, inf_hor])
+                        sup_hor = Math.max(...[x+rx, sup_hor])
+                        //----------------------------------------
+                        inf_ver = Math.min(...[y-ry, inf_ver])
+                        sup_ver = Math.max(...[y+ry, sup_ver])
                     }
                 }
             }
-            console.log("inforrr: ",inf_hor)
             this.mover_centros.inf_hor = inf_hor;
             this.mover_centros.sup_hor = sup_hor;
             this.mover_centros.inf_ver = inf_ver;
@@ -512,10 +496,10 @@ class GestionLienzoAnimacion {
     }
 };
 
-function dibujar_punto(ctx, color, x, y) {
+function dibujar_punto(ctx, color, x, y, size=1) {
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.fillRect(x, y, 1, 1);
+    ctx.fillRect(x, y, size, size);
     //ctx.stroke();
 }
 
