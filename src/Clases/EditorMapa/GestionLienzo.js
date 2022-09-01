@@ -12,7 +12,7 @@ function eventMoveMouse(e){
     let pos = getMousePos(document.getElementById("lienzo-editor"), e);
     let x1 = parseInt(pos.x);
     let y1 = parseInt(pos.y);
-    console.log(x1, y1)
+    //console.log(x1, y1)
     //lienzo.moverElemento(x1, y1);
 }
 
@@ -37,7 +37,7 @@ class GestionLienzo {
         objeto["atributos"]["y"] = y1;
         //setPropiedadObjeto(this.id_seleccionado);
         this.actualizarLienzo();
-        console.log("x: "+ x1+ " y: "+ y1);
+        //console.log("x: "+ x1+ " y: "+ y1);
     }
 
     actualizarLienzo(listado_objetos, config_meta) {

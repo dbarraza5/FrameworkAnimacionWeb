@@ -66,8 +66,8 @@ function Lienzo(props){
     const eventoKeyUp=(e)=>{
         const name = e.key;
         const  code = e.code;
-        console.log(name)
-        console.log(code)
+        //console.log(name)
+        //console.log(code)
         props.lienzo.stack_event_teclado = props.lienzo.stack_event_teclado.filter((v)=>v!==code)
         props.editar_animacion()
     }

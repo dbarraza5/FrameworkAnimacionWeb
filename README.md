@@ -16,3 +16,8 @@ falta el mover los atributos usando el mouse.
         b.- inflar
         c.- reducir, etc...
     4.- implementar el duplicado de grupos y figuras.
+    
+    99.- La relatividad especial del tiempo puede resolver el problema de ajuste de los tiempos de los movimientos,
+    cuando los grupos disminuyen su tamaño o figura en general.
+    100.- las etiquetas pueden ser un de ayuda para aplicar movimientos sin aplicarlo a un id especifico de un 
+    grupo o figura.

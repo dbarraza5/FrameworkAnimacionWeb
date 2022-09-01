@@ -13,6 +13,7 @@ const MOVER_RADIO_CIRCULO = 4;
 const MOVER_CENTROS_FIGURAS = 5;
 const MOVER_ROTAR_FIGURAS = 6;
 const MOVER_INFLAR_FIGURAS = 7;
+const MOVER_ELIMINAR_FIGURAS = 8;
 
 
 class GestionLienzoAnimacion {
@@ -88,11 +89,11 @@ class GestionLienzoAnimacion {
         this.y = 0;
     }
 
-    seleccionarFiguraMover(nombre_figura_, nombre_grupo_) {
+    seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
         this.categoria_trabajo = TRABAJO_FIGURA;
         this.id_grupo_selec = nombre_grupo_;
         this.id_figura_selec = nombre_figura_;
-        this.mover_figura = MOVER_CENTRO_FIGURA;
+        this.mover_figura = tipo_movimiento;
     }
 
     seleccionarFigurasTransformar(nombre_grupo_) {
@@ -108,7 +109,7 @@ class GestionLienzoAnimacion {
 
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
-        console.log(this.mover_figura)
+        //console.log(this.mover_figura)
         if (this.mover_figura === MOVER_NADA) {//this.categoria_trabajo === TRABAJO_NONE
             if (eventoLienzoFigura.mouse_sobre_lienzo) {
                 if (eventoLienzoFigura.mouse_click_down) {
@@ -126,11 +127,11 @@ class GestionLienzoAnimacion {
                     if(this.lista_id_figuras.length == 1 && this.seleccion_figuras){
                         console.log(this.puntero_seleccion)
                         this.seleccion_figuras = false
-                        this.seleccionarFiguraMover(this.lista_id_figuras[0], nombre_grupo)
+                        this.seleccionarFiguraMover(this.lista_id_figuras[0], nombre_grupo, MOVER_NADA)
                     }
-                    if(this.lista_id_figuras.length>1 && this.seleccion_figuras){
+                    if(this.lista_id_figuras.length>0 && this.seleccion_figuras){
                         this.seleccion_figuras = false
-                        this.calcularCenTroFiguras(animacion)
+                        this.copia_lista_figuras = animacion.duplicar_lista_figuras(nombre_grupo, this.lista_id_figuras)
                         this.seleccionarFigurasTransformar(nombre_grupo)
                     }
                 }
@@ -157,8 +158,6 @@ class GestionLienzoAnimacion {
                         this.actualizarPuntosCirculo(figura, grupo)
                     }
                     if(rectsColliding(this.puntero_seleccion, this.p_centro)){
-                        console.log("COLISION!!!!")
-                        console.log(this.puntero_seleccion)
                         if(!this.lista_id_figuras.includes(figura.nombre)){
                             this.lista_id_figuras.push(figura.nombre);
                         }
@@ -174,11 +173,17 @@ class GestionLienzoAnimacion {
         if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ")){
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
                 this.mover_figura = MOVER_CENTROS_FIGURAS;
+                this.mover_centros=this.calcularCenTroFiguras(animacion)
+            }
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyB")){
+                this.mover_figura = MOVER_ELIMINAR_FIGURAS;
+                this.mover_centros=this.calcularCenTroFiguras(animacion)
             }
         }
 
         if(this.mover_figura === MOVER_CENTROS_FIGURAS){
             console.log("MOVER CENTRO DE FIGURAS")
+            //this.calcularCenTroFiguras(animacion)
             let nombre_grupo = this.id_grupo_selec;
             const grupo = animacion.getGrupo(nombre_grupo)
             let x = eventoLienzoFigura.mouse_x - grupo.cx;
@@ -193,10 +198,24 @@ class GestionLienzoAnimacion {
                     figura.atributos.cy = f_copia.atributos.cy + y_move;
                 }
             }
-
             if(eventoLienzoFigura.mouse_click_down){
                 this.mover_figura = MOVER_NADA
             }
+        }
+
+        if(this.mover_figura === MOVER_ELIMINAR_FIGURAS){
+            console.log("MOVER_ELIMINAR_FIGURAS 2222")
+            console.log(this.id_grupo_selec)
+            console.log(this.lista_id_figuras)
+            console.log(animacion.getGrupo(this.id_grupo_selec))
+            for (let i = 0; i < this.lista_id_figuras.length; i++) {
+                animacion.borrar_figura(this.id_grupo_selec, this.lista_id_figuras[i])
+            }
+            this.mover_figura = MOVER_NADA;
+            this.seleccion_figuras = true;
+            this.lista_id_figuras = []
+            setAnimacion({"edicion": animacion})
+            console.log(animacion.getGrupo(this.id_grupo_selec))
         }
     }
 
@@ -412,17 +431,19 @@ class GestionLienzoAnimacion {
                     }
                 }
             }
+
         }
         if (this.seleccion_figuras) {
-            console.log(this.seleccion_figuras)
+            //console.log(this.seleccion_figuras)
             dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
                 this.puntero_seleccion.w, this.puntero_seleccion.h)
         }
 
         if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
-            dibujar_rectangulo(ctx, "#14f7ff", this.mover_centros.inf_hor, this.mover_centros.inf_ver,
-                this.mover_centros.ancho, this.mover_centros.alto)
-            dibujar_rectangulo(ctx, "#14f7ff", this.mover_centros.centro_x, this.mover_centros.centro_y,
+            const rect_seleccion = this.calcularCenTroFiguras(animacion)
+            dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
+                rect_seleccion.ancho, rect_seleccion.alto)
+            dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.centro_x, rect_seleccion.centro_y,
                 this.p_centro.w, this.p_centro.h)
         }
 
@@ -432,23 +453,19 @@ class GestionLienzoAnimacion {
         let nombre_grupo = this.id_grupo_selec;
         const grupo = animacion.getGrupo(nombre_grupo)
         if (grupo != null) {
-            this.copia_lista_figuras = animacion.duplicar_lista_figuras(nombre_grupo, this.lista_id_figuras)
-            console.log("LISTA FIGURAS DUPLICADOS")
-            console.log(this.copia_lista_figuras)
-
             let inf_hor = Number.POSITIVE_INFINITY;
             let inf_ver = Number.POSITIVE_INFINITY;
             let sup_hor = Number.NEGATIVE_INFINITY;
             let sup_ver = Number.NEGATIVE_INFINITY;
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
                 const figura = grupo.lista_figuras[j];
-                if (this.lista_id_figuras.includes(figura.nombre)){
+                if (this.lista_id_figuras.includes(figura.nombre)) {
                     if (figura.tipo_figura === "RECTA") {
                         const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
                         const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
                         const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
                         const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-                        console.log(x1, y1)
+                        //console.log(x1, y1)
                         inf_hor = Math.min(...[x1, x2, inf_hor])
                         sup_hor = Math.max(...[x1, x2, sup_hor])
 
@@ -466,7 +483,7 @@ class GestionLienzoAnimacion {
                         //----------------------------------------
                         inf_ver = Math.min(...[y, inf_ver])
                         sup_ver = Math.max(...[y, sup_ver])
-                  
+
                     }
 
                     if (figura.tipo_figura === "CIRCULO") {
@@ -476,22 +493,24 @@ class GestionLienzoAnimacion {
                         const rx = parseInt(figura.atributos.radiox);
                         const ry = parseInt(figura.atributos.radioy);
 
-                        inf_hor = Math.min(...[x-rx, inf_hor])
-                        sup_hor = Math.max(...[x+rx, sup_hor])
+                        inf_hor = Math.min(...[x - rx, inf_hor])
+                        sup_hor = Math.max(...[x + rx, sup_hor])
                         //----------------------------------------
-                        inf_ver = Math.min(...[y-ry, inf_ver])
-                        sup_ver = Math.max(...[y+ry, sup_ver])
+                        inf_ver = Math.min(...[y - ry, inf_ver])
+                        sup_ver = Math.max(...[y + ry, sup_ver])
                     }
                 }
             }
-            this.mover_centros.inf_hor = inf_hor;
-            this.mover_centros.sup_hor = sup_hor;
-            this.mover_centros.inf_ver = inf_ver;
-            this.mover_centros.sup_ver = sup_ver;
-            this.mover_centros.ancho = (sup_hor-inf_hor);
-            this.mover_centros.alto = (sup_ver-inf_ver);
-            this.mover_centros.centro_x = inf_hor+(sup_hor-inf_hor)/2;
-            this.mover_centros.centro_y = inf_ver+(sup_ver-inf_ver)/2;
+            let centro_figuras = {...this.mover_centros}
+            centro_figuras.inf_hor = inf_hor;
+            centro_figuras.sup_hor = sup_hor;
+            centro_figuras.inf_ver = inf_ver;
+            centro_figuras.sup_ver = sup_ver;
+            centro_figuras.ancho = (sup_hor-inf_hor);
+            centro_figuras.alto = (sup_ver-inf_ver);
+            centro_figuras.centro_x = inf_hor+(sup_hor-inf_hor)/2;
+            centro_figuras.centro_y = inf_ver+(sup_ver-inf_ver)/2;
+            return centro_figuras
         }
     }
 };

@@ -360,8 +360,8 @@ class GestionAnimacion{
         recta.atributos["y1"] = y1_;
         recta.atributos["x2"] = x2_;
         recta.atributos["y2"] = y2_;
-        recta.atributos["cx"] = recta.atributos.cx+cx_;
-        recta.atributos["cy"] = recta.atributos.cy+cy_;
+        recta.atributos["cx"] = parseInt(recta.atributos.cx)+cx_;
+        recta.atributos["cy"] = parseInt(recta.atributos.cy)+cy_;
         //console.log(recta_nueva)
         return recta
     }
