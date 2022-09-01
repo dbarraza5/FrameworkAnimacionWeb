@@ -14,6 +14,7 @@ const MOVER_CENTROS_FIGURAS = 5;
 const MOVER_ROTAR_FIGURAS = 6;
 const MOVER_INFLAR_FIGURAS = 7;
 const MOVER_ELIMINAR_FIGURAS = 8;
+const MOVER_DUPLICAR_FIGURAS = 9;
 
 
 class GestionLienzoAnimacion {
@@ -131,7 +132,7 @@ class GestionLienzoAnimacion {
                     }
                     if(this.lista_id_figuras.length>0 && this.seleccion_figuras){
                         this.seleccion_figuras = false
-                        this.copia_lista_figuras = animacion.duplicar_lista_figuras(nombre_grupo, this.lista_id_figuras)
+                        this.copia_lista_figuras = animacion.get_lista_figuras_duplicadas(nombre_grupo, this.lista_id_figuras)
                         this.seleccionarFigurasTransformar(nombre_grupo)
                     }
                 }
@@ -165,7 +166,7 @@ class GestionLienzoAnimacion {
                 }
             }
         }
-        this.actualizarLienzo(animacion)
+        //this.actualizarLienzo(animacion)
     }
 
     procesarTrabajoListaFiguras(eventoLienzoFigura, animacion, setAnimacion){
@@ -177,6 +178,10 @@ class GestionLienzoAnimacion {
             }
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyB")){
                 this.mover_figura = MOVER_ELIMINAR_FIGURAS;
+                this.mover_centros=this.calcularCenTroFiguras(animacion)
+            }
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyD")){
+                this.mover_figura = MOVER_DUPLICAR_FIGURAS;
                 this.mover_centros=this.calcularCenTroFiguras(animacion)
             }
         }
@@ -216,6 +221,13 @@ class GestionLienzoAnimacion {
             this.lista_id_figuras = []
             setAnimacion({"edicion": animacion})
             console.log(animacion.getGrupo(this.id_grupo_selec))
+        }
+
+        if(this.mover_figura === MOVER_DUPLICAR_FIGURAS){
+            console.log("MOVER_DUPLICAR_FIGURAS")
+            animacion.duplicar_figuras_id_figuras(this.id_grupo_selec, this.lista_id_figuras)
+            this.mover_figura = MOVER_CENTROS_FIGURAS
+            setAnimacion({"edicion": animacion})
         }
     }
 
@@ -320,6 +332,7 @@ class GestionLienzoAnimacion {
             this.procesarTrabajoListaFiguras(eventoLienzoFigura, animacion, setAnimacion)
         }
         this.procesarSeleccionPuntero(eventoLienzoFigura, animacion);
+        this.actualizarLienzo(animacion)
     }
 
     actualizarPuntoCentro(fig_, grupo_) {

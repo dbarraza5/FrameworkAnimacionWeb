@@ -258,7 +258,6 @@ class GestionAnimacion{
             while(!id_encontrado){
                 id_temp = "f"+prefix+contador;
                 if(!lista_nombre_fig.includes(id_temp)){
-                    //console.log(id_temp)
                     return id_temp;
                 }
                 contador+=1;
@@ -329,7 +328,15 @@ class GestionAnimacion{
         })
     }
 
-    duplicar_lista_figuras(nombre_grupo, lista_id_figuras){
+    duplicar_figuras_id_figuras(nombre_grupo, lista_id_figuras){
+        let lista_figuras = this.get_lista_figuras_duplicadas(nombre_grupo, lista_id_figuras);
+        for (let i = 0; i < lista_figuras.length; i++) {
+            lista_figuras[i].nombre = this.crear_id_figura(nombre_grupo, lista_figuras[i].tipo_figura)
+            this.agregar_figura_grupo(nombre_grupo, lista_figuras[i])
+        }
+    }
+
+    get_lista_figuras_duplicadas(nombre_grupo, lista_id_figuras){
         const grupo = this.getGrupo(nombre_grupo);
         const lista_figuras = grupo.lista_figuras.filter((e)=>lista_id_figuras.includes(e.nombre));
         return lista_figuras.map((f)=>{
