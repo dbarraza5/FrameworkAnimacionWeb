@@ -71,7 +71,7 @@ class GestionAnimacion{
                 tiempo_final: 2000,
                 ciclo: 1,
                 color: "#2851e3",
-                cx: 10,
+                cx: 0,
                 cy: 0,
                 capa: 0,
                 grupo_movimientos: ["default"],

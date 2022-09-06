@@ -1,3 +1,5 @@
+import Fisica from "./Fisica";
+
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
 const TRABAJO_LISTA_FIGURAS = 1;
@@ -15,6 +17,7 @@ const MOVER_ROTAR_FIGURAS = 6;
 const MOVER_INFLAR_FIGURAS = 7;
 const MOVER_ELIMINAR_FIGURAS = 8;
 const MOVER_DUPLICAR_FIGURAS = 9;
+const MOVER_DESINFLAR_FIGURAS = 10;
 
 
 class GestionLienzoAnimacion {
@@ -184,6 +187,10 @@ class GestionLienzoAnimacion {
                 this.mover_figura = MOVER_DUPLICAR_FIGURAS;
                 this.mover_centros=this.calcularCenTroFiguras(animacion)
             }
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyF")){
+                this.mover_figura = MOVER_INFLAR_FIGURAS;
+                this.mover_centros=this.calcularCenTroFiguras(animacion)
+            }
         }
 
         if(this.mover_figura === MOVER_CENTROS_FIGURAS){
@@ -229,6 +236,86 @@ class GestionLienzoAnimacion {
             this.mover_figura = MOVER_CENTROS_FIGURAS
             setAnimacion({"edicion": animacion})
         }
+
+        if(this.mover_figura === MOVER_INFLAR_FIGURAS){
+            console.log("MOVER_INFLAR_FIGURAS")
+            let nombre_grupo = this.id_grupo_selec;
+            const grupo = animacion.getGrupo(nombre_grupo)
+            let x = this.mover_centros.centro_x - grupo.cx;
+            let y = this.mover_centros.centro_y - grupo.cy;
+            const distancia_seleccion = Fisica.distanciaEntreDosPuntos(0, 0, this.mover_centros.ancho, this.mover_centros.alto)
+            const ancho_ = Math.abs(eventoLienzoFigura.mouse_x-this.mover_centros.centro_x )
+            const alto_ = Math.abs(eventoLienzoFigura.mouse_y-this.mover_centros.centro_y)
+            const distancia_puntero = Fisica.distanciaEntreDosPuntos(0, 0, ancho_, alto_)
+            const porcentaje = (distancia_puntero - distancia_seleccion)/distancia_seleccion
+
+            for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                const figura = grupo.lista_figuras[j];
+                if (this.lista_id_figuras.includes(figura.nombre)){
+                    let f_copia = this.copia_lista_figuras.filter((f)=>f.nombre===figura.nombre)[0]
+                    //figura.atributos.cx = f_copia.atributos.cx + x_move;
+                    //figura.atributos.cy = f_copia.atributos.cy + y_move;
+                    if(figura.tipo_figura === "PUNTO"){
+                        const angulo_figura = Fisica.angulo_recta(x, y,
+                            f_copia.atributos.cx, f_copia.atributos.cy)
+                        const distancia = Fisica.distanciaEntreDosPuntos(x, y,
+                            f_copia.atributos.cx, f_copia.atributos.cy)
+
+                        let dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                        let dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                        figura.atributos.cx = x+ dx
+                        figura.atributos.cy = y+ dy
+
+                        console.log("angulo: ", angulo_figura)
+                        console.log("distancia: ", distancia)
+                        console.log("dx: ", dx)
+                        console.log("dy: ", dy)
+                        console.log()
+                    }
+                }
+            }
+        }
+
+        /*
+        *
+        * static double distanciaEntreDosPuntos(double x1, double y1, double x2, double y2)
+        {
+            return sqrt(pow(x2-x1, 2)+pow(y2-y1,2));
+        }
+        *
+        * if(elemento->getTipoFigura()==PUNTO){
+                PuntoObjeto * punto = (PuntoObjeto*)elemento;
+                punto->p_aux[0]=punto->getXc();
+                punto->p_aux[1]=punto->getYc();
+                punto->setHipotenusa(Fisica::distanciaEntreDosPuntos(punto->getXc(), punto->getYc()
+                                                                       , centrox_rotar, centroy_rotar));
+            }
+
+            if(elemento->getTipoFigura()==RECTA){
+                RectaObjeto * r = (RectaObjeto*)elemento;
+                int angulo_aux = (int)Fisica::angulo_recta(centrox_rotar, centroy_rotar,
+                                                     r->getX1(), r->getY1());
+                r->setAnguloP1(angulo_aux);
+
+                angulo_aux = (int)Fisica::angulo_recta(centrox_rotar, centroy_rotar,
+                                                     r->getX2(), r->getY2());
+                r->setAnguloP2(angulo_aux);
+                r->setHipotenusaP1(Fisica::distanciaEntreDosPuntos(r->getX1(), r->getY1(), centrox_rotar, centroy_rotar));
+                r->setHipotenusaP2(Fisica::distanciaEntreDosPuntos(r->getX2(), r->getY2(), centrox_rotar, centroy_rotar));
+                r->p1_aux[0]=r->getX1();
+                r->p1_aux[1]=r->getY1();
+                r->p2_aux[0]=r->getX2();
+                r->p2_aux[1]=r->getY2();
+            }
+            if(elemento->getTipoFigura()==CIRCULO){
+                CirculoObjeto * circulo = (CirculoObjeto*)elemento;
+                circulo->setHipotenusa(Fisica::distanciaEntreDosPuntos(circulo->getXc(), circulo->getYc()
+                                                                       , centrox_rotar, centroy_rotar));
+                circulo->p_aux[0]=circulo->getXc();
+                circulo->p_aux[1]=circulo->getYc();
+                circulo->radio_aux = circulo->getRadioX();
+            }
+        * */
     }
 
     procesarTrabajoFigura(eventoLienzoFigura, animacion, setAnimacion){
