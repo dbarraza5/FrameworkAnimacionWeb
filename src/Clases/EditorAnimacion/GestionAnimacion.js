@@ -312,7 +312,7 @@ class GestionAnimacion{
     set_figura(nombre_grupo, figura_){
         this.grupos_figuras = this.grupos_figuras.map((g)=>{
             if(g.nombre === nombre_grupo){
-                g.lista_figuras.map((figura)=>{
+                g.lista_figuras = g.lista_figuras.map((figura)=>{
                     if(figura.nombre === figura_.nombre){
                         if(figura_.tipo_figura === "RECTA"){
                             //console.log(figura_)
@@ -349,28 +349,7 @@ class GestionAnimacion{
     }
 
     set_recta(recta){
-        const x1 = parseInt(recta.atributos.x1);
-        const y1 = parseInt(recta.atributos.y1);
-        const x2 = parseInt(recta.atributos.x2);
-        const y2 = parseInt(recta.atributos.y2);
-
-        const cx_ = parseInt((x1 + x2)/2)
-        const cy_ = parseInt((y1 + y2)/2)
-
-        const x1_ = x1 - cx_;
-        const y1_ = y1 - cy_;
-        const x2_ = x2 - cx_;
-        const y2_ = y2 - cy_;
-        //let recta_nueva = this.duplicar_figura(recta)
-        //recta_nueva["atributos"]={...(recta.atributos)}
-        recta.atributos["x1"] = x1_;
-        recta.atributos["y1"] = y1_;
-        recta.atributos["x2"] = x2_;
-        recta.atributos["y2"] = y2_;
-        recta.atributos["cx"] = parseInt(recta.atributos.cx)+cx_;
-        recta.atributos["cy"] = parseInt(recta.atributos.cy)+cy_;
-        //console.log(recta_nueva)
-        return recta
+        return normalizar_recta(recta)
     }
 
     set_atributo_figura(nombre_grupo, nombre_figura, nombre_atributo, valor){
@@ -457,6 +436,34 @@ class GestionAnimacion{
     }
 }
 
+function normalizar_recta(recta1){
+    const x1 = parseInt(recta1.atributos.x1);
+    const y1 = parseInt(recta1.atributos.y1);
+    const x2 = parseInt(recta1.atributos.x2);
+    const y2 = parseInt(recta1.atributos.y2);
 
+    const cx_ = parseInt((x1 + x2)/2)
+    const cy_ = parseInt((y1 + y2)/2)
 
-export default GestionAnimacion
+    const x1_ = x1 - cx_;
+    const y1_ = y1 - cy_;
+    const x2_ = x2 - cx_;
+    const y2_ = y2 - cy_;
+    //let recta_nueva = this.duplicar_figura(recta)
+    //recta_nueva["atributos"]={...(recta.atributos)}
+    let recta = {
+        nombre:recta1.nombre,
+        tipo_figura: recta1.tipo_figura,
+        atributos: {}
+    }
+    recta.atributos["x1"] = x1_;
+    recta.atributos["y1"] = y1_;
+    recta.atributos["x2"] = x2_;
+    recta.atributos["y2"] = y2_;
+    recta.atributos["cx"] = parseInt(recta1.atributos.cx)+cx_;
+    recta.atributos["cy"] = parseInt(recta1.atributos.cy)+cy_;
+    //console.log(recta_nueva)
+    return recta
+}
+
+export {GestionAnimacion, normalizar_recta}

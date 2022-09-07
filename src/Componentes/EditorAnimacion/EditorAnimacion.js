@@ -8,7 +8,7 @@ import NavEditorAnimacion from "./NavEditorAnimacion";
 import SeleccionFigura from "./SeccionFiguras/GestionFiguras/SeleccionFigura";
 import {useEffect, useState} from "react";
 import EdicionFiguras from "./SeccionFiguras/EdicionFiguras";
-import GestionAnimacion from "../../Clases/EditorAnimacion/GestionAnimacion";
+import {GestionAnimacion} from "../../Clases/EditorAnimacion/GestionAnimacion";
 import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
 import Lienzo from "./Lienzo";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";

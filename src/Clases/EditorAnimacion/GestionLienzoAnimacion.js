@@ -1,4 +1,5 @@
 import Fisica from "./Fisica";
+import {normalizar_recta} from "./GestionAnimacion";
 
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
@@ -188,7 +189,24 @@ class GestionLienzoAnimacion {
                 this.mover_centros=this.calcularCenTroFiguras(animacion)
             }
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyF")){
+                //this.mover_figura = MOVER_INFLAR_FIGURAS;
+                //this.mover_centros=this.calcularCenTroFiguras(animacion)
+            }
+        }
+
+        if(this.mover_figura === MOVER_NADA){
+            //dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
+            let rect_seleccion = this.calcularCenTroFiguras(animacion)
+            let p_sup = {
+                x: rect_seleccion.sup_hor,
+                y: rect_seleccion.sup_ver,
+                w: 3,
+                h: 3
+            }
+            if (eventoLienzoFigura.mouse_click_down && rectsColliding(this.puntero, p_sup)){
+                console.log("INFLAR POR LA ESQUINA")
                 this.mover_figura = MOVER_INFLAR_FIGURAS;
+                this.copia_lista_figuras = animacion.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
                 this.mover_centros=this.calcularCenTroFiguras(animacion)
             }
         }
@@ -241,38 +259,72 @@ class GestionLienzoAnimacion {
             console.log("MOVER_INFLAR_FIGURAS")
             let nombre_grupo = this.id_grupo_selec;
             const grupo = animacion.getGrupo(nombre_grupo)
-            let x = this.mover_centros.centro_x - grupo.cx;
-            let y = this.mover_centros.centro_y - grupo.cy;
-            const distancia_seleccion = Fisica.distanciaEntreDosPuntos(0, 0, this.mover_centros.ancho, this.mover_centros.alto)
-            const ancho_ = Math.abs(eventoLienzoFigura.mouse_x-this.mover_centros.centro_x )
-            const alto_ = Math.abs(eventoLienzoFigura.mouse_y-this.mover_centros.centro_y)
-            const distancia_puntero = Fisica.distanciaEntreDosPuntos(0, 0, ancho_, alto_)
-            const porcentaje = (distancia_puntero - distancia_seleccion)/distancia_seleccion
 
-            for (let j = 0; j < grupo.lista_figuras.length; j++) {
-                const figura = grupo.lista_figuras[j];
-                if (this.lista_id_figuras.includes(figura.nombre)){
-                    let f_copia = this.copia_lista_figuras.filter((f)=>f.nombre===figura.nombre)[0]
-                    //figura.atributos.cx = f_copia.atributos.cx + x_move;
-                    //figura.atributos.cy = f_copia.atributos.cy + y_move;
-                    if(figura.tipo_figura === "PUNTO"){
-                        const angulo_figura = Fisica.angulo_recta(x, y,
-                            f_copia.atributos.cx, f_copia.atributos.cy)
-                        const distancia = Fisica.distanciaEntreDosPuntos(x, y,
-                            f_copia.atributos.cx, f_copia.atributos.cy)
+            if(eventoLienzoFigura.mouse_x> (this.mover_centros.centro_x+20)){
+                const diff_ancho = (eventoLienzoFigura.mouse_x-10)-(this.mover_centros.sup_hor-10);
+                const total_ancho = (this.mover_centros.ancho/2) -20
+                const porcentaje = diff_ancho/total_ancho
 
-                        let dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
-                        let dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
-                        figura.atributos.cx = x+ dx
-                        figura.atributos.cy = y+ dy
+                for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                    let figura = grupo.lista_figuras[j];
+                    if (this.lista_id_figuras.includes(figura.nombre)){
+                        let f_copia = this.copia_lista_figuras.filter((f)=>f.nombre===figura.nombre)[0]
+                        if(figura.tipo_figura === "PUNTO"){
+                            let x = this.mover_centros.centro_x - grupo.cx;
+                            let y = this.mover_centros.centro_y - grupo.cy;
 
-                        console.log("angulo: ", angulo_figura)
-                        console.log("distancia: ", distancia)
-                        console.log("dx: ", dx)
-                        console.log("dy: ", dy)
-                        console.log()
+                            const angulo_figura = Fisica.angulo_recta(x, y,
+                                f_copia.atributos.cx, f_copia.atributos.cy)
+                            const distancia = Fisica.distanciaEntreDosPuntos(x, y,
+                                f_copia.atributos.cx, f_copia.atributos.cy)
+
+                            let dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                            let dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                            figura.atributos.cx = x+ dx
+                            figura.atributos.cy = y+ dy
+                        }
+                        if(figura.tipo_figura === "RECTA"){
+
+                            let x = this.mover_centros.centro_x - grupo.cx -f_copia.atributos.cx;
+                            let y = this.mover_centros.centro_y - grupo.cy -f_copia.atributos.cy;
+
+                            const x1 = f_copia.atributos.x1;
+                            const y1 = f_copia.atributos.y1;
+
+
+                            const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
+                            const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1 ,y1)
+                            let dx = Math.cos(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
+                            let dy = Math.sin(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
+
+                            figura.atributos.x1 = x+ dx
+                            figura.atributos.y1 = y+ dy
+
+
+                            //x = this.mover_centros.centro_x - grupo.cx -figura1.atributos.cx;
+                            //y = this.mover_centros.centro_y - grupo.cy -figura1.atributos.cy;
+
+                            const x2 = f_copia.atributos.x2;
+                            const y2 = f_copia.atributos.y2;
+
+                            const angulo_p2 = Fisica.angulo_recta(x, y, x2 ,y2)
+                            const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2 ,y2)
+
+                            dx = Math.cos(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
+                            dy = Math.sin(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
+
+                            figura.atributos.x2 = x+ dx
+                            figura.atributos.y2 = y+ dy
+                            //setAnimacion({"edicion": animacion})
+                            //figura.atributos.cx =
+                            //animacion.set_figura(nombre_grupo, figura)
+                        }
                     }
                 }
+            }
+
+            if(eventoLienzoFigura.mouse_click_up){
+                this.mover_figura = MOVER_NADA;
             }
         }
 
@@ -481,7 +533,7 @@ class GestionLienzoAnimacion {
         const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
         const rx = parseInt(figura.atributos.radiox);
         const ry = parseInt(figura.atributos.radioy);
-        bibujar_circulo(ctx, color_, x, y, rx, ry)
+        dibujar_circulo(ctx, color_, x, y, rx, ry)
         this.actualizarPuntosCirculo(figura, grupo)
         if (seleccion) {
             dibujar_rectangulo(ctx, color_seleccion, this.p_circulo.x, this.p_circulo.y,
@@ -545,6 +597,10 @@ class GestionLienzoAnimacion {
                 rect_seleccion.ancho, rect_seleccion.alto)
             dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.centro_x, rect_seleccion.centro_y,
                 this.p_centro.w, this.p_centro.h)
+
+            //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
+                dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
+            //}
         }
 
     }
@@ -602,12 +658,13 @@ class GestionLienzoAnimacion {
                 }
             }
             let centro_figuras = {...this.mover_centros}
-            centro_figuras.inf_hor = inf_hor;
-            centro_figuras.sup_hor = sup_hor;
-            centro_figuras.inf_ver = inf_ver;
-            centro_figuras.sup_ver = sup_ver;
-            centro_figuras.ancho = (sup_hor-inf_hor);
-            centro_figuras.alto = (sup_ver-inf_ver);
+            const margen = 10;
+            centro_figuras.inf_hor = inf_hor-margen;
+            centro_figuras.sup_hor = sup_hor+margen;
+            centro_figuras.inf_ver = inf_ver-margen;
+            centro_figuras.sup_ver = sup_ver+margen;
+            centro_figuras.ancho = (sup_hor-inf_hor)+margen*2;
+            centro_figuras.alto = (sup_ver-inf_ver)+margen*2;
             centro_figuras.centro_x = inf_hor+(sup_hor-inf_hor)/2;
             centro_figuras.centro_y = inf_ver+(sup_ver-inf_ver)/2;
             return centro_figuras
@@ -622,7 +679,7 @@ function dibujar_punto(ctx, color, x, y, size=1) {
     //ctx.stroke();
 }
 
-function bibujar_circulo(ctx, color, xc, yc, rx, ry) {
+function dibujar_circulo(ctx, color, xc, yc, rx, ry) {
     let x = 0;
     let y = ry;
     const rx2 = Math.pow(rx, 2);
