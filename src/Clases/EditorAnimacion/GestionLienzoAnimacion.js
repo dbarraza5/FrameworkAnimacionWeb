@@ -285,11 +285,11 @@ class GestionLienzoAnimacion {
                         }
                         if(figura.tipo_figura === "RECTA"){
 
-                            let x = this.mover_centros.centro_x - grupo.cx -f_copia.atributos.cx;
-                            let y = this.mover_centros.centro_y - grupo.cy -f_copia.atributos.cy;
+                            let x = this.mover_centros.centro_x - grupo.cx;
+                            let y = this.mover_centros.centro_y - grupo.cy;
 
-                            const x1 = f_copia.atributos.x1;
-                            const y1 = f_copia.atributos.y1;
+                            const x1 = f_copia.atributos.x1+f_copia.atributos.cx;
+                            const y1 = f_copia.atributos.y1+f_copia.atributos.cy;
 
                             // solo se mueve los puntos, el problema es que se utiliza el centro de figura auxliar
                             const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
@@ -304,8 +304,8 @@ class GestionLienzoAnimacion {
                             //x = this.mover_centros.centro_x - grupo.cx -figura1.atributos.cx;
                             //y = this.mover_centros.centro_y - grupo.cy -figura1.atributos.cy;
 
-                            const x2 = f_copia.atributos.x2;
-                            const y2 = f_copia.atributos.y2;
+                            const x2 = f_copia.atributos.x2+f_copia.atributos.cx;
+                            const y2 = f_copia.atributos.y2+f_copia.atributos.cy;
 
                             const angulo_p2 = Fisica.angulo_recta(x, y, x2 ,y2)
                             const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2 ,y2)
@@ -326,10 +326,10 @@ class GestionLienzoAnimacion {
 
                             dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
                             dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
-                            figura.atributos.cx = x+ dx
-                            figura.atributos.cy = y+ dy
+                            figura.atributos.cx = 0
+                            figura.atributos.cy = 0
 
-                            //animacion.set_figura(nombre_grupo, figura)
+                            animacion.set_figura(nombre_grupo, figura)
                             setAnimacion({"edicion": animacion})
                             //figura.atributos.cx =
 
