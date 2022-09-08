@@ -291,14 +291,14 @@ class GestionLienzoAnimacion {
                             const x1 = f_copia.atributos.x1;
                             const y1 = f_copia.atributos.y1;
 
-
+                            // solo se mueve los puntos, el problema es que se utiliza el centro de figura auxliar
                             const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
                             const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1 ,y1)
                             let dx = Math.cos(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
                             let dy = Math.sin(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
 
-                            figura.atributos.x1 = x+ dx
-                            figura.atributos.y1 = y+ dy
+                            figura.atributos.x1 = parseInt(x+ dx)
+                            figura.atributos.y1 = parseInt(y+ dy)
 
 
                             //x = this.mover_centros.centro_x - grupo.cx -figura1.atributos.cx;
@@ -313,11 +313,26 @@ class GestionLienzoAnimacion {
                             dx = Math.cos(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
                             dy = Math.sin(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
 
-                            figura.atributos.x2 = x+ dx
-                            figura.atributos.y2 = y+ dy
-                            //setAnimacion({"edicion": animacion})
-                            //figura.atributos.cx =
+                            figura.atributos.x2 = parseInt(x+ dx)
+                            figura.atributos.y2 = parseInt(y+ dy)
+
+                            x = this.mover_centros.centro_x - grupo.cx;
+                            y = this.mover_centros.centro_y - grupo.cy;
+
+                            const angulo_figura = Fisica.angulo_recta(x, y,
+                                f_copia.atributos.cx, f_copia.atributos.cy)
+                            const distancia = Fisica.distanciaEntreDosPuntos(x, y,
+                                f_copia.atributos.cx, f_copia.atributos.cy)
+
+                            dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                            dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                            figura.atributos.cx = x+ dx
+                            figura.atributos.cy = y+ dy
+
                             //animacion.set_figura(nombre_grupo, figura)
+                            setAnimacion({"edicion": animacion})
+                            //figura.atributos.cx =
+
                         }
                     }
                 }

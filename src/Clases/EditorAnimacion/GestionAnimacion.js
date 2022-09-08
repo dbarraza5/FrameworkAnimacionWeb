@@ -312,7 +312,7 @@ class GestionAnimacion{
     set_figura(nombre_grupo, figura_){
         this.grupos_figuras = this.grupos_figuras.map((g)=>{
             if(g.nombre === nombre_grupo){
-                g.lista_figuras = g.lista_figuras.map((figura)=>{
+                g.lista_figuras.map((figura)=>{
                     if(figura.nombre === figura_.nombre){
                         if(figura_.tipo_figura === "RECTA"){
                             //console.log(figura_)
@@ -456,12 +456,12 @@ function normalizar_recta(recta1){
         tipo_figura: recta1.tipo_figura,
         atributos: {}
     }
-    recta.atributos["x1"] = x1_;
-    recta.atributos["y1"] = y1_;
-    recta.atributos["x2"] = x2_;
-    recta.atributos["y2"] = y2_;
-    recta.atributos["cx"] = parseInt(recta1.atributos.cx)+cx_;
-    recta.atributos["cy"] = parseInt(recta1.atributos.cy)+cy_;
+    recta1.atributos["x1"] = x1_;
+    recta1.atributos["y1"] = y1_;
+    recta1.atributos["x2"] = x2_;
+    recta1.atributos["y2"] = y2_;
+    recta1.atributos["cx"] = parseInt(recta1.atributos.cx)+cx_;
+    recta1.atributos["cy"] = parseInt(recta1.atributos.cy)+cy_;
     //console.log(recta_nueva)
     return recta
 }
