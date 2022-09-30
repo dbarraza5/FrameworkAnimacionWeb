@@ -12,6 +12,7 @@ import {GestionAnimacion} from "../../Clases/EditorAnimacion/GestionAnimacion";
 import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
 import Lienzo from "./Lienzo";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
+import EditorCompisicion from "./Composicion/EditorComposicion";
 
 
 
@@ -34,13 +35,15 @@ function EditorAnimacion() {
         //lienzo.actualizarLienzo(animacion_.edicion)
     }
 
+    const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
+        eventoLienzoFigura :eventoLienzoFigura, setEventLienzoFigura:setEventLienzoFigura,
+        gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo};
 
+    const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
+    const composicion = <EditorCompisicion {...paquete_datos}/>
     return (<div className="row">
-        <NavEditorAnimacion>
-            <EdicionFiguras animacion={animacion.edicion} setAnimacion={editar_animacion}
-                            eventoLienzoFigura ={eventoLienzoFigura} setEventLienzoFigura={setEventLienzoFigura}
-                            gestionLienzo ={gestionLienzo} setGestionLienzo={setGestionLienzo}
-            />
+        <NavEditorAnimacion edicion_figuras ={edicion_figuras}
+                            composicion = {composicion}>
         </NavEditorAnimacion>
     </div>)
 }

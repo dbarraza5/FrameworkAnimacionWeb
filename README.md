@@ -19,6 +19,13 @@ falta el mover los atributos usando el mouse.
     
     5.- fallo de inflar y despues mover
     
+    6.- mostrar edicion de un solo grupo.
+        a.- centrar grupo ´para poder editar figuras.
+        b.- aumentar la vista para poder editar de mejor forma.
+        c.- seleccion de figuras para la edicion.
+        d.- debe haber otra vista solo para editar grupos en general.
+    7.- aprender nodejs para poder guardar los datos.
+    
     99.- La relatividad especial del tiempo puede resolver el problema de ajuste de los tiempos de los movimientos,
     cuando los grupos disminuyen su tamaño o figura en general.
     100.- las etiquetas pueden ser un de ayuda para aplicar movimientos sin aplicarlo a un id especifico de un 

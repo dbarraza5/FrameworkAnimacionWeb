@@ -35,11 +35,13 @@ class GestionAnimacion{
     meta_movimientos = [
         {
             nombre: "MRU",
-            velocidad: "TIPO_FLOAT",
-            sentido: "TIPO_BOOL",
-            direccion: "TIPO_BOOL",
+            atributos:[
+                {nombre:"velocidad",tipo: "TIPO_FLOAT", valor_defecto: 20},
+                {nombre:"sentido",tipo: "TIPO_BOOL", valor_defecto: 1},
+                {nombre:"direccion",tipo: "TIPO_BOOL", valor_defecto: 1},
+            ]
         },
-        {
+        /*{
             nombre: "MRUA",
             velocidad: "TIPO_FLOAT",
             aceleracion: "TIPO_FLOAT",
@@ -59,8 +61,10 @@ class GestionAnimacion{
             aceleracion: "TIPO_FLOAT",
             sentido: "TIPO_BOOL",
             direccion: "TIPO_BOOL",
-        },
+        },*/
     ]
+    id_proyecto = "12hh21j"
+    nombre_proyecto = "automovil"
 
     constructor() {
         this.grupos_figuras = [
@@ -186,6 +190,17 @@ class GestionAnimacion{
                 ]
             }
         ]
+    }
+
+    getDatosAnimacion(){
+        return {
+            id_proyecto: this.id_proyecto,
+            nombre_proyecto: this.nombre_proyecto,
+            meta_figuras: this.meta_figuras,
+            meta_movimiento: this.meta_movimientos,
+            grupos_figuras: this.grupos_figuras,
+            grupo_movimientos: this.grupo_movimientos
+        }
     }
 
     getMetaFigura(tipo_figura){

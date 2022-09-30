@@ -1,6 +1,6 @@
 import ButtonNav from "../EditorMapa/ButtonNav";
 
-function NavEditorAnimacion({children}){
+function NavEditorAnimacion(props){
 
     const graph = {
         nodes: [
@@ -50,18 +50,17 @@ function NavEditorAnimacion({children}){
         <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
                  aria-labelledby="home-tab"
-                 tabIndex="0">{children}
+                 tabIndex="0">{props.edicion_figuras}
             </div>
             <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel"
                  aria-labelledby="profile-tab"
                  tabIndex="1">
 
-
             </div>
             <div className="tab-pane fade" id="contact-tab-pane" role="tabpanel"
                  aria-labelledby="contact-tab"
                  tabIndex="2">
-                figuras
+                {props.composicion}
             </div>
         </div>
     </div>)
