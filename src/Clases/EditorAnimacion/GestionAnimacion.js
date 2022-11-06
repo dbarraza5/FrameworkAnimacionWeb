@@ -182,10 +182,14 @@ class GestionAnimacion{
                 nombre: "default",
                 lista_movimientos: [
                     {
+                        nombre: "mr1",
                         tipo: "MRU",
-                        velocidad: 20,
-                        sentido: true,
-                        direccion: false,
+                        atributos:{
+                            velocidad: 20,
+                            sentido: true,
+                            direccion: false,
+                        }
+
                     }
                 ]
             }
