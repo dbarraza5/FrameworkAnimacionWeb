@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import Editor from "./Componentes/EditorMapa/Editor";
 import GestionMapa from "./Clases/EditorMapa/GestionMapa"
 import styles from './App.css';
-import React, {Component} from "react";
+import React, {Component, useState} from "react";
 import {Switch, Route, Link} from 'react-router-dom'
 import EditorAnimacion from "./Componentes/EditorAnimacion/EditorAnimacion";
 import Login from "./Componentes/Autentificacion/Login";
@@ -19,24 +19,14 @@ import RoutesMain from "./Routes/RoutesMain";
 }*/
 
 
-class App extends Component {
+function App(){
+    const [user, setUser] = useState(null);
 
-
-    constructor() {
-        super();
-        //this.mapa = new GestionMapa();
-
-    }
-
-    render() {
-        //const mapa= new GestionMapa()
-        //<EditorAnimacion/>
-        return (
-            <div>
-                <RoutesMain/>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <RoutesMain user={user} setUser={setUser}/>
+        </div>
+    );
 }
 
 export default App;

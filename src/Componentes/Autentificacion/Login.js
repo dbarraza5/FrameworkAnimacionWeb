@@ -2,9 +2,13 @@ import {useState} from "react"
 import axios from "axios"
 import {Link} from "react-router-dom";
 import config from "../../config";
+import useCookies from "react-cookie/cjs/useCookies";
 
 
-function Login() {
+function Login(props) {
+    const user = props.user;
+    const setUser = props.setUser;
+    const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
 
     const [datos, setDatos] = useState({
         email: "",
@@ -22,7 +26,10 @@ function Login() {
                 let res = await axios.post(config.SERVIDOR_BACKEND + "/user/login", datos)
                     .then(function (response) {
                         console.log("funciono")
-                        console.log(response);
+                        console.log(response.data);
+                        console.log(cookies)
+                        setCookie( "usuario",response.data, "/");
+                        setUser(response.data);
                     })
                     .catch(function (error) {
                         console.log("error")

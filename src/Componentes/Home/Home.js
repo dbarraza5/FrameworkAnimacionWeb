@@ -1,8 +1,8 @@
 import MenuBar from "./MenuBar";
 
-function Home(){
+function Home(props){
     return(<div>
-        <MenuBar/>
+        <MenuBar {...props}/>
     </div>)
 }
 
