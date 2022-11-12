@@ -1,6 +1,6 @@
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import axios from "axios"
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import config from "../../config";
 import useCookies from "react-cookie/cjs/useCookies";
 
@@ -14,6 +14,15 @@ function Login(props) {
         email: "",
         password: ""
     })
+
+    const navigate = useNavigate();
+    const [ir_home, setIrHome] = useState(false);
+    useEffect(() => {
+        if(ir_home){
+            navigate("/");
+        }
+
+    }, [ir_home]);
 
     const enviarFormulario = async () => {
         console.log("enviar formulario")
@@ -30,6 +39,7 @@ function Login(props) {
                         console.log(cookies)
                         setCookie( "usuario",response.data, "/");
                         setUser(response.data);
+                        setIrHome(true)
                     })
                     .catch(function (error) {
                         console.log("error")

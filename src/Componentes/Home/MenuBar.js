@@ -1,18 +1,38 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import useCookies from "react-cookie/cjs/useCookies";
 import axios from "axios";
 import config from "../../config";
+import {useEffect, useState} from "react";
 
 function MenuBar(props){
     const setUser = props.setUser;
     const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
 
+
+    const navigate = useNavigate();
+    const [ir_login, setIrLogin] = useState(false);
+    useEffect(() => {
+        console.log("vamos ave4errr: "+ir_login)
+        if(ir_login){
+            console.log("IR AL LOGIN KBRON22222222222222222")
+            navigate("/");
+        }
+
+    }, [ir_login]);
+
     const logout= async()=>{
         try {
+            console.log("ussuario: ")
+            console.log(props.user)
             let res = await axios.get(config.SERVIDOR_BACKEND + "/user/logout")
                 .then(function (response) {
+                    console.log("IR AL LOGIN KBRON")
                     removeCookie('usuario', "/")
-                    setUser(null);
+                    if(props.user != null){
+                        console.log("seteando el USER")
+                        setUser(null);
+                    }
+                    //setIrLogin(true)
                 })
                 .catch(function (error) {
                     console.log("error")

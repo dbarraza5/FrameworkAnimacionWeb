@@ -15,9 +15,8 @@ function RoutesMain(props){
     const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
     const user_cookie = cookies.usuario;
 
-    const logout=()=>{
-        removeCookie('cookie-usuario', "/")
-    }
+    console.log("cookie:")
+    console.log(user_cookie)
 
     const [resgistrado, setRegistrado] = useState(false);
     useEffect(() => {
@@ -29,10 +28,23 @@ function RoutesMain(props){
         }
     }, [resgistrado]);
 
+
+    if(props.user == null && user_cookie !== undefined){
+        //user = user_cookie;
+        props.setUser(user_cookie)
+    }
+
+    /*useEffect(() => {
+        if(props.user == null){
+            props.setUser(user_cookie)
+        }
+    }, [props.user]);*/
+
+
     return (
             <BrowserRouter>
                 <Routes>
-                    <Route exact path="/" element={user ? SectionHome(props) :SectionLogin(props)}/>
+                    <Route exact path="/" element={user != null ? SectionHome(props) :SectionLogin(props)}/>
 
                     <Route exact path="/register" element={<SectionRegister setRegistrado={setRegistrado}/>} />
 
