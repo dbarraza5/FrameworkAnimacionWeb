@@ -1,7 +1,7 @@
-import {Route, Routes,BrowserRouter , Link, redirect } from "react-router-dom";
+import {Route, Routes, BrowserRouter, Link, redirect, useNavigate} from "react-router-dom";
 import styles from "../App.css";
 import Login from "../Componentes/Autentificacion/Login";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import EditorAnimacion from "../Componentes/EditorAnimacion/EditorAnimacion";
 import Register from "../Componentes/Autentificacion/Register";
 import Home from "../Componentes/Home/Home";
@@ -19,12 +19,22 @@ function RoutesMain(props){
         removeCookie('cookie-usuario', "/")
     }
 
+    const [resgistrado, setRegistrado] = useState(false);
+    useEffect(() => {
+        if(resgistrado)
+        {
+            setTimeout(() => {
+                alert("registrado!!!");
+            }, 1000)
+        }
+    }, [resgistrado]);
+
     return (
             <BrowserRouter>
                 <Routes>
                     <Route exact path="/" element={user ? SectionHome(props) :SectionLogin(props)}/>
 
-                    <Route exact path="/register" element={<SectionRegister />} />
+                    <Route exact path="/register" element={<SectionRegister setRegistrado={setRegistrado}/>} />
 
                     <Route exact path="/home" element={<SectionHome />} />
 
@@ -44,11 +54,11 @@ function SectionLogin(props) {
     );
 }
 
-function SectionRegister() {
+function SectionRegister(props) {
     return (
         <section className="vh-100 gradientCustom" style={styles}>
             <div className="container-xxl">
-                <Register/>
+                <Register {...props}/>
             </div>
         </section>
     );
