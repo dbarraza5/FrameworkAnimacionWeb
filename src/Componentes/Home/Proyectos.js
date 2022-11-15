@@ -2,6 +2,7 @@ import { Cookies } from 'react-cookie';
 import {useEffect, useState} from "react";
 import axios from "axios";
 import config from "../../config";
+import ModalProyecto from "./ModalProyecto";
 
 
 
@@ -12,6 +13,8 @@ function Proyectos(){
     console.log("Cookie: ")
     console.log(datos_usuario)
     const [proyectos, setProyectos] = useState([])
+
+
 
     const obtenerListaProyectos=async()=>{
         console.log("obteniendo proyectos");
@@ -24,10 +27,6 @@ function Proyectos(){
                         console.log("funciono")
                         console.log(response.data);
                         setProyectos(response.data)
-                        //console.log(cookies)
-                        //setUser( "usuario",response.data, "/");
-                        //setUser(response.data);
-                        //setIrHome(true)
                     })
                     .catch(function (error) {
                         console.log("error")
@@ -38,6 +37,15 @@ function Proyectos(){
         } catch (err) {
             //console.log(err);
         }
+    }
+
+    const CambioValoresProyecto=(e, p)=>{
+        proyectos.map((proyecto)=>{
+            if(proyecto._id === p._id){
+
+            }
+            return proyecto;
+        })
     }
 
     useEffect(()=>{
@@ -85,7 +93,7 @@ function Proyectos(){
                         const fecha_creacion = new Date(p.fecha_creacion).toLocaleString();
                         const fecha_actualizacion = new Date(p.fecha_actualizacion).toLocaleString();
 
-
+                        const id_modal = "modal_proyec_"+p._id;
                         return(
                             <tr>
                                 <th scope="row">{index+1}</th>
@@ -95,17 +103,19 @@ function Proyectos(){
                                 <td>{fecha_actualizacion}</td>
                                 <td>
                                     <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
-                                        <button type="button" className="btn btn-outline-primary"><i className="bi bi-eye"></i></button>
-                                        <button type="button" className="btn btn-outline-primary" onClick="">
+                                        <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target={"#"+id_modal}>
+                                            <i className="bi bi-eye"></i></button>
+                                        <button type="button" className="btn btn-outline-primary">
                                             <i className="bi bi-pencil"></i>
                                         </button>
-                                        <button type="button" className="btn btn-outline-primary"
-                                                onClick="">
+                                        <button type="button" className="btn btn-outline-primary">
                                             <i className="bi bi-eraser"></i>
                                         </button>
                                     </div>
                                 </td>
+                                <ModalProyecto id = {id_modal} p={p}/>
                             </tr>
+
                         )
                     })}
                     </tbody>
