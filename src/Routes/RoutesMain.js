@@ -6,6 +6,7 @@ import EditorAnimacion from "../Componentes/EditorAnimacion/EditorAnimacion";
 import Register from "../Componentes/Autentificacion/Register";
 import Home from "../Componentes/Home/Home";
 import useCookies from "react-cookie/cjs/useCookies";
+import Proyectos from "../Componentes/Home/Proyectos";
 
 
 function RoutesMain(props){
@@ -37,7 +38,7 @@ function RoutesMain(props){
     return (
             <BrowserRouter>
                 <Routes>
-                    <Route exact path="/" element={user != null ? SectionHome(props) :SectionLogin(props)}/>
+                    <Route exact path="/" element={user.usuario != null ? SectionHome(props) :SectionLogin(props)}/>
 
                     <Route exact path="/register" element={<SectionRegister setRegistrado={setRegistrado}/>} />
 
@@ -72,9 +73,16 @@ function SectionRegister(props) {
 
 function SectionHome(props) {
     return (
-        <section className="vh-100 gradientCustom" style={styles}>
+        <section className="" >
             <div className="container-xxl">
                 <Home {...props} />
+                <hr/>
+
+                <div className="container-xxl">
+                    <Proyectos/>
+                </div>
+
+
             </div>
         </section>
     );

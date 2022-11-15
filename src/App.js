@@ -7,7 +7,7 @@ import {Switch, Route, Link} from 'react-router-dom'
 import EditorAnimacion from "./Componentes/EditorAnimacion/EditorAnimacion";
 import Login from "./Componentes/Autentificacion/Login";
 import RoutesMain from "./Routes/RoutesMain";
-import useCookies from "react-cookie/cjs/useCookies";
+import { useCookies } from 'react-cookie';
 
 /*function App() {
 
@@ -21,28 +21,16 @@ import useCookies from "react-cookie/cjs/useCookies";
 
 
 function App(){
-    const [user, setUser] = useState(null);
-    const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
-    const user_cookie = cookies.usuario;
+    //const [user, setUser] = useState(null);
+    const [user, setUser, removeCookie] = useCookies();
+    //const user_cookie = cookies.usuario;
 
-    console.log("cookie:")
-    console.log(user_cookie)
-
-    if(user == null && user_cookie !== undefined){
-        //user = user_cookie;
-        setUser(user_cookie)
-    }
-
-    const info=()=>{
-        console.log("info: ")
-        console.log(cookies)
-        console.log(user)
-    }
+    console.log("user cookie:")
+    console.log(user)
 
     return (
         <div>
-            <RoutesMain user={user} setUser={setUser}/>
-            <button onClick={info}>ftreter</button>
+            <RoutesMain user={user} setUser={setUser} removeCookie={removeCookie}/>
         </div>
     );
 }

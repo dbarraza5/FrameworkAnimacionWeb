@@ -37,9 +37,9 @@ function Login(props) {
                         console.log("funciono")
                         console.log(response.data);
                         console.log(cookies)
-                        setCookie( "usuario",response.data, "/");
-                        setUser(response.data);
-                        setIrHome(true)
+                        setUser( "usuario",response.data, "/");
+                        //setUser(response.data);
+                        //setIrHome(true)
                     })
                     .catch(function (error) {
                         console.log("error")

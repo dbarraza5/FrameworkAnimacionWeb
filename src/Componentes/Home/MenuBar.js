@@ -10,7 +10,7 @@ function MenuBar(props){
 
 
     const navigate = useNavigate();
-    const [ir_login, setIrLogin] = useState(false);
+    /*const [ir_login, setIrLogin] = useState(false);
     useEffect(() => {
         console.log("vamos ave4errr: "+ir_login)
         if(ir_login){
@@ -18,7 +18,7 @@ function MenuBar(props){
             navigate("/");
         }
 
-    }, [ir_login]);
+    }, [ir_login]);*/
 
     const logout= async()=>{
         try {
@@ -27,11 +27,11 @@ function MenuBar(props){
             let res = await axios.get(config.SERVIDOR_BACKEND + "/user/logout")
                 .then(function (response) {
                     console.log("IR AL LOGIN KBRON")
-                    removeCookie('usuario', "/")
-                    if(props.user != null){
+                    props.removeCookie('usuario', "/")
+                    /*if(props.user != null){
                         console.log("seteando el USER")
                         setUser(null);
-                    }
+                    }*/
                     //setIrLogin(true)
                 })
                 .catch(function (error) {
