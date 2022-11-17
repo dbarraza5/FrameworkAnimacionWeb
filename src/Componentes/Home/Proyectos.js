@@ -48,6 +48,19 @@ function Proyectos(){
         })
     }
 
+    const abrirModal=(p)=>{
+        console.log("abriendo modal!!!")
+        console.log(p)
+        const input_nombre = document.getElementById("nombre-proyecto")
+        input_nombre.value = p.nombre;
+
+        const input_descripcion = document.getElementById("descripcion-proyecto")
+        input_descripcion.value = p.descripcion;
+
+        const btn_enviar = document.getElementById("enviar-proyecto")
+        btn_enviar.value = p._id
+    }
+
     useEffect(()=>{
         obtenerListaProyectos();
     },[])
@@ -94,6 +107,7 @@ function Proyectos(){
                         const fecha_actualizacion = new Date(p.fecha_actualizacion).toLocaleString();
 
                         const id_modal = "modal_proyec_"+p._id;
+
                         return(
                             <tr>
                                 <th scope="row">{index+1}</th>
@@ -103,7 +117,8 @@ function Proyectos(){
                                 <td>{fecha_actualizacion}</td>
                                 <td>
                                     <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
-                                        <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target={"#"+id_modal}>
+                                        <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
+                                                data-bs-target={"#modal-proyecto"} onClick={(e)=>abrirModal(p)}>
                                             <i className="bi bi-eye"></i></button>
                                         <button type="button" className="btn btn-outline-primary">
                                             <i className="bi bi-pencil"></i>
@@ -113,7 +128,7 @@ function Proyectos(){
                                         </button>
                                     </div>
                                 </td>
-                                <ModalProyecto id = {id_modal} p={p}/>
+
                             </tr>
 
                         )
@@ -121,9 +136,8 @@ function Proyectos(){
                     </tbody>
                 </table>
             </div>
+            <ModalProyecto proyectos={proyectos} setProyectos={setProyectos}/>
         </div>
-
-
     )
 }
 
