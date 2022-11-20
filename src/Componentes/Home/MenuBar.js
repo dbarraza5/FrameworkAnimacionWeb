@@ -24,7 +24,17 @@ function MenuBar(props){
         try {
             console.log("ussuario: ")
             console.log(props.user)
-            let res = await axios.get(config.SERVIDOR_BACKEND + "/user/logout")
+            const config = {
+                method: 'get',
+                url: "user/logout",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Accept': 'application/json'
+                },
+                withCredentials: true
+            };
+
+            let res = await axios(config)
                 .then(function (response) {
                     console.log("IR AL LOGIN KBRON")
                     props.removeCookie('usuario', "/")

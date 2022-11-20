@@ -19,10 +19,24 @@ function Proyectos(){
     const obtenerListaProyectos=async()=>{
         console.log("obteniendo proyectos");
         try {
-            const url = config.SERVIDOR_BACKEND + "/api/proyecto/user/"+datos_usuario.id;
+            const url = "api/proyecto/user/"+datos_usuario.id;
             console.log("url: "+url)
             if(true){
-                let res = await axios.get(url)
+                console.log(cookie)
+                const token = datos_usuario.token
+                const config = {
+                    method: 'get',
+                    url: url,
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Accept': 'application/json'
+                        //'Authorization': 'Bearer '+token,
+                        //'Cookie': 'app.sid=s%3AvQpGktI'
+                    },
+                    withCredentials: true
+                };
+
+                let res = await axios(config)
                     .then(function (response) {
                         console.log("funciono")
                         console.log(response.data);

@@ -32,11 +32,22 @@ function Login(props) {
         if (form.checkValidity()) {
             console.log("form validado");
             try {
-                let res = await axios.post(config.SERVIDOR_BACKEND + "/user/login", datos)
+                const config_request = {
+                    method: 'post',
+                    url: "user/login",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        //'Cookie': 'app.sid=s%3AL0QWOmz98YcP55JDuuIiWyj4ipkVsm2K.2vzUJKRev28dwNFSebHhv6bH7SYTBvmw1YeYnV5xnZ0'
+                    },
+                    data : datos
+                }
+
+                let res = await axios(config_request)
                     .then(function (response) {
                         console.log("funciono")
                         console.log(response.data);
                         console.log(cookies)
+                        console.log(response.headers)
                         setUser( "usuario",response.data, "/");
                         //setUser(response.data);
                         //setIrHome(true)
