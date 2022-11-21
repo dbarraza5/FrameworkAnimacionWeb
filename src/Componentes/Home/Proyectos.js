@@ -151,7 +151,7 @@ function Proyectos(props){
                     </tbody>
                 </table>
             </div>
-            <ModalProyecto proyectos={proyectos} setProyectos={setProyectos}/>
+            <ModalProyecto user={props.user} proyectos={proyectos} setProyectos={setProyectos}/>
         </div>
     )
 }

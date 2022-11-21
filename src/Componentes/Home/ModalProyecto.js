@@ -25,25 +25,18 @@ function ModalProyectos(props){
         if (form.checkValidity()) {
             console.log("form validado");
             try {
-                const token = ""
-                /*var config = {
-                    method: 'get',
-                    url: url,
-                    headers: {
-                        'Authorization': 'Bearer '+token,
-                        //'Cookie': 'app.sid=s%3AvQpGktI'
-                    }
-                };*/
-
+                const token = props.user.usuario.token;
                 const config_request = {
                     method: 'put',
                     url: url,
                     headers: {
                         'Content-Type': 'application/json',
-                        //'Cookie': 'app.sid=s%3AL0QWOmz98YcP55JDuuIiWyj4ipkVsm2K.2vzUJKRev28dwNFSebHhv6bH7SYTBvmw1YeYnV5xnZ0'
+                        'Authorization': 'Bearer '+token,
                     },
                     data : datos
                 }
+                //console.log(props.user.usuario)
+                //console.log(config_request)
 
 
                 let res = await axios(config_request)
