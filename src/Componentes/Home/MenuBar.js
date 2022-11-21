@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 
 function MenuBar(props){
     const setUser = props.setUser;
-    const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
+    //const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
 
 
     const navigate = useNavigate();
@@ -22,8 +22,8 @@ function MenuBar(props){
 
     const logout= async()=>{
         try {
-            console.log("ussuario: ")
-            console.log(props.user)
+            //console.log("ussuario: ")
+            //console.log(props.user)
             const config = {
                 method: 'get',
                 url: "user/logout",
@@ -36,8 +36,8 @@ function MenuBar(props){
 
             let res = await axios(config)
                 .then(function (response) {
-                    console.log("IR AL LOGIN KBRON")
-                    props.removeCookie('usuario', "/")
+                    //console.log("IR AL LOGIN KBRON")
+                    props.removeCookieUser()
                     /*if(props.user != null){
                         console.log("seteando el USER")
                         setUser(null);

@@ -14,7 +14,11 @@ function RoutesMain(props){
     const user = props.user;
 
 
-
+    //console.log("[COOKIE USER]")
+    //console.log(user)
+    //console.log("[END COOKIE]")
+    //props.setUser( "usuario",null, "/");
+    //props.removeCookie('usuario','/');
     const [resgistrado, setRegistrado] = useState(false);
     useEffect(() => {
         if(resgistrado)
@@ -25,24 +29,35 @@ function RoutesMain(props){
         }
     }, [resgistrado]);
 
-
-
-
-    /*useEffect(() => {
-        if(props.user == null){
-            props.setUser(user_cookie)
+    const [mensajeError, setMensajeError] = useState(null);
+    useEffect(() => {
+        console.log("cambiar el mensaje de error")
+        if(mensajeError)
+        {
+            setTimeout(() => {
+                alert(mensajeError);
+            }, 1000)
         }
-    }, [props.user]);*/
+    }, [mensajeError]);
 
+
+    const manejadorErrores = (datos)=>{
+        const tipo_error = datos.error.name;
+        if(tipo_error === "TokenExpiredError" || tipo_error === "NoAutenticado"){
+            console.log("tu session expiro brooo¬¬¬");
+            props.removeCookieUser();
+            setMensajeError("tu sesión expiro0122")
+        }
+    }
 
     return (
             <BrowserRouter>
                 <Routes>
-                    <Route exact path="/" element={user.usuario != null ? SectionHome(props) :SectionLogin(props)}/>
+                    <Route exact path="/" element={user.usuario != null ? SectionHome({...props, manejadorErrores:manejadorErrores}) :SectionLogin(props)}/>
 
                     <Route exact path="/register" element={<SectionRegister setRegistrado={setRegistrado}/>} />
 
-                    <Route exact path="/home" element={<SectionHome />} />
+                    <Route exact path="/home" element={<SectionHome {...props} setMensajeError={setMensajeError}/>} />
 
                     <Route exact path="/home/animacion" element={<SectionAnimacion />} />
                 </Routes>
@@ -79,7 +94,7 @@ function SectionHome(props) {
                 <hr/>
 
                 <div className="container-xxl">
-                    <Proyectos/>
+                    <Proyectos {...props}/>
                 </div>
 
 

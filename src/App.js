@@ -25,12 +25,23 @@ function App(){
     const [user, setUser, removeCookie] = useCookies();
     //const user_cookie = cookies.usuario;
 
-    console.log("user cookie:")
-    console.log(user)
+    //console.log("user cookie:")
+    //console.log(user)
+
+    const setCookieUser=(datos)=>{
+        console.log("[CAMBIANDO LOS VALORES DE LA COOKIE]")
+        setUser("usuario", datos, "/")
+    }
+
+    const removeCookieUser=()=>{
+        console.log("[REMOVINEDO COOKIE]")
+        removeCookie('usuario','/')
+    }
+
 
     return (
         <div>
-            <RoutesMain user={user} setUser={setUser} removeCookie={removeCookie}/>
+            <RoutesMain user={user} setUser={setCookieUser} removeCookieUser={removeCookieUser}/>
         </div>
     );
 }

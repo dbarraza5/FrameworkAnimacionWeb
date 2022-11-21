@@ -6,31 +6,31 @@ import ModalProyecto from "./ModalProyecto";
 
 
 
-function Proyectos(){
+function Proyectos(props){
     //const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
-    console.log("Cookie: ")
-    console.log(datos_usuario)
+    //console.log("Cookie: ")
+    //console.log(datos_usuario)
     const [proyectos, setProyectos] = useState([])
 
-
+    const removerCookieUser_=props.removeCookieUser;
 
     const obtenerListaProyectos=async()=>{
-        console.log("obteniendo proyectos");
+        //console.log("obteniendo proyectos");
         try {
             const url = "api/proyecto/user/"+datos_usuario.id;
-            console.log("url: "+url)
+            //console.log("url: "+url)
             if(true){
-                console.log(cookie)
+                //console.log(cookie)
                 const token = datos_usuario.token
                 const config = {
                     method: 'get',
                     url: url,
                     headers: {
                         "Content-Type": "application/json",
-                        'Accept': 'application/json'
-                        //'Authorization': 'Bearer '+token,
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer '+token,
                         //'Cookie': 'app.sid=s%3AvQpGktI'
                     },
                     withCredentials: true
@@ -38,13 +38,14 @@ function Proyectos(){
 
                 let res = await axios(config)
                     .then(function (response) {
-                        console.log("funciono")
-                        console.log(response.data);
+                        //console.log("funciono")
+                        //console.log(response.data);
                         setProyectos(response.data)
                     })
-                    .catch(function (error) {
-                        console.log("error")
-                        console.log(error);
+                    .catch(function (response) {
+                        console.log("error obtener proyectos")
+                        console.log(response.response.data);
+                        props.manejadorErrores(response.response.data)
                     });
             }
 

@@ -8,7 +8,7 @@ import useCookies from "react-cookie/cjs/useCookies";
 function Login(props) {
     const user = props.user;
     const setUser = props.setUser;
-    const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
+    //const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
 
     const [datos, setDatos] = useState({
         email: "",
@@ -25,12 +25,12 @@ function Login(props) {
     }, [ir_home]);
 
     const enviarFormulario = async () => {
-        console.log("enviar formulario")
-        console.log(datos)
+        //console.log("enviar formulario")
+        //console.log(datos)
         const form = document.getElementById("form-login")
 
         if (form.checkValidity()) {
-            console.log("form validado");
+            //console.log("form validado");
             try {
                 const config_request = {
                     method: 'post',
@@ -44,11 +44,11 @@ function Login(props) {
 
                 let res = await axios(config_request)
                     .then(function (response) {
-                        console.log("funciono")
-                        console.log(response.data);
-                        console.log(cookies)
-                        console.log(response.headers)
-                        setUser( "usuario",response.data, "/");
+                        //console.log("funciono")
+                        //console.log(response.data);
+                        //console.log(cookies)
+                        //console.log(response.headers)
+                        setUser( response.data);
                         //setUser(response.data);
                         //setIrHome(true)
                     })
