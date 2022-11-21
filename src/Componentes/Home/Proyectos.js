@@ -54,22 +54,12 @@ function Proyectos(props){
         }
     }
 
-    const CambioValoresProyecto=(e, p)=>{
-        proyectos.map((proyecto)=>{
-            if(proyecto._id === p._id){
-
-            }
-            return proyecto;
-        })
-    }
 
     const abrirModal=(p)=>{
-        console.log("abriendo modal!!!")
-        console.log(p)
-        const input_nombre = document.getElementById("nombre-proyecto")
+        const input_nombre = document.getElementById("nombre-proyecto-put")
         input_nombre.value = p.nombre;
 
-        const input_descripcion = document.getElementById("descripcion-proyecto")
+        const input_descripcion = document.getElementById("descripcion-proyecto-put")
         input_descripcion.value = p.descripcion;
 
         const btn_enviar = document.getElementById("enviar-proyecto")
@@ -92,7 +82,8 @@ function Proyectos(props){
                                 <h2>Proyecto <b>Animación</b></h2>
                             </div>
                             <div className="col-sm-3">
-                                <button type="button" className="btn btn-outline-primary">
+                                <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target={"#modal-crear-proyecto"}>
                                     <i className="bi bi-plus-circle"></i> <span>Agregar</span>
                                 </button>
                                 <button type="button" className="btn btn-outline-primary">
@@ -133,7 +124,7 @@ function Proyectos(props){
                                 <td>
                                     <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
                                         <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
-                                                data-bs-target={"#modal-proyecto"} onClick={(e)=>abrirModal(p)}>
+                                                data-bs-target={"#modal-actualizar-proyecto"} onClick={(e)=>abrirModal(p)}>
                                             <i className="bi bi-eye"></i></button>
                                         <button type="button" className="btn btn-outline-primary">
                                             <i className="bi bi-pencil"></i>
@@ -151,7 +142,8 @@ function Proyectos(props){
                     </tbody>
                 </table>
             </div>
-            <ModalProyecto user={props.user} proyectos={proyectos} setProyectos={setProyectos}/>
+            <ModalProyecto id_modal="modal-actualizar-proyecto" accion="put" user={props.user} proyectos={proyectos} setProyectos={setProyectos}/>
+            <ModalProyecto id_modal="modal-crear-proyecto" accion="post" user={props.user} proyectos={proyectos} setProyectos={setProyectos}/>
         </div>
     )
 }
