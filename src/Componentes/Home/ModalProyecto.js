@@ -135,7 +135,7 @@ function ModalProyectos(props){
                             <div className="mb-3">
                                 <label htmlFor="exampleInputEmail1" className="form-label">Nombre</label>
                                 <input type="text" className="form-control" id={"nombre-proyecto-"+props.accion}
-                                       aria-describedby="emailHelp"
+                                       aria-describedby="emailHelp" maxLength="20"
                                        onChange={ingresarValorCampo} required/>
                             </div>
 

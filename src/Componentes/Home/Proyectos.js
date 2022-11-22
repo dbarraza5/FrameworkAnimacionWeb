@@ -54,7 +54,6 @@ function Proyectos(props){
         }
     }
 
-
     const abrirModal=(p)=>{
         const input_nombre = document.getElementById("nombre-proyecto-put")
         input_nombre.value = p.nombre;
@@ -64,6 +63,51 @@ function Proyectos(props){
 
         const btn_enviar = document.getElementById("enviar-proyecto")
         btn_enviar.value = p._id
+    }
+
+    const eliminarProyecto=async (id_proyecto)=>{
+        const url ="api/proyecto/id/"+id_proyecto;
+
+        const token = props.user.usuario.token;
+        const config_request = {
+            method: 'delete',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+token,
+            }
+        }
+
+        try {
+            let res = await axios(config_request)
+                .then(function (response) {
+                    console.log("Borrando animacion")
+                    //console.log(response.data);
+                    //const nuevo_proyecto = response.data;
+                    const proyectos_act = proyectos.filter((p)=>{
+                        if(p._id !== id_proyecto){
+                            return true;
+                        }
+                        return false
+                    })
+                    console.log(proyectos_act)
+                    console.log("TERMIINO DEL PROE")
+                    setProyectos(proyectos_act);
+                    const btn_cerrar = document.getElementById("btn-cerrar-modal-"+props.accion)
+                    btn_cerrar.click();
+                })
+                .catch(function (respuesta) {
+                    //const msj = respuesta.response.data.error[0]
+                    //props.setMensajeError(msj)
+                });
+        }
+        catch(err) {
+            console.log(err)
+            //document.getElementById("demo").innerHTML = err.message;
+        }
+
+
+
     }
 
     useEffect(()=>{
@@ -78,19 +122,14 @@ function Proyectos(props){
                     <div className="container-fluid">
 
                         <div className="row">
-                            <div className="col-sm-9">
+                            <div className="col-sm-10">
                                 <h2>Proyecto <b>Animación</b></h2>
                             </div>
-                            <div className="col-sm-3">
+                            <div className="col-sm-2">
                                 <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
                                         data-bs-target={"#modal-crear-proyecto"}>
                                     <i className="bi bi-plus-circle"></i> <span>Agregar</span>
                                 </button>
-                                <button type="button" className="btn btn-outline-primary">
-                                    <i className="bi bi-eraser"></i> <span>Borrar</span>
-                                </button>
-
-
                             </div>
                         </div>
 
@@ -125,11 +164,11 @@ function Proyectos(props){
                                     <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
                                         <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
                                                 data-bs-target={"#modal-actualizar-proyecto"} onClick={(e)=>abrirModal(p)}>
-                                            <i className="bi bi-eye"></i></button>
+                                            <i className="bi bi-pencil"></i></button>
                                         <button type="button" className="btn btn-outline-primary">
-                                            <i className="bi bi-pencil"></i>
+                                            <i className="bi bi-eye"></i>
                                         </button>
-                                        <button type="button" className="btn btn-outline-primary">
+                                        <button type="button" className="btn btn-outline-primary" onClick={()=>eliminarProyecto(p._id)}>
                                             <i className="bi bi-eraser"></i>
                                         </button>
                                     </div>
