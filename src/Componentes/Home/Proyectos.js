@@ -169,7 +169,7 @@ function Proyectos(props){
                                                 data-bs-target={"#modal-actualizar-proyecto"} onClick={(e)=>abrirModal(p)}>
                                             <i className="bi bi-pencil"></i></button>
                                         <button type="button" className="btn btn-outline-primary"
-                                        onClick={()=>navigate("animacion/"+p._id)}>
+                                        onClick={()=>navigate("list-animaciones/"+p._id)}>
                                             <i className="bi bi-eye"></i>
                                         </button>
                                         <button type="button" className="btn btn-outline-primary" onClick={()=>eliminarProyecto(p._id)}>

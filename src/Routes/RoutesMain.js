@@ -62,7 +62,9 @@ function RoutesMain(props){
 
                     <Route exact path="/home/animacion" element={<SectionAnimacion />} />
 
-                    <Route exact path="/animacion/:id_proyecto" element={<SectionListaAnimacion {...props} manejadorErrores={manejadorErrores}/>} />
+                    <Route exact path="/list-animaciones/:id_proyecto" element={<SectionListaAnimacion {...props} manejadorErrores={manejadorErrores}/>} />
+
+                    <Route exact path="/animacion/:id_animacion" element={<SectionEdicionAnimacion {...props} manejadorErrores={manejadorErrores}/>} />
                 </Routes>
             </BrowserRouter>
     )
@@ -87,7 +89,6 @@ function SectionRegister(props) {
         </section>
     );
 }
-
 
 function SectionHome(props) {
     return (
@@ -124,6 +125,19 @@ function SectionListaAnimacion(props) {
                 <Home {...props}/>
                 <hr/>
                 <Animacion {...props} id_proyecto={id_proyecto} nombre_proyecto="sin nombre"/>
+            </div>
+        </section>
+    );
+}
+
+function SectionEdicionAnimacion(props) {
+    const {id_animacion} = useParams();
+    return (
+        <section className="" style={styles}>
+            <div className="container-xxl">
+                <Home {...props}/>
+                <hr/>
+                <EditorAnimacion/>
             </div>
         </section>
     );

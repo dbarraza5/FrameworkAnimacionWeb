@@ -2,12 +2,15 @@ import ModalProyecto from "./ModalProyecto";
 import {useEffect, useState} from "react";
 import {Cookies} from 'react-cookie';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 function Animacion(props) {
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
 
     const [animaciones, setAnimaciones] = useState([]);
+
+    const navigate = useNavigate();
 
     const obtenerListaAnimaciones = async () => {
         try {
@@ -46,6 +49,10 @@ function Animacion(props) {
     useEffect(()=>{
         obtenerListaAnimaciones();
     }, [])
+
+    const irEdicionAnimacion=(id_animacion)=>{
+        navigate("/animacion/"+id_animacion)
+    }
 
     return (
         <div className="table-responsive">
@@ -96,7 +103,7 @@ function Animacion(props) {
                                                 data-bs-target={"#modal-actualizar-proyecto"}
                                                 onClick={(e) => console.log("editar")}>
                                             <i className="bi bi-pencil"></i></button>
-                                        <button type="button" className="btn btn-outline-primary">
+                                        <button type="button" className="btn btn-outline-primary" onClick={()=>irEdicionAnimacion(animacion._id)}>
                                             <i className="bi bi-eye"></i>
                                         </button>
                                         <button type="button" className="btn btn-outline-primary"
