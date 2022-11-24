@@ -2,8 +2,12 @@ import TreeViewElement from "../../../TreeView/TreeViewElement";
 
 
 function GestionGruposLienzo(props){
-    const arbol=props.animacion.estructura_arbol_grupos()
 
+
+    if(props.animacion.meta_figuras.length===0){
+        return (<p>nada</p>)
+    }
+    const arbol=props.animacion.estructura_arbol_grupos()
     return (<div>
         <div className="row">
             <div className="col-6">

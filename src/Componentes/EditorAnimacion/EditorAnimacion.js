@@ -27,7 +27,7 @@ function EditorAnimacion(props) {
     const [animacion, setAnimacion] = useState({edicion: new GestionAnimacion()});
     const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion());
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura())
-
+    console.log(animacion)
     const obtenerAnimacion=async ()=>{
         try {
             const url = "/api/animacion/id/" + props.id_animacion;
@@ -48,6 +48,9 @@ function EditorAnimacion(props) {
                 .then(function (response) {
                     console.log("funciono")
                     console.log(response.data);
+                    animacion.edicion.meta_figuras = response.data.meta_figuras
+                    animacion.edicion.meta_movimientos = response.data.meta_movimientos
+                    setAnimacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
                 })
                 .catch(function (response) {
@@ -67,7 +70,7 @@ function EditorAnimacion(props) {
         //console.log(gestionLienzo)
         console.log("[==============================ANIMACION===========================]")
         obtenerAnimacion();
-        gestionLienzo.actualizarLienzo(animacion.edicion)
+        //gestionLienzo.actualizarLienzo(animacion.edicion)
     },[]);
 
     const editar_animacion=(animacion_)=>{
@@ -76,17 +79,21 @@ function EditorAnimacion(props) {
         //lienzo.actualizarLienzo(animacion_.edicion)
     }
 
-    const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
-        eventoLienzoFigura :eventoLienzoFigura, setEventLienzoFigura:setEventLienzoFigura,
-        gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo};
+    if(animacion.edicion.meta_figuras.length>0){
+        const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
+            eventoLienzoFigura :eventoLienzoFigura, setEventLienzoFigura:setEventLienzoFigura,
+            gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo};
 
-    const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
-    const composicion = <EditorCompisicion {...paquete_datos}/>
-    return (<div className="row">
-        <NavEditorAnimacion edicion_figuras ={edicion_figuras}
-                            composicion = {composicion}>
-        </NavEditorAnimacion>
-    </div>)
+        const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
+        const composicion = <EditorCompisicion {...paquete_datos}/>
+        return (<div className="row">
+            <NavEditorAnimacion edicion_figuras ={edicion_figuras}
+                                composicion = {composicion}>
+            </NavEditorAnimacion>
+        </div>)
+    }
+
+    return <h1> Sin Servicio</h1>
 }
 
 export default EditorAnimacion

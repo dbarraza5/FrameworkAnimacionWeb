@@ -655,7 +655,8 @@ class GestionLienzoAnimacion {
                 const figura = grupo.lista_figuras[j];
                 let seleccion = null;
                 let color_figura = grupo.color;
-                if (this.categoria_trabajo === TRABAJO_FIGURA || this.categoria_trabajo === TRABAJO_LISTA_FIGURAS) {
+                if (true)//(this.categoria_trabajo === TRABAJO_FIGURA || this.categoria_trabajo === TRABAJO_LISTA_FIGURAS)
+                {
                     seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
                     if(this.lista_id_figuras.includes(figura.nombre)){
                         color_figura = "#ff00a1";
