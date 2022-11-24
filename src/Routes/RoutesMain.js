@@ -1,4 +1,4 @@
-import {Route, Routes, BrowserRouter, Link, redirect, useNavigate} from "react-router-dom";
+import {Route, Routes, BrowserRouter, Link, redirect, useNavigate, useParams} from "react-router-dom";
 import styles from "../App.css";
 import Login from "../Componentes/Autentificacion/Login";
 import React, {useEffect, useState} from "react";
@@ -7,6 +7,7 @@ import Register from "../Componentes/Autentificacion/Register";
 import Home from "../Componentes/Home/Home";
 import useCookies from "react-cookie/cjs/useCookies";
 import Proyectos from "../Componentes/Home/Proyectos";
+import Animacion from "../Componentes/Home/Animacion";
 
 
 function RoutesMain(props){
@@ -60,6 +61,8 @@ function RoutesMain(props){
                     <Route exact path="/home" element={<SectionHome {...props} setMensajeError={setMensajeError}/>} />
 
                     <Route exact path="/home/animacion" element={<SectionAnimacion />} />
+
+                    <Route exact path="/animacion/:id_proyecto" element={<SectionListaAnimacion {...props} manejadorErrores={manejadorErrores}/>} />
                 </Routes>
             </BrowserRouter>
     )
@@ -96,8 +99,6 @@ function SectionHome(props) {
                 <div className="container-xxl">
                     <Proyectos {...props}/>
                 </div>
-
-
             </div>
         </section>
     );
@@ -110,6 +111,19 @@ function SectionAnimacion(props) {
                 <Home />
                 <hr/>
                 <EditorAnimacion/>
+            </div>
+        </section>
+    );
+}
+
+function SectionListaAnimacion(props) {
+    const {id_proyecto} = useParams();
+    return (
+        <section className="" style={styles}>
+            <div className="container-xxl">
+                <Home {...props}/>
+                <hr/>
+                <Animacion {...props} id_proyecto={id_proyecto} nombre_proyecto="sin nombre"/>
             </div>
         </section>
     );

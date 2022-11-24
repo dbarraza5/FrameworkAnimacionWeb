@@ -4,6 +4,7 @@ import axios from "axios";
 import config from "../../config";
 import {useEffect, useState} from "react";
 
+
 function MenuBar(props){
     const setUser = props.setUser;
     //const [cookies, setCookie, removeCookie] = useCookies(['cookie-usuario']);
@@ -26,7 +27,7 @@ function MenuBar(props){
             //console.log(props.user)
             const config = {
                 method: 'get',
-                url: "user/logout",
+                url: "/user/logout",
                 headers: {
                     "Content-Type": "application/json",
                     'Accept': 'application/json'
@@ -38,6 +39,7 @@ function MenuBar(props){
                 .then(function (response) {
                     //console.log("IR AL LOGIN KBRON")
                     props.removeCookieUser()
+                    navigate("/")
                     /*if(props.user != null){
                         console.log("seteando el USER")
                         setUser(null);
@@ -62,7 +64,7 @@ function MenuBar(props){
             <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav">
                     <li className="nav-item">
-                        <a className="nav-link active" aria-current="page" href="">Inicio</a>
+                        <Link className="nav-link active" to="/">Inicio</Link>
                     </li>
                 </ul>
             </div>

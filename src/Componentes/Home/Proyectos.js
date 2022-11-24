@@ -3,7 +3,8 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import config from "../../config";
 import ModalProyecto from "./ModalProyecto";
-
+import {redirect} from "react-router-dom";
+import {useNavigate} from "react-router";
 
 
 function Proyectos(props){
@@ -114,6 +115,8 @@ function Proyectos(props){
         obtenerListaProyectos();
     },[])
 
+    const navigate = useNavigate();
+
     return(
         <div className="table-responsive">
             <div className="table-wrapper">
@@ -165,7 +168,8 @@ function Proyectos(props){
                                         <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
                                                 data-bs-target={"#modal-actualizar-proyecto"} onClick={(e)=>abrirModal(p)}>
                                             <i className="bi bi-pencil"></i></button>
-                                        <button type="button" className="btn btn-outline-primary">
+                                        <button type="button" className="btn btn-outline-primary"
+                                        onClick={()=>navigate("animacion/"+p._id)}>
                                             <i className="bi bi-eye"></i>
                                         </button>
                                         <button type="button" className="btn btn-outline-primary" onClick={()=>eliminarProyecto(p._id)}>
