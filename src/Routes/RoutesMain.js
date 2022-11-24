@@ -137,7 +137,7 @@ function SectionEdicionAnimacion(props) {
             <div className="container-xxl">
                 <Home {...props}/>
                 <hr/>
-                <EditorAnimacion/>
+                <EditorAnimacion id_animacion={id_animacion}/>
             </div>
         </section>
     );

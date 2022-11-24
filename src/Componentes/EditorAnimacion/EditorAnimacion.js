@@ -13,21 +13,62 @@ import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAn
 import Lienzo from "./Lienzo";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
 import EditorCompisicion from "./Composicion/EditorComposicion";
+import axios from "axios";
+import {Cookies} from 'react-cookie';
 
 
 
 
-function EditorAnimacion() {
+function EditorAnimacion(props) {
+
+    const cookie = new Cookies();
+    const datos_usuario = cookie.get("usuario")
 
     const [animacion, setAnimacion] = useState({edicion: new GestionAnimacion()});
     const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion());
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura())
 
+    const obtenerAnimacion=async ()=>{
+        try {
+            const url = "/api/animacion/id/" + props.id_animacion;
+
+            const token = datos_usuario.token
+            const config = {
+                method: 'get',
+                url: url,
+                headers: {
+                    "Content-Type": "application/json",
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                withCredentials: true
+            };
+
+            let res = await axios(config)
+                .then(function (response) {
+                    console.log("funciono")
+                    console.log(response.data);
+                    //setAnimaciones(response.data)
+                })
+                .catch(function (response) {
+                    console.log("error obtener proyectos")
+                    console.log(response.response.data);
+                    props.manejadorErrores(response.response.data)
+                });
+
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     useEffect(() => {
         //const liezo = new GestionLienzoAnimacion()
         //console.log(gestionLienzo)
+        console.log("[==============================ANIMACION===========================]")
+        obtenerAnimacion();
         gestionLienzo.actualizarLienzo(animacion.edicion)
-    });
+    },[]);
 
     const editar_animacion=(animacion_)=>{
         setAnimacion(animacion_)
