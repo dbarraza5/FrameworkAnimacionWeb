@@ -49,7 +49,8 @@ function EditorAnimacion(props) {
                     console.log("funciono")
                     console.log(response.data);
                     animacion.edicion.meta_figuras = response.data.meta_figuras
-                    animacion.edicion.meta_movimientos = response.data.meta_movimientos
+                    animacion.edicion.meta_movimientos = response.data.meta_movimientos;
+                    animacion.edicion.grupos_figuras = response.data.grupos_figuras
                     setAnimacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
                 })
