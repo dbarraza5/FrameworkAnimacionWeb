@@ -102,7 +102,7 @@ function MenuLateral(props) {
                     </div>
                 </div>
                 <div className="col py-3">
-                    Content area...
+                    {props.children}
                 </div>
             </div>
         </div>

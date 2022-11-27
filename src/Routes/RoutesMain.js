@@ -8,6 +8,7 @@ import Home from "../Componentes/Home/Home";
 import useCookies from "react-cookie/cjs/useCookies";
 import Proyectos from "../Componentes/Home/Proyectos";
 import Animacion from "../Componentes/Home/Animacion";
+import MenuLateral from "../Componentes/Home/MenuLateral";
 
 
 function RoutesMain(props){
@@ -134,13 +135,19 @@ function SectionEdicionAnimacion(props) {
     const {id_animacion} = useParams();
     return (
         <section className="" style={styles}>
-            <div className="container-xxl">
+            <MenuLateral>
+                <EditorAnimacion id_animacion={id_animacion}/>
+            </MenuLateral>
+        </section>
+    );
+}
+/*
+<div className="container-xxl">
                 <Home {...props}/>
                 <hr/>
                 <EditorAnimacion id_animacion={id_animacion}/>
             </div>
-        </section>
-    );
-}
+*
+* */
 
 export default RoutesMain
