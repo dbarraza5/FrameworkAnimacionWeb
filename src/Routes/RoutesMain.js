@@ -9,6 +9,7 @@ import useCookies from "react-cookie/cjs/useCookies";
 import Proyectos from "../Componentes/Home/Proyectos";
 import Animacion from "../Componentes/Home/Animacion";
 import MenuLateral from "../Componentes/Home/MenuLateral";
+import MenuAnimacion from "../Componentes/Home/MenuAnimacion";
 
 
 function RoutesMain(props){
@@ -93,16 +94,9 @@ function SectionRegister(props) {
 
 function SectionHome(props) {
     return (
-        <section className="" >
-            <div className="container-xxl">
-                <Home {...props} />
-                <hr/>
-
-                <div className="container-xxl">
-                    <Proyectos {...props}/>
-                </div>
-            </div>
-        </section>
+        <Home {...props}>
+            <Proyectos {...props}></Proyectos>
+        </Home>
     );
 }
 
@@ -121,6 +115,11 @@ function SectionAnimacion(props) {
 function SectionListaAnimacion(props) {
     const {id_proyecto} = useParams();
     return (
+        <Home {...props}>
+            <Animacion {...props} id_proyecto={id_proyecto} nombre_proyecto="sin nombre"/>
+        </Home>
+    )
+    /*return (
         <section className="" style={styles}>
             <div className="container-xxl">
                 <Home {...props}/>
@@ -128,18 +127,19 @@ function SectionListaAnimacion(props) {
                 <Animacion {...props} id_proyecto={id_proyecto} nombre_proyecto="sin nombre"/>
             </div>
         </section>
-    );
+    );*/
 }
 
 function SectionEdicionAnimacion(props) {
     const {id_animacion} = useParams();
+
     return (
-        <section className="" style={styles}>
-            <MenuLateral>
-                <EditorAnimacion id_animacion={id_animacion}/>
-            </MenuLateral>
-        </section>
-    );
+        <Home {...props}>
+            <MenuAnimacion/>
+            <hr/>
+            <EditorAnimacion id_animacion={id_animacion}/>
+        </Home>
+    )
 }
 /*
 <div className="container-xxl">
