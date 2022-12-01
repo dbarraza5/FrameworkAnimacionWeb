@@ -9,7 +9,7 @@ import useCookies from "react-cookie/cjs/useCookies";
 import Proyectos from "../Componentes/Home/Proyectos";
 import Animacion from "../Componentes/Home/Animacion";
 import MenuLateral from "../Componentes/Home/MenuLateral";
-import MenuAnimacion from "../Componentes/Home/MenuAnimacion";
+import MenuAnimacion from "../Componentes/EditorAnimacion/MenuAnimacion";
 
 
 function RoutesMain(props){
@@ -135,8 +135,6 @@ function SectionEdicionAnimacion(props) {
 
     return (
         <Home {...props}>
-            <MenuAnimacion/>
-            <hr/>
             <EditorAnimacion id_animacion={id_animacion}/>
         </Home>
     )

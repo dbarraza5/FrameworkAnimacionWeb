@@ -18,7 +18,7 @@ function MenuAnimacion(props){
                             Archivo
                         </a>
                         <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a className="dropdown-item" href="#">Subir</a></li>
+                            <li><a className="dropdown-item" onClick={()=>props.subirAnimacion()}>Subir</a></li>
                             <li><a className="dropdown-item" href="#">Refrescar</a></li>
                             <li><a className="dropdown-item" href="#">Guardor Como</a></li>
                             <li><a className="dropdown-item" href="#">Exportar</a></li>

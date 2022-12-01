@@ -646,6 +646,8 @@ class GestionLienzoAnimacion {
 
     actualizarLienzo(animacion) {
         const canvas = document.getElementById(this.id_canvas);
+        if(canvas === null)
+            return null;
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const lista_grupo_root = animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
