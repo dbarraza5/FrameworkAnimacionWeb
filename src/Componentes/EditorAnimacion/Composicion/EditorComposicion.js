@@ -7,7 +7,10 @@ function EditorCompisicion(props){
     const obtener_animacion=()=>{
         console.log("obtener animacion")
         const a1 = props.animacion.getDatosAnimacion()
-        console.log(a1)
+        //console.log(a1)
+        const lista = [];
+        props.animacion.listaOrdenadasGrupos(lista)
+        console.log(lista)
     }
 
 

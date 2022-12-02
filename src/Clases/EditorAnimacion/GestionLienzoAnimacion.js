@@ -650,7 +650,8 @@ class GestionLienzoAnimacion {
             return null;
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const lista_grupo_root = animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
+        const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
+        animacion.listaOrdenadasGrupos(lista_grupo_root)
         for (let i = 0; i < lista_grupo_root.length; i++) {
             const grupo = lista_grupo_root[i]
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
@@ -810,6 +811,11 @@ function dibujar_circulo(ctx, color, xc, yc, rx, ry) {
         dibujar_punto(ctx, color, xc - x, yc + y)
         dibujar_punto(ctx, color, xc + x, yc - y)
         dibujar_punto(ctx, color, xc - x, yc - y)
+    }
+
+    function zoomLocalizacion(){
+        const canvas = document.getElementById(this.id_canvas);
+        const ctx = canvas.getContext('2d');
     }
 }
 
