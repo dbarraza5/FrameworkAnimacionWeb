@@ -4,8 +4,8 @@ import {normalizar_recta} from "./GestionAnimacion";
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
 const TRABAJO_LISTA_FIGURAS = 1;
-const TRABAJO_GRUPO = 2;
-const TRABAJO_GRUPOS = 3;
+const TRABAJO_GRUPOS = 2;
+//const TRABAJO_GRUPOS = 3;
 
 const MOVER_NADA = 0
 const MOVER_CENTRO_FIGURA = 1;
@@ -19,6 +19,11 @@ const MOVER_INFLAR_FIGURAS = 7;
 const MOVER_ELIMINAR_FIGURAS = 8;
 const MOVER_DUPLICAR_FIGURAS = 9;
 
+const MOVER_CENTRO_GRUPOS = 10;
+const MOVER_ROTAR_GRUPOS = 11;
+const MOVER_INFLAR_GRUPOS = 12;
+const MOVER_DUPLICAR_GRUPOS=13;
+const MOVER_BORRAR_GRUPOS=14;
 
 class GestionLienzoAnimacion {
 
@@ -74,6 +79,8 @@ class GestionLienzoAnimacion {
     }
 
     mover_figura = MOVER_NADA;
+
+    copia_lista_grupos = []
 
     copia_lista_figuras = []
     mover_centros = {
@@ -552,6 +559,19 @@ class GestionLienzoAnimacion {
         }
     }
 
+    procesarTrabajoListaGrupos(eventoLienzoFigura, animacion, setAnimacion){
+        if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") && this.mover_figura === MOVER_NADA){
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
+                this.mover_figura = MOVER_CENTRO_GRUPOS;
+                this.copia_lista_grupos = animacion.duplicar_lista_grupos(["rueda1"])
+            }
+        }
+        if(this.mover_figura === MOVER_CENTRO_GRUPOS){
+            let x = eventoLienzoFigura.mouse_x - grupo.cx;
+            let y = eventoLienzoFigura.mouse_y - grupo.cy;
+        }
+    }
+
     procesarEventoLienzo(eventoLienzoFigura, animacion, setAnimacion) {
         if (this.categoria_trabajo === TRABAJO_FIGURA) {
             this.procesarTrabajoFigura(eventoLienzoFigura, animacion, setAnimacion)
@@ -559,6 +579,11 @@ class GestionLienzoAnimacion {
 
         if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
             this.procesarTrabajoListaFiguras(eventoLienzoFigura, animacion, setAnimacion)
+        }
+
+        if(this.categoria_trabajo === TRABAJO_GRUPOS){
+            this.procesarTrabajoListaGrupos(eventoLienzoFigura, animacion, setAnimacion)
+
         }
         this.procesarSeleccionPuntero(eventoLienzoFigura, animacion);
         this.actualizarLienzo(animacion)
@@ -697,6 +722,14 @@ class GestionLienzoAnimacion {
             //}
         }
 
+    }
+
+    calcularCentroFigurasSeleccionadas(animacion){
+        let nombre_grupo = this.id_grupo_selec;
+        const grupo = animacion.getGrupo(nombre_grupo)
+        if(grupo != null){
+            const figuras_select = grupo.lista_figuras.filter((f)=>this.lista_id_figuras.includes(f.nombre))
+        }
     }
 
     calcularCenTroFiguras(animacion) {

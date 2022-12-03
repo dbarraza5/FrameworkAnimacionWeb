@@ -9,6 +9,7 @@ function GestionGruposLienzo(props){
     }
     const arbol=props.animacion.estructura_arbol_grupos()
     return (<div>
+        <br/>
         <div className="row">
             <div className="col-6">
                 <div className="card">
@@ -21,33 +22,45 @@ function GestionGruposLienzo(props){
                 </div>
             </div>
             <div className="col-6">
-                <div className="form-check">
-                    <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/>
-                        <label className="form-check-label" htmlFor="flexRadioDefault1">
+                <form>
+                    <legend>Opciones</legend>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="radio_grupo" id="radio_grupo_mover"/>
+                        <label className="form-check-label" htmlFor="radio_grupo_mover">
                             Mover
                         </label>
-                </div>
-                <div className="form-check">
-                    <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
-                           checked/>
-                        <label className="form-check-label" htmlFor="flexRadioDefault2">
+                    </div>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="radio_grupo" id="radio_grupo_rotar"
+                               checked/>
+                        <label className="form-check-label" htmlFor="radio_grupo_rotar">
                             Rotar
                         </label>
-                </div>
-                <div className="form-check">
-                    <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
-                           checked/>
-                    <label className="form-check-label" htmlFor="flexRadioDefault2">
-                        Aumentar
-                    </label>
-                </div>
-                <div className="form-check">
-                    <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
-                           checked/>
-                    <label className="form-check-label" htmlFor="flexRadioDefault2">
-                        Reducir
-                    </label>
-                </div>
+                    </div>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="radio_grupo" id="radio_grupo_tamano"
+                               />
+                        <label className="form-check-label" htmlFor="radio_grupo_tamano">
+                            Tamaño
+                        </label>
+                    </div>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="radio_grupo" id="radio_grupo_duplicar"
+                               />
+                        <label className="form-check-label" htmlFor="radio_grupo_duplicar">
+                            Duplicar
+                        </label>
+                    </div>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="radio_grupo" id="radio_grupo_borrar"
+                               checked/>
+                        <label className="form-check-label" htmlFor="radio_grupo_borrar">
+                            Borrar
+                        </label>
+                    </div>
+
+                </form>
+
             </div>
         </div>
     </div>)

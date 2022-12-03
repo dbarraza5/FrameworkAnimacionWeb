@@ -291,7 +291,24 @@ class GestionAnimacion{
             lista_ordenada.push(grupo_);
             this.listaOrdenadasGrupos(lista_ordenada, grupo_.nombre)
         }
+    }
 
+    moverListaGrupos(lista_nombres_grupos, deltax, deltay){
+        for(let i=0; i<lista_nombres_grupos.length; i++){
+            const grupo_ = this.getGrupo(lista_nombres_grupos[i])
+            this.set_atributo_grupo(grupo_.nombre, "cx",grupo_.cx+deltax)
+            this.set_atributo_grupo(grupo_.nombre, "cy",grupo_.cy+deltay)
+        }
+    }
+
+    duplicar_grupo(nombre_grupo){
+        const grupo_ = this.getGrupo(nombre_grupo)
+        const grupo_duplicado = JSON.parse(JSON.stringify(grupo_))
+        return grupo_duplicado;
+    }
+
+    duplicar_lista_grupos(lista_nombres_grupos){
+        return lista_nombres_grupos.map((nombre)=>this.duplicar_grupo(nombre))
     }
 }
 
