@@ -184,30 +184,30 @@ class GestionLienzoAnimacion {
         if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") && this.mover_figura === MOVER_NADA){
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
                 this.mover_figura = MOVER_CENTROS_FIGURAS;
-                this.mover_centros=this.calcularCenTroFiguras(animacion)
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyB")){
                 this.mover_figura = MOVER_ELIMINAR_FIGURAS;
-                this.mover_centros=this.calcularCenTroFiguras(animacion)
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyD")){
                 this.mover_figura = MOVER_DUPLICAR_FIGURAS;
-                this.mover_centros=this.calcularCenTroFiguras(animacion)
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyF")){
                 //this.mover_figura = MOVER_INFLAR_FIGURAS;
-                //this.mover_centros=this.calcularCenTroFiguras(animacion)
+                //this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
 
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyG")){
                 this.mover_figura = MOVER_ROTAR_FIGURAS;
-                this.mover_centros=this.calcularCenTroFiguras(animacion)
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
         }
 
         if(this.mover_figura === MOVER_NADA){
             //dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
-            let rect_seleccion = this.calcularCenTroFiguras(animacion)
+            let rect_seleccion = this.calcularCentroFigurasSeleccionadas(animacion)
             let p_sup = {
                 x: rect_seleccion.sup_hor,
                 y: rect_seleccion.sup_ver,
@@ -218,13 +218,13 @@ class GestionLienzoAnimacion {
                 console.log("INFLAR POR LA ESQUINA")
                 this.mover_figura = MOVER_INFLAR_FIGURAS;
                 this.copia_lista_figuras = animacion.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
-                this.mover_centros=this.calcularCenTroFiguras(animacion)
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
         }
 
         if(this.mover_figura === MOVER_CENTROS_FIGURAS){
             console.log("MOVER CENTRO DE FIGURAS")
-            //this.calcularCenTroFiguras(animacion)
+            //this.calcularCentroFigurasSeleccionadas(animacion)
             let nombre_grupo = this.id_grupo_selec;
             const grupo = animacion.getGrupo(nombre_grupo)
             let x = eventoLienzoFigura.mouse_x - grupo.cx;
@@ -342,7 +342,7 @@ class GestionLienzoAnimacion {
             if(eventoLienzoFigura.mouse_click_up){
                 this.mover_figura = MOVER_NADA;
                 this.copia_lista_figuras = animacion.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
-                this.mover_centros=this.calcularCenTroFiguras(animacion)
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
         }
 
@@ -420,7 +420,7 @@ class GestionLienzoAnimacion {
             if(eventoLienzoFigura.mouse_click_down){
                 this.mover_figura = MOVER_NADA
                 this.copia_lista_figuras = animacion.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
-                this.mover_centros=this.calcularCenTroFiguras(animacion)
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas(animacion)
             }
 
         }
@@ -563,12 +563,13 @@ class GestionLienzoAnimacion {
         if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") && this.mover_figura === MOVER_NADA){
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
                 this.mover_figura = MOVER_CENTRO_GRUPOS;
-                this.copia_lista_grupos = animacion.duplicar_lista_grupos(["rueda1"])
+                this.copia_lista_grupos = animacion.duplicar_lista_grupos(["rayos_rueda"])
+                this.mover_centros=this.calcularCentroGruposSeleccionados(animacion)
             }
         }
         if(this.mover_figura === MOVER_CENTRO_GRUPOS){
-            let x = eventoLienzoFigura.mouse_x - grupo.cx;
-            let y = eventoLienzoFigura.mouse_y - grupo.cy;
+            //let x = eventoLienzoFigura.mouse_x - grupo.cx;
+            //let y = eventoLienzoFigura.mouse_y - grupo.cy;
         }
     }
 
@@ -711,7 +712,7 @@ class GestionLienzoAnimacion {
         }
 
         if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
-            const rect_seleccion = this.calcularCenTroFiguras(animacion)
+            const rect_seleccion = this.calcularCentroFigurasSeleccionadas(animacion)
             dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
                 rect_seleccion.ancho, rect_seleccion.alto)
             dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.centro_x, rect_seleccion.centro_y,
@@ -727,75 +728,110 @@ class GestionLienzoAnimacion {
     calcularCentroFigurasSeleccionadas(animacion){
         let nombre_grupo = this.id_grupo_selec;
         const grupo = animacion.getGrupo(nombre_grupo)
+        let figuras_select = []
         if(grupo != null){
-            const figuras_select = grupo.lista_figuras.filter((f)=>this.lista_id_figuras.includes(f.nombre))
+            figuras_select= grupo.lista_figuras.filter((f)=>this.lista_id_figuras.includes(f.nombre))
         }
+        return this.calcularCenTroFiguras(figuras_select, grupo)
     }
 
-    calcularCenTroFiguras(animacion) {
-        let nombre_grupo = this.id_grupo_selec;
-        const grupo = animacion.getGrupo(nombre_grupo)
-        if (grupo != null) {
-            let inf_hor = Number.POSITIVE_INFINITY;
-            let inf_ver = Number.POSITIVE_INFINITY;
-            let sup_hor = Number.NEGATIVE_INFINITY;
-            let sup_ver = Number.NEGATIVE_INFINITY;
-            for (let j = 0; j < grupo.lista_figuras.length; j++) {
-                const figura = grupo.lista_figuras[j];
-                if (this.lista_id_figuras.includes(figura.nombre)) {
-                    if (figura.tipo_figura === "RECTA") {
-                        const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-                        const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-                        const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-                        const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-                        //console.log(x1, y1)
-                        inf_hor = Math.min(...[x1, x2, inf_hor])
-                        sup_hor = Math.max(...[x1, x2, sup_hor])
+    calcularCentroGruposSeleccionados(animacion){
 
-                        //----------------------------------------
-                        inf_ver = Math.min(...[y1, y2, inf_ver])
-                        sup_ver = Math.max(...[y1, y2, sup_ver])
-                    }
+        let inf_hor = Number.POSITIVE_INFINITY;
+        let inf_ver = Number.POSITIVE_INFINITY;
+        let sup_hor = Number.NEGATIVE_INFINITY;
+        let sup_ver = Number.NEGATIVE_INFINITY;
 
-                    if (figura.tipo_figura === "PUNTO") {
-                        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-                        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+        for (let i=0; i<this.copia_lista_grupos.length; i++){
+            const grupo_ =this.copia_lista_grupos[i];
+            const espacio = this.calcularCenTroFiguras(grupo_.lista_figuras, grupo_)
 
-                        inf_hor = Math.min(...[x, inf_hor])
-                        sup_hor = Math.max(...[x, sup_hor])
-                        //----------------------------------------
-                        inf_ver = Math.min(...[y, inf_ver])
-                        sup_ver = Math.max(...[y, sup_ver])
-
-                    }
-
-                    if (figura.tipo_figura === "CIRCULO") {
-
-                        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-                        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-                        const rx = parseInt(figura.atributos.radiox);
-                        const ry = parseInt(figura.atributos.radioy);
-
-                        inf_hor = Math.min(...[x - rx, inf_hor])
-                        sup_hor = Math.max(...[x + rx, sup_hor])
-                        //----------------------------------------
-                        inf_ver = Math.min(...[y - ry, inf_ver])
-                        sup_ver = Math.max(...[y + ry, sup_ver])
-                    }
-                }
+            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                const figura = grupo_.lista_figuras[j];
+                [inf_hor, sup_hor, inf_ver, sup_ver]=this.calcularLimitesFigura(figura, grupo_,
+                    inf_hor, sup_hor, inf_ver, sup_ver)
             }
-            let centro_figuras = {...this.mover_centros}
-            const margen = 10;
-            centro_figuras.inf_hor = inf_hor-margen;
-            centro_figuras.sup_hor = sup_hor+margen;
-            centro_figuras.inf_ver = inf_ver-margen;
-            centro_figuras.sup_ver = sup_ver+margen;
-            centro_figuras.ancho = (sup_hor-inf_hor)+margen*2;
-            centro_figuras.alto = (sup_ver-inf_ver)+margen*2;
-            centro_figuras.centro_x = inf_hor+(sup_hor-inf_hor)/2;
-            centro_figuras.centro_y = inf_ver+(sup_ver-inf_ver)/2;
-            return centro_figuras
         }
+
+        let centro_figuras = {...this.mover_centros}
+        const margen = 10;
+        centro_figuras.inf_hor = inf_hor-margen;
+        centro_figuras.sup_hor = sup_hor+margen;
+        centro_figuras.inf_ver = inf_ver-margen;
+        centro_figuras.sup_ver = sup_ver+margen;
+        centro_figuras.ancho = (sup_hor-inf_hor)+margen*2;
+        centro_figuras.alto = (sup_ver-inf_ver)+margen*2;
+        centro_figuras.centro_x = inf_hor+(sup_hor-inf_hor)/2;
+        centro_figuras.centro_y = inf_ver+(sup_ver-inf_ver)/2;
+        return centro_figuras
+    }
+
+    calcularCenTroFiguras(lista_figuras_, grupo) {
+
+        let inf_hor = Number.POSITIVE_INFINITY;
+        let inf_ver = Number.POSITIVE_INFINITY;
+        let sup_hor = Number.NEGATIVE_INFINITY;
+        let sup_ver = Number.NEGATIVE_INFINITY;
+        if(grupo != null)
+        for (let j = 0; j < lista_figuras_.length; j++) {
+            const figura = lista_figuras_[j];
+            [inf_hor, sup_hor, inf_ver, sup_ver]=this.calcularLimitesFigura(figura, grupo,
+                inf_hor, sup_hor, inf_ver, sup_ver)
+        }
+        let centro_figuras = {...this.mover_centros}
+        const margen = 10;
+        centro_figuras.inf_hor = inf_hor-margen;
+        centro_figuras.sup_hor = sup_hor+margen;
+        centro_figuras.inf_ver = inf_ver-margen;
+        centro_figuras.sup_ver = sup_ver+margen;
+        centro_figuras.ancho = (sup_hor-inf_hor)+margen*2;
+        centro_figuras.alto = (sup_ver-inf_ver)+margen*2;
+        centro_figuras.centro_x = inf_hor+(sup_hor-inf_hor)/2;
+        centro_figuras.centro_y = inf_ver+(sup_ver-inf_ver)/2;
+        return centro_figuras
+    }
+
+    calcularLimitesFigura(figura, grupo, inf_hor, sup_hor, inf_ver, sup_ver){
+        if (figura.tipo_figura === "RECTA") {
+            const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+            const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+            const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+            const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+            //console.log(x1, y1)
+            inf_hor = Math.min(...[x1, x2, inf_hor])
+            sup_hor = Math.max(...[x1, x2, sup_hor])
+
+            //----------------------------------------
+            inf_ver = Math.min(...[y1, y2, inf_ver])
+            sup_ver = Math.max(...[y1, y2, sup_ver])
+        }
+
+        if (figura.tipo_figura === "PUNTO") {
+            const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+            const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+
+            inf_hor = Math.min(...[x, inf_hor])
+            sup_hor = Math.max(...[x, sup_hor])
+            //----------------------------------------
+            inf_ver = Math.min(...[y, inf_ver])
+            sup_ver = Math.max(...[y, sup_ver])
+
+        }
+
+        if (figura.tipo_figura === "CIRCULO") {
+
+            const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
+            const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+            const rx = parseInt(figura.atributos.radiox);
+            const ry = parseInt(figura.atributos.radioy);
+
+            inf_hor = Math.min(...[x - rx, inf_hor])
+            sup_hor = Math.max(...[x + rx, sup_hor])
+            //----------------------------------------
+            inf_ver = Math.min(...[y - ry, inf_ver])
+            sup_ver = Math.max(...[y + ry, sup_ver])
+        }
+        return [inf_hor, sup_hor, inf_ver, sup_ver]
     }
 };
 
