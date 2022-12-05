@@ -17,6 +17,9 @@ function TreeViewElement(props){
         console.log(nombre_grupo)
     }
 
+    console.log("[LISTA SELECCIONADOS]")
+    console.log(lista_seleccionados)
+
     const seleccion_grupo=(e, nombre_grupo)=>{
         const select = e.target.checked;
         if(select){

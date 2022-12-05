@@ -8,6 +8,8 @@ function GestionGruposLienzo(props){
         return (<p>nada</p>)
     }
     const arbol=props.animacion.estructura_arbol_grupos()
+    console.log("[ARBOL]")
+    console.log(arbol)
     return (<div>
         <br/>
         <div className="row">

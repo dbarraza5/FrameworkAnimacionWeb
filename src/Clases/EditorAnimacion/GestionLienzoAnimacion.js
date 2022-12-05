@@ -562,8 +562,9 @@ class GestionLienzoAnimacion {
     procesarTrabajoListaGrupos(eventoLienzoFigura, animacion, setAnimacion){
         if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") && this.mover_figura === MOVER_NADA){
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
+                console.log("[SELECCION DE GRUPOS]")
                 this.mover_figura = MOVER_CENTRO_GRUPOS;
-                this.copia_lista_grupos = animacion.duplicar_lista_grupos(["rayos_rueda"])
+                this.copia_lista_grupos = animacion.duplicar_lista_grupos(["marco","rayos_rueda"])
                 this.mover_centros=this.calcularCentroGruposSeleccionados(animacion)
             }
         }
@@ -583,6 +584,7 @@ class GestionLienzoAnimacion {
         }
 
         if(this.categoria_trabajo === TRABAJO_GRUPOS){
+            console.log("[1.-TRABAJO_GRUPOS]")
             this.procesarTrabajoListaGrupos(eventoLienzoFigura, animacion, setAnimacion)
 
         }
@@ -720,6 +722,19 @@ class GestionLienzoAnimacion {
 
             //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
                 dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
+            //}
+        }
+
+
+        if(this.categoria_trabajo === TRABAJO_GRUPOS){
+            const rect_seleccion = this.calcularCentroGruposSeleccionados(animacion)
+            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
+                rect_seleccion.ancho, rect_seleccion.alto)
+            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.centro_x, rect_seleccion.centro_y,
+                this.p_centro.w, this.p_centro.h)
+
+            //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
+            dibujar_circulo(ctx, "#76ff14", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
             //}
         }
 
