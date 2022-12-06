@@ -628,10 +628,10 @@ class GestionLienzoAnimacion {
     }
 
     imprimir_recta(ctx, figura, grupo, color_, seleccion = false, color_seleccion = "#39ff14") {
-        const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-        const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-        const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-        const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+        const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+        const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
+        const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+        const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
         dibujar_linea(ctx, color_, x1, y1, x2, y2)
         if (seleccion) {
             this.actualizarPuntosRectas(figura, grupo)
@@ -647,8 +647,8 @@ class GestionLienzoAnimacion {
     }
 
     imprimir_circulo(ctx, figura, grupo, color_, seleccion = false, color_seleccion = "#39ff14") {
-        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
         const rx = parseInt(figura.atributos.radiox);
         const ry = parseInt(figura.atributos.radioy);
         dibujar_circulo(ctx, color_, x, y, rx, ry)
@@ -662,8 +662,8 @@ class GestionLienzoAnimacion {
     }
 
     imprimir_punto(ctx, figura, grupo, color_, seleccion = false, color_seleccion = "#39ff14") {
-        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
         dibujar_punto(ctx, color_, x, y, 2)
         if (seleccion) {
             this.actualizarPuntoCentro(figura, grupo)
@@ -679,6 +679,7 @@ class GestionLienzoAnimacion {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
+        animacion.procesarPosicionFinalFiguras()
         animacion.listaOrdenadasGrupos(lista_grupo_root)
         for (let i = 0; i < lista_grupo_root.length; i++) {
             const grupo = lista_grupo_root[i]
@@ -808,10 +809,10 @@ class GestionLienzoAnimacion {
 
     calcularLimitesFigura(figura, grupo, inf_hor, sup_hor, inf_ver, sup_ver){
         if (figura.tipo_figura === "RECTA") {
-            const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-            const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
-            const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-            const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+            const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+            const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
+            const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+            const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
             //console.log(x1, y1)
             inf_hor = Math.min(...[x1, x2, inf_hor])
             sup_hor = Math.max(...[x1, x2, sup_hor])
@@ -822,8 +823,8 @@ class GestionLienzoAnimacion {
         }
 
         if (figura.tipo_figura === "PUNTO") {
-            const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-            const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+            const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+            const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
 
             inf_hor = Math.min(...[x, inf_hor])
             sup_hor = Math.max(...[x, sup_hor])
@@ -835,8 +836,8 @@ class GestionLienzoAnimacion {
 
         if (figura.tipo_figura === "CIRCULO") {
 
-            const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx);
-            const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy);
+            const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
+            const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
             const rx = parseInt(figura.atributos.radiox);
             const ry = parseInt(figura.atributos.radioy);
 

@@ -277,6 +277,25 @@ class GestionAnimacion{
         return this.grupos_figuras.filter((grupo)=>grupo.nodo_padre===nombre_grupo)
     }
 
+    procesarPosicionFinalFiguras(nombre_grupo="root"){
+        const grupo_padre = this.getGrupo(nombre_grupo);
+        const lista_grupos = this.get_grupos_hijos(nombre_grupo)
+
+        for(let i=0; i<lista_grupos.length; i++){
+            const grupo_ = lista_grupos[i];
+            if(nombre_grupo === "root"){
+                grupo_.cx_solid = parseInt(grupo_.cx);
+                grupo_.cy_solid = parseInt(grupo_.cy);
+            }else{
+                grupo_.cx_solid = parseInt(grupo_.cx) +
+                    parseInt(grupo_padre.cx_solid);
+                grupo_.cy_solid = parseInt(grupo_.cy) +
+                    parseInt(grupo_padre.cy_solid);
+            }
+            this.procesarPosicionFinalFiguras(grupo_.nombre)
+        }
+    }
+
     listaOrdenadasGrupos(lista_ordenada, nombre_grupo="root"){
         const lista_grupos = this.get_grupos_hijos(nombre_grupo)
         lista_grupos.sort((a, b)=>{
