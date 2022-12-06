@@ -10,6 +10,11 @@ function GestionGruposLienzo(props){
     const arbol=props.animacion.estructura_arbol_grupos()
     console.log("[ARBOL]")
     console.log(arbol)
+
+    const mover_grupos=()=>{
+        console.log("MOVER GRUPOS")
+    }
+
     return (<div>
         <br/>
         <div className="row">
@@ -65,6 +70,7 @@ function GestionGruposLienzo(props){
 
             </div>
         </div>
+        <button onClick={mover_grupos}>moverrrrsh</button>
     </div>)
 }
 

@@ -98,6 +98,14 @@ class GestionLienzoAnimacion {
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
         this.y = 0;
+        this.animacion_ = null
+    }
+
+    seleccionGrupoMover(lista_grupos, tipo_movimiento){
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.mover_figura = tipo_movimiento;
+        this.copia_lista_grupos = animacion.duplicar_lista_grupos(lista_grupos)
+        this.mover_centros=this.calcularCentroGruposSeleccionados(animacion)
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
