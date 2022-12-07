@@ -37,10 +37,11 @@ function EditorAnimacion(props) {
     const datos_usuario = cookie.get("usuario")
 
     const [animacion, setAnimacion] = useCustomAnimacion({edicion: new GestionAnimacion()});
-    const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion());
+    const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion));
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
 
     useEffect(()=>{
+        gestionLienzo.animacion_=animacion.edicion;
         gestionLienzo.actualizarLienzo(animacion.edicion)
     },[animacion])
 

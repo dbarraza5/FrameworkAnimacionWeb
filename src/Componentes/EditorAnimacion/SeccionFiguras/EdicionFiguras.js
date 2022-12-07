@@ -15,7 +15,7 @@ function EdicionFiguras(props){
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
         props.gestionLienzo.categoria_trabajo=2
-        props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.animacion, props.setAnimacion)
+        props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion)
         eventoLienzoFigura.reset()
     }
 
