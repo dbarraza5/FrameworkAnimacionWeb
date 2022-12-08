@@ -3,8 +3,13 @@ import {useEffect, useState} from "react";
 
 function TreeViewElement(props){
     const data_tree = props.datos;
-    const [lista_seleccionados, setListaSeleccionados] = useState([])
+    const [lista_seleccionados, seleccionGrupos] = useState([])
     const [nombre_nodo, setNombreNodo] = useState("")
+
+    const setListaSeleccionados=(lista_)=>{
+        props.mover_grupos(lista_);
+        seleccionGrupos(lista_);
+    }
 
     const click_nodo=(event, nombre_grupo)=>{
         event.target.parentElement.querySelector(".nested").classList.toggle("active");

@@ -8,11 +8,11 @@ function GestionGruposLienzo(props){
         return (<p>nada</p>)
     }
     const arbol=props.animacion.estructura_arbol_grupos()
-    console.log("[ARBOL]")
-    console.log(arbol)
 
-    const mover_grupos=()=>{
+    const mover_grupos=(lista_grupos)=>{
         console.log("MOVER GRUPOS")
+        props.gestionLienzo.seleccionGrupoMover(lista_grupos)
+        props.gestionLienzo.actualizarLienzo()
     }
 
     return (<div>
@@ -24,7 +24,7 @@ function GestionGruposLienzo(props){
                         Estructura Arbol
                     </div>
                     <div className="card-body">
-                        <TreeViewElement datos={arbol.nodes}/>
+                        <TreeViewElement datos={arbol.nodes} mover_grupos={mover_grupos}/>
                     </div>
                 </div>
             </div>

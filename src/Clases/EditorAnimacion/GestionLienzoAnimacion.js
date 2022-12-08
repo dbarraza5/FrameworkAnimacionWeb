@@ -101,9 +101,10 @@ class GestionLienzoAnimacion {
         this.animacion_ = animacion_
     }
 
-    seleccionGrupoMover(lista_grupos, tipo_movimiento){
+    seleccionGrupoMover(lista_grupos){
+        console.log("seleccionarGRUPOS")
         this.categoria_trabajo = TRABAJO_GRUPOS;
-        this.mover_figura = tipo_movimiento;
+        this.mover_figura = MOVER_CENTRO_GRUPOS;
         this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
         this.mover_centros=this.calcularCentroGruposSeleccionados()
     }
