@@ -39,7 +39,7 @@ function GestionGruposLienzo(props){
                     </div>
                     <div className="form-check">
                         <input className="form-check-input" type="radio" name="radio_grupo" id="radio_grupo_rotar"
-                               checked/>
+                               />
                         <label className="form-check-label" htmlFor="radio_grupo_rotar">
                             Rotar
                         </label>
@@ -60,7 +60,7 @@ function GestionGruposLienzo(props){
                     </div>
                     <div className="form-check">
                         <input className="form-check-input" type="radio" name="radio_grupo" id="radio_grupo_borrar"
-                               checked/>
+                               />
                         <label className="form-check-label" htmlFor="radio_grupo_borrar">
                             Borrar
                         </label>

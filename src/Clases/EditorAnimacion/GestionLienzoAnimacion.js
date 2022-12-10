@@ -580,6 +580,27 @@ class GestionLienzoAnimacion {
         if(this.mover_figura === MOVER_CENTRO_GRUPOS){
             //let x = eventoLienzoFigura.mouse_x - grupo.cx;
             //let y = eventoLienzoFigura.mouse_y - grupo.cy;
+
+            for (let i=0; i<this.copia_lista_grupos.length; i++){
+                const grupo_copia = this.copia_lista_grupos[i]
+                const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
+
+                let x = eventoLienzoFigura.mouse_x - grupo_.cx;
+                let y = eventoLienzoFigura.mouse_y - grupo_.cy;
+                let x_move =  x- this.mover_centros.centro_x;
+                let y_move = y- this.mover_centros.centro_y;
+
+                for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                    const figura = grupo_.lista_figuras[j];
+                    const f_copia = grupo_copia.lista_figuras[j];
+                    figura.atributos.cx = f_copia.atributos.cx + x_move;
+                    figura.atributos.cy = f_copia.atributos.cy + y_move;
+
+                }
+            }
+            if(eventoLienzoFigura.mouse_click_down){
+                this.mover_figura = MOVER_NADA
+            }
         }
     }
 
@@ -768,7 +789,7 @@ class GestionLienzoAnimacion {
         let sup_ver = Number.NEGATIVE_INFINITY;
 
         for (let i=0; i<this.copia_lista_grupos.length; i++){
-            const grupo_ =this.copia_lista_grupos[i];
+            const grupo_ = this.animacion_.getGrupo(this.copia_lista_grupos[i].nombre);
             const espacio = this.calcularCenTroFiguras(grupo_.lista_figuras, grupo_)
 
             for (let j = 0; j < grupo_.lista_figuras.length; j++) {
