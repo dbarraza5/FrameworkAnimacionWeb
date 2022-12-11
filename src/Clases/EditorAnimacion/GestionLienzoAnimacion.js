@@ -107,6 +107,8 @@ class GestionLienzoAnimacion {
         this.mover_figura = MOVER_CENTRO_GRUPOS;
         this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
         this.mover_centros=this.calcularCentroGruposSeleccionados()
+        console.log("[CALCULO CENTRO DE GRUPOS]")
+        console.log(this.mover_centros)
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
@@ -433,47 +435,6 @@ class GestionLienzoAnimacion {
             }
 
         }
-
-        /*
-        *
-        * static double distanciaEntreDosPuntos(double x1, double y1, double x2, double y2)
-        {
-            return sqrt(pow(x2-x1, 2)+pow(y2-y1,2));
-        }
-        *
-        * if(elemento->getTipoFigura()==PUNTO){
-                PuntoObjeto * punto = (PuntoObjeto*)elemento;
-                punto->p_aux[0]=punto->getXc();
-                punto->p_aux[1]=punto->getYc();
-                punto->setHipotenusa(Fisica::distanciaEntreDosPuntos(punto->getXc(), punto->getYc()
-                                                                       , centrox_rotar, centroy_rotar));
-            }
-
-            if(elemento->getTipoFigura()==RECTA){
-                RectaObjeto * r = (RectaObjeto*)elemento;
-                int angulo_aux = (int)Fisica::angulo_recta(centrox_rotar, centroy_rotar,
-                                                     r->getX1(), r->getY1());
-                r->setAnguloP1(angulo_aux);
-
-                angulo_aux = (int)Fisica::angulo_recta(centrox_rotar, centroy_rotar,
-                                                     r->getX2(), r->getY2());
-                r->setAnguloP2(angulo_aux);
-                r->setHipotenusaP1(Fisica::distanciaEntreDosPuntos(r->getX1(), r->getY1(), centrox_rotar, centroy_rotar));
-                r->setHipotenusaP2(Fisica::distanciaEntreDosPuntos(r->getX2(), r->getY2(), centrox_rotar, centroy_rotar));
-                r->p1_aux[0]=r->getX1();
-                r->p1_aux[1]=r->getY1();
-                r->p2_aux[0]=r->getX2();
-                r->p2_aux[1]=r->getY2();
-            }
-            if(elemento->getTipoFigura()==CIRCULO){
-                CirculoObjeto * circulo = (CirculoObjeto*)elemento;
-                circulo->setHipotenusa(Fisica::distanciaEntreDosPuntos(circulo->getXc(), circulo->getYc()
-                                                                       , centrox_rotar, centroy_rotar));
-                circulo->p_aux[0]=circulo->getXc();
-                circulo->p_aux[1]=circulo->getYc();
-                circulo->radio_aux = circulo->getRadioX();
-            }
-        * */
     }
 
     procesarTrabajoFigura(eventoLienzoFigura, setAnimacion){
@@ -585,8 +546,8 @@ class GestionLienzoAnimacion {
                 const grupo_copia = this.copia_lista_grupos[i]
                 const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
 
-                let x = eventoLienzoFigura.mouse_x - grupo_.cx;
-                let y = eventoLienzoFigura.mouse_y - grupo_.cy;
+                let x = eventoLienzoFigura.mouse_x ;
+                let y = eventoLienzoFigura.mouse_y ;
                 let x_move =  x- this.mover_centros.centro_x;
                 let y_move = y- this.mover_centros.centro_y;
 
@@ -601,6 +562,7 @@ class GestionLienzoAnimacion {
             if(eventoLienzoFigura.mouse_click_down){
                 this.mover_figura = MOVER_NADA
             }
+            setAnimacion({"edicion": this.animacion_})
         }
     }
 
@@ -615,6 +577,7 @@ class GestionLienzoAnimacion {
 
         if(this.categoria_trabajo === TRABAJO_GRUPOS){
             console.log("[1.-TRABAJO_GRUPOS]")
+
             this.procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion)
 
         }
@@ -790,7 +753,6 @@ class GestionLienzoAnimacion {
 
         for (let i=0; i<this.copia_lista_grupos.length; i++){
             const grupo_ = this.animacion_.getGrupo(this.copia_lista_grupos[i].nombre);
-            const espacio = this.calcularCenTroFiguras(grupo_.lista_figuras, grupo_)
 
             for (let j = 0; j < grupo_.lista_figuras.length; j++) {
                 const figura = grupo_.lista_figuras[j];
