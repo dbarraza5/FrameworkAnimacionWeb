@@ -101,14 +101,28 @@ class GestionLienzoAnimacion {
         this.animacion_ = animacion_
     }
 
+    seleccionListaGrupos(lista_grupos){
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
+        this.mover_centros=this.calcularCentroGruposSeleccionados()
+    }
+
     seleccionGrupoMover(lista_grupos){
         console.log("seleccionarGRUPOS")
         this.categoria_trabajo = TRABAJO_GRUPOS;
         this.mover_figura = MOVER_CENTRO_GRUPOS;
-        this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
-        this.mover_centros=this.calcularCentroGruposSeleccionados()
+        //this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
+        //this.mover_centros=this.calcularCentroGruposSeleccionados()
         console.log("[CALCULO CENTRO DE GRUPOS]")
         console.log(this.mover_centros)
+    }
+
+    seleccionGrupoDuplicar(lista_grupos){
+        console.log("seleccionarGRUPOSDuplicar")
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.mover_figura = MOVER_DUPLICAR_GRUPOS;
+        //this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
+        //this.mover_centros=this.calcularCentroGruposSeleccionados()
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
@@ -562,7 +576,18 @@ class GestionLienzoAnimacion {
             if(eventoLienzoFigura.mouse_click_down){
                 this.mover_figura = MOVER_NADA
             }
+        }
+
+        if(this.mover_figura === MOVER_DUPLICAR_GRUPOS){
+            const lista_nombre_grupos = this.copia_lista_grupos.map((g)=>{
+                return g.nombre
+            })
+            const nombre_grupo_duplicado = this.animacion_.duplicar_internamente_lista_grupos_(lista_nombre_grupos)
+            this.mover_figura = MOVER_CENTRO_GRUPOS;
+            this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(nombre_grupo_duplicado)
             setAnimacion({"edicion": this.animacion_})
+            console.log("DUUUUUUUPLICACIONNNNNNNNN")
+            //this.actualizarLienzo()
         }
     }
 

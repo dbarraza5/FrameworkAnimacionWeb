@@ -107,6 +107,23 @@ class GestionAnimacion{
         }
     }
 
+    crear_id_grupo(){
+        const lis_nombre_grupos = this.grupos_figuras.map((g)=>g.nombre)
+        let id_temp = ""
+        let id_encontrado = false;
+        let contador=0;
+        while(!id_encontrado){
+            id_temp = "grup_"+contador;
+            if(!lis_nombre_grupos.includes(id_temp)){
+                return id_temp;
+            }
+            contador+=1;
+            if(contador>1000)
+                break;
+        }
+        return null
+    }
+
     crear_figura(nombre_grupo, tipo_figura){
         const id_figura = this.crear_id_figura(nombre_grupo, tipo_figura)
         let figura = {
@@ -328,6 +345,29 @@ class GestionAnimacion{
 
     duplicar_lista_grupos(lista_nombres_grupos){
         return lista_nombres_grupos.map((nombre)=>this.duplicar_grupo(nombre))
+    }
+
+    duplicar_internamente_lista_grupos_(lista_nombres_grupos){
+        const lista_duplicada = lista_nombres_grupos.map((nombre)=>this.duplicar_grupo(nombre))
+        const lista_orinal = lista_duplicada.map((g)=>g.nombre)
+
+        for (let i=0; i<lista_duplicada.length; i++){
+            const id_grupo_ = this.crear_id_grupo();
+            lista_duplicada[i].nombre = id_grupo_;
+            this.grupos_figuras.push(lista_duplicada[i]);
+        }
+
+        for(let i=0; i<lista_orinal.length; i++)
+        {
+            const grupo_= lista_duplicada[i];
+            if(lista_orinal.includes(grupo_.nodo_padre)){
+                const index = lista_orinal.findIndex((nombre)=>{
+                    return grupo_.nodo_padre === nombre;
+                })
+                grupo_.nodo_padre = lista_duplicada[index].nombre;
+            }
+        }
+        return lista_duplicada.map((g)=>g.nombre)
     }
 }
 

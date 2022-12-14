@@ -7,7 +7,7 @@ function TreeViewElement(props){
     const [nombre_nodo, setNombreNodo] = useState("")
 
     const setListaSeleccionados=(lista_)=>{
-        props.mover_grupos(lista_);
+        props.setListaSeleccionados(lista_);
         seleccionGrupos(lista_);
     }
 
