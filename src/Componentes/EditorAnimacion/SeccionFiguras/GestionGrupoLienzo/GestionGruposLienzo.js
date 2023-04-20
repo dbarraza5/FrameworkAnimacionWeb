@@ -31,8 +31,8 @@ function GestionGruposLienzo(props){
             props.gestionLienzo.seleccionGrupoDuplicar(lista_seleccionados)
         }
 
-        if(operacion === "mover"){
-            //props.gestionLienzo.seleccionGrupoMover(lista_grupos)
+        if(operacion === "rotar"){
+            props.gestionLienzo.seleccionGrupoRotar(lista_seleccionados)
         }
 
 

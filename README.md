@@ -30,3 +30,13 @@ falta el mover los atributos usando el mouse.
     cuando los grupos disminuyen su tamaño o figura en general.
     100.- las etiquetas pueden ser un de ayuda para aplicar movimientos sin aplicarlo a un id especifico de un 
     grupo o figura.
+    
+    
+## Atajos de teclado
+
+| Atajo | Descripcion |
+|---|---|
+| Q+E | Mover lista de figuras de un grupo. |
+| Q+B | Remover lista de figuras de un grupo. |
+| Q+D | Duplicar lista de figuras de un grupo. |
+| Q+R | Rotar lista de figuras de un grupo. |

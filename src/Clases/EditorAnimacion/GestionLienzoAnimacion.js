@@ -94,6 +94,13 @@ class GestionLienzoAnimacion {
         alto: 0,
     }
 
+    pivote_rotacion = {
+        x: 0,
+        y: 0,
+        w: 5,
+        h: 5
+    }
+
     constructor(animacion_) {
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
@@ -105,6 +112,9 @@ class GestionLienzoAnimacion {
         this.categoria_trabajo = TRABAJO_GRUPOS;
         this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
         this.mover_centros=this.calcularCentroGruposSeleccionados()
+        this.pivote_rotacion.x = this.mover_centros.centro_x;
+        this.pivote_rotacion.y = this.mover_centros.centro_y;
+
     }
 
     seleccionGrupoMover(lista_grupos){
@@ -123,6 +133,17 @@ class GestionLienzoAnimacion {
         this.mover_figura = MOVER_DUPLICAR_GRUPOS;
         //this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
         //this.mover_centros=this.calcularCentroGruposSeleccionados()
+    }
+
+    seleccionGrupoRotar(lista_grupos){
+        console.log("seleccionGrupoRotar231432432423")
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.mover_figura = MOVER_ROTAR_GRUPOS;
+        /*let rect = this.calcularCentroFigurasSeleccionadas()
+        this.pivote_rotacion.x = rect.centro_x;
+        this.pivote_rotacion.y = rect.centro_y;
+        console.log(rect)*/
+        this.actualizarLienzo();
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
@@ -589,6 +610,10 @@ class GestionLienzoAnimacion {
             console.log("DUUUUUUUPLICACIONNNNNNNNN")
             //this.actualizarLienzo()
         }
+
+        if(this.mover_figura === MOVER_ROTAR_GRUPOS){
+
+        }
     }
 
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion) {
@@ -755,6 +780,10 @@ class GestionLienzoAnimacion {
             //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
             dibujar_circulo(ctx, "#76ff14", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
             //}
+            if(this.mover_figura === MOVER_ROTAR_GRUPOS){
+                console.log("imprime el pivote 12121212")
+                dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 3, 3)
+            }
         }
 
     }
