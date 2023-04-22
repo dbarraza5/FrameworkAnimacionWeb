@@ -100,6 +100,7 @@ class GestionLienzoAnimacion {
         w: 5,
         h: 5
     }
+    moviendo_pivote_r = false
 
     constructor(animacion_) {
         this.id_canvas = "lienzo-animacion"
@@ -612,7 +613,20 @@ class GestionLienzoAnimacion {
         }
 
         if(this.mover_figura === MOVER_ROTAR_GRUPOS){
-
+            let tocando_pivote = rectsColliding(this.puntero, this.pivote_rotacion) &&
+                eventoLienzoFigura.mouse_only_click;
+            if(this.moviendo_pivote_r === false){
+                if (tocando_pivote) {
+                    console.log("haciendo click en el pivote")
+                    this.moviendo_pivote_r = true;
+                }
+            }else{
+                if (tocando_pivote){
+                    this.moviendo_pivote_r = false;
+                }
+                this.pivote_rotacion.x = this.puntero.x;
+                this.pivote_rotacion.y = this.puntero.y;
+            }
         }
     }
 
@@ -774,15 +788,18 @@ class GestionLienzoAnimacion {
             const rect_seleccion = this.calcularCentroGruposSeleccionados()
             dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
                 rect_seleccion.ancho, rect_seleccion.alto)
-            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.centro_x, rect_seleccion.centro_y,
-                this.p_centro.w, this.p_centro.h)
-
             //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
             dibujar_circulo(ctx, "#76ff14", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
             //}
+            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.centro_x, rect_seleccion.centro_y,
+                this.p_centro.w, this.p_centro.h)
             if(this.mover_figura === MOVER_ROTAR_GRUPOS){
                 console.log("imprime el pivote 12121212")
-                dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 3, 3)
+                dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 5, 5)
+                dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
+                    rect_seleccion.centro_x+1, rect_seleccion.centro_y-1)
+            }else{
+
             }
         }
 
@@ -956,6 +973,16 @@ function dibujar_linea(ctx, color, x1, y1, x2, y2) {
     ctx.lineTo(x2, y2);
     ctx.strokeStyle = color;
     ctx.stroke();
+}
+
+function dibujar_linea_segmentada(ctx, color, x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.setLineDash([5, 15]);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color;
+    ctx.stroke();
+    ctx.setLineDash([]);
 }
 
 function dibujar_rectangulo(ctx, color, x, y, w, h) {
