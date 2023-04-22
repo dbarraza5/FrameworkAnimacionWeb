@@ -101,6 +101,7 @@ class GestionLienzoAnimacion {
         h: 5
     }
     moviendo_pivote_r = false
+    rotar_lista_grupos = false
 
     constructor(animacion_) {
         this.id_canvas = "lienzo-animacion"
@@ -109,6 +110,7 @@ class GestionLienzoAnimacion {
         this.animacion_ = animacion_
     }
 
+    //proceso que es llamado por componente de react para proceder a intereactuar a nivel de grupo
     seleccionListaGrupos(lista_grupos){
         this.categoria_trabajo = TRABAJO_GRUPOS;
         this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
@@ -574,6 +576,15 @@ class GestionLienzoAnimacion {
                 this.mover_centros=this.calcularCentroGruposSeleccionados()
             }
         }
+        console.log(eventoLienzoFigura.stack_event_teclado)
+        if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") &&
+            this.mover_figura === MOVER_ROTAR_GRUPOS){
+            console.log("FUNCIONAAAAAAA!!!!")
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyG")){
+                console.log("rotar_lista_grupos")
+            }
+        }
+
         if(this.mover_figura === MOVER_CENTRO_GRUPOS){
             //let x = eventoLienzoFigura.mouse_x - grupo.cx;
             //let y = eventoLienzoFigura.mouse_y - grupo.cy;
@@ -640,8 +651,6 @@ class GestionLienzoAnimacion {
         }
 
         if(this.categoria_trabajo === TRABAJO_GRUPOS){
-            console.log("[1.-TRABAJO_GRUPOS]")
-
             this.procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion)
 
         }
