@@ -58,8 +58,10 @@ function Lienzo(props){
         const  code = e.code;
         if(!props.lienzo.stack_event_teclado.includes(code)){
             props.lienzo.stack_event_teclado.push(code)
+
         }
-        console.log(props.lienzo.stack_event_teclado)
+        //console.log(props.lienzo.stack_event_teclado)
+        console.log("key: "+code)
         props.editar_animacion()
     }
 

@@ -576,12 +576,12 @@ class GestionLienzoAnimacion {
                 this.mover_centros=this.calcularCentroGruposSeleccionados()
             }
         }
-        console.log(eventoLienzoFigura.stack_event_teclado)
+
         if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") &&
             this.mover_figura === MOVER_ROTAR_GRUPOS){
-            console.log("FUNCIONAAAAAAA!!!!")
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyG")){
                 console.log("rotar_lista_grupos")
+                this.rotar_lista_grupos = true;
             }
         }
 
@@ -626,17 +626,28 @@ class GestionLienzoAnimacion {
         if(this.mover_figura === MOVER_ROTAR_GRUPOS){
             let tocando_pivote = rectsColliding(this.puntero, this.pivote_rotacion) &&
                 eventoLienzoFigura.mouse_only_click;
-            if(this.moviendo_pivote_r === false){
-                if (tocando_pivote) {
-                    console.log("haciendo click en el pivote")
-                    this.moviendo_pivote_r = true;
+
+            if(this.rotar_lista_grupos === false){
+                if(this.moviendo_pivote_r === false){
+                    if (tocando_pivote) {
+                        console.log("haciendo click en el pivote")
+                        this.moviendo_pivote_r = true;
+                    }
+                }else{
+                    if (tocando_pivote){
+                        this.moviendo_pivote_r = false;
+                    }
+                    this.pivote_rotacion.x = this.puntero.x;
+                    this.pivote_rotacion.y = this.puntero.y;
                 }
             }else{
-                if (tocando_pivote){
-                    this.moviendo_pivote_r = false;
+                const angulo_rotacion = Fisica.angulo_recta(this.pivote_rotacion.x, this.pivote_rotacion.y
+                    ,eventoLienzoFigura.mouse_x, eventoLienzoFigura.mouse_y);
+
+                for (let i=0; i<this.copia_lista_grupos.length; i++){
+                    const grupo_copia = this.copia_lista_grupos[i]
+                    const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
                 }
-                this.pivote_rotacion.x = this.puntero.x;
-                this.pivote_rotacion.y = this.puntero.y;
             }
         }
     }
@@ -807,6 +818,11 @@ class GestionLienzoAnimacion {
                 dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 5, 5)
                 dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
                     rect_seleccion.centro_x+1, rect_seleccion.centro_y-1)
+
+                if(this.rotar_lista_grupos){
+                    dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
+                        this.puntero.x, this.puntero.y)
+                }
             }else{
 
             }
