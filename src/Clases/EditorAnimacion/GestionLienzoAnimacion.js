@@ -555,14 +555,12 @@ class GestionLienzoAnimacion {
             }else{
                 if(eventoLienzoFigura.mouse_click_down){
                     this.inflar_grupos = false;
-                    let lista_grupos = this.copia_lista_grupos.map(g=>g.nombre)
-                    this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
+                    setAnimacion({"edicion": this.animacion_})
+                    //let lista_grupos = this.copia_lista_grupos.map(g=>g.nombre)
+                    //this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
                 }
             }
-
         }
-
-
 
         if(this.mover_figura === MOVER_CENTRO_GRUPOS){
             //let x = eventoLienzoFigura.mouse_x - grupo.cx;
@@ -582,7 +580,6 @@ class GestionLienzoAnimacion {
                     const f_copia = grupo_copia.lista_figuras[j];
                     figura.atributos.cx = f_copia.atributos.cx + x_move;
                     figura.atributos.cy = f_copia.atributos.cy + y_move;
-
                 }
             }
             if(eventoLienzoFigura.mouse_click_down){
@@ -623,6 +620,7 @@ class GestionLienzoAnimacion {
 
                 if(eventoLienzoFigura.mouse_only_click){
                     this.rotar_lista_grupos = false
+                    setAnimacion({"edicion": this.animacion_})
                 }
 
                 const angulo_rotacion = Fisica.angulo_recta(this.pivote_rotacion.x, this.pivote_rotacion.y

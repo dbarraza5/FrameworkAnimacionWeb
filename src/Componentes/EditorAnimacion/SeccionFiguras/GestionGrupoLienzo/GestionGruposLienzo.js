@@ -23,6 +23,7 @@ function GestionGruposLienzo(props){
         console.log(lista_seleccionados)
         console.log("[Operaciones]")
         console.log(operacion)*/
+        props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
         if(operacion === "mover"){
             props.gestionLienzo.seleccionGrupoMover(lista_seleccionados)
         }
