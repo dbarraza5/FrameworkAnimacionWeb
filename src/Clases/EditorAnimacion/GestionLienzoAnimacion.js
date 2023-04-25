@@ -103,6 +103,8 @@ class GestionLienzoAnimacion {
     moviendo_pivote_r = false
     rotar_lista_grupos = false
 
+    inflar_grupos = false
+
     constructor(animacion_) {
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
@@ -142,11 +144,14 @@ class GestionLienzoAnimacion {
         console.log("seleccionGrupoRotar231432432423")
         this.categoria_trabajo = TRABAJO_GRUPOS;
         this.mover_figura = MOVER_ROTAR_GRUPOS;
-        /*let rect = this.calcularCentroFigurasSeleccionadas()
-        this.pivote_rotacion.x = rect.centro_x;
-        this.pivote_rotacion.y = rect.centro_y;
-        console.log(rect)*/
         this.actualizarLienzo();
+    }
+
+    seleccionGrupoTamano(lista_grupos){
+        console.log("seleccionGrupoTamano")
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.mover_figura = MOVER_INFLAR_GRUPOS;
+        //this.actualizarLienzo();
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
@@ -533,6 +538,32 @@ class GestionLienzoAnimacion {
             }
         }
 
+        if(this.mover_figura === MOVER_INFLAR_GRUPOS){
+            let rect_seleccion = this.calcularCentroGruposSeleccionados()
+            let p_sup = {
+                x: rect_seleccion.sup_hor,
+                y: rect_seleccion.sup_ver,
+                w: 3,
+                h: 3
+            }
+            if(this.inflar_grupos === false){
+                if(eventoLienzoFigura.mouse_click_down && rectsColliding(this.puntero, p_sup)){
+                    console.log("inflar_lista_grupos")
+                    this.inflar_grupos = true;
+                    this.mover_centros=this.calcularCentroGruposSeleccionados()
+                }
+            }else{
+                if(eventoLienzoFigura.mouse_click_down){
+                    this.inflar_grupos = false;
+                    let lista_grupos = this.copia_lista_grupos.map(g=>g.nombre)
+                    this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
+                }
+            }
+
+        }
+
+
+
         if(this.mover_figura === MOVER_CENTRO_GRUPOS){
             //let x = eventoLienzoFigura.mouse_x - grupo.cx;
             //let y = eventoLienzoFigura.mouse_y - grupo.cy;
@@ -612,6 +643,92 @@ class GestionLienzoAnimacion {
                     }
                 }
 
+            }
+        }
+
+        if(this.mover_figura === MOVER_INFLAR_GRUPOS){
+            console.log("inflateeeeeee!!!")
+
+            /*console.log("rect_seleccion")
+            console.log(p_sup)
+            console.log(this.puntero)
+            console.log(rectsColliding(this.puntero, p_sup))
+            console.log(eventoLienzoFigura.mouse_click_down)*/
+            if (this.inflar_grupos){
+                console.log("nooo entra inflarrrrrr1111111111")
+                if(eventoLienzoFigura.mouse_x> (this.mover_centros.centro_x+20)){
+                    console.log("nooo entra inflarrrrrr22222222")
+                    const diff_ancho = (eventoLienzoFigura.mouse_x-10)-(this.mover_centros.sup_hor-10);
+                    const total_ancho = (this.mover_centros.ancho/2) -20
+                    const porcentaje = diff_ancho/total_ancho
+                    /*console.log(diff_ancho)
+                    console.log(total_ancho)
+                    console.log(porcentaje)*/
+
+                    for (let i=0; i<this.copia_lista_grupos.length; i++){
+                        const grupo_copia = this.copia_lista_grupos[i]
+                        const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
+
+                        for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                            let figura = grupo_.lista_figuras[j];
+                            if (true){//(this.lista_id_figuras.includes(figura.nombre)){
+                                let f_copia = grupo_copia.lista_figuras[j];
+                                if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
+                                    let x = this.mover_centros.centro_x - grupo_.cx;
+                                    let y = this.mover_centros.centro_y - grupo_.cy;
+
+                                    const angulo_figura = Fisica.angulo_recta(x, y,
+                                        f_copia.atributos.cx, f_copia.atributos.cy)
+                                    const distancia = Fisica.distanciaEntreDosPuntos(x, y,
+                                        f_copia.atributos.cx, f_copia.atributos.cy)
+
+                                    let dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                                    let dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+                                    figura.atributos.cx = parseInt(x+ dx)
+                                    figura.atributos.cy = parseInt(y+ dy)
+
+                                    if(figura.tipo_figura === "CIRCULO"){
+                                        figura.atributos.radiox = parseInt(f_copia.atributos.radiox+ f_copia.atributos.radiox*porcentaje)
+                                        figura.atributos.radioy = parseInt(f_copia.atributos.radioy+ f_copia.atributos.radioy*porcentaje)
+                                    }
+                                }
+                                if(figura.tipo_figura === "RECTA"){
+
+                                    let x = this.mover_centros.centro_x - grupo_.cx;
+                                    let y = this.mover_centros.centro_y - grupo_.cy;
+
+                                    const x1 = f_copia.atributos.x1+f_copia.atributos.cx;
+                                    const y1 = f_copia.atributos.y1+f_copia.atributos.cy;
+
+                                    const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
+                                    const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1 ,y1)
+                                    let dx = Math.cos(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
+                                    let dy = Math.sin(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
+
+                                    figura.atributos.x1 = parseInt(x+ dx)
+                                    figura.atributos.y1 = parseInt(y+ dy)
+
+                                    const x2 = f_copia.atributos.x2+f_copia.atributos.cx;
+                                    const y2 = f_copia.atributos.y2+f_copia.atributos.cy;
+
+                                    const angulo_p2 = Fisica.angulo_recta(x, y, x2 ,y2)
+                                    const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2 ,y2)
+
+                                    dx = Math.cos(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
+                                    dy = Math.sin(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
+
+                                    figura.atributos.x2 = parseInt(x+ dx)
+                                    figura.atributos.y2 = parseInt(y+ dy)
+
+                                    figura.atributos.cx = 0
+                                    figura.atributos.cy = 0
+
+                                    //this.animacion_.set_figura(nombre_grupo, figura)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

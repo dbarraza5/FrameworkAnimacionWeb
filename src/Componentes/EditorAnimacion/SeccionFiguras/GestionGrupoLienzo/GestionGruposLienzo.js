@@ -18,11 +18,11 @@ function GestionGruposLienzo(props){
     const arbol=props.animacion.estructura_arbol_grupos()
 
     const mover_grupos=()=>{
-        console.log("[MOVER GRUPOS]")
+        /*console.log("[MOVER GRUPOS]")
         console.log("[Lista Grupos Seleccionado]")
         console.log(lista_seleccionados)
         console.log("[Operaciones]")
-        console.log(operacion)
+        console.log(operacion)*/
         if(operacion === "mover"){
             props.gestionLienzo.seleccionGrupoMover(lista_seleccionados)
         }
@@ -35,7 +35,9 @@ function GestionGruposLienzo(props){
             props.gestionLienzo.seleccionGrupoRotar(lista_seleccionados)
         }
 
-
+        if(operacion === "tamano"){
+            props.gestionLienzo.seleccionGrupoTamano(lista_seleccionados)
+        }
     }
 
     const cambioOperacion = (e)=>{
