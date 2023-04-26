@@ -634,7 +634,8 @@ class GestionLienzoAnimacion {
                         let figura = grupo_.lista_figuras[j];
 
                         let f_copia = grupo_copia.lista_figuras[j];
-                        let f_nuevo=this.rotar_figura(figura, f_copia, grupo_,angulo_rotacion, this.pivote_rotacion.x, this.pivote_rotacion.y)
+                        let f_nuevo=this.rotar_figura(figura, f_copia, grupo_,angulo_rotacion,
+                            this.pivote_rotacion.x, this.pivote_rotacion.y)
 
                         //this.animacion_.set_figura(grupo_.nombre, f_nuevo)
 
