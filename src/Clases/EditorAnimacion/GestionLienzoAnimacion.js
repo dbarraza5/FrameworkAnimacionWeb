@@ -505,8 +505,8 @@ class GestionLienzoAnimacion {
                 if(eventoLienzoFigura.mouse_click_down){
                     this.inflar_grupos = false;
                     setAnimacion({"edicion": this.animacion_})
-                    //let lista_grupos = this.copia_lista_grupos.map(g=>g.nombre)
-                    //this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
+                    let lista_grupos = this.copia_lista_grupos.map(g=>g.nombre)
+                    this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
                 }
             }
         }
