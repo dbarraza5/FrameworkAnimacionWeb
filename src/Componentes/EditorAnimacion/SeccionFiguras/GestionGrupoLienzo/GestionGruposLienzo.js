@@ -17,35 +17,30 @@ function GestionGruposLienzo(props){
     }
     const arbol=props.animacion.estructura_arbol_grupos()
 
-    const mover_grupos=()=>{
-        /*console.log("[MOVER GRUPOS]")
-        console.log("[Lista Grupos Seleccionado]")
-        console.log(lista_seleccionados)
-        console.log("[Operaciones]")
-        console.log(operacion)*/
+    const mover_grupos=(operacion_)=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
-        if(operacion === "mover"){
+        if(operacion_ === "mover"){
             props.gestionLienzo.seleccionGrupoMover(lista_seleccionados)
         }
 
-        if(operacion === "duplicar"){
+        if(operacion_ === "duplicar"){
             props.gestionLienzo.seleccionGrupoDuplicar(lista_seleccionados)
         }
 
-        if(operacion === "rotar"){
+        if(operacion_ === "rotar"){
             props.gestionLienzo.seleccionGrupoRotar(lista_seleccionados)
         }
 
-        if(operacion === "tamano"){
+        if(operacion_ === "tamano"){
             props.gestionLienzo.seleccionGrupoTamano(lista_seleccionados)
         }
     }
 
     const cambioOperacion = (e)=>{
         console.log(e.target.value)
-        setOperacion(e.target.value)
+        //setOperacion(e.target.value)
         console.log("cambio de operacion: "+e.target.value)
-        //mover_grupos()
+        mover_grupos(e.target.value)
     }
 
     return (<div>
@@ -66,30 +61,30 @@ function GestionGruposLienzo(props){
                     <legend>Opciones</legend>
 
                     <div className="btn-group-vertical" role="group" aria-label="Basic checkbox toggle button group">
-                        <input type="radio" className="btn-check" id="radio_grupo_mover" name="radio_grupo" autoComplete="off"
-                               value="mover" onChange={cambioOperacion}/>
+                        <input type="button" className="btn-check" id="radio_grupo_mover" name="radio_grupo" autoComplete="off"
+                               value="mover" onClick={cambioOperacion}/>
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_mover">Mover</label>
 
-                        <input type="radio" className="btn-check" id="radio_grupo_rotar" name="radio_grupo" autoComplete="off"
-                               value="rotar" onChange={cambioOperacion}/>
+                        <input type="button" className="btn-check" id="radio_grupo_rotar" name="radio_grupo" autoComplete="off"
+                               value="rotar" onClick={cambioOperacion}/>
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_rotar">Rotar</label>
 
-                        <input type="radio" className="btn-check" id="radio_grupo_tamano" name="radio_grupo" autoComplete="off"
-                               value="tamano" onChange={cambioOperacion}/>
+                        <input type="button" className="btn-check" id="radio_grupo_tamano" name="radio_grupo" autoComplete="off"
+                               value="tamano" onClick={cambioOperacion}/>
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_tamano">Tamaño</label>
 
                     </div>
                     <div className="btn-group-vertical" role="group" aria-label="Basic checkbox toggle button group">
-                        <input type="radio" className="btn-check" id="radio_grupo_duplicar" name="radio_grupo" autoComplete="off"
-                               value="duplicar" onChange={cambioOperacion}/>
+                        <input type="button" className="btn-check" id="radio_grupo_duplicar" name="radio_grupo" autoComplete="off"
+                               value="duplicar" onClick={cambioOperacion}/>
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_duplicar">Duplicar</label>
 
-                        <input type="radio" className="btn-check" id="radio_grupo_espejo" name="radio_grupo" autoComplete="off"
-                               value="espejo" onChange={cambioOperacion}/>
+                        <input type="button" className="btn-check" id="radio_grupo_espejo" name="radio_grupo" autoComplete="off"
+                               value="espejo" onClick={cambioOperacion}/>
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_espejo">Espejo</label>
 
-                        <input type="radio" className="btn-check" id="radio_grupo_borrar" name="radio_grupo" autoComplete="off"
-                               value="borrar" onChange={cambioOperacion}/>
+                        <input type="button" className="btn-check" id="radio_grupo_borrar" name="radio_grupo" autoComplete="off"
+                               value="borrar" onClick={cambioOperacion}/>
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_borrar">Borrar</label>
                     </div>
 

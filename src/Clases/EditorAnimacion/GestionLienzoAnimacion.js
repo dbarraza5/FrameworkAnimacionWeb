@@ -646,23 +646,11 @@ class GestionLienzoAnimacion {
         }
 
         if(this.mover_figura === MOVER_INFLAR_GRUPOS){
-            console.log("inflateeeeeee!!!")
-
-            /*console.log("rect_seleccion")
-            console.log(p_sup)
-            console.log(this.puntero)
-            console.log(rectsColliding(this.puntero, p_sup))
-            console.log(eventoLienzoFigura.mouse_click_down)*/
             if (this.inflar_grupos){
-                console.log("nooo entra inflarrrrrr1111111111")
                 if(eventoLienzoFigura.mouse_x> (this.mover_centros.centro_x+20)){
-                    console.log("nooo entra inflarrrrrr22222222")
                     const diff_ancho = (eventoLienzoFigura.mouse_x-10)-(this.mover_centros.sup_hor-10);
                     const total_ancho = (this.mover_centros.ancho/2) -20
                     const porcentaje = diff_ancho/total_ancho
-                    /*console.log(diff_ancho)
-                    console.log(total_ancho)
-                    console.log(porcentaje)*/
 
                     for (let i=0; i<this.copia_lista_grupos.length; i++){
                         const grupo_copia = this.copia_lista_grupos[i]
