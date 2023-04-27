@@ -334,60 +334,9 @@ class GestionLienzoAnimacion {
                     let figura = grupo.lista_figuras[j];
                     if (this.lista_id_figuras.includes(figura.nombre)){
                         let f_copia = this.copia_lista_figuras.filter((f)=>f.nombre===figura.nombre)[0]
-                        if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
-                            let x = this.mover_centros.centro_x - grupo.cx;
-                            let y = this.mover_centros.centro_y - grupo.cy;
 
-                            const angulo_figura = Fisica.angulo_recta(x, y,
-                                f_copia.atributos.cx, f_copia.atributos.cy)
-                            const distancia = Fisica.distanciaEntreDosPuntos(x, y,
-                                f_copia.atributos.cx, f_copia.atributos.cy)
-
-                            let dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
-                            let dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
-                            figura.atributos.cx = parseInt(x+ dx)
-                            figura.atributos.cy = parseInt(y+ dy)
-
-                            if(figura.tipo_figura === "CIRCULO"){
-                                figura.atributos.radiox = parseInt(f_copia.atributos.radiox+ f_copia.atributos.radiox*porcentaje)
-                                figura.atributos.radioy = parseInt(f_copia.atributos.radioy+ f_copia.atributos.radioy*porcentaje)
-                            }
-                        }
-                        if(figura.tipo_figura === "RECTA"){
-
-                            let x = this.mover_centros.centro_x - grupo.cx;
-                            let y = this.mover_centros.centro_y - grupo.cy;
-
-                            const x1 = f_copia.atributos.x1+f_copia.atributos.cx;
-                            const y1 = f_copia.atributos.y1+f_copia.atributos.cy;
-
-                            const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
-                            const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1 ,y1)
-                            let dx = Math.cos(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
-                            let dy = Math.sin(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
-
-                            figura.atributos.x1 = parseInt(x+ dx)
-                            figura.atributos.y1 = parseInt(y+ dy)
-
-                            const x2 = f_copia.atributos.x2+f_copia.atributos.cx;
-                            const y2 = f_copia.atributos.y2+f_copia.atributos.cy;
-
-                            const angulo_p2 = Fisica.angulo_recta(x, y, x2 ,y2)
-                            const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2 ,y2)
-
-                            dx = Math.cos(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
-                            dy = Math.sin(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
-
-                            figura.atributos.x2 = parseInt(x+ dx)
-                            figura.atributos.y2 = parseInt(y+ dy)
-
-                            figura.atributos.cx = 0
-                            figura.atributos.cy = 0
-
-                            this.animacion_.set_figura(nombre_grupo, figura)
-
-                        }
-
+                        this.inflar_figura(figura, f_copia, grupo, this.mover_centros.centro_x,
+                            this.mover_centros.centro_y, porcentaje)
                     }
                 }
                 setAnimacion({"edicion": this.animacion_})
@@ -660,58 +609,9 @@ class GestionLienzoAnimacion {
                             let figura = grupo_.lista_figuras[j];
                             if (true){//(this.lista_id_figuras.includes(figura.nombre)){
                                 let f_copia = grupo_copia.lista_figuras[j];
-                                if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
-                                    let x = this.mover_centros.centro_x - grupo_.cx;
-                                    let y = this.mover_centros.centro_y - grupo_.cy;
 
-                                    const angulo_figura = Fisica.angulo_recta(x, y,
-                                        f_copia.atributos.cx, f_copia.atributos.cy)
-                                    const distancia = Fisica.distanciaEntreDosPuntos(x, y,
-                                        f_copia.atributos.cx, f_copia.atributos.cy)
-
-                                    let dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
-                                    let dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
-                                    figura.atributos.cx = parseInt(x+ dx)
-                                    figura.atributos.cy = parseInt(y+ dy)
-
-                                    if(figura.tipo_figura === "CIRCULO"){
-                                        figura.atributos.radiox = parseInt(f_copia.atributos.radiox+ f_copia.atributos.radiox*porcentaje)
-                                        figura.atributos.radioy = parseInt(f_copia.atributos.radioy+ f_copia.atributos.radioy*porcentaje)
-                                    }
-                                }
-                                if(figura.tipo_figura === "RECTA"){
-
-                                    let x = this.mover_centros.centro_x - grupo_.cx;
-                                    let y = this.mover_centros.centro_y - grupo_.cy;
-
-                                    const x1 = f_copia.atributos.x1+f_copia.atributos.cx;
-                                    const y1 = f_copia.atributos.y1+f_copia.atributos.cy;
-
-                                    const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
-                                    const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1 ,y1)
-                                    let dx = Math.cos(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
-                                    let dy = Math.sin(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
-
-                                    figura.atributos.x1 = parseInt(x+ dx)
-                                    figura.atributos.y1 = parseInt(y+ dy)
-
-                                    const x2 = f_copia.atributos.x2+f_copia.atributos.cx;
-                                    const y2 = f_copia.atributos.y2+f_copia.atributos.cy;
-
-                                    const angulo_p2 = Fisica.angulo_recta(x, y, x2 ,y2)
-                                    const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2 ,y2)
-
-                                    dx = Math.cos(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
-                                    dy = Math.sin(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
-
-                                    figura.atributos.x2 = parseInt(x+ dx)
-                                    figura.atributos.y2 = parseInt(y+ dy)
-
-                                    figura.atributos.cx = 0
-                                    figura.atributos.cy = 0
-
-                                    //this.animacion_.set_figura(nombre_grupo, figura)
-                                }
+                                this.inflar_figura(figura, f_copia, grupo_, this.mover_centros.centro_x,
+                                    this.mover_centros.centro_y, porcentaje)
                             }
                         }
                     }
@@ -775,6 +675,61 @@ class GestionLienzoAnimacion {
             //this.animacion_.set_figura(nombre_grupo, figura)
         }
         return figura
+    }
+
+    inflar_figura(figura, f_copia, grupo_, centrox, centroy, porcentaje){
+        if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
+            let x = centrox - grupo_.cx;
+            let y = centroy - grupo_.cy;
+
+            const angulo_figura = Fisica.angulo_recta(x, y,
+                f_copia.atributos.cx, f_copia.atributos.cy)
+            const distancia = Fisica.distanciaEntreDosPuntos(x, y,
+                f_copia.atributos.cx, f_copia.atributos.cy)
+
+            let dx = Math.cos(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+            let dy = Math.sin(Fisica.angulo_radianaes(angulo_figura))*(distancia+distancia*porcentaje)
+            figura.atributos.cx = parseInt(x+ dx)
+            figura.atributos.cy = parseInt(y+ dy)
+
+            if(figura.tipo_figura === "CIRCULO"){
+                figura.atributos.radiox = parseInt(f_copia.atributos.radiox+ f_copia.atributos.radiox*porcentaje)
+                figura.atributos.radioy = parseInt(f_copia.atributos.radioy+ f_copia.atributos.radioy*porcentaje)
+            }
+        }
+        if(figura.tipo_figura === "RECTA"){
+
+            let x = centrox - grupo_.cx;
+            let y = centroy - grupo_.cy;
+
+            const x1 = f_copia.atributos.x1+f_copia.atributos.cx;
+            const y1 = f_copia.atributos.y1+f_copia.atributos.cy;
+
+            const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
+            const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1 ,y1)
+            let dx = Math.cos(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
+            let dy = Math.sin(Fisica.angulo_radianaes(angulo_p1))*(distancia_p1+distancia_p1*porcentaje)
+
+            figura.atributos.x1 = parseInt(x+ dx)
+            figura.atributos.y1 = parseInt(y+ dy)
+
+            const x2 = f_copia.atributos.x2+f_copia.atributos.cx;
+            const y2 = f_copia.atributos.y2+f_copia.atributos.cy;
+
+            const angulo_p2 = Fisica.angulo_recta(x, y, x2 ,y2)
+            const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2 ,y2)
+
+            dx = Math.cos(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
+            dy = Math.sin(Fisica.angulo_radianaes(angulo_p2))*(distancia_p2+distancia_p2*porcentaje)
+
+            figura.atributos.x2 = parseInt(x+ dx)
+            figura.atributos.y2 = parseInt(y+ dy)
+
+            figura.atributos.cx = 0
+            figura.atributos.cy = 0
+
+            //this.animacion_.set_figura(nombre_grupo, figura)
+        }
     }
 
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion) {
