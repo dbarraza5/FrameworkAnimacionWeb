@@ -24,6 +24,7 @@ const MOVER_ROTAR_GRUPOS = 11;
 const MOVER_INFLAR_GRUPOS = 12;
 const MOVER_DUPLICAR_GRUPOS=13;
 const MOVER_BORRAR_GRUPOS=14;
+const MOVER_CENTRAR_GRUPOS=15;
 
 class GestionLienzoAnimacion {
 
@@ -130,6 +131,12 @@ class GestionLienzoAnimacion {
         //this.mover_centros=this.calcularCentroGruposSeleccionados()
         console.log("[CALCULO CENTRO DE GRUPOS]")
         console.log(this.mover_centros)
+    }
+
+    seleccionGrupoCentrar(lista_grupos){
+        console.log("seleccionGrupoCentrar")
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.mover_figura = MOVER_CENTRAR_GRUPOS;
     }
 
     seleccionGrupoDuplicar(lista_grupos){
@@ -512,25 +519,8 @@ class GestionLienzoAnimacion {
         }
 
         if(this.mover_figura === MOVER_CENTRO_GRUPOS){
-            //let x = eventoLienzoFigura.mouse_x - grupo.cx;
-            //let y = eventoLienzoFigura.mouse_y - grupo.cy;
-
-            for (let i=0; i<this.copia_lista_grupos.length; i++){
-                const grupo_copia = this.copia_lista_grupos[i]
-                const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
-
-                let x = eventoLienzoFigura.mouse_x ;
-                let y = eventoLienzoFigura.mouse_y ;
-                let x_move =  x- this.mover_centros.centro_x;
-                let y_move = y- this.mover_centros.centro_y;
-
-                for (let j = 0; j < grupo_.lista_figuras.length; j++) {
-                    const figura = grupo_.lista_figuras[j];
-                    const f_copia = grupo_copia.lista_figuras[j];
-                    figura.atributos.cx = f_copia.atributos.cx + x_move;
-                    figura.atributos.cy = f_copia.atributos.cy + y_move;
-                }
-            }
+            this.mover_lista_grupos(this.mover_centros.centro_x, this.mover_centros.centro_y,
+                eventoLienzoFigura.mouse_x, eventoLienzoFigura.mouse_y  )
             if(eventoLienzoFigura.mouse_click_down){
                 this.mover_figura = MOVER_NADA
             }
@@ -617,6 +607,13 @@ class GestionLienzoAnimacion {
                     }
                 }
             }
+        }
+
+        if(this.mover_figura === MOVER_CENTRAR_GRUPOS){
+            this.mover_centros=this.calcularCentroGruposSeleccionados()
+            this.mover_lista_grupos(this.mover_centros.centro_x, this.mover_centros.centro_y,
+                300,300)
+            this.mover_figura = MOVER_NADA;
         }
     }
 
@@ -729,6 +726,24 @@ class GestionLienzoAnimacion {
             figura.atributos.cy = 0
 
             //this.animacion_.set_figura(nombre_grupo, figura)
+        }
+    }
+
+    mover_lista_grupos(orig_x, orig_y, des_x,  des_y){
+        for (let i=0; i<this.copia_lista_grupos.length; i++){
+            const grupo_copia = this.copia_lista_grupos[i]
+            const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
+            let x = des_x ;
+            let y = des_y ;
+            let x_move =  x- orig_x;
+            let y_move = y- orig_y;
+
+            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                const figura = grupo_.lista_figuras[j];
+                const f_copia = grupo_copia.lista_figuras[j];
+                figura.atributos.cx = f_copia.atributos.cx + x_move;
+                figura.atributos.cy = f_copia.atributos.cy + y_move;
+            }
         }
     }
 

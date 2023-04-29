@@ -34,6 +34,10 @@ function GestionGruposLienzo(props){
         if(operacion_ === "tamano"){
             props.gestionLienzo.seleccionGrupoTamano(lista_seleccionados)
         }
+
+        if(operacion_ === "centrar"){
+            props.gestionLienzo.seleccionGrupoCentrar(lista_seleccionados)
+        }
     }
 
     const cambioOperacion = (e)=>{
@@ -88,10 +92,11 @@ function GestionGruposLienzo(props){
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_borrar">Borrar</label>
                     </div>
 
-                    <br/>
-                    <input type="button" className="btn-check" autoComplete="off"
-                           value="tamano" onChange={mover_grupos}/>
-                    <label className="btn btn-outline-primary" htmlFor="radio_grupo_tamano">aplicar</label>
+                    <div className="btn-group-vertical" role="group" aria-label="Basic checkbox toggle button group">
+                        <input type="button" className="btn-check" id="radio_grupo_centrar" name="radio_grupo" autoComplete="off"
+                               value="centrar" onClick={cambioOperacion}/>
+                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_centrar">Centrar</label>
+                    </div>
                 </form>
 
             </div>

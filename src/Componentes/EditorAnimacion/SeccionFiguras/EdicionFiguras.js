@@ -19,7 +19,11 @@ function EdicionFiguras(props){
     }
 
     useEffect(() => {
-
+        const interval = setInterval(() => {
+            //console.log('This will run every second!');
+            props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion)
+        }, 500);
+        return () => clearInterval(interval);
     }, []);
 
     return(
