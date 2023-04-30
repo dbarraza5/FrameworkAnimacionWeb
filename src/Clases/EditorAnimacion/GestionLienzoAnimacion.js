@@ -25,6 +25,7 @@ const MOVER_INFLAR_GRUPOS = 12;
 const MOVER_DUPLICAR_GRUPOS=13;
 const MOVER_BORRAR_GRUPOS=14;
 const MOVER_CENTRAR_GRUPOS=15;
+const MOVER_ESPEJO_GRUPOS=16;
 
 class GestionLienzoAnimacion {
 
@@ -158,6 +159,13 @@ class GestionLienzoAnimacion {
         console.log("seleccionGrupoTamano")
         this.categoria_trabajo = TRABAJO_GRUPOS;
         this.mover_figura = MOVER_INFLAR_GRUPOS;
+        //this.actualizarLienzo();
+    }
+
+    seleccionGrupoEspejo(lista_grupos){
+        console.log("seleccionGrupoEspejo")
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.mover_figura = MOVER_ESPEJO_GRUPOS;
         //this.actualizarLienzo();
     }
 
@@ -613,6 +621,39 @@ class GestionLienzoAnimacion {
             this.mover_centros=this.calcularCentroGruposSeleccionados()
             this.mover_lista_grupos(this.mover_centros.centro_x, this.mover_centros.centro_y,
                 300,300)
+            this.mover_figura = MOVER_NADA;
+        }
+
+        if(this.mover_figura === MOVER_ESPEJO_GRUPOS){
+            console.log("EFECTO ESPEJOOOOOOOO")
+            this.mover_centros=this.calcularCentroGruposSeleccionados();
+
+            for (let i=0; i<this.copia_lista_grupos.length; i++){
+                const grupo_copia = this.copia_lista_grupos[i]
+                const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
+                let centrox = this.mover_centros.centro_x;
+                let centroy = this.mover_centros.centro_y;
+                for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                    const figura = grupo_.lista_figuras[j];
+                    const f_copia = grupo_copia.lista_figuras[j];
+                    let deff_x = 0;
+                    let deff_y = 0;
+
+                    if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
+                        deff_x = centrox*2-f_copia.atributos.cx;
+                        figura.atributos.cx = deff_x
+                    }
+
+                    if(figura.tipo_figura === "RECTA"){
+                        deff_x = centrox*2-f_copia.atributos.cx;
+                        figura.atributos.cx = deff_x
+
+                        figura.atributos.x1 = figura.atributos.x1*-1;
+                        figura.atributos.x2 = figura.atributos.x2*-1;
+                    }
+                }
+            }
+
             this.mover_figura = MOVER_NADA;
         }
     }

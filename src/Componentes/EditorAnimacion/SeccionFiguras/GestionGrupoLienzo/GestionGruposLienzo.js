@@ -38,6 +38,10 @@ function GestionGruposLienzo(props){
         if(operacion_ === "centrar"){
             props.gestionLienzo.seleccionGrupoCentrar(lista_seleccionados)
         }
+
+        if(operacion_ === "espejo"){
+            props.gestionLienzo.seleccionGrupoEspejo(lista_seleccionados)
+        }
     }
 
     const cambioOperacion = (e)=>{
