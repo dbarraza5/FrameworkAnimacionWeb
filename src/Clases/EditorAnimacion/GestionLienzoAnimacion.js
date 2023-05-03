@@ -27,6 +27,11 @@ const MOVER_BORRAR_GRUPOS=14;
 const MOVER_CENTRAR_GRUPOS=15;
 const MOVER_ESPEJO_GRUPOS=16;
 
+const REFLEJO_NONE = 0;
+const REFLEJO_HORIZONTAL = 1;
+const REFLEJO_VERTICAL = 2;
+
+
 class GestionLienzoAnimacion {
 
     categoria_trabajo = TRABAJO_NONE;
@@ -107,6 +112,13 @@ class GestionLienzoAnimacion {
 
     inflar_grupos = false
 
+
+
+    espejo_sentido_reflejo = REFLEJO_NONE;
+    reflejo_original_horz=false;
+    reflejo_original_vert=false;
+
+
     constructor(animacion_) {
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
@@ -166,7 +178,19 @@ class GestionLienzoAnimacion {
         console.log("seleccionGrupoEspejo")
         this.categoria_trabajo = TRABAJO_GRUPOS;
         this.mover_figura = MOVER_ESPEJO_GRUPOS;
-        //this.actualizarLienzo();
+        this.reflejo_original_horz=false;
+        this.reflejo_original_vert=false;
+    }
+
+    espejoReflejoHorizontal(lista_grupos){
+        console.log("espejoReflejoHorizontal")
+        this.espejo_sentido_reflejo = REFLEJO_HORIZONTAL;
+        this.reflejo_original_horz = !this.reflejo_original_horz;
+    }
+    espejoReflejoVertical(lista_grupos){
+        console.log("espejoReflejoVertical")
+        this.espejo_sentido_reflejo = REFLEJO_VERTICAL;
+        this.reflejo_original_vert = !this.reflejo_original_vert;
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
@@ -626,35 +650,105 @@ class GestionLienzoAnimacion {
 
         if(this.mover_figura === MOVER_ESPEJO_GRUPOS){
             console.log("EFECTO ESPEJOOOOOOOO")
-            this.mover_centros=this.calcularCentroGruposSeleccionados();
 
-            for (let i=0; i<this.copia_lista_grupos.length; i++){
-                const grupo_copia = this.copia_lista_grupos[i]
-                const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
-                let centrox = this.mover_centros.centro_x;
-                let centroy = this.mover_centros.centro_y;
-                for (let j = 0; j < grupo_.lista_figuras.length; j++) {
-                    const figura = grupo_.lista_figuras[j];
-                    const f_copia = grupo_copia.lista_figuras[j];
-                    let deff_x = 0;
-                    let deff_y = 0;
+            if(this.espejo_sentido_reflejo !== REFLEJO_NONE){
+                this.mover_centros=this.calcularCentroGruposSeleccionados(true);
+                for (let i=0; i<this.copia_lista_grupos.length; i++){
+                    const grupo_copia = this.copia_lista_grupos[i]
+                    const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
+                    let centrox = this.mover_centros.centro_x;
+                    let centroy = this.mover_centros.centro_y;
+                    for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                        const figura = grupo_.lista_figuras[j];
+                        const f_copia = grupo_copia.lista_figuras[j];
+                        let deff_x = 0;
+                        let deff_y = 0;
+                        console.log(grupo_copia)
+                        console.log(grupo_)
+                        console.log("=================")
+                        if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
 
-                    if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
-                        deff_x = centrox*2-f_copia.atributos.cx;
-                        figura.atributos.cx = deff_x
-                    }
+                            if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
+                                if(this.reflejo_original_horz){
+                                    deff_x = centrox*2-(f_copia.atributos.cx+grupo_copia.cx*2);
+                                    figura.atributos.cx = deff_x
+                                }else{
+                                    figura.atributos.cx = f_copia.atributos.cx
+                                }
+                            }
+                            if(this.espejo_sentido_reflejo === REFLEJO_VERTICAL){
+                                if(this.reflejo_original_vert){
+                                    deff_y = centroy*2-(f_copia.atributos.cy+grupo_copia.cy*2);
+                                    figura.atributos.cy = deff_y
+                                }else{
+                                    figura.atributos.cy = f_copia.atributos.cy
+                                }
+                            }
+                        }
 
-                    if(figura.tipo_figura === "RECTA"){
-                        deff_x = centrox*2-f_copia.atributos.cx;
-                        figura.atributos.cx = deff_x
+                        if(figura.tipo_figura === "RECTA"){
+                            if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
 
-                        figura.atributos.x1 = figura.atributos.x1*-1;
-                        figura.atributos.x2 = figura.atributos.x2*-1;
+                                if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
+                                    if(this.reflejo_original_horz){
+                                        deff_x = centrox*2-(f_copia.atributos.cx+grupo_copia.cx*2);
+                                        figura.atributos.cx = deff_x
+                                        figura.atributos.x1 = figura.atributos.x1*-1;
+                                        figura.atributos.x2 = figura.atributos.x2*-1;
+                                    }else{
+                                        figura.atributos.cx = f_copia.atributos.cx
+                                        figura.atributos.x1 = f_copia.atributos.x1
+                                        figura.atributos.x2 = f_copia.atributos.x2
+                                    }
+                                }
+                            }
+                            if(this.espejo_sentido_reflejo === REFLEJO_VERTICAL){
+                                if(this.reflejo_original_vert){
+                                    deff_y = centroy*2-(f_copia.atributos.cy+grupo_copia.cy*2);
+                                    figura.atributos.cy = deff_y
+
+                                    figura.atributos.y1 = figura.atributos.y1*-1;
+                                    figura.atributos.y2 = figura.atributos.y2*-1;
+                                }else{
+                                    figura.atributos.cy = f_copia.atributos.cy
+                                    figura.atributos.y1 = f_copia.atributos.y1
+                                    figura.atributos.y2 = f_copia.atributos.y2
+                                }
+
+                            }
+                        }
                     }
                 }
+                this.espejo_sentido_reflejo = REFLEJO_NONE;
             }
 
-            this.mover_figura = MOVER_NADA;
+
+
+            //this.new_center=this.calcularCentroGruposSeleccionados();
+            //this.mover_lista_grupos(this.new_center.centro_x, this.new_center.centro_y,
+            //    this.mover_centros.centro_x, this.mover_centros.centro_y)
+            //this.mover_figura = MOVER_NADA;
+        }
+    }
+
+    efectoEspejo(sentido){
+
+    }
+
+    espejo_figura(figura, f_copia, centrox, centroy){
+        let deff_x = 0;
+        let deff_y = 0;
+        if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
+            deff_x = centrox*2-f_copia.atributos.cx;
+            figura.atributos.cx = deff_x
+        }
+
+        if(figura.tipo_figura === "RECTA"){
+            deff_x = centrox*2-f_copia.atributos.cx;
+            figura.atributos.cx = deff_x
+
+            figura.atributos.x1 = figura.atributos.x1*-1;
+            figura.atributos.x2 = figura.atributos.x2*-1;
         }
     }
 
@@ -976,7 +1070,7 @@ class GestionLienzoAnimacion {
         return this.calcularCenTroFiguras(figuras_select, grupo)
     }
 
-    calcularCentroGruposSeleccionados(){
+    calcularCentroGruposSeleccionados(copia=false){
 
         let inf_hor = Number.POSITIVE_INFINITY;
         let inf_ver = Number.POSITIVE_INFINITY;
@@ -984,7 +1078,12 @@ class GestionLienzoAnimacion {
         let sup_ver = Number.NEGATIVE_INFINITY;
 
         for (let i=0; i<this.copia_lista_grupos.length; i++){
-            const grupo_ = this.animacion_.getGrupo(this.copia_lista_grupos[i].nombre);
+            let grupo_ = null;
+            if(copia){
+                grupo_ = this.copia_lista_grupos[i];
+            }else{
+                grupo_ = this.animacion_.getGrupo(this.copia_lista_grupos[i].nombre);
+            }
 
             for (let j = 0; j < grupo_.lista_figuras.length; j++) {
                 const figura = grupo_.lista_figuras[j];

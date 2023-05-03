@@ -1,5 +1,7 @@
 import TreeViewElement from "../../../TreeView/TreeViewElement";
 import {useEffect, useState} from "react";
+import CrearGrupo from "../GestionGrupos/CrearGrupo";
+import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
 
 function GestionGruposLienzo(props){
@@ -42,6 +44,13 @@ function GestionGruposLienzo(props){
         if(operacion_ === "espejo"){
             props.gestionLienzo.seleccionGrupoEspejo(lista_seleccionados)
         }
+    }
+
+    const seleccionSentidoReflejo=(sentido)=>{
+        if(sentido === 1)
+            props.gestionLienzo.espejoReflejoHorizontal()
+        if(sentido === 2)
+            props.gestionLienzo.espejoReflejoVertical()
     }
 
     const cambioOperacion = (e)=>{
@@ -102,7 +111,29 @@ function GestionGruposLienzo(props){
                         <label className="btn btn-outline-primary" htmlFor="radio_grupo_centrar">Centrar</label>
                     </div>
                 </form>
-
+                <br/>
+                <div className="accordion" id="accordionExample">
+                    <div className="accordion-item">
+                        <h2 className="accordion-header" id="headingTwo">
+                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Configuración
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo"
+                             data-bs-parent="#accordionExample">
+                            <div className="accordion-body">
+                                <div className="btn-group" role="group" aria-label="Basic outlined example">
+                                    <button type="button" className="btn btn-outline-primary"
+                                            onClick={()=>seleccionSentidoReflejo(1)}><i
+                                        className="bi bi-arrow-left-right"></i></button>
+                                    <button type="button" className="btn btn-outline-primary" onClick={()=>seleccionSentidoReflejo(2)}><i
+                                        className="bi bi-arrow-down-up"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <button onClick={mover_grupos}>moverrrrsh</button>
