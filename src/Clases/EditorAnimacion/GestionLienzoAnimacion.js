@@ -649,8 +649,6 @@ class GestionLienzoAnimacion {
         }
 
         if(this.mover_figura === MOVER_ESPEJO_GRUPOS){
-            console.log("EFECTO ESPEJOOOOOOOO")
-
             if(this.espejo_sentido_reflejo !== REFLEJO_NONE){
                 this.mover_centros=this.calcularCentroGruposSeleccionados(true);
                 for (let i=0; i<this.copia_lista_grupos.length; i++){
@@ -661,94 +659,66 @@ class GestionLienzoAnimacion {
                     for (let j = 0; j < grupo_.lista_figuras.length; j++) {
                         const figura = grupo_.lista_figuras[j];
                         const f_copia = grupo_copia.lista_figuras[j];
-                        let deff_x = 0;
-                        let deff_y = 0;
-                        console.log(grupo_copia)
-                        console.log(grupo_)
-                        console.log("=================")
-                        if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
-
-                            if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
-                                if(this.reflejo_original_horz){
-                                    deff_x = centrox*2-(f_copia.atributos.cx+grupo_copia.cx*2);
-                                    figura.atributos.cx = deff_x
-                                }else{
-                                    figura.atributos.cx = f_copia.atributos.cx
-                                }
-                            }
-                            if(this.espejo_sentido_reflejo === REFLEJO_VERTICAL){
-                                if(this.reflejo_original_vert){
-                                    deff_y = centroy*2-(f_copia.atributos.cy+grupo_copia.cy*2);
-                                    figura.atributos.cy = deff_y
-                                }else{
-                                    figura.atributos.cy = f_copia.atributos.cy
-                                }
-                            }
-                        }
-
-                        if(figura.tipo_figura === "RECTA"){
-                            if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
-
-                                if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
-                                    if(this.reflejo_original_horz){
-                                        deff_x = centrox*2-(f_copia.atributos.cx+grupo_copia.cx*2);
-                                        figura.atributos.cx = deff_x
-                                        figura.atributos.x1 = figura.atributos.x1*-1;
-                                        figura.atributos.x2 = figura.atributos.x2*-1;
-                                    }else{
-                                        figura.atributos.cx = f_copia.atributos.cx
-                                        figura.atributos.x1 = f_copia.atributos.x1
-                                        figura.atributos.x2 = f_copia.atributos.x2
-                                    }
-                                }
-                            }
-                            if(this.espejo_sentido_reflejo === REFLEJO_VERTICAL){
-                                if(this.reflejo_original_vert){
-                                    deff_y = centroy*2-(f_copia.atributos.cy+grupo_copia.cy*2);
-                                    figura.atributos.cy = deff_y
-
-                                    figura.atributos.y1 = figura.atributos.y1*-1;
-                                    figura.atributos.y2 = figura.atributos.y2*-1;
-                                }else{
-                                    figura.atributos.cy = f_copia.atributos.cy
-                                    figura.atributos.y1 = f_copia.atributos.y1
-                                    figura.atributos.y2 = f_copia.atributos.y2
-                                }
-
-                            }
-                        }
+                        this.espejo_figura(figura, f_copia, grupo_copia,centrox, centroy)
                     }
                 }
                 this.espejo_sentido_reflejo = REFLEJO_NONE;
             }
-
-
-
-            //this.new_center=this.calcularCentroGruposSeleccionados();
-            //this.mover_lista_grupos(this.new_center.centro_x, this.new_center.centro_y,
-            //    this.mover_centros.centro_x, this.mover_centros.centro_y)
-            //this.mover_figura = MOVER_NADA;
         }
     }
 
-    efectoEspejo(sentido){
-
-    }
-
-    espejo_figura(figura, f_copia, centrox, centroy){
+    espejo_figura(figura, f_copia,grupo_copia, centrox, centroy){
         let deff_x = 0;
         let deff_y = 0;
         if(figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO"){
-            deff_x = centrox*2-f_copia.atributos.cx;
-            figura.atributos.cx = deff_x
+            if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
+                if(this.reflejo_original_horz){
+                    deff_x = centrox*2-(f_copia.atributos.cx+grupo_copia.cx*2);
+                    figura.atributos.cx = deff_x
+                }else{
+                    figura.atributos.cx = f_copia.atributos.cx
+                }
+            }
+            if(this.espejo_sentido_reflejo === REFLEJO_VERTICAL){
+                if(this.reflejo_original_vert){
+                    deff_y = centroy*2-(f_copia.atributos.cy+grupo_copia.cy*2);
+                    figura.atributos.cy = deff_y
+                }else{
+                    figura.atributos.cy = f_copia.atributos.cy
+                }
+            }
         }
 
         if(figura.tipo_figura === "RECTA"){
-            deff_x = centrox*2-f_copia.atributos.cx;
-            figura.atributos.cx = deff_x
+            if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
 
-            figura.atributos.x1 = figura.atributos.x1*-1;
-            figura.atributos.x2 = figura.atributos.x2*-1;
+                if(this.espejo_sentido_reflejo === REFLEJO_HORIZONTAL){
+                    if(this.reflejo_original_horz){
+                        deff_x = centrox*2-(f_copia.atributos.cx+grupo_copia.cx*2);
+                        figura.atributos.cx = deff_x
+                        figura.atributos.x1 = figura.atributos.x1*-1;
+                        figura.atributos.x2 = figura.atributos.x2*-1;
+                    }else{
+                        figura.atributos.cx = f_copia.atributos.cx
+                        figura.atributos.x1 = f_copia.atributos.x1
+                        figura.atributos.x2 = f_copia.atributos.x2
+                    }
+                }
+            }
+            if(this.espejo_sentido_reflejo === REFLEJO_VERTICAL){
+                if(this.reflejo_original_vert){
+                    deff_y = centroy*2-(f_copia.atributos.cy+grupo_copia.cy*2);
+                    figura.atributos.cy = deff_y
+
+                    figura.atributos.y1 = figura.atributos.y1*-1;
+                    figura.atributos.y2 = figura.atributos.y2*-1;
+                }else{
+                    figura.atributos.cy = f_copia.atributos.cy
+                    figura.atributos.y1 = f_copia.atributos.y1
+                    figura.atributos.y2 = f_copia.atributos.y2
+                }
+
+            }
         }
     }
 
