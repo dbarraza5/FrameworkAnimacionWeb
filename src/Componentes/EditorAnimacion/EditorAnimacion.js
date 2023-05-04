@@ -68,6 +68,9 @@ function EditorAnimacion(props) {
                     animacion.edicion.meta_figuras = response.data.meta_figuras
                     animacion.edicion.meta_movimientos = response.data.meta_movimientos;
                     animacion.edicion.grupos_figuras = response.data.grupos_figuras
+
+                    animacion.edicion.id_proyecto = response.data._id;
+                    animacion.edicion.nombre_proyecto = response.data.nombre_animacion;
                     //customSetAnimacion(animacion)
                     setAnimacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
@@ -120,6 +123,23 @@ function EditorAnimacion(props) {
         }
     }
 
+    const exportandoAnimacion = async () => {
+        console.log("EXPORTANDO LA ANIMACION")
+        console.log(animacion)
+        const miArray = animacion.edicion.grupos_figuras;
+
+        const jsonString = JSON.stringify(miArray);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "miArchivo.json";
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
     useEffect(() => {
         //const liezo = new GestionLienzoAnimacion()
         //console.log(gestionLienzo)
@@ -142,7 +162,7 @@ function EditorAnimacion(props) {
         const composicion = <EditorCompisicion {...paquete_datos}/>
         return (
             <div className="row">
-                <MenuAnimacion subirAnimacion={subirAnimacion}/>
+                <MenuAnimacion subirAnimacion={subirAnimacion} exportarAnimacion={exportandoAnimacion}/>
                 <hr/>
             <NavEditorAnimacion edicion_figuras ={edicion_figuras}
                                 composicion = {composicion}>
