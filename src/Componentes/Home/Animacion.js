@@ -9,6 +9,7 @@ function Animacion(props) {
     const datos_usuario = cookie.get("usuario")
 
     const [animaciones, setAnimaciones] = useState([]);
+    //const [nombre_pro, setAnimaciones] = useState([]);
 
     const navigate = useNavigate();
 

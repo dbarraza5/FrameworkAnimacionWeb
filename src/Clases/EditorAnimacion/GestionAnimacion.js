@@ -5,8 +5,8 @@ class GestionAnimacion{
 
     meta_movimientos = [
     ]
-    id_proyecto = "12hh21j"
-    nombre_proyecto = "automovil"
+    id_animacion = "12hh21j"
+    nombre_animacion = "automovil"
 
     constructor() {
         this.grupos_figuras = [
@@ -18,8 +18,8 @@ class GestionAnimacion{
 
     getDatosAnimacion(){
         return {
-            id_proyecto: this.id_proyecto,
-            nombre_proyecto: this.nombre_proyecto,
+            id_animacion: this.id_animacion,
+            nombre_animacion: this.nombre_animacion,
             meta_figuras: this.meta_figuras,
             meta_movimiento: this.meta_movimientos,
             grupos_figuras: this.grupos_figuras,

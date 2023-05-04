@@ -116,7 +116,7 @@ function SectionListaAnimacion(props) {
     const {id_proyecto} = useParams();
     return (
         <Home {...props}>
-            <Animacion {...props} id_proyecto={id_proyecto} nombre_proyecto="sin nombre"/>
+            <Animacion {...props} id_proyecto={id_proyecto} nombre_proyecto={id_proyecto}/>
         </Home>
     )
     /*return (

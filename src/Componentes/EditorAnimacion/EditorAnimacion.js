@@ -69,8 +69,8 @@ function EditorAnimacion(props) {
                     animacion.edicion.meta_movimientos = response.data.meta_movimientos;
                     animacion.edicion.grupos_figuras = response.data.grupos_figuras
 
-                    animacion.edicion.id_proyecto = response.data._id;
-                    animacion.edicion.nombre_proyecto = response.data.nombre_animacion;
+                    animacion.edicion.id_animacion = response.data._id;
+                    animacion.edicion.nombre_animacion = response.data.nombre_animacion;
                     //customSetAnimacion(animacion)
                     setAnimacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
