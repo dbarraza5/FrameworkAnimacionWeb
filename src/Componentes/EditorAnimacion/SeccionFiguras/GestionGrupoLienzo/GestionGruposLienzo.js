@@ -19,6 +19,9 @@ function GestionGruposLienzo(props){
     }
     const arbol=props.animacion.estructura_arbol_grupos()
 
+    console.log("nodos del arbol")
+    console.log(arbol)
+
     const mover_grupos=(operacion_)=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
         if(operacion_ === "mover"){
