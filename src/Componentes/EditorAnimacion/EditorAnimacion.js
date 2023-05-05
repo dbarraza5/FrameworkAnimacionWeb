@@ -125,16 +125,16 @@ function EditorAnimacion(props) {
 
     const exportandoAnimacion = async () => {
         console.log("EXPORTANDO LA ANIMACION")
-        console.log(animacion)
+        //console.log(animacion)
         const miArray = animacion.edicion.grupos_figuras;
-
+        const nombre = animacion.edicion.nombre_animacion+animacion.edicion.id_animacion
         const jsonString = JSON.stringify(miArray);
         const blob = new Blob([jsonString], { type: "application/json" });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = "miArchivo.json";
+        a.download = nombre+".json";
         a.click();
 
         URL.revokeObjectURL(url);

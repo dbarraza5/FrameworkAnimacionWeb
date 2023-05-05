@@ -24,8 +24,6 @@ function TreeViewElement(props){
         console.log(nombre_grupo)
     }
 
-    console.log("[LISTA SELECCIONADOS]")
-    console.log(lista_seleccionados)
 
     const seleccionarRama=(nodo, first=false)=>{
         if(first){
@@ -43,8 +41,6 @@ function TreeViewElement(props){
     const seleccion_grupo=(e, nombre_grupo)=>{
         const select = e.target.checked;
         const nodo_ = lista_nodos_flat[nombre_grupo];
-        console.log(lista_seleccionados)
-        console.log(nodo_)
         seleccionarRama(nodo_, true)
         if(select){
             setListaSeleccionados(lista_seleccionados.concat(list_aux_selec))
