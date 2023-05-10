@@ -3,14 +3,14 @@ import {GestionAnimacion} from "../../Clases/EditorAnimacion/GestionAnimacion";
 
 const animacionSlice = createSlice({
    name:"animacion",
-   initialState: new GestionAnimacion(),
+   initialState: {nombre: "daniel"},//new GestionAnimacion(),
 
     reducers:{
-       actualizar: (state => {
-
-       })
+        actAnimacion_: (state, action) => {
+           state.nombre = action.payload
+       },
     }
 });
 
-export const {actualizar} = animacionSlice.actions;
+export const {actAnimacion_} = animacionSlice.actions;
 export default animacionSlice.reducer;

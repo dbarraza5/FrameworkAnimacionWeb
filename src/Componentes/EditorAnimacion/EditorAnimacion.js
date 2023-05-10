@@ -18,6 +18,9 @@ import {Cookies} from 'react-cookie';
 import MenuAnimacion from "./MenuAnimacion";
 import Home from "../Home/Home";
 
+import { Provider } from 'react-redux';
+import store from '../../Store/store';
+
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);
 
@@ -162,13 +165,17 @@ function EditorAnimacion(props) {
         const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
         const composicion = <EditorCompisicion {...paquete_datos}/>
         return (
-            <div className="row">
-                <MenuAnimacion subirAnimacion={subirAnimacion} exportarAnimacion={exportandoAnimacion}/>
-                <hr/>
-            <NavEditorAnimacion edicion_figuras ={edicion_figuras}
-                                composicion = {composicion}>
-            </NavEditorAnimacion>
-        </div>)
+            <Provider store={store}>
+                <div className="row">
+                    <MenuAnimacion subirAnimacion={subirAnimacion} exportarAnimacion={exportandoAnimacion}/>
+                    <hr/>
+                    <NavEditorAnimacion edicion_figuras ={edicion_figuras}
+                                        composicion = {composicion}>
+                    </NavEditorAnimacion>
+                </div>
+            </Provider>
+
+        )
     }
 
     return <h1> Sin Servicio</h1>

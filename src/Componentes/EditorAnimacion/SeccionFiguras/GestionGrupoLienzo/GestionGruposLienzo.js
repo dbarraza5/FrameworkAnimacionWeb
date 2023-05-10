@@ -3,8 +3,13 @@ import {useEffect, useState} from "react";
 import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
+import { useSelector, useDispatch } from 'react-redux';
+import {actAnimacion_} from "../../../../Store/Animacion/animacionSlice"
 
 function GestionGruposLienzo(props){
+
+    const animacion_redux = useSelector((state) => state.animacion);
+    const dispatch = useDispatch();
 
     const [operacion, setOperacion] = useState(null)
     const [lista_seleccionados, setListaSeleccionados] = useState(props.gestionLienzo.lista_grupos_trabajando)
@@ -139,7 +144,8 @@ function GestionGruposLienzo(props){
                 </div>
             </div>
         </div>
-        <button onClick={mover_grupos}>moverrrrsh</button>
+        <button onClick={() => dispatch(actAnimacion_("aversssss"))}>moverrrrsh {animacion_redux.nombre}</button>
+        <h5>{animacion_redux.nombre}</h5>
     </div>)
 }
 
