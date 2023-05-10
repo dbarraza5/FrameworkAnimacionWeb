@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import Editor from "./Componentes/EditorMapa/Editor";
 import GestionMapa from "./Clases/EditorMapa/GestionMapa"
 import styles from './App.css';
