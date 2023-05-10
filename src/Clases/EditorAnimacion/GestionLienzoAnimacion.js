@@ -87,6 +87,7 @@ class GestionLienzoAnimacion {
 
     mover_figura = MOVER_NADA;
 
+    lista_grupos_trabajando = [];
     copia_lista_grupos = []
 
     copia_lista_figuras = []
@@ -128,6 +129,7 @@ class GestionLienzoAnimacion {
 
     //proceso que es llamado por componente de react para proceder a intereactuar a nivel de grupo
     seleccionListaGrupos(lista_grupos){
+        this.lista_grupos_trabajando = lista_grupos;
         this.categoria_trabajo = TRABAJO_GRUPOS;
         this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
         this.mover_centros=this.calcularCentroGruposSeleccionados()
@@ -565,6 +567,7 @@ class GestionLienzoAnimacion {
             const nombre_grupo_duplicado = this.animacion_.duplicar_internamente_lista_grupos_(lista_nombre_grupos)
             this.mover_figura = MOVER_CENTRO_GRUPOS;
             this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(nombre_grupo_duplicado)
+            this.lista_grupos_trabajando = nombre_grupo_duplicado
             setAnimacion({"edicion": this.animacion_})
             console.log("DUUUUUUUPLICACIONNNNNNNNN")
             //this.actualizarLienzo()

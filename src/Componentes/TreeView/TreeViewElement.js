@@ -5,7 +5,7 @@ function TreeViewElement(props){
     const data_tree = props.datos;
     const [lista_nodos_flat, setListaNodosFlat] = useState({})
     const list_aux_selec = []
-    const [lista_seleccionados, seleccionGrupos] = useState([])
+    const [lista_seleccionados, seleccionGrupos] = useState(props.lista_select_)
     const [nombre_nodo, setNombreNodo] = useState("")
 
     const setListaSeleccionados=(lista_)=>{

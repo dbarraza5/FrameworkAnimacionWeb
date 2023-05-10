@@ -7,7 +7,7 @@ import TablaGrupos from "../GestionGrupos/TablaGrupos";
 function GestionGruposLienzo(props){
 
     const [operacion, setOperacion] = useState(null)
-    const [lista_seleccionados, setListaSeleccionados] = useState([])
+    const [lista_seleccionados, setListaSeleccionados] = useState(props.gestionLienzo.lista_grupos_trabajando)
 
     useEffect(()=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
@@ -72,7 +72,7 @@ function GestionGruposLienzo(props){
                         Estructura Arbol
                     </div>
                     <div className="card-body">
-                        <TreeViewElement datos={arbol.nodes} setListaSeleccionados={setListaSeleccionados}/>
+                        <TreeViewElement datos={arbol.nodes} setListaSeleccionados={setListaSeleccionados} lista_select_={lista_seleccionados}/>
                     </div>
                 </div>
             </div>

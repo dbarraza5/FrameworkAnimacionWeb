@@ -43,6 +43,7 @@ function EditorAnimacion(props) {
     useEffect(()=>{
         gestionLienzo.animacion_=animacion.edicion;
         gestionLienzo.actualizarLienzo(animacion.edicion)
+        setGestionLienzo(gestionLienzo)
     },[animacion])
 
     const obtenerAnimacion=async ()=>{
