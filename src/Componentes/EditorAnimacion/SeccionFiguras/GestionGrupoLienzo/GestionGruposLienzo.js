@@ -4,12 +4,12 @@ import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
 import { useSelector, useDispatch } from 'react-redux';
-import {actAnimacion_} from "../../../../Store/Animacion/animacionSlice"
+import {actAnimacion_, fetchAnimacion} from "../../../../Store/Animacion/animacionSlice"
 
 function GestionGruposLienzo(props){
 
-    const animacion_redux = useSelector((state) => state.animacion);
-    const dispatch = useDispatch();
+    //const animacion_redux = useSelector((state) => state.animacion);
+    //const dispatch = useDispatch();
 
     const [operacion, setOperacion] = useState(null)
     const [lista_seleccionados, setListaSeleccionados] = useState(props.gestionLienzo.lista_grupos_trabajando)
@@ -18,6 +18,12 @@ function GestionGruposLienzo(props){
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
         props.gestionLienzo.actualizarLienzo()
     }, [lista_seleccionados])
+
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchAnimacion());
+    }, [dispatch]);
 
     if(props.animacion.meta_figuras.length===0){
         return (<p>nada</p>)
@@ -144,8 +150,6 @@ function GestionGruposLienzo(props){
                 </div>
             </div>
         </div>
-        <button onClick={() => dispatch(actAnimacion_("aversssss"))}>moverrrrsh {animacion_redux.nombre}</button>
-        <h5>{animacion_redux.nombre}</h5>
     </div>)
 }
 

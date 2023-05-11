@@ -18,8 +18,9 @@ import {Cookies} from 'react-cookie';
 import MenuAnimacion from "./MenuAnimacion";
 import Home from "../Home/Home";
 
-import { Provider } from 'react-redux';
+import {Provider, useDispatch} from 'react-redux';
 import store from '../../Store/store';
+import {fetchAnimacion} from "../../Store/Animacion/animacionSlice";
 
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);
@@ -48,6 +49,8 @@ function EditorAnimacion(props) {
         gestionLienzo.actualizarLienzo(animacion.edicion)
         setGestionLienzo(gestionLienzo)
     },[animacion])
+
+
 
     const obtenerAnimacion=async ()=>{
         try {
