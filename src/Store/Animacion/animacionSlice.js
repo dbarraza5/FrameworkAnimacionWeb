@@ -4,10 +4,10 @@ import {obtenerAnimacion} from "./AnimacionAPI";
 import {Cookies} from "react-cookie";
 
 
-export const fetchAnimacion = createAsyncThunk('animacion/fetchAnimacion', async () => {
+export const fetchAnimacion = createAsyncThunk('animacion/fetchAnimacion', async (id_animacion) => {
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
-    const response = await obtenerAnimacion(datos_usuario.token,"63881cb471c3843157059664");
+    const response = await obtenerAnimacion(datos_usuario.token, id_animacion);
     console.log(response)
     return response.data;
 });
@@ -22,11 +22,34 @@ const animacionSlice = createSlice({
    },//new GestionAnimacion(),
 
     reducers:{
-        actAnimacion_: (state, action) => {
-           state.nombre = action.payload
+        setAnimacionR: (state, action) => {
+           state.animacion = action.payload
        },
     },
-    extraReducers: {
+    extraReducers:
+        (builder) => {
+            builder
+                .addCase(fetchAnimacion.pending, (state) => {
+                    state.status = 'loading';
+                })
+                .addCase(fetchAnimacion.fulfilled, (state, action) => {
+                    state.status = 'succeeded';
+                    console.log("SUCCEEDED")
+                    console.log(action.payload)
+                    console.log(action.error)
+                    state.animacion.id_animacion = action.payload._id;
+                    state.animacion.nombre_animacion = action.payload.nombre_animacion;
+                    state.animacion.meta_figuras = action.payload.meta_figuras
+                    state.animacion.meta_movimientos = action.payload.meta_movimientos;
+                    state.animacion.grupos_figuras = action.payload.grupos_figuras
+                })
+                .addCase(fetchAnimacion.rejected, (state, action) => {
+                    state.status = 'failed';
+                    state.error = action.error.message;
+                    console.log("FAILEDDDD")
+                });
+        }
+        /*{
         [fetchAnimacion.pending]: (state) => {
             state.status = 'loading';
         },
@@ -42,8 +65,8 @@ const animacionSlice = createSlice({
             state.status = 'failed';
             state.error = action.error.message;
         },
-    }
+    }*/
 });
 
-export const {actAnimacion_} = animacionSlice.actions;
+export const {setAnimacionR} = animacionSlice.actions;
 export default animacionSlice.reducer;
