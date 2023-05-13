@@ -20,10 +20,10 @@ function GestionGruposLienzo(props){
     }, [lista_seleccionados])
 
 
-    const dispatch = useDispatch();
+    /*const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchAnimacion());
-    }, [dispatch]);
+    }, [dispatch]);*/
 
     if(props.animacion.meta_figuras.length===0){
         return (<p>nada</p>)

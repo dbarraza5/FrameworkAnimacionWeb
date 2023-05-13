@@ -7,6 +7,8 @@ import EditorAnimacion from "./Componentes/EditorAnimacion/EditorAnimacion";
 import Login from "./Componentes/Autentificacion/Login";
 import RoutesMain from "./Routes/RoutesMain";
 import { useCookies } from 'react-cookie';
+import store from "./Store/store";
+import {Provider} from "react-redux";
 
 /*function App() {
 
@@ -39,9 +41,9 @@ function App(){
 
 
     return (
-        <div>
+        <Provider store={store}>
             <RoutesMain user={user} setUser={setCookieUser} removeCookieUser={removeCookieUser}/>
-        </div>
+        </Provider>
     );
 }
 

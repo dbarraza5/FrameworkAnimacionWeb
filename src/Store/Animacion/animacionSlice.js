@@ -16,7 +16,6 @@ export const fetchAnimacion = createAsyncThunk('animacion/fetchAnimacion', async
 const animacionSlice = createSlice({
    name:"animacion",
    initialState: {
-       todos: [],
        animacion: new GestionAnimacion(),
        status: 'idle',
        error: null

@@ -18,9 +18,8 @@ import {Cookies} from 'react-cookie';
 import MenuAnimacion from "./MenuAnimacion";
 import Home from "../Home/Home";
 
-import {Provider, useDispatch} from 'react-redux';
-import store from '../../Store/store';
 import {fetchAnimacion} from "../../Store/Animacion/animacionSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);
@@ -37,10 +36,15 @@ const useCustomAnimacion=(valor_inicial=null)=>{
 
 function EditorAnimacion(props) {
 
+    const animacion_redux = useSelector((state) => state.animacion.animacion);
+    console.log("ANIMACION REDUX ================================")
+    console.log(animacion_redux)
+    const dispatch = useDispatch();
+
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
 
-    const [animacion, setAnimacion] = useCustomAnimacion({edicion: new GestionAnimacion()});
+    const [animacion, setAnimacion] = useCustomAnimacion({edicion: animacion_redux})//useCustomAnimacion({edicion: new GestionAnimacion()});
     const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion));
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
 
@@ -50,7 +54,17 @@ function EditorAnimacion(props) {
         setGestionLienzo(gestionLienzo)
     },[animacion])
 
+    useEffect(() => {
+        dispatch(fetchAnimacion());
 
+    }, [dispatch]);
+
+    useEffect(() => {
+        //const liezo = new GestionLienzoAnimacion()
+        //console.log(gestionLienzo)
+        console.log("[==============================ANIMACION===========================]")
+        //obtenerAnimacion();
+    },[]);
 
     const obtenerAnimacion=async ()=>{
         try {
@@ -147,12 +161,7 @@ function EditorAnimacion(props) {
         URL.revokeObjectURL(url);
     }
 
-    useEffect(() => {
-        //const liezo = new GestionLienzoAnimacion()
-        //console.log(gestionLienzo)
-        console.log("[==============================ANIMACION===========================]")
-        obtenerAnimacion();
-    },[]);
+
 
     const editar_animacion=(animacion_)=>{
         setAnimacion(animacion_)
@@ -168,16 +177,13 @@ function EditorAnimacion(props) {
         const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
         const composicion = <EditorCompisicion {...paquete_datos}/>
         return (
-            <Provider store={store}>
-                <div className="row">
-                    <MenuAnimacion subirAnimacion={subirAnimacion} exportarAnimacion={exportandoAnimacion}/>
-                    <hr/>
-                    <NavEditorAnimacion edicion_figuras ={edicion_figuras}
-                                        composicion = {composicion}>
-                    </NavEditorAnimacion>
-                </div>
-            </Provider>
-
+            <div className="row">
+                <MenuAnimacion subirAnimacion={subirAnimacion} exportarAnimacion={exportandoAnimacion}/>
+                <hr/>
+                <NavEditorAnimacion edicion_figuras ={edicion_figuras}
+                                    composicion = {composicion}>
+                </NavEditorAnimacion>
+            </div>
         )
     }
 
