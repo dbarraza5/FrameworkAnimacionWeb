@@ -26,6 +26,8 @@ falta el mover los atributos usando el mouse.
         d.- debe haber otra vista solo para editar grupos en general.
     7.- aprender nodejs para poder guardar los datos.
     
+    8.- implementar la funcionalidad de capas en los grupos
+    
     99.- La relatividad especial del tiempo puede resolver el problema de ajuste de los tiempos de los movimientos,
     cuando los grupos disminuyen su tamaño o figura en general.
     100.- las etiquetas pueden ser un de ayuda para aplicar movimientos sin aplicarlo a un id especifico de un 
@@ -40,3 +42,6 @@ falta el mover los atributos usando el mouse.
 | Q+B | Remover lista de figuras de un grupo. |
 | Q+D | Duplicar lista de figuras de un grupo. |
 | Q+R | Rotar lista de figuras de un grupo. |
+
+
+pendientes

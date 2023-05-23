@@ -510,7 +510,7 @@ class GestionLienzoAnimacion {
         }
     }
 
-    procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion){
+    procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion, actListaTrabajo){
         if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") && this.mover_figura === MOVER_NADA){
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
                 console.log("[SELECCION DE GRUPOS]")
@@ -569,7 +569,8 @@ class GestionLienzoAnimacion {
             this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(nombre_grupo_duplicado)
             this.lista_grupos_trabajando = nombre_grupo_duplicado
             setAnimacion({"edicion": this.animacion_})
-            console.log("DUUUUUUUPLICACIONNNNNNNNN")
+            console.log(this.lista_grupos_trabajando)
+            actListaTrabajo(nombre_grupo_duplicado)
             //this.actualizarLienzo()
         }
 
@@ -855,7 +856,7 @@ class GestionLienzoAnimacion {
         }
     }
 
-    procesarEventoLienzo(eventoLienzoFigura, setAnimacion) {
+    procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
         if (this.categoria_trabajo === TRABAJO_FIGURA) {
             this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
         }
@@ -865,7 +866,7 @@ class GestionLienzoAnimacion {
         }
 
         if(this.categoria_trabajo === TRABAJO_GRUPOS){
-            this.procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion)
+            this.procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion, actListaTrabajo)
 
         }
         this.procesarSeleccionPuntero(eventoLienzoFigura);

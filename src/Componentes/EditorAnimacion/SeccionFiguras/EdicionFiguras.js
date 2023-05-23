@@ -7,21 +7,32 @@ import Graph from "react-graph-vis";
 import NavFiguras from "./NavFiguras";
 import Lienzo from "../Lienzo";
 
+
+
+import {useDispatch, useSelector} from "react-redux";
+import {setListaGrupoTrabajo} from "../../../Store/Animacion/animacionSlice";
 function EdicionFiguras(props){
 
     //let grupos = props.animacion.grupos_figuras;
     const eventoLienzoFigura = props.eventoLienzoFigura;
+    const animacion_redux = useSelector((state) => state.animacion.animacion);
+
+    const dispatch = useDispatch();
+
+    const cambiarListaTrabajo=(lista)=>{
+        dispatch(setListaGrupoTrabajo(lista))
+    }
 
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
-        props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion)
+        props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, cambiarListaTrabajo)
         eventoLienzoFigura.reset()
     }
 
     useEffect(() => {
         const interval = setInterval(() => {
             //console.log('This will run every second!');
-            props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion)
+            props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, cambiarListaTrabajo)
         }, 500);
         return () => clearInterval(interval);
     }, []);
@@ -35,7 +46,7 @@ function EdicionFiguras(props){
                 </div>
                 <div className="col">
                     <div className="card text-bg-light mb-3">
-                        <div className="card-header">Animación</div>
+                        <div className="card-header">Animación <strong>{animacion_redux.nombre_animacion}</strong></div>
                         <div className="card-body">
                             <Lienzo lienzo = {eventoLienzoFigura} id="lienzo-animacion" editar_animacion={editar_animacion}
                                     setEventLienzoFigura={props.setEventLienzoFigura}/>

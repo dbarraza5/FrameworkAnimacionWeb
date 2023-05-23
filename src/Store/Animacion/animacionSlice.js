@@ -16,15 +16,26 @@ export const fetchAnimacion = createAsyncThunk('animacion/fetchAnimacion', async
 const animacionSlice = createSlice({
    name:"animacion",
    initialState: {
-       animacion: new GestionAnimacion(),
+       animacion: {
+           id_proyecto: "",
+           id_animacion: "",
+           nombre_animacion: "",
+           grupos_trabajando:[],
+           // para poder retroceder crtl+z
+           estado_anterior:[]
+
+       },
        status: 'idle',
        error: null
    },//new GestionAnimacion(),
 
     reducers:{
-        setAnimacionR: (state, action) => {
-           state.animacion = action.payload
+        setNombreAnimacion: (state, action) => {
+           state.animacion.nombre_animacion = action.payload
        },
+        setListaGrupoTrabajo: (state, action) => {
+            state.animacion.grupos_trabajando = action.payload
+        },
     },
     extraReducers:
         (builder) => {
@@ -68,5 +79,5 @@ const animacionSlice = createSlice({
     }*/
 });
 
-export const {setAnimacionR} = animacionSlice.actions;
+export const {setNombreAnimacion, setListaGrupoTrabajo} = animacionSlice.actions;
 export default animacionSlice.reducer;

@@ -18,7 +18,7 @@ import {Cookies} from 'react-cookie';
 import MenuAnimacion from "./MenuAnimacion";
 import Home from "../Home/Home";
 
-import {fetchAnimacion, setAnimacionR} from "../../Store/Animacion/animacionSlice";
+import {fetchAnimacion, setNombreAnimacion} from "../../Store/Animacion/animacionSlice";
 import {useDispatch, useSelector} from "react-redux";
 
 const useCustomAnimacion=(valor_inicial=null)=>{
@@ -36,7 +36,7 @@ const useCustomAnimacion=(valor_inicial=null)=>{
 
 function EditorAnimacion(props) {
 
-    const animacion_redux = useSelector((state) => state.animacion.animacion);
+    const animacion_redux = useSelector((state) => state.animacion);
     console.log("ANIMACION REDUX ================================")
     console.log(animacion_redux)
     const dispatch = useDispatch();
@@ -44,36 +44,37 @@ function EditorAnimacion(props) {
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
 
-    //const [animacion, setAnimacion] = useCustomAnimacion({edicion: animacion_redux})//useCustomAnimacion({edicion: new GestionAnimacion()});
-    const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion_redux));
+    const [animacion, setAnimacion]= useCustomAnimacion({edicion: new GestionAnimacion()});
+    const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion.edicion));
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
 
-    const setAnimacion=(animacion_)=>{
-        dispatch(setAnimacionR(animacion_))
-    }
+    //const setAnimacion=(animacion_)=>{
+    //    dispatch(setAnimacionR(animacion_))
+    //}
 
-    useEffect(()=>{
+    /*useEffect(()=>{
         gestionLienzo.animacion_=animacion_redux;
         gestionLienzo.actualizarLienzo(animacion_redux)
         setGestionLienzo(gestionLienzo)
-    },[animacion_redux])
+    },[animacion_redux])*/
 
-    useEffect(() => {
-        dispatch(fetchAnimacion(props.id_animacion));
-    }, [dispatch]);
+    //useEffect(() => {
+    //    dispatch(fetchAnimacion(props.id_animacion));
+    //}, [dispatch]);
 
     useEffect(() => {
         //const liezo = new GestionLienzoAnimacion()
         //console.log(gestionLienzo)
         console.log("[==============================ANIMACION===========================]")
-        //obtenerAnimacion();
+        //
+        //
+        obtenerAnimacion();
     },[]);
 
     const obtenerAnimacion=async ()=>{
+        const token = datos_usuario.token
         try {
             const url = "/api/animacion/id/" + props.id_animacion;
-
-            const token = datos_usuario.token
             const config = {
                 method: 'get',
                 url: url,
@@ -89,14 +90,16 @@ function EditorAnimacion(props) {
                 .then(function (response) {
                     console.log("funciono")
                     console.log(response.data);
-                    animacion_redux.meta_figuras = response.data.meta_figuras
-                    animacion_redux.meta_movimientos = response.data.meta_movimientos;
-                    animacion_redux.grupos_figuras = response.data.grupos_figuras
+                    animacion.edicion.meta_figuras = response.data.meta_figuras
+                    animacion.edicion.meta_movimientos = response.data.meta_movimientos;
+                    animacion.edicion.grupos_figuras = response.data.grupos_figuras
 
-                    animacion_redux.id_animacion = response.data._id;
-                    animacion_redux.nombre_animacion = response.data.nombre_animacion;
+                    animacion.edicion.id_animacion = response.data._id;
+                    animacion.edicion.nombre_animacion = response.data.nombre_animacion;
+
+                    dispatch(setNombreAnimacion(response.data.nombre_animacion))
                     //customSetAnimacion(animacion)
-                    setAnimacion({"edicion": animacion_redux})
+                    setAnimacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
                 })
                 .catch(function (response) {
@@ -104,8 +107,6 @@ function EditorAnimacion(props) {
                     console.log(response.response.data);
                     props.manejadorErrores(response.response.data)
                 });
-
-
         } catch (err) {
             console.log(err);
         }
@@ -115,7 +116,7 @@ function EditorAnimacion(props) {
         console.log("SUBBBBBBEEEEEEEE!!!!")
         try{
             const datos = {
-                grupos_figuras: animacion_redux.grupos_figuras
+                grupos_figuras: animacion.edicion.grupos_figuras
             }
 
             const url = "/api/animacion/id/" + props.id_animacion;
@@ -150,8 +151,8 @@ function EditorAnimacion(props) {
     const exportandoAnimacion = async () => {
         console.log("EXPORTANDO LA ANIMACION")
         //console.log(animacion)
-        const miArray = animacion_redux.grupos_figuras;
-        const nombre = animacion_redux.nombre_animacion+animacion_redux.id_animacion
+        const miArray = animacion.edicion.grupos_figuras;
+        const nombre = animacion.edicion.nombre_animacion+animacion.edicion.id_animacion
         const jsonString = JSON.stringify(miArray);
         const blob = new Blob([jsonString], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -172,8 +173,8 @@ function EditorAnimacion(props) {
         //lienzo.actualizarLienzo(animacion_.edicion)
     }
 
-    if(animacion_redux.meta_figuras.length>0){
-        const paquete_datos = { animacion:animacion_redux, setAnimacion:editar_animacion,
+    if(animacion.edicion.meta_figuras.length>0){
+        const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
             eventoLienzoFigura :eventoLienzoFigura, setEventLienzoFigura:setEventLienzoFigura,
             gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo};
 

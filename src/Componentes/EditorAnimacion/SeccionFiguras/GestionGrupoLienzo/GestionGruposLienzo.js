@@ -4,20 +4,25 @@ import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
 import { useSelector, useDispatch } from 'react-redux';
-import {actAnimacion_, fetchAnimacion} from "../../../../Store/Animacion/animacionSlice"
+import {setListaGrupoTrabajo} from "../../../../Store/Animacion/animacionSlice"
 
 function GestionGruposLienzo(props){
 
-    //const animacion_redux = useSelector((state) => state.animacion);
-    //const dispatch = useDispatch();
+    const animacion_redux = useSelector((state) => state.animacion.animacion);
+    const dispatch = useDispatch();
 
     const [operacion, setOperacion] = useState(null)
-    const [lista_seleccionados, setListaSeleccionados] = useState(props.gestionLienzo.lista_grupos_trabajando)
+    const [lista_seleccionados, setListaSeleccionados] = useState(animacion_redux.grupos_trabajando)
 
     useEffect(()=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
         props.gestionLienzo.actualizarLienzo()
+        dispatch(setListaGrupoTrabajo(lista_seleccionados));
     }, [lista_seleccionados])
+
+    useEffect(()=>{
+        setListaSeleccionados(animacion_redux.grupos_trabajando)
+    }, [animacion_redux.grupos_trabajando])
 
 
     /*const dispatch = useDispatch();
