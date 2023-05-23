@@ -8,10 +8,15 @@ function TreeViewElement(props){
     const [lista_seleccionados, seleccionGrupos] = useState(props.lista_select_)
     const [nombre_nodo, setNombreNodo] = useState("")
 
+
     const setListaSeleccionados=(lista_)=>{
         props.setListaSeleccionados(lista_);
         seleccionGrupos(lista_);
     }
+
+    useEffect(()=>{
+        seleccionGrupos(props.lista_select_)
+    }, [props.lista_select_])
 
     const click_nodo=(event, nombre_grupo)=>{
         event.target.parentElement.querySelector(".nested").classList.toggle("active");
@@ -21,7 +26,7 @@ function TreeViewElement(props){
 
     const click_leaf=(event, nombre_grupo)=>{
         setNombreNodo(nombre_grupo)
-        console.log(nombre_grupo)
+        //console.log(nombre_grupo)
     }
 
 
@@ -88,9 +93,6 @@ function TreeViewElement(props){
             {lista_tag_nodo}
         </ul>)
     }
-
-    useEffect(() => {
-    }, []);
 
     return(<div>
         {construir_arbol(data_tree, true)}

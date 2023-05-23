@@ -8,12 +8,13 @@ import {setListaGrupoTrabajo} from "../../../../Store/Animacion/animacionSlice"
 
 function GestionGruposLienzo(props){
 
-    const animacion_redux = useSelector((state) => state.animacion.animacion);
+    const grupos_trabajando = useSelector((state) => state.animacion.animacion.grupos_trabajando);
     const dispatch = useDispatch();
 
     const [operacion, setOperacion] = useState(null)
-    const [lista_seleccionados, setListaSeleccionados] = useState(animacion_redux.grupos_trabajando)
-
+    const [lista_seleccionados, setListaSeleccionados] = useState(grupos_trabajando)
+    console.log("NUEVOS GRUPOSSSSSSSS=======================>")
+    console.log(lista_seleccionados)
     useEffect(()=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
         props.gestionLienzo.actualizarLienzo()
@@ -21,8 +22,8 @@ function GestionGruposLienzo(props){
     }, [lista_seleccionados])
 
     useEffect(()=>{
-        setListaSeleccionados(animacion_redux.grupos_trabajando)
-    }, [animacion_redux.grupos_trabajando])
+        setListaSeleccionados(grupos_trabajando)
+    }, [grupos_trabajando])
 
 
     /*const dispatch = useDispatch();
