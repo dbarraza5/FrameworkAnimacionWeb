@@ -12,24 +12,28 @@ const MOVER_CENTRO_FIGURA = 1;
 const MOVER_RECTA_PUNTO1 = 2;
 const MOVER_RECTA_PUNTO2 = 3;
 const MOVER_RADIO_CIRCULO = 4;
+const MOVER_FIGURA_AGREGADA = 5;
 
-const MOVER_CENTROS_FIGURAS = 5;
-const MOVER_ROTAR_FIGURAS = 6;
-const MOVER_INFLAR_FIGURAS = 7;
-const MOVER_ELIMINAR_FIGURAS = 8;
-const MOVER_DUPLICAR_FIGURAS = 9;
+const MOVER_CENTROS_FIGURAS = 6;
+const MOVER_ROTAR_FIGURAS = 7;
+const MOVER_INFLAR_FIGURAS = 8;
+const MOVER_ELIMINAR_FIGURAS = 9;
+const MOVER_DUPLICAR_FIGURAS = 10;
 
-const MOVER_CENTRO_GRUPOS = 10;
-const MOVER_ROTAR_GRUPOS = 11;
-const MOVER_INFLAR_GRUPOS = 12;
-const MOVER_DUPLICAR_GRUPOS=13;
-const MOVER_BORRAR_GRUPOS=14;
-const MOVER_CENTRAR_GRUPOS=15;
-const MOVER_ESPEJO_GRUPOS=16;
+const MOVER_CENTRO_GRUPOS = 11;
+const MOVER_ROTAR_GRUPOS = 12;
+const MOVER_INFLAR_GRUPOS = 13;
+const MOVER_DUPLICAR_GRUPOS = 14;
+const MOVER_BORRAR_GRUPOS = 15;
+const MOVER_CENTRAR_GRUPOS = 16;
+const MOVER_ESPEJO_GRUPOS = 17;
 
 const REFLEJO_NONE = 0;
 const REFLEJO_HORIZONTAL = 1;
 const REFLEJO_VERTICAL = 2;
+
+const RECTA_MOVER_TODO = 0;
+const RECTA_MOVER_P1 = 1;
 
 
 class GestionLienzoAnimacion {
@@ -114,10 +118,13 @@ class GestionLienzoAnimacion {
     inflar_grupos = false
 
 
-
+    //trabajando sobre el espejo de los grupos
     espejo_sentido_reflejo = REFLEJO_NONE;
     reflejo_original_horz=false;
     reflejo_original_vert=false;
+
+    //trabajando sobre figuras agregadas recientemente
+    movimiento_recta_agregada = MOVER_NADA;
 
 
     constructor(animacion_) {
@@ -193,6 +200,13 @@ class GestionLienzoAnimacion {
         console.log("espejoReflejoVertical")
         this.espejo_sentido_reflejo = REFLEJO_VERTICAL;
         this.reflejo_original_vert = !this.reflejo_original_vert;
+    }
+
+    seleccionarFiguraAgregada(nombre_figura_, nombre_grupo_){
+        this.categoria_trabajo = TRABAJO_FIGURA;
+        this.id_grupo_selec = nombre_grupo_;
+        this.id_figura_selec = nombre_figura_;
+        this.mover_figura = MOVER_FIGURA_AGREGADA;
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
@@ -426,7 +440,11 @@ class GestionLienzoAnimacion {
         if (grupo_ != null) {
             const fig_ = this.animacion_.get_figura(nombre_grupo, nombre_figura)
 
-            if (fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click) {
+            if(this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura !== "RECTA"){
+                this.mover_figura = MOVER_CENTRO_FIGURA;
+            }
+
+            if (fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click && this.mover_figura !== MOVER_FIGURA_AGREGADA) {
                 this.actualizarPuntosRectas(fig_, grupo_)
                 if (rectsColliding(this.puntero, this.p1_recta)) {
                     this.mover_figura = MOVER_RECTA_PUNTO1;
@@ -470,12 +488,24 @@ class GestionLienzoAnimacion {
                     fig_.atributos["x1"] = x;
                     fig_.atributos["y1"] = y;
 
-                } else {
+                }
+                if (this.mover_figura === MOVER_RECTA_PUNTO2){
                     fig_.atributos["x2"] = x;
                     fig_.atributos["y2"] = y;
                 }
+
+
                 this.animacion_.set_figura(nombre_grupo, fig_)
                 setAnimacion({"edicion": this.animacion_})
+            }
+
+            if(this.mover_figura === MOVER_FIGURA_AGREGADA){
+                let x = eventoLienzoFigura.mouse_x - grupo_.cx - fig_.atributos.cx;
+                let y = eventoLienzoFigura.mouse_y - grupo_.cy - fig_.atributos.cy;
+                if (this.movimiento_recta_agregada === RECTA_MOVER_TODO){
+                    fig_.atributos["x1"] = fig_.atributos["x2"] = x;
+                    fig_.atributos["y1"] = fig_.atributos["y2"] = y;
+                }
             }
 
             if (this.mover_figura === MOVER_RADIO_CIRCULO) {
@@ -506,6 +536,11 @@ class GestionLienzoAnimacion {
             }
             if (eventoLienzoFigura.mouse_click_up && this.mover_figura === MOVER_RADIO_CIRCULO) {
                 this.mover_figura = MOVER_NADA;
+            }
+
+            if (eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura === "RECTA") {
+                console.log("MOVER AHORA EL PUNTO1")
+                this.mover_figura = MOVER_RECTA_PUNTO1;
             }
         }
     }

@@ -37,8 +37,8 @@ const useCustomAnimacion=(valor_inicial=null)=>{
 function EditorAnimacion(props) {
 
     const animacion_redux = useSelector((state) => state.animacion);
-    console.log("ANIMACION REDUX ================================")
-    console.log(animacion_redux)
+    //console.log("ANIMACION REDUX ================================")
+    //console.log(animacion_redux)
     const dispatch = useDispatch();
 
     const cookie = new Cookies();

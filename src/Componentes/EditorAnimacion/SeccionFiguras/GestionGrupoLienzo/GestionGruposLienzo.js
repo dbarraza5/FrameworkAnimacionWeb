@@ -13,8 +13,8 @@ function GestionGruposLienzo(props){
 
     const [operacion, setOperacion] = useState(null)
     const [lista_seleccionados, setListaSeleccionados] = useState(grupos_trabajando)
-    console.log("NUEVOS GRUPOSSSSSSSS=======================>")
-    console.log(lista_seleccionados)
+    //console.log("NUEVOS GRUPOSSSSSSSS=======================>")
+    //console.log(lista_seleccionados)
     useEffect(()=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
         props.gestionLienzo.actualizarLienzo()
@@ -36,8 +36,8 @@ function GestionGruposLienzo(props){
     }
     const arbol=props.animacion.estructura_arbol_grupos()
 
-    console.log("nodos del arbol")
-    console.log(arbol)
+    //console.log("nodos del arbol")
+    //console.log(arbol)
 
     const mover_grupos=(operacion_)=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
