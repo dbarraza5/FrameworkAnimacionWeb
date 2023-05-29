@@ -22,6 +22,7 @@ function MenuAnimacion(props){
                             <li><a className="dropdown-item" href="#">Refrescar</a></li>
                             <li><a className="dropdown-item" href="#">Guardor Como</a></li>
                             <li><a className="dropdown-item" onClick={()=>props.exportarAnimacion()}>Exportar</a></li>
+                            <li><a className="dropdown-item" onClick={()=>console.log("importar")}>Importar</a></li>
                             <li><a className="dropdown-item" href="#">Salir</a></li>
                         </ul>
                     </li>

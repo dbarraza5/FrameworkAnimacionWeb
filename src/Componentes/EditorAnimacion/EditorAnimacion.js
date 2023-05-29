@@ -20,6 +20,7 @@ import Home from "../Home/Home";
 
 import {fetchAnimacion, setNombreAnimacion} from "../../Store/Animacion/animacionSlice";
 import {useDispatch, useSelector} from "react-redux";
+import ModalTransferirGrupos from "./SeccionFiguras/GestionGrupos/TransferirGrupos";
 
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);
@@ -187,6 +188,7 @@ function EditorAnimacion(props) {
                 <NavEditorAnimacion edicion_figuras ={edicion_figuras}
                                     composicion = {composicion}>
                 </NavEditorAnimacion>
+                <ModalTransferirGrupos/>
             </div>
         )
     }
