@@ -93,10 +93,14 @@ function TreeViewElement(props){
             {lista_tag_nodo}
         </ul>)
     }
-
-    return(<div>
-        {construir_arbol(data_tree, true)}
-    </div>)
+    console.log("VER ARBOL :)")
+    console.log(data_tree)
+    if(typeof data_tree !== 'undefined'){
+        return(<div>
+            {construir_arbol(data_tree, true)}
+        </div>)
+    }
+    return (<div></div>)
 }
 
 
