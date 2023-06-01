@@ -20,7 +20,7 @@ import Home from "../Home/Home";
 
 import {fetchAnimacion, setNombreAnimacion} from "../../Store/Animacion/animacionSlice";
 import {useDispatch, useSelector} from "react-redux";
-import ModalImportarGrupo from "./SeccionFiguras/GestionGrupos/ModalImportarGrupo";
+import ModalImportarGrupo from "./SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
 
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);

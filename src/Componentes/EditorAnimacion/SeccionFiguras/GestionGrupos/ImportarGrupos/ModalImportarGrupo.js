@@ -1,7 +1,7 @@
-import TreeViewElement from "../../../TreeView/TreeViewElement";
+import TreeViewElement from "../../../../TreeView/TreeViewElement";
 import React, {useState} from "react";
 import TransferirGrupos from "./TransferirGrupos";
-import {GestionAnimacion} from "../../../../Clases/EditorAnimacion/GestionAnimacion";
+import {GestionAnimacion} from "../../../../../Clases/EditorAnimacion/GestionAnimacion";
 
 function ModalImportarGrupo(props){
 
