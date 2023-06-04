@@ -188,7 +188,7 @@ function EditorAnimacion(props) {
                 <NavEditorAnimacion edicion_figuras ={edicion_figuras}
                                     composicion = {composicion}>
                 </NavEditorAnimacion>
-                <ModalImportarGrupo animacion={animacion.edicion}/>
+                <ModalImportarGrupo animacion={animacion.edicion} setAnimacion={setAnimacion}/>
             </div>
         )
     }

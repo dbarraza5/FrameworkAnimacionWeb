@@ -37,7 +37,7 @@ function ModalImportarGrupo(props){
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Modal con Contenedores Verticales y Checkboxes Dinámicos</h5>
+                            <h5 className="modal-title" id="exampleModalLabel">Importar animación de un archivo JSON</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div className="modal-body">

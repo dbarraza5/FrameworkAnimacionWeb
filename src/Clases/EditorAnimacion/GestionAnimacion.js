@@ -273,7 +273,10 @@ class GestionAnimacion{
         return lista_nombres
     }
 
-    estructura_arbol_grupos(nombre_grupo="root"){
+
+
+    estructura_arbol_grupos1(nombre_grupo){
+        console.log(nombre_grupo)
         let lista_grupo = this.get_nombres_grupos_hijos(nombre_grupo)
         let lista_nodos = []
         //console.log(lista_grupo)
@@ -283,16 +286,35 @@ class GestionAnimacion{
             }
         }
         for (let i=0; i<lista_grupo.length; i++){
-            lista_nodos.push(this.estructura_arbol_grupos(lista_grupo[i]))
+            lista_nodos.push(this.estructura_arbol_grupos1(lista_grupo[i]))
         }
+
         return {
             text:nombre_grupo,
             nodes: lista_nodos
         }
+
+        if(nombre_grupo === "root"){
+            return {
+                text:nombre_grupo,
+                nodes: lista_nodos
+            }
+        }else{
+            return {
+                text:nombre_grupo,
+                nodes: lista_nodos
+            }
+        }
+
+    }
+    estructura_arbol_grupos(){
+        return this.estructura_arbol_grupos1("root")
     }
     get_grupos_hijos(nombre_grupo){
         return this.grupos_figuras.filter((grupo)=>grupo.nodo_padre===nombre_grupo)
     }
+
+
 
     procesarPosicionFinalFiguras(nombre_grupo="root"){
         const grupo_padre = this.getGrupo(nombre_grupo);
