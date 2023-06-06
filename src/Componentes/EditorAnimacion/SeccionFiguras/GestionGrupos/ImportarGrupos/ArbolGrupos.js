@@ -68,9 +68,6 @@ const ArbolGrupos=(props)=>{
     }
 
     if(typeof data_tree !== 'undefined'){
-
-        console.log("[CONSTRUIR EL ARBOL]")
-        console.log(data_tree)
         return(<div>
             <ul className="active">
                 <li>

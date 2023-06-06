@@ -72,26 +72,6 @@ function PropiedadGrupoFiguras(props){
         />
         {seleccion_grupo}
 
-        <InputEnteroPropiedadGrupo nombre_input="Tiempo Inicial" valor={grupo.tiempo_inicial} tipo="tiempo_inicial"
-                                   cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
-
-        <InputEnteroPropiedadGrupo nombre_input="Tiempo Final"
-                                   valor={grupo.tiempo_final}
-                                   tipo="tiempo_final"
-                                   cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
-
-        <div className="input-group input-group-sm mb-3">
-            <div className="form-check">
-                <input className="form-check-input" type="checkbox" value=""
-                       id="flexCheckDefault" {...checked}
-                       onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "ciclo", parseInt(e.target.checked*1))}
-                />
-                    <label className="form-check-label" htmlFor="flexCheckDefault">
-                        Ciclos
-                    </label>
-            </div>
-        </div>
-
         <InputEnteroPropiedadGrupo nombre_input="Centro x"
                                    valor={grupo.cx}
                                    tipo="cx"
