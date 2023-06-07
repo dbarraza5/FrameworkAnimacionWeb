@@ -29,11 +29,7 @@ function ModalImportarGrupo(props){
 
     return (
         <>
-            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#miModal">
-                Abrir Modal
-            </button>
-
-            <div className="modal fade" id="miModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="modal-importal-json" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -42,7 +38,11 @@ function ModalImportarGrupo(props){
                         </div>
                         <div className="modal-body">
                             <TransferirGrupos {...props} animacion2={animacion_imp}/>
-                            <input type="file"  onChange={handleFileSelect} accept=".json"/>
+                            <hr/>
+                            <div className="form-group">
+                                <input type="file" className="form-control" id="archivo"
+                                       onChange={handleFileSelect} accept=".json"/>
+                            </div>
 
                         </div>
                         <div className="modal-footer">

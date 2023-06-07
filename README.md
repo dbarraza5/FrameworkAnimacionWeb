@@ -33,6 +33,12 @@ falta el mover los atributos usando el mouse.
     100.- las etiquetas pueden ser un de ayuda para aplicar movimientos sin aplicarlo a un id especifico de un 
     grupo o figura.
     
+## Apartado Importacion de grupos de figuras
+
+    1.- fucionar 2 grupos en vez de dejar uno hijo del otro.
+    2.- si hay grupos con el mismo nombre debe darse la opcion de renombrar el grupo en conflicto.
+    3.- debe dar se la opcion de asignacion automatica de nombres en caso de conflictos , en el caso  que el usuario no quiera
+    ir uno por uno dando  los nuevos nombre.
     
 ## Atajos de teclado
 
