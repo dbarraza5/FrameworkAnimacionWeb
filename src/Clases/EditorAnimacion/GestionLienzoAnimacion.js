@@ -183,6 +183,12 @@ class GestionLienzoAnimacion {
         //this.actualizarLienzo();
     }
 
+    seleccionGrupoBorrar(lista_grupos){
+        console.log("seleccionGrupoBorrar")
+        this.categoria_trabajo = TRABAJO_GRUPOS;
+        this.mover_figura = MOVER_BORRAR_GRUPOS;
+    }
+
     seleccionGrupoEspejo(lista_grupos){
         console.log("seleccionGrupoEspejo")
         this.categoria_trabajo = TRABAJO_GRUPOS;
@@ -703,6 +709,16 @@ class GestionLienzoAnimacion {
                 }
                 this.espejo_sentido_reflejo = REFLEJO_NONE;
             }
+        }
+
+        if(this.mover_figura === MOVER_BORRAR_GRUPOS){
+            for (let i=0; i<this.copia_lista_grupos.length; i++){
+                const grupo_copia = this.copia_lista_grupos[i];
+                this.animacion_.borrar_grupo(grupo_copia.nombre)
+            }
+            actListaTrabajo([]);
+            this.mover_figura = MOVER_NADA;
+            console.log("[Terminado de borrar los grupos]")
         }
     }
 

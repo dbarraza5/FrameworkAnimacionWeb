@@ -64,6 +64,10 @@ function GestionGruposLienzo(props){
         if(operacion_ === "espejo"){
             props.gestionLienzo.seleccionGrupoEspejo(lista_seleccionados)
         }
+
+        if(operacion_ === "borrar"){
+            props.gestionLienzo.seleccionGrupoBorrar(lista_seleccionados)
+        }
     }
 
     const seleccionSentidoReflejo=(sentido)=>{
