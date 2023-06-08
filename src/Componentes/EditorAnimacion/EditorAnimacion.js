@@ -150,20 +150,30 @@ function EditorAnimacion(props) {
     }
 
     const exportandoAnimacion = async () => {
-        console.log("EXPORTANDO LA ANIMACION")
-        //console.log(animacion)
-        const miArray = animacion.edicion.grupos_figuras;
-        const nombre = animacion.edicion.nombre_animacion+animacion.edicion.id_animacion
-        const jsonString = JSON.stringify(miArray);
-        const blob = new Blob([jsonString], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
+        if ('showSaveFilePicker' in window) {
+            try {
+                const miArray = animacion.edicion.grupos_figuras;
+                const nombre = animacion.edicion.nombre_animacion + animacion.edicion.id_animacion;
+                const jsonString = JSON.stringify(miArray);
+                const blob = new Blob([jsonString], { type: "application/json" });
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = nombre+".json";
-        a.click();
+                const handle = await window.showSaveFilePicker({
+                    types: [{
+                        description: 'Archivos JSON',
+                        accept: { 'application/json': ['.json'] }
+                    }],
+                    suggestedName: nombre + ".json"
+                });
 
-        URL.revokeObjectURL(url);
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+            } catch (error) {
+                console.error('Error al exportar la animación:', error);
+            }
+        } else {
+            console.error('La función showSaveFilePicker() no está soportada en este navegador.');
+        }
     }
 
 

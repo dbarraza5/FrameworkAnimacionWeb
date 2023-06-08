@@ -49,5 +49,28 @@ falta el mover los atributos usando el mouse.
 | Q+D | Duplicar lista de figuras de un grupo. |
 | Q+R | Rotar lista de figuras de un grupo. |
 
-
+   +-------------------------+
+   |    Creación de Conjuntos   |
+   |    de Dibujo Objeto     |
+   +-------------------------+
+                 |
+                 |
+                 v
+   +-------------------------+
+   |    Creación de Conjuntos   |
+   |    de Movimientos      |
+   +-------------------------+
+                 |
+                 |
+                 v
+   +-------------------------+
+   |    Composición de       |
+   |    Animaciones          |
+   +-------------------------+
+                 |
+                 |
+                 v
+   +-------------------------+
+   |    Creación de Escenarios |
+   +-------------------------+
 pendientes
