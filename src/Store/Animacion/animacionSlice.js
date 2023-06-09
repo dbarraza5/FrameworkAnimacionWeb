@@ -25,6 +25,12 @@ const animacionSlice = createSlice({
            estado_anterior:[]
 
        },
+       backup:{
+           deshacer: [],
+           rehacer: [],
+           actual: null,
+           max_distancia: 5,
+       },
        status: 'idle',
        error: null
    },//new GestionAnimacion(),
@@ -36,6 +42,25 @@ const animacionSlice = createSlice({
         setListaGrupoTrabajo: (state, action) => {
             state.animacion.grupos_trabajando = action.payload
         },
+        deshacer: ()=>{
+            if(state.backup.deshacer.length > 0){
+                const auxiliar = state.backup.actual;
+                state.backup.actual = state.backup.deshacer.pop();
+                state.backup.rehacer.unshift(auxiliar);
+            }
+        },
+        rehacer: ()=>{
+            if(state.backup.rehacer.length > 0){
+                const auxiliar = state.backup.actual;
+                state.backup.actual = state.backup.rehacer.shift();
+                state.backup.deshacer.push(auxiliar);
+            }
+        },
+        actualizarBackup: (state, action)=>{
+            state.backup.deshacer.push(state.backup.actual)
+            state.backup.rehacer.clean()
+            state.backup.actual = action.payload;
+        }
     },
     extraReducers:
         (builder) => {
@@ -60,23 +85,6 @@ const animacionSlice = createSlice({
                     console.log("FAILEDDDD")
                 });
         }
-        /*{
-        [fetchAnimacion.pending]: (state) => {
-            state.status = 'loading';
-        },
-        [fetchAnimacion.fulfilled]: (state, action) => {
-            state.status = 'succeeded';
-            state.animacion.id_animacion = action.payload._id;
-            state.animacion.nombre_animacion = action.payload.nombre_animacion;
-            state.animacion.meta_figuras = action.payload.meta_figuras
-            state.animacion.meta_movimientos = action.payload.meta_movimientos;
-            state.animacion.grupos_figuras = action.payload.grupos_figuras
-        },
-        [fetchAnimacion.rejected]: (state, action) => {
-            state.status = 'failed';
-            state.error = action.error.message;
-        },
-    }*/
 });
 
 export const {setNombreAnimacion, setListaGrupoTrabajo} = animacionSlice.actions;

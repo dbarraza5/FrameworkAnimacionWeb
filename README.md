@@ -40,6 +40,11 @@ falta el mover los atributos usando el mouse.
     3.- debe dar se la opcion de asignacion automatica de nombres en caso de conflictos , en el caso  que el usuario no quiera
     ir uno por uno dando  los nuevos nombre.
     
+## backup del proyecto
+    1.- implementar un deshacer y ir hacia delante algunos pasos.
+    2.- tener un backup que se suba a la nuve cada x tiempo.
+        a.- estos backup tendra la misma estructura pero no se mostraran al usuario.
+    
 ## Atajos de teclado
 
 | Atajo | Descripcion |
@@ -49,28 +54,5 @@ falta el mover los atributos usando el mouse.
 | Q+D | Duplicar lista de figuras de un grupo. |
 | Q+R | Rotar lista de figuras de un grupo. |
 
-   +-------------------------+
-   |    Creación de Conjuntos   |
-   |    de Dibujo Objeto     |
-   +-------------------------+
-                 |
-                 |
-                 v
-   +-------------------------+
-   |    Creación de Conjuntos   |
-   |    de Movimientos      |
-   +-------------------------+
-                 |
-                 |
-                 v
-   +-------------------------+
-   |    Composición de       |
-   |    Animaciones          |
-   +-------------------------+
-                 |
-                 |
-                 v
-   +-------------------------+
-   |    Creación de Escenarios |
-   +-------------------------+
+
 pendientes
