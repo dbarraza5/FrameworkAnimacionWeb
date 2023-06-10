@@ -8,14 +8,14 @@ function ModalTransferirGrupos(props) {
     const [nombre_grupo_origen, setNombreGrupoOrigen] = useState(null);
     const [nombre_grupo_export, setNombreGrupoExport] = useState(null);
     const [lista_seleccionados, setListaSeleccionados] = useState([])
-    console.log(arbol2)
-    console.log(props.animacion2)
-    console.log(arbol)
+    //console.log(arbol2)
+    //console.log(props.animacion2)
+    //console.log(arbol)
 
     const agregar_grupo=()=>{
         if(nombre_grupo_origen !== null && lista_seleccionados.length >0){
-            console.log("[LISTA de GRUPOS A AGREGAR]")
-            console.log(lista_seleccionados)
+            //console.log("[LISTA de GRUPOS A AGREGAR]")
+            //console.log(lista_seleccionados)
 
             for(let i=0; i<lista_seleccionados.length; i++){
                 const nombre = lista_seleccionados[i];
@@ -42,7 +42,7 @@ function ModalTransferirGrupos(props) {
                             <button className="btn btn-primary mt-2" onClick={agregar_grupo}>
                                 agregar
                             </button>
-                            <button className="btn btn-primary mt-2" onClick={console.log("")}>
+                            <button className="btn btn-primary mt-2">
                                 fucionar
                             </button>
                         </div>

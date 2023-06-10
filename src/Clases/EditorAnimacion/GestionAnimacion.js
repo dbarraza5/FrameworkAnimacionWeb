@@ -16,6 +16,8 @@ class GestionAnimacion{
         ]
     }
 
+    version = 0;
+
     getDatosAnimacion(){
         return {
             id_animacion: this.id_animacion,
@@ -276,7 +278,7 @@ class GestionAnimacion{
 
 
     estructura_arbol_grupos1(nombre_grupo){
-        console.log(nombre_grupo)
+        //console.log(nombre_grupo)
         let lista_grupo = this.get_nombres_grupos_hijos(nombre_grupo)
         let lista_nodos = []
         //console.log(lista_grupo)

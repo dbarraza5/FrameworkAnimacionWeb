@@ -25,8 +25,8 @@ import ModalImportarGrupo from "./SeccionFiguras/GestionGrupos/ImportarGrupos/Mo
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);
     function setCustomAnimacion(animacion_aux){
-        console.log("set animacion custom")
-
+        //console.log("set animacion custom")
+        animacion_aux.edicion.version+=1
         setAnimacion_(animacion_aux)
     }
     return [animacion_, setCustomAnimacion]
@@ -175,10 +175,23 @@ function EditorAnimacion(props) {
     }
 
     const editar_animacion=(animacion_)=>{
+        const raw_animacion = JSON.stringify(animacion_.edicion.grupos_figuras);
+        //console.log(raw_animacion)
+        dispatch(actualizarBackup(raw_animacion))
         setAnimacion(animacion_)
         //const liezo = new GestionLienzoAnimacion()
         //lienzo.actualizarLienzo(animacion_.edicion)
     }
+
+    useEffect(() => {
+        console.log("ACTUALIZA ==========================>")
+        const arr = JSON.parse(backup.actual);
+        console.log(arr)
+        console.log(animacion.edicion.grupos_figuras)
+        animacion.edicion.grupos_figuras = arr;
+        gestionLienzo.animacion_=animacion.edicion
+        //setAnimacion({"edicion": animacion.edicion})
+    },[backup.actual]);
 
     const actBackup=()=>{
         console.log("actBackup")
@@ -203,12 +216,12 @@ function EditorAnimacion(props) {
                 <h4>valor[{backup.actual}]</h4>
                 <hr/>
                 {backup.deshacer.map(e=>{
-                    return <h6>{e}</h6>
+                    return <h6>{e.length}</h6>
                 })}
 
                 <hr/>
                 {backup.rehacer.map(e=>{
-                    return <h6>{e}</h6>
+                    return <h6>{e.length}</h6>
                 })}
                 <button onClick={actBackup}>actualizar</button>
                 <button onClick={()=>dispatch(deshacer())}>deshacer</button>

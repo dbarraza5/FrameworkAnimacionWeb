@@ -32,7 +32,7 @@ const animacionSlice = createSlice({
            max_distancia: 5,
            tiempo_ultimo_cambio: null,
            //tiempo de espera para poder guardar los cambios | en milisegundos
-           tiempo_espera: 1000
+           tiempo_espera: 3000
        },
        status: 'idle',
        error: null
