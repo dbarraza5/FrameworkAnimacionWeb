@@ -18,26 +18,24 @@ import {Cookies} from 'react-cookie';
 import MenuAnimacion from "./MenuAnimacion";
 import Home from "../Home/Home";
 
-import {fetchAnimacion, setNombreAnimacion} from "../../Store/Animacion/animacionSlice";
+import {setNombreAnimacion, deshacer, rehacer, actualizarBackup} from "../../Store/Animacion/animacionSlice";
 import {useDispatch, useSelector} from "react-redux";
 import ModalImportarGrupo from "./SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
 
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);
-
     function setCustomAnimacion(animacion_aux){
         console.log("set animacion custom")
 
         setAnimacion_(animacion_aux)
     }
-
     return [animacion_, setCustomAnimacion]
 }
 
 
 function EditorAnimacion(props) {
 
-    const animacion_redux = useSelector((state) => state.animacion);
+    const backup = useSelector((state) => state.animacion.backup);
     //console.log("ANIMACION REDUX ================================")
     //console.log(animacion_redux)
     const dispatch = useDispatch();
@@ -176,12 +174,15 @@ function EditorAnimacion(props) {
         }
     }
 
-
-
     const editar_animacion=(animacion_)=>{
         setAnimacion(animacion_)
         //const liezo = new GestionLienzoAnimacion()
         //lienzo.actualizarLienzo(animacion_.edicion)
+    }
+
+    const actBackup=()=>{
+        console.log("actBackup")
+        dispatch(actualizarBackup(backup.actual+1))
     }
 
     if(animacion.edicion.meta_figuras.length>0){
@@ -199,6 +200,19 @@ function EditorAnimacion(props) {
                                     composicion = {composicion}>
                 </NavEditorAnimacion>
                 <ModalImportarGrupo animacion={animacion.edicion} setAnimacion={setAnimacion}/>
+                <h4>valor[{backup.actual}]</h4>
+                <hr/>
+                {backup.deshacer.map(e=>{
+                    return <h6>{e}</h6>
+                })}
+
+                <hr/>
+                {backup.rehacer.map(e=>{
+                    return <h6>{e}</h6>
+                })}
+                <button onClick={actBackup}>actualizar</button>
+                <button onClick={()=>dispatch(deshacer())}>deshacer</button>
+                <button onClick={()=>dispatch(rehacer())}>rehacer</button>
             </div>
         )
     }

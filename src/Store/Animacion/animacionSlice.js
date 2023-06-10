@@ -30,6 +30,9 @@ const animacionSlice = createSlice({
            rehacer: [],
            actual: null,
            max_distancia: 5,
+           tiempo_ultimo_cambio: null,
+           //tiempo de espera para poder guardar los cambios | en milisegundos
+           tiempo_espera: 1000
        },
        status: 'idle',
        error: null
@@ -42,14 +45,14 @@ const animacionSlice = createSlice({
         setListaGrupoTrabajo: (state, action) => {
             state.animacion.grupos_trabajando = action.payload
         },
-        deshacer: ()=>{
+        deshacer: (state)=>{
             if(state.backup.deshacer.length > 0){
                 const auxiliar = state.backup.actual;
                 state.backup.actual = state.backup.deshacer.pop();
                 state.backup.rehacer.unshift(auxiliar);
             }
         },
-        rehacer: ()=>{
+        rehacer: (state)=>{
             if(state.backup.rehacer.length > 0){
                 const auxiliar = state.backup.actual;
                 state.backup.actual = state.backup.rehacer.shift();
@@ -57,9 +60,21 @@ const animacionSlice = createSlice({
             }
         },
         actualizarBackup: (state, action)=>{
-            state.backup.deshacer.push(state.backup.actual)
-            state.backup.rehacer.clean()
-            state.backup.actual = action.payload;
+            const tiempoActual = new Date().getTime();
+            if ((state.backup.tiempo_ultimo_cambio === null ||
+                tiempoActual - state.backup.tiempo_ultimo_cambio >= state.backup.tiempo_espera) &&
+                state.backup.actual !== action.payload ) {
+                console.log("Mensaje cada 5 segundos");
+                if(state.backup.actual !== null){
+                    state.backup.deshacer.push(state.backup.actual)
+                    if(state.backup.deshacer.length > state.backup.max_distancia){
+                        state.backup.deshacer.shift()
+                    }
+                }
+                state.backup.rehacer=[]
+                state.backup.actual = action.payload;
+                state.backup.tiempo_ultimo_cambio = tiempoActual;
+            }
         }
     },
     extraReducers:
@@ -87,5 +102,5 @@ const animacionSlice = createSlice({
         }
 });
 
-export const {setNombreAnimacion, setListaGrupoTrabajo} = animacionSlice.actions;
+export const {setNombreAnimacion, setListaGrupoTrabajo, deshacer, rehacer, actualizarBackup} = animacionSlice.actions;
 export default animacionSlice.reducer;
