@@ -10,8 +10,10 @@ import Lienzo from "../Lienzo";
 
 
 import {useDispatch, useSelector} from "react-redux";
-import {setListaGrupoTrabajo} from "../../../Store/Animacion/animacionSlice";
+import {setListaGrupoTrabajo, deshacer, rehacer} from "../../../Store/Animacion/animacionSlice";
 function EdicionFiguras(props){
+
+    const backup = useSelector((state) => state.animacion.backup);
 
     //let grupos = props.animacion.grupos_figuras;
     const eventoLienzoFigura = props.eventoLienzoFigura;
@@ -46,7 +48,17 @@ function EdicionFiguras(props){
                 </div>
                 <div className="col">
                     <div className="card text-bg-light mb-3">
-                        <div className="card-header">Animación <strong>{animacion_redux.nombre_animacion}</strong></div>
+                        <div className="card-header d-flex justify-content-between align-items-center">
+                            <h6 className="card-title mb-0 text-start">Animación <strong>{animacion_redux.nombre_animacion}</strong></h6>
+                            <div className="d-flex">
+                                <button className="btn btn-light me-2 btn-icon" onClick={()=>dispatch(deshacer())} disabled={backup.deshacer.length===0}>
+                                    <i className="bi bi-arrow-left"></i>
+                                </button>
+                                <button className="btn btn-light btn-icon" onClick={()=>dispatch(rehacer())} disabled={backup.rehacer.length===0}>
+                                    <i className="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
                         <div className="card-body">
                             <Lienzo lienzo = {eventoLienzoFigura} id="lienzo-animacion" editar_animacion={editar_animacion}
                                     setEventLienzoFigura={props.setEventLienzoFigura}/>
