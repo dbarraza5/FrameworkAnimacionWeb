@@ -32,7 +32,9 @@ const animacionSlice = createSlice({
            max_distancia: 5,
            tiempo_ultimo_cambio: null,
            //tiempo de espera para poder guardar los cambios | en milisegundos
-           tiempo_espera: 3000
+           tiempo_espera: 1000,
+           //0: se mantiene o se acutaliza | 1: se rehace el estado | -1: se dehace
+           estado: 0
        },
        status: 'idle',
        error: null
@@ -50,6 +52,7 @@ const animacionSlice = createSlice({
                 const auxiliar = state.backup.actual;
                 state.backup.actual = state.backup.deshacer.pop();
                 state.backup.rehacer.unshift(auxiliar);
+                state.backup.estado+= -1;
             }
         },
         rehacer: (state)=>{
@@ -57,6 +60,7 @@ const animacionSlice = createSlice({
                 const auxiliar = state.backup.actual;
                 state.backup.actual = state.backup.rehacer.shift();
                 state.backup.deshacer.push(auxiliar);
+                state.backup.estado+= 1;
             }
         },
         actualizarBackup: (state, action)=>{
@@ -74,6 +78,7 @@ const animacionSlice = createSlice({
                 state.backup.rehacer=[]
                 state.backup.actual = action.payload;
                 state.backup.tiempo_ultimo_cambio = tiempoActual;
+                state.backup.estado = 0;
             }
         }
     },

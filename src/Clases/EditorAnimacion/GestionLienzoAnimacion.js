@@ -126,6 +126,10 @@ class GestionLienzoAnimacion {
     //trabajando sobre figuras agregadas recientemente
     movimiento_recta_agregada = MOVER_NADA;
 
+    //evitar conflicto por concurrencia
+    act_grupos_concurrente = false
+    grupos_figuras_concurrent = null;
+
 
     constructor(animacion_) {
         this.id_canvas = "lienzo-animacion"
@@ -133,6 +137,21 @@ class GestionLienzoAnimacion {
         this.y = 0;
         this.animacion_ = animacion_
     }
+
+    setGrupoFigurasCurrent(grupos_){
+        this.act_grupos_concurrente =true;
+        this.grupos_figuras_concurrent = grupos_;
+    }
+
+    aplicarCambiosConcurrente(){
+        if(this.act_grupos_concurrente && this.grupos_figuras_concurrent !== null){
+            this.animacion_.grupos_figuras = this.grupos_figuras_concurrent;
+            this.act_grupos_concurrente = false;
+            this.mover_figura = MOVER_NADA
+            this.categoria_trabajo = TRABAJO_NONE;
+        }
+    }
+
 
     //proceso que es llamado por componente de react para proceder a intereactuar a nivel de grupo
     seleccionListaGrupos(lista_grupos){
@@ -922,6 +941,7 @@ class GestionLienzoAnimacion {
         }
         this.procesarSeleccionPuntero(eventoLienzoFigura);
         this.actualizarLienzo()
+        this.aplicarCambiosConcurrente();
     }
 
     actualizarPuntoCentro(fig_, grupo_) {

@@ -182,16 +182,31 @@ function EditorAnimacion(props) {
         //const liezo = new GestionLienzoAnimacion()
         //lienzo.actualizarLienzo(animacion_.edicion)
     }
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function delay() {
+        console.log('Antes de la pausa');
+        await sleep(100);
+        console.log('Después de la pausa');
+    }
 
     useEffect(() => {
         console.log("ACTUALIZA ==========================>")
         const arr = JSON.parse(backup.actual);
-        console.log(arr)
-        console.log(animacion.edicion.grupos_figuras)
-        animacion.edicion.grupos_figuras = arr;
-        gestionLienzo.animacion_=animacion.edicion
+        console.log("STRING=>"+arr)
+        //console.log(animacion.edicion.grupos_figuras)
+        if(arr !==null)
+        gestionLienzo.setGrupoFigurasCurrent(arr)
+        //while(gestionLienzo.bloque_proceso){
+        //    console.log("esperar")
+        //    delay()
+        //}
+        //animacion.edicion.grupos_figuras = arr;
+        //gestionLienzo.animacion_=animacion.edicion
         //setAnimacion({"edicion": animacion.edicion})
-    },[backup.actual]);
+    },[backup.estado]);
 
     const actBackup=()=>{
         console.log("actBackup")
@@ -205,6 +220,9 @@ function EditorAnimacion(props) {
 
         const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
         const composicion = <EditorCompisicion {...paquete_datos}/>
+
+        const num_chr_actual = backup.actual === null? -1:backup.actual.length;
+
         return (
             <div className="row">
                 <MenuAnimacion subirAnimacion={subirAnimacion} exportarAnimacion={exportandoAnimacion}/>
@@ -213,7 +231,7 @@ function EditorAnimacion(props) {
                                     composicion = {composicion}>
                 </NavEditorAnimacion>
                 <ModalImportarGrupo animacion={animacion.edicion} setAnimacion={setAnimacion}/>
-                <h4>valor[{backup.actual}]</h4>
+                <h4>valor[{num_chr_actual}]</h4>
                 <hr/>
                 {backup.deshacer.map(e=>{
                     return <h6>{e.length}</h6>
