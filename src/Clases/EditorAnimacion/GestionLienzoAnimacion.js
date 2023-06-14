@@ -616,6 +616,7 @@ class GestionLienzoAnimacion {
             this.mover_lista_grupos(this.mover_centros.centro_x, this.mover_centros.centro_y,
                 eventoLienzoFigura.mouse_x, eventoLienzoFigura.mouse_y  )
             if(eventoLienzoFigura.mouse_click_down){
+                setAnimacion({"edicion": this.animacion_})
                 this.mover_figura = MOVER_NADA
             }
         }

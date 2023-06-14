@@ -51,10 +51,10 @@ function EdicionFiguras(props){
                         <div className="card-header d-flex justify-content-between align-items-center">
                             <h6 className="card-title mb-0 text-start">Animación <strong>{animacion_redux.nombre_animacion}</strong></h6>
                             <div className="d-flex">
-                                <button className="btn btn-light me-2 btn-icon" onClick={()=>dispatch(deshacer())} disabled={backup.deshacer.length===0}>
+                                <button className="btn  me-2 btn-icon" onClick={()=>dispatch(deshacer())} disabled={backup.deshacer.length===0}>
                                     <i className="bi bi-arrow-left"></i>
                                 </button>
-                                <button className="btn btn-light btn-icon" onClick={()=>dispatch(rehacer())} disabled={backup.rehacer.length===0}>
+                                <button className="btn btn-icon" onClick={()=>dispatch(rehacer())} disabled={backup.rehacer.length===0}>
                                     <i className="bi bi-arrow-right"></i>
                                 </button>
                             </div>

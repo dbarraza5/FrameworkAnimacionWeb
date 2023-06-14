@@ -12,33 +12,34 @@ export const fetchAnimacion = createAsyncThunk('animacion/fetchAnimacion', async
     return response.data;
 });
 
+const inicializarState= {
+    animacion: {
+        id_proyecto: "",
+        id_animacion: "",
+        nombre_animacion: "",
+        grupos_trabajando:[],
+        // para poder retroceder crtl+z
+        estado_anterior:[]
+
+    },
+    backup:{
+        deshacer: [],
+        rehacer: [],
+        actual: null,
+        max_distancia: 5,
+        tiempo_ultimo_cambio: null,
+        //tiempo de espera para poder guardar los cambios | en milisegundos
+        tiempo_espera: 1000,
+        //0: se mantiene o se acutaliza | 1: se rehace el estado | -1: se dehace
+        estado: 0
+    },
+    status: 'idle',
+    error: null
+}
 
 const animacionSlice = createSlice({
    name:"animacion",
-   initialState: {
-       animacion: {
-           id_proyecto: "",
-           id_animacion: "",
-           nombre_animacion: "",
-           grupos_trabajando:[],
-           // para poder retroceder crtl+z
-           estado_anterior:[]
-
-       },
-       backup:{
-           deshacer: [],
-           rehacer: [],
-           actual: null,
-           max_distancia: 5,
-           tiempo_ultimo_cambio: null,
-           //tiempo de espera para poder guardar los cambios | en milisegundos
-           tiempo_espera: 1000,
-           //0: se mantiene o se acutaliza | 1: se rehace el estado | -1: se dehace
-           estado: 0
-       },
-       status: 'idle',
-       error: null
-   },//new GestionAnimacion(),
+   initialState: inicializarState,//new GestionAnimacion(),
 
     reducers:{
         setNombreAnimacion: (state, action) => {
@@ -80,7 +81,9 @@ const animacionSlice = createSlice({
                 state.backup.tiempo_ultimo_cambio = tiempoActual;
                 state.backup.estado = 0;
             }
-        }
+        },
+
+        restaurarState: ()=>inicializarState
     },
     extraReducers:
         (builder) => {
@@ -107,5 +110,5 @@ const animacionSlice = createSlice({
         }
 });
 
-export const {setNombreAnimacion, setListaGrupoTrabajo, deshacer, rehacer, actualizarBackup} = animacionSlice.actions;
+export const {setNombreAnimacion, setListaGrupoTrabajo, deshacer, rehacer, actualizarBackup, restaurarState} = animacionSlice.actions;
 export default animacionSlice.reducer;

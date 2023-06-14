@@ -26,6 +26,12 @@ function GestionGruposLienzo(props){
     }, [grupos_trabajando])
 
 
+    /*useEffect(()=>{
+        setListaSeleccionados(grupos_trabajando)
+    }, [props.animacion.grupos_figuras])
+
+    const [arbol, setArbol] = useState(props.animacion.estructura_arbol_grupos())*/
+
     /*const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchAnimacion());

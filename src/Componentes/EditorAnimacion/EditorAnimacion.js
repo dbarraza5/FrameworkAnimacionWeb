@@ -18,7 +18,7 @@ import {Cookies} from 'react-cookie';
 import MenuAnimacion from "./MenuAnimacion";
 import Home from "../Home/Home";
 
-import {setNombreAnimacion, deshacer, rehacer, actualizarBackup} from "../../Store/Animacion/animacionSlice";
+import {setNombreAnimacion, setListaGrupoTrabajo,restaurarState, actualizarBackup} from "../../Store/Animacion/animacionSlice";
 import {useDispatch, useSelector} from "react-redux";
 import ModalImportarGrupo from "./SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
 
@@ -97,8 +97,9 @@ function EditorAnimacion(props) {
                     animacion.edicion.nombre_animacion = response.data.nombre_animacion;
 
                     dispatch(setNombreAnimacion(response.data.nombre_animacion))
+                    dispatch(restaurarState())
                     //customSetAnimacion(animacion)
-                    setAnimacion({"edicion": animacion.edicion})
+                    editar_animacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
                 })
                 .catch(function (response) {
@@ -178,40 +179,20 @@ function EditorAnimacion(props) {
         const raw_animacion = JSON.stringify(animacion_.edicion.grupos_figuras);
         //console.log(raw_animacion)
         dispatch(actualizarBackup(raw_animacion))
+
         setAnimacion(animacion_)
         //const liezo = new GestionLienzoAnimacion()
         //lienzo.actualizarLienzo(animacion_.edicion)
     }
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function delay() {
-        console.log('Antes de la pausa');
-        await sleep(100);
-        console.log('Después de la pausa');
-    }
 
     useEffect(() => {
-        console.log("ACTUALIZA ==========================>")
         const arr = JSON.parse(backup.actual);
-        console.log("STRING=>"+arr)
-        //console.log(animacion.edicion.grupos_figuras)
-        if(arr !==null)
-        gestionLienzo.setGrupoFigurasCurrent(arr)
-        //while(gestionLienzo.bloque_proceso){
-        //    console.log("esperar")
-        //    delay()
-        //}
-        //animacion.edicion.grupos_figuras = arr;
-        //gestionLienzo.animacion_=animacion.edicion
-        //setAnimacion({"edicion": animacion.edicion})
+        if(arr !==null){
+            gestionLienzo.setGrupoFigurasCurrent(arr)
+            dispatch(setListaGrupoTrabajo([]))
+        }
     },[backup.estado]);
 
-    const actBackup=()=>{
-        console.log("actBackup")
-        dispatch(actualizarBackup(backup.actual+1))
-    }
 
     if(animacion.edicion.meta_figuras.length>0){
         const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
@@ -221,8 +202,6 @@ function EditorAnimacion(props) {
         const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
         const composicion = <EditorCompisicion {...paquete_datos}/>
 
-        const num_chr_actual = backup.actual === null? -1:backup.actual.length;
-
         return (
             <div className="row">
                 <MenuAnimacion subirAnimacion={subirAnimacion} exportarAnimacion={exportandoAnimacion}/>
@@ -231,19 +210,6 @@ function EditorAnimacion(props) {
                                     composicion = {composicion}>
                 </NavEditorAnimacion>
                 <ModalImportarGrupo animacion={animacion.edicion} setAnimacion={setAnimacion}/>
-                <h4>valor[{num_chr_actual}]</h4>
-                <hr/>
-                {backup.deshacer.map(e=>{
-                    return <h6>{e.length}</h6>
-                })}
-
-                <hr/>
-                {backup.rehacer.map(e=>{
-                    return <h6>{e.length}</h6>
-                })}
-                <button onClick={actBackup}>actualizar</button>
-                <button onClick={()=>dispatch(deshacer())}>deshacer</button>
-                <button onClick={()=>dispatch(rehacer())}>rehacer</button>
             </div>
         )
     }
