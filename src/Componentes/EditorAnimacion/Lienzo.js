@@ -38,14 +38,14 @@ function Lienzo(props){
     }
 
     const eventoMouseEntrada=(e)=>{
-        console.log("entrada al lienzo")
+        //console.log("entrada al lienzo")
         props.lienzo.mouse_sobre_lienzo = true;
         props.setEventLienzoFigura(props.lienzo);
         props.editar_animacion()
     }
 
     const eventoMouseSalida=(e)=>{
-        console.log("salida al lienzo")
+        //console.log("salida al lienzo")
         props.lienzo.mouse_sobre_lienzo = false;
         props.lienzo.mouse_mueve_sobre_lienzo = false;
         props.setEventLienzoFigura(props.lienzo);

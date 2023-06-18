@@ -90,6 +90,10 @@ class GestionLienzoAnimacion {
     }
 
     mover_figura = MOVER_NADA;
+    anterior_mover_figura = MOVER_NADA;
+
+    editar_lienzo = false;
+    funcion_editar_lienzo = null;
 
     lista_grupos_trabajando = [];
     copia_lista_grupos = []
@@ -943,6 +947,13 @@ class GestionLienzoAnimacion {
         this.procesarSeleccionPuntero(eventoLienzoFigura);
         this.actualizarLienzo()
         this.aplicarCambiosConcurrente();
+
+        if(this.mover_figura !== this.anterior_mover_figura){
+            this.anterior_mover_figura = this.mover_figura;
+            if(this.funcion_editar_lienzo !== null && this.mover_figura === 0){
+                this.funcion_editar_lienzo();
+            }
+        }
     }
 
     actualizarPuntoCentro(fig_, grupo_) {

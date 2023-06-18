@@ -61,6 +61,8 @@ function EditorAnimacion(props) {
     //    dispatch(fetchAnimacion(props.id_animacion));
     //}, [dispatch]);
 
+
+
     useEffect(() => {
         //const liezo = new GestionLienzoAnimacion()
         //console.log(gestionLienzo)
@@ -69,6 +71,18 @@ function EditorAnimacion(props) {
         //
         obtenerAnimacion();
     },[]);
+
+    /*useEffect(() => {
+        console.log("MOVER_FIGURA: "+gestionLienzo.mover_figura)
+    },[gestionLienzo.mover_figura]);*/
+
+    const editar_lienzo=()=>{
+        //dispatch(actualizarBackup(raw_animacion))
+        console.log("MOVER_FIGURA: "+gestionLienzo.mover_figura)
+        const raw_animacion = JSON.stringify(animacion.edicion.grupos_figuras);
+        dispatch(actualizarBackup(raw_animacion))
+    }
+    gestionLienzo.funcion_editar_lienzo = editar_lienzo;
 
     const obtenerAnimacion=async ()=>{
         const token = datos_usuario.token
@@ -176,9 +190,9 @@ function EditorAnimacion(props) {
     }
 
     const editar_animacion=(animacion_)=>{
-        const raw_animacion = JSON.stringify(animacion_.edicion.grupos_figuras);
+        //const raw_animacion = JSON.stringify(animacion_.edicion.grupos_figuras);
         //console.log(raw_animacion)
-        dispatch(actualizarBackup(raw_animacion))
+        //dispatch(actualizarBackup(raw_animacion))
 
         setAnimacion(animacion_)
         //const liezo = new GestionLienzoAnimacion()

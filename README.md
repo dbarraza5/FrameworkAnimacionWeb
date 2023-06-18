@@ -15,6 +15,7 @@ falta el mover los atributos usando el mouse.
         a.- rotacio
         b.- inflar
         c.- reducir, etc...
+        d.- eliminar
     4.- implementar el duplicado de grupos y figuras.
     
     5.- fallo de inflar y despues mover
@@ -43,7 +44,7 @@ falta el mover los atributos usando el mouse.
 ## backup del proyecto
     1.- implementar un deshacer y ir hacia delante algunos pasos.
     2.- tener un backup que se suba a la nuve cada x tiempo.
-        a.- estos backup tendra la misma estructura pero no se mostraran al usuario.
+        a.- estos backup tendra la misma estructura pero no se mostraran al usuario.qb
     
 ## Atajos de teclado
 
