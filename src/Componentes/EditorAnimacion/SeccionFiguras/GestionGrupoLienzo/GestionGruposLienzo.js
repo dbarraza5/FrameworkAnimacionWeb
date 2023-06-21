@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {setListaGrupoTrabajo} from "../../../../Store/Animacion/animacionSlice"
 
 function GestionGruposLienzo(props){
+    const backup_actual = useSelector((state) => state.animacion.backup.actual);
 
     const grupos_trabajando = useSelector((state) => state.animacion.animacion.grupos_trabajando);
     const dispatch = useDispatch();
@@ -26,11 +27,22 @@ function GestionGruposLienzo(props){
     }, [grupos_trabajando])
 
 
+    //useEffect(()=>{
+    //    dispatch()
+    //}, [backup_actual])
+
+
     /*useEffect(()=>{
         setListaSeleccionados(grupos_trabajando)
-    }, [props.animacion.grupos_figuras])
+    }, [props.animacion.grupos_figuras])*/
 
-    const [arbol, setArbol] = useState(props.animacion.estructura_arbol_grupos())*/
+    const raw_grupos = props.animacion.estructura_arbol_grupos()
+
+    useEffect(()=>{
+        setArbol(raw_grupos)
+    }, [raw_grupos])
+
+    const [arbol, setArbol] = useState(raw_grupos)
 
     /*const dispatch = useDispatch();
     useEffect(() => {
@@ -40,7 +52,7 @@ function GestionGruposLienzo(props){
     if(props.animacion.meta_figuras.length===0){
         return (<p>nada</p>)
     }
-    const arbol=props.animacion.estructura_arbol_grupos()
+    //const arbol=props.animacion.estructura_arbol_grupos()
 
     //console.log("nodos del arbol")
     //console.log(arbol)
