@@ -29,7 +29,7 @@ const inicializarState= {
         max_distancia: 5,
         tiempo_ultimo_cambio: null,
         //tiempo de espera para poder guardar los cambios | en milisegundos
-        tiempo_espera: 1000,
+        tiempo_espera: 100,
         //0: se mantiene o se acutaliza | 1: se rehace el estado | -1: se dehace
         estado: 0
     },

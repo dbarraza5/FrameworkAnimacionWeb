@@ -45,6 +45,15 @@ falta el mover los atributos usando el mouse.
     1.- implementar un deshacer y ir hacia delante algunos pasos.
     2.- tener un backup que se suba a la nuve cada x tiempo.
         a.- estos backup tendra la misma estructura pero no se mostraran al usuario.qb
+        
+### bugs de trabajo de figuras
+    1.- al duplicar las figuras no se refleja en el apartado de administracion.
+    
+### bugs de trabajo de grupos
+    1.- al duplicar los grupos no se ven reflajadas los cambios en el argol de grupos.
+    2.- tiene problemas con el efecto espejo no registra el cambio para guardar
+    3.- tiene problemas con rotar no registra el cambio para guardar
+    3.- tiene problemas con cambio de tamaño no registra el cambio para guardar
     
 ## Atajos de teclado
 

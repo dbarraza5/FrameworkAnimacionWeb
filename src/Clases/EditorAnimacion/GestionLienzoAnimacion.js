@@ -343,6 +343,8 @@ class GestionLienzoAnimacion {
             }
         }
 
+        this.anterior_mover_figura = this.mover_figura;
+
         if(this.mover_figura === MOVER_NADA){
             //dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
             let rect_seleccion = this.calcularCentroFigurasSeleccionadas()
@@ -459,9 +461,15 @@ class GestionLienzoAnimacion {
             }
 
         }
+
+        if(this.anterior_mover_figura !== MOVER_NADA && this.mover_figura === MOVER_NADA){
+            this.editar_lienzo = true;
+        }
     }
 
     procesarTrabajoFigura(eventoLienzoFigura, setAnimacion){
+
+
         let nombre_grupo = this.id_grupo_selec;
         let nombre_figura = this.id_figura_selec;
         const grupo_ = this.animacion_.getGrupo(nombre_grupo)
@@ -556,6 +564,8 @@ class GestionLienzoAnimacion {
                 setAnimacion({"edicion": this.animacion_})
             }
 
+            this.anterior_mover_figura = this.mover_figura;
+
             if (eventoLienzoFigura.mouse_click_up && (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2)) {
                 this.mover_figura = MOVER_NADA;
             }
@@ -570,6 +580,10 @@ class GestionLienzoAnimacion {
             if (eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura === "RECTA") {
                 console.log("MOVER AHORA EL PUNTO1")
                 this.mover_figura = MOVER_RECTA_PUNTO1;
+            }
+
+            if(this.anterior_mover_figura !== MOVER_NADA && this.mover_figura === MOVER_NADA){
+                this.editar_lienzo = true;
             }
         }
     }
@@ -591,6 +605,7 @@ class GestionLienzoAnimacion {
                 this.rotar_lista_grupos = true;
             }
         }
+        this.anterior_mover_figura = this.mover_figura;
 
         if(this.mover_figura === MOVER_INFLAR_GRUPOS){
             let rect_seleccion = this.calcularCentroGruposSeleccionados()
@@ -743,6 +758,10 @@ class GestionLienzoAnimacion {
             actListaTrabajo([]);
             this.mover_figura = MOVER_NADA;
             console.log("[Terminado de borrar los grupos]")
+        }
+
+        if(this.anterior_mover_figura !== MOVER_NADA && this.mover_figura === MOVER_NADA){
+            this.editar_lienzo = true;
         }
     }
 
@@ -948,11 +967,10 @@ class GestionLienzoAnimacion {
         this.actualizarLienzo()
         this.aplicarCambiosConcurrente();
 
-        if(this.mover_figura !== this.anterior_mover_figura){
-            this.anterior_mover_figura = this.mover_figura;
-            if(this.funcion_editar_lienzo !== null && this.mover_figura === 0){
-                this.funcion_editar_lienzo();
-            }
+        if(this.editar_lienzo){
+            console.log("[EDITAR EL LIENZO]")
+            this.funcion_editar_lienzo();
+            this.editar_lienzo = false;
         }
     }
 

@@ -101,7 +101,7 @@ function EditorAnimacion(props) {
 
             let res = await axios(config)
                 .then(function (response) {
-                    console.log("funciono")
+                    console.log("funcionaaa DESCARGAAAAA")
                     console.log(response.data);
                     animacion.edicion.meta_figuras = response.data.meta_figuras
                     animacion.edicion.meta_movimientos = response.data.meta_movimientos;
@@ -109,9 +109,11 @@ function EditorAnimacion(props) {
 
                     animacion.edicion.id_animacion = response.data._id;
                     animacion.edicion.nombre_animacion = response.data.nombre_animacion;
-
-                    dispatch(setNombreAnimacion(response.data.nombre_animacion))
                     dispatch(restaurarState())
+                    const raw_animacion = JSON.stringify(response.data.grupos_figuras);
+                    dispatch(actualizarBackup(raw_animacion))
+                    dispatch(setNombreAnimacion(response.data.nombre_animacion))
+
                     //customSetAnimacion(animacion)
                     editar_animacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
