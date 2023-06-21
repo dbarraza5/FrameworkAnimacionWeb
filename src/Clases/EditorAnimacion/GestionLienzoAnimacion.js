@@ -627,6 +627,7 @@ class GestionLienzoAnimacion {
                     setAnimacion({"edicion": this.animacion_})
                     let lista_grupos = this.copia_lista_grupos.map(g=>g.nombre)
                     this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(lista_grupos)
+                    this.editar_lienzo = true;
                 }
             }
         }
@@ -676,6 +677,7 @@ class GestionLienzoAnimacion {
                 if(eventoLienzoFigura.mouse_only_click){
                     this.rotar_lista_grupos = false
                     setAnimacion({"edicion": this.animacion_})
+                    this.editar_lienzo = true;
                 }
 
                 const angulo_rotacion = Fisica.angulo_recta(this.pivote_rotacion.x, this.pivote_rotacion.y
@@ -747,6 +749,7 @@ class GestionLienzoAnimacion {
                     }
                 }
                 this.espejo_sentido_reflejo = REFLEJO_NONE;
+                this.editar_lienzo = true;
             }
         }
 
