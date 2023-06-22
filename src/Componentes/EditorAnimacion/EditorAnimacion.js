@@ -47,34 +47,23 @@ function EditorAnimacion(props) {
     const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion.edicion));
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
 
-    //const setAnimacion=(animacion_)=>{
-    //    dispatch(setAnimacionR(animacion_))
-    //}
 
-    /*useEffect(()=>{
-        gestionLienzo.animacion_=animacion_redux;
-        gestionLienzo.actualizarLienzo(animacion_redux)
-        setGestionLienzo(gestionLienzo)
-    },[animacion_redux])*/
+    const cambiarListaTrabajo=(lista)=>{
+        dispatch(setListaGrupoTrabajo(lista))
+    }
 
-    //useEffect(() => {
-    //    dispatch(fetchAnimacion(props.id_animacion));
-    //}, [dispatch]);
-
-
+    const comenzarProcesoLoopLienzo=()=>{
+        const interval = setInterval(() => {
+            //console.log('This will run every second!');
+            gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, cambiarListaTrabajo)
+        }, 500);
+        return () => clearInterval(interval);
+    }
 
     useEffect(() => {
-        //const liezo = new GestionLienzoAnimacion()
-        //console.log(gestionLienzo)
         console.log("[==============================ANIMACION===========================]")
-        //
-        //
         obtenerAnimacion();
-    },[]);
-
-    /*useEffect(() => {
-        console.log("MOVER_FIGURA: "+gestionLienzo.mover_figura)
-    },[gestionLienzo.mover_figura]);*/
+    }, []);
 
     const editar_lienzo=()=>{
         //dispatch(actualizarBackup(raw_animacion))
@@ -103,10 +92,12 @@ function EditorAnimacion(props) {
                 .then(function (response) {
                     console.log("funcionaaa DESCARGAAAAA")
                     console.log(response.data);
+                    animacion.proceso_principal_activo = false
                     animacion.edicion.meta_figuras = response.data.meta_figuras
                     animacion.edicion.meta_movimientos = response.data.meta_movimientos;
                     animacion.edicion.grupos_figuras = response.data.grupos_figuras
-
+                    animacion.edicion.grupos_figuras_concurrent = null
+                    //animacion.edicion.setGrupoFigurasCurrent(response.data.grupos_figuras)
                     animacion.edicion.id_animacion = response.data._id;
                     animacion.edicion.nombre_animacion = response.data.nombre_animacion;
                     dispatch(restaurarState())
@@ -114,9 +105,14 @@ function EditorAnimacion(props) {
                     dispatch(actualizarBackup(raw_animacion))
                     dispatch(setNombreAnimacion(response.data.nombre_animacion))
 
+                    //comenzarProcesoLoopLienzo();
                     //customSetAnimacion(animacion)
+                    setGestionLienzo(new GestionLienzoAnimacion(animacion.edicion));
+                    //gestionLienzo.animacion_ = animacion.edicion
                     editar_animacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
+                    console.log("funcionaaa DESCARGAAAAA22222222222")
+                    console.log(animacion.edicion)
                 })
                 .catch(function (response) {
                     console.log("error obtener proyectos")
@@ -196,7 +192,7 @@ function EditorAnimacion(props) {
         //console.log(raw_animacion)
         //dispatch(actualizarBackup(raw_animacion))
 
-        setAnimacion(animacion_)
+        setAnimacion({edicion: animacion_.edicion})
         //const liezo = new GestionLienzoAnimacion()
         //lienzo.actualizarLienzo(animacion_.edicion)
     }
@@ -213,7 +209,8 @@ function EditorAnimacion(props) {
     if(animacion.edicion.meta_figuras.length>0){
         const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
             eventoLienzoFigura :eventoLienzoFigura, setEventLienzoFigura:setEventLienzoFigura,
-            gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo};
+            gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo,
+            cambiarListaTrabajo:cambiarListaTrabajo};
 
         const edicion_figuras = <EdicionFiguras {...paquete_datos}/>
         const composicion = <EditorCompisicion {...paquete_datos}/>

@@ -21,23 +21,15 @@ function EdicionFiguras(props){
 
     const dispatch = useDispatch();
 
-    const cambiarListaTrabajo=(lista)=>{
-        dispatch(setListaGrupoTrabajo(lista))
-    }
+
 
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
-        props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, cambiarListaTrabajo)
+        props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
         eventoLienzoFigura.reset()
     }
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            //console.log('This will run every second!');
-            props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, cambiarListaTrabajo)
-        }, 500);
-        return () => clearInterval(interval);
-    }, []);
+
 
     return(
         <div>

@@ -38,9 +38,9 @@ function GestionGruposLienzo(props){
 
     const raw_grupos = props.animacion.estructura_arbol_grupos()
 
-    useEffect(()=>{
-        setArbol(raw_grupos)
-    }, [raw_grupos])
+    //useEffect(()=>{
+    //    setArbol(raw_grupos)
+    //}, [raw_grupos])
 
     const [arbol, setArbol] = useState(raw_grupos)
 

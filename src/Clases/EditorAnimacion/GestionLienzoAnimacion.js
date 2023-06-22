@@ -133,6 +133,8 @@ class GestionLienzoAnimacion {
     //evitar conflicto por concurrencia
     act_grupos_concurrente = false
     grupos_figuras_concurrent = null;
+    //desactivar el proceso principal
+    proceso_principal_activo = true
 
 
     constructor(animacion_) {
@@ -149,6 +151,7 @@ class GestionLienzoAnimacion {
 
     aplicarCambiosConcurrente(){
         if(this.act_grupos_concurrente && this.grupos_figuras_concurrent !== null){
+            console.log("APLICAR GRUPOS CONCURRENTES!!!!")
             this.animacion_.grupos_figuras = this.grupos_figuras_concurrent;
             this.act_grupos_concurrente = false;
             this.mover_figura = MOVER_NADA
@@ -954,26 +957,29 @@ class GestionLienzoAnimacion {
     }
 
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
-        if (this.categoria_trabajo === TRABAJO_FIGURA) {
-            this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
-        }
 
-        if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
-            this.procesarTrabajoListaFiguras(eventoLienzoFigura, setAnimacion)
-        }
+        if(this.proceso_principal_activo){
+            if (this.categoria_trabajo === TRABAJO_FIGURA) {
+                this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
+            }
 
-        if(this.categoria_trabajo === TRABAJO_GRUPOS){
-            this.procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion, actListaTrabajo)
+            if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
+                this.procesarTrabajoListaFiguras(eventoLienzoFigura, setAnimacion)
+            }
 
-        }
-        this.procesarSeleccionPuntero(eventoLienzoFigura);
-        this.actualizarLienzo()
-        this.aplicarCambiosConcurrente();
+            if(this.categoria_trabajo === TRABAJO_GRUPOS){
+                this.procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion, actListaTrabajo)
 
-        if(this.editar_lienzo){
-            console.log("[EDITAR EL LIENZO]")
-            this.funcion_editar_lienzo();
-            this.editar_lienzo = false;
+            }
+            this.procesarSeleccionPuntero(eventoLienzoFigura);
+            this.actualizarLienzo()
+            this.aplicarCambiosConcurrente();
+
+            if(this.editar_lienzo){
+                console.log("[EDITAR EL LIENZO]")
+                this.funcion_editar_lienzo();
+                this.editar_lienzo = false;
+            }
         }
     }
 
