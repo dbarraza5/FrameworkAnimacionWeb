@@ -48,7 +48,7 @@ falta el mover los atributos usando el mouse.
         
 ### bugs de trabajo de figuras
     1.- al duplicar las figuras no se refleja en el apartado de administracion.
-    
+    2.- al agregar un circulo no se guarda en el buckup    
 ### bugs de trabajo de grupos
     1.- al duplicar los grupos no se ven reflajadas los cambios en el argol de grupos.
     2.- tiene problemas con el efecto espejo no registra el cambio para guardar

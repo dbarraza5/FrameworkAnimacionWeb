@@ -18,7 +18,8 @@ import {Cookies} from 'react-cookie';
 import MenuAnimacion from "./MenuAnimacion";
 import Home from "../Home/Home";
 
-import {setNombreAnimacion, setListaGrupoTrabajo,restaurarState, actualizarBackup} from "../../Store/Animacion/animacionSlice";
+import {setNombreAnimacion, setListaGrupoTrabajo,restaurarState,
+    actualizarBackup, setIdHiloLienzo} from "../../Store/Animacion/animacionSlice";
 import {useDispatch, useSelector} from "react-redux";
 import ModalImportarGrupo from "./SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
 
@@ -36,6 +37,7 @@ const useCustomAnimacion=(valor_inicial=null)=>{
 function EditorAnimacion(props) {
 
     const backup = useSelector((state) => state.animacion.backup);
+    const id_hilo_lienzo = useSelector((state) => state.animacion.animacion.id_hilo_lienzo);
     //console.log("ANIMACION REDUX ================================")
     //console.log(animacion_redux)
     const dispatch = useDispatch();
@@ -53,11 +55,25 @@ function EditorAnimacion(props) {
     }
 
     const comenzarProcesoLoopLienzo=()=>{
+        console.log("comenzarProcesoLoopLienzo")
+
+        if(id_hilo_lienzo !== null){
+            console.log("LIMOIANDO EL HILO: "+id_hilo_lienzo)
+            clearInterval(id_hilo_lienzo)
+        }
+
         const interval = setInterval(() => {
-            //console.log('This will run every second!');
-            gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, cambiarListaTrabajo)
-        }, 500);
-        return () => clearInterval(interval);
+            console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
+            gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
+        }, 2000);
+        console.log("[INTERVAL]")
+        console.log(interval)
+
+        //clearInterval(interval)
+        dispatch(setIdHiloLienzo(interval))
+        //return () => {
+        //    clearInterval(interval)
+        //};
     }
 
     useEffect(() => {
@@ -92,11 +108,9 @@ function EditorAnimacion(props) {
                 .then(function (response) {
                     console.log("funcionaaa DESCARGAAAAA")
                     console.log(response.data);
-                    animacion.proceso_principal_activo = false
                     animacion.edicion.meta_figuras = response.data.meta_figuras
                     animacion.edicion.meta_movimientos = response.data.meta_movimientos;
                     animacion.edicion.grupos_figuras = response.data.grupos_figuras
-                    animacion.edicion.grupos_figuras_concurrent = null
                     //animacion.edicion.setGrupoFigurasCurrent(response.data.grupos_figuras)
                     animacion.edicion.id_animacion = response.data._id;
                     animacion.edicion.nombre_animacion = response.data.nombre_animacion;
@@ -105,9 +119,9 @@ function EditorAnimacion(props) {
                     dispatch(actualizarBackup(raw_animacion))
                     dispatch(setNombreAnimacion(response.data.nombre_animacion))
 
-                    //comenzarProcesoLoopLienzo();
+                    comenzarProcesoLoopLienzo();
                     //customSetAnimacion(animacion)
-                    setGestionLienzo(new GestionLienzoAnimacion(animacion.edicion));
+                    //setGestionLienzo(new GestionLienzoAnimacion(animacion.edicion));
                     //gestionLienzo.animacion_ = animacion.edicion
                     editar_animacion({"edicion": animacion.edicion})
                     //setAnimaciones(response.data)
@@ -203,9 +217,13 @@ function EditorAnimacion(props) {
             gestionLienzo.setGrupoFigurasCurrent(arr)
             dispatch(setListaGrupoTrabajo([]))
         }
+        console.log("CAMBIA ESTADO Buckup")
     },[backup.estado]);
 
-
+    const eventTerminarLoop=()=>{
+        console.log("[TERMINA EL HILO LPTM]")
+        clearInterval(id_hilo_lienzo)
+    }
     if(animacion.edicion.meta_figuras.length>0){
         const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
             eventoLienzoFigura :eventoLienzoFigura, setEventLienzoFigura:setEventLienzoFigura,
@@ -223,6 +241,7 @@ function EditorAnimacion(props) {
                                     composicion = {composicion}>
                 </NavEditorAnimacion>
                 <ModalImportarGrupo animacion={animacion.edicion} setAnimacion={setAnimacion}/>
+                <button onClick={eventTerminarLoop}>zzzzzz[{id_hilo_lienzo}]</button>
             </div>
         )
     }

@@ -35,8 +35,17 @@ const REFLEJO_VERTICAL = 2;
 const RECTA_MOVER_TODO = 0;
 const RECTA_MOVER_P1 = 1;
 
+function generarID() {
+    const timestamp = Date.now().toString(); // Obtiene la marca de tiempo actual como una cadena
+    const randomNum = Math.random().toString().slice(2, 8); // Genera un número aleatorio de 6 dígitos
+    const id = timestamp + randomNum; // Concatena la marca de tiempo y el número aleatorio
+    return id;
+}
+
 
 class GestionLienzoAnimacion {
+
+    ID = generarID();
 
     categoria_trabajo = TRABAJO_NONE;
 
@@ -958,7 +967,7 @@ class GestionLienzoAnimacion {
 
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
 
-        if(this.proceso_principal_activo){
+        if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {
                 this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
             }
@@ -972,8 +981,8 @@ class GestionLienzoAnimacion {
 
             }
             this.procesarSeleccionPuntero(eventoLienzoFigura);
-            this.actualizarLienzo()
             this.aplicarCambiosConcurrente();
+            this.actualizarLienzo()
 
             if(this.editar_lienzo){
                 console.log("[EDITAR EL LIENZO]")

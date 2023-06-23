@@ -19,7 +19,8 @@ const inicializarState= {
         nombre_animacion: "",
         grupos_trabajando:[],
         // para poder retroceder crtl+z
-        estado_anterior:[]
+        estado_anterior:[],
+        id_hilo_lienzo: null
 
     },
     backup:{
@@ -48,6 +49,10 @@ const animacionSlice = createSlice({
         setListaGrupoTrabajo: (state, action) => {
             state.animacion.grupos_trabajando = action.payload
         },
+        setIdHiloLienzo: (state, action) => {
+            state.animacion.id_hilo_lienzo = action.payload
+        }
+        ,
         deshacer: (state)=>{
             if(state.backup.deshacer.length > 0){
                 const auxiliar = state.backup.actual;
@@ -110,5 +115,7 @@ const animacionSlice = createSlice({
         }
 });
 
-export const {setNombreAnimacion, setListaGrupoTrabajo, deshacer, rehacer, actualizarBackup, restaurarState} = animacionSlice.actions;
+export const {setNombreAnimacion, setListaGrupoTrabajo,
+    deshacer, rehacer, actualizarBackup, restaurarState,
+    setIdHiloLienzo} = animacionSlice.actions;
 export default animacionSlice.reducer;
