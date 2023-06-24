@@ -340,10 +340,17 @@ class GestionAnimacion{
     listaOrdenadasGrupos(lista_ordenada, nombre_grupo="root"){
         const lista_grupos = this.get_grupos_hijos(nombre_grupo)
         lista_grupos.sort((a, b)=>{
-            if(a.capa>b.capa){
+            var capaA = Number(a.capa);
+            var capaB = Number(b.capa);
+
+            if (capaA < capaB) {
+                return -1;
+            }
+            if (capaA > capaB) {
                 return 1;
             }
-            return 0;
+
+            return 0; // Las capas son iguales
         })
 
         for(let i=0; i<lista_grupos.length; i++){
