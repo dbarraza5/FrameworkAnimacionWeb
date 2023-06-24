@@ -14,6 +14,8 @@ function GestionGruposLienzo(props){
 
     const [operacion, setOperacion] = useState(null)
     const [lista_seleccionados, setListaSeleccionados] = useState(grupos_trabajando)
+
+    const backup = useSelector((state) => state.animacion.backup);
     //console.log("NUEVOS GRUPOSSSSSSSS=======================>")
     //console.log(lista_seleccionados)
     useEffect(()=>{
@@ -27,35 +29,18 @@ function GestionGruposLienzo(props){
     }, [grupos_trabajando])
 
 
-    //useEffect(()=>{
-    //    dispatch()
-    //}, [backup_actual])
+    const [arbol, setArbol] = useState(null);
 
-
-    /*useEffect(()=>{
-        setListaSeleccionados(grupos_trabajando)
-    }, [props.animacion.grupos_figuras])*/
-
-    const raw_grupos = props.animacion.estructura_arbol_grupos()
-
-    //useEffect(()=>{
-    //    setArbol(raw_grupos)
-    //}, [raw_grupos])
-
-    const [arbol, setArbol] = useState(raw_grupos)
-
-    /*const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchAnimacion());
-    }, [dispatch]);*/
+        console.log("const raw_grupos = props.animacion.estructura_arbol_grupos();")
+        const raw_grupos = props.animacion.estructura_arbol_grupos();
+        setArbol(raw_grupos);
+    }, [backup.actual]);
 
-    if(props.animacion.meta_figuras.length===0){
+
+    if(props.animacion.meta_figuras.length===0 || arbol === null){
         return (<p>nada</p>)
     }
-    //const arbol=props.animacion.estructura_arbol_grupos()
-
-    //console.log("nodos del arbol")
-    //console.log(arbol)
 
     const mover_grupos=(operacion_)=>{
         props.gestionLienzo.seleccionListaGrupos(lista_seleccionados)
