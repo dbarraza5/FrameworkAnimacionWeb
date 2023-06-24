@@ -22,6 +22,7 @@ import {setNombreAnimacion, setListaGrupoTrabajo,restaurarState,
     actualizarBackup, setIdHiloLienzo} from "../../Store/Animacion/animacionSlice";
 import {useDispatch, useSelector} from "react-redux";
 import ModalImportarGrupo from "./SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
+import {useInterval} from 'react-use';;
 
 const useCustomAnimacion=(valor_inicial=null)=>{
     const [animacion_, setAnimacion_] = useState(valor_inicial);
@@ -49,6 +50,8 @@ function EditorAnimacion(props) {
     const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion.edicion));
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
 
+    const [startLoopLienzo, setStartLoopLienzo] = useState(false);
+
 
     const cambiarListaTrabajo=(lista)=>{
         dispatch(setListaGrupoTrabajo(lista))
@@ -57,7 +60,7 @@ function EditorAnimacion(props) {
     const comenzarProcesoLoopLienzo=()=>{
         console.log("comenzarProcesoLoopLienzo")
 
-        if(id_hilo_lienzo !== null){
+        /*if(id_hilo_lienzo !== null){
             console.log("LIMOIANDO EL HILO: "+id_hilo_lienzo)
             clearInterval(id_hilo_lienzo)
         }
@@ -65,12 +68,14 @@ function EditorAnimacion(props) {
         const interval = setInterval(() => {
             console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
             gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
-        }, 2000);
-        console.log("[INTERVAL]")
-        console.log(interval)
+        }, 2000);*/
+
+
+        //console.log("[INTERVAL]")
+        //console.log(interval)
 
         //clearInterval(interval)
-        dispatch(setIdHiloLienzo(interval))
+        //dispatch(setIdHiloLienzo(interval))
         //return () => {
         //    clearInterval(interval)
         //};
@@ -80,6 +85,11 @@ function EditorAnimacion(props) {
         console.log("[==============================ANIMACION===========================]")
         obtenerAnimacion();
     }, []);
+
+    useInterval(() => {
+        console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
+        gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
+    }, startLoopLienzo ? 1000 : null);
 
     const editar_lienzo=()=>{
         //dispatch(actualizarBackup(raw_animacion))
@@ -108,9 +118,11 @@ function EditorAnimacion(props) {
                 .then(function (response) {
                     console.log("funcionaaa DESCARGAAAAA")
                     console.log(response.data);
+
                     animacion.edicion.meta_figuras = response.data.meta_figuras
                     animacion.edicion.meta_movimientos = response.data.meta_movimientos;
                     animacion.edicion.grupos_figuras = response.data.grupos_figuras
+                    gestionLienzo.grupos_figuras_concurrent = null;
                     //animacion.edicion.setGrupoFigurasCurrent(response.data.grupos_figuras)
                     animacion.edicion.id_animacion = response.data._id;
                     animacion.edicion.nombre_animacion = response.data.nombre_animacion;
@@ -127,6 +139,7 @@ function EditorAnimacion(props) {
                     //setAnimaciones(response.data)
                     console.log("funcionaaa DESCARGAAAAA22222222222")
                     console.log(animacion.edicion)
+                    setStartLoopLienzo(true)
                 })
                 .catch(function (response) {
                     console.log("error obtener proyectos")
