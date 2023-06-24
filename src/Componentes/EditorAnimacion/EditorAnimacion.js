@@ -57,30 +57,6 @@ function EditorAnimacion(props) {
         dispatch(setListaGrupoTrabajo(lista))
     }
 
-    const comenzarProcesoLoopLienzo=()=>{
-        console.log("comenzarProcesoLoopLienzo")
-
-        /*if(id_hilo_lienzo !== null){
-            console.log("LIMOIANDO EL HILO: "+id_hilo_lienzo)
-            clearInterval(id_hilo_lienzo)
-        }
-
-        const interval = setInterval(() => {
-            console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
-            gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
-        }, 2000);*/
-
-
-        //console.log("[INTERVAL]")
-        //console.log(interval)
-
-        //clearInterval(interval)
-        //dispatch(setIdHiloLienzo(interval))
-        //return () => {
-        //    clearInterval(interval)
-        //};
-    }
-
     useEffect(() => {
         console.log("[==============================ANIMACION===========================]")
         obtenerAnimacion();
@@ -89,7 +65,7 @@ function EditorAnimacion(props) {
     useInterval(() => {
         console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
         gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
-    }, startLoopLienzo ? 1000 : null);
+    }, startLoopLienzo ? 500 : null);
 
     const editar_lienzo=()=>{
         //dispatch(actualizarBackup(raw_animacion))
@@ -131,14 +107,8 @@ function EditorAnimacion(props) {
                     dispatch(actualizarBackup(raw_animacion))
                     dispatch(setNombreAnimacion(response.data.nombre_animacion))
 
-                    comenzarProcesoLoopLienzo();
-                    //customSetAnimacion(animacion)
-                    //setGestionLienzo(new GestionLienzoAnimacion(animacion.edicion));
-                    //gestionLienzo.animacion_ = animacion.edicion
+
                     editar_animacion({"edicion": animacion.edicion})
-                    //setAnimaciones(response.data)
-                    console.log("funcionaaa DESCARGAAAAA22222222222")
-                    console.log(animacion.edicion)
                     setStartLoopLienzo(true)
                 })
                 .catch(function (response) {
@@ -233,10 +203,7 @@ function EditorAnimacion(props) {
         console.log("CAMBIA ESTADO Buckup")
     },[backup.estado]);
 
-    const eventTerminarLoop=()=>{
-        console.log("[TERMINA EL HILO LPTM]")
-        clearInterval(id_hilo_lienzo)
-    }
+
     if(animacion.edicion.meta_figuras.length>0){
         const paquete_datos = { animacion:animacion.edicion, setAnimacion:editar_animacion,
             eventoLienzoFigura :eventoLienzoFigura, setEventLienzoFigura:setEventLienzoFigura,
@@ -254,7 +221,6 @@ function EditorAnimacion(props) {
                                     composicion = {composicion}>
                 </NavEditorAnimacion>
                 <ModalImportarGrupo animacion={animacion.edicion} setAnimacion={setAnimacion}/>
-                <button onClick={eventTerminarLoop}>zzzzzz[{id_hilo_lienzo}]</button>
             </div>
         )
     }
