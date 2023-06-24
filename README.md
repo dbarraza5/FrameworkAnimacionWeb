@@ -29,6 +29,9 @@ falta el mover los atributos usando el mouse.
     
     8.- implementar la funcionalidad de capas en los grupos
     
+    9(*)- volver a la edicion de grupos sin tener que agregar elementos
+    10(*)- no elimina un punto de un grupo.
+    
     99.- La relatividad especial del tiempo puede resolver el problema de ajuste de los tiempos de los movimientos,
     cuando los grupos disminuyen su tamaño o figura en general.
     100.- las etiquetas pueden ser un de ayuda para aplicar movimientos sin aplicarlo a un id especifico de un 
