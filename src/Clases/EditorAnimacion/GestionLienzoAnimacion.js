@@ -1,5 +1,6 @@
 import Fisica from "./Fisica";
 import {normalizar_recta} from "./GestionAnimacion";
+import pintarGrupo from "./ImprimirAnimacion";
 
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
@@ -1106,6 +1107,7 @@ class GestionLienzoAnimacion {
                     }
                 }
             }
+            pintarGrupo(ctx, grupo)
 
         }
         if (this.seleccion_figuras) {
