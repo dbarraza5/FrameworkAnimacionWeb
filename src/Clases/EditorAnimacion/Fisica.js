@@ -27,6 +27,35 @@ class Fisica{
     static angulo_radianaes(grados) {
         return grados * Math.PI / 180;
     }
+
+
+    static calcularTangente(cx, cy, r, px, py){
+        const dx = cx- px;
+        const dy = cy -py;
+        //angulo de la recta
+        const a_r= Math.atan2(dy, dx)
+        //distancia entre punto y centro
+        const d = Math.sqrt(Math.pow(dx, 2)+ Math.pow(dy,2))
+        const a = Math.atan(r/d)
+
+
+        const g = a+a_r//(a * (180 / Math.PI))+a_r;
+        const h = Math.sqrt(Math.pow(d,2)+Math.pow(r,2))//d/Math.cos(a)
+        const x = Math.cos(g)*h
+        const y = Math.sin(g)*h
+        console.log(x+", "+y)
+
+        const new_x = x+px;
+        const new_y = y+py;
+        console.log(new_x+", "+new_y)
+        //console.log
+
+
+
+        return [a_r, g]
+    }
+
+    //console.log(calcularTangente(6, 6, 2, 9, 9))
 }
 
 export default Fisica
