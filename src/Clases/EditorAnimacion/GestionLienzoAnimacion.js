@@ -1035,51 +1035,6 @@ class GestionLienzoAnimacion {
         this.p_centro.y = parseInt((y1 + y2) / 2) - 2
     }
 
-    imprimir_recta(ctx, figura, grupo, color_, seleccion = false, color_seleccion = "#39ff14") {
-        const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-        const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
-        const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-        const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
-        dibujar_linea(ctx, color_, x1, y1, x2, y2)
-        if (seleccion) {
-            this.actualizarPuntosRectas(figura, grupo)
-            dibujar_rectangulo(ctx, color_seleccion, this.p1_recta.x, this.p1_recta.y,
-                this.p1_recta.w, this.p1_recta.h)
-
-            dibujar_rectangulo(ctx, color_seleccion, this.p2_recta.x, this.p2_recta.y,
-                this.p2_recta.w, this.p2_recta.h)
-
-            dibujar_rectangulo(ctx, color_seleccion, this.p_centro.x, this.p_centro.y,
-                this.p_centro.w, this.p_centro.h)
-        }
-    }
-
-    imprimir_circulo(ctx, figura, grupo, color_, seleccion = false, color_seleccion = "#39ff14") {
-        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
-        const rx = parseInt(figura.atributos.radiox);
-        const ry = parseInt(figura.atributos.radioy);
-        dibujar_circulo(ctx, color_, x, y, rx, ry)
-        this.actualizarPuntosCirculo(figura, grupo)
-        if (seleccion) {
-            dibujar_rectangulo(ctx, color_seleccion, this.p_circulo.x, this.p_circulo.y,
-                this.p_circulo.w, this.p_circulo.h)
-            dibujar_rectangulo(ctx, color_seleccion, this.p_centro.x, this.p_centro.y,
-                this.p_centro.w, this.p_centro.h)
-        }
-    }
-
-    imprimir_punto(ctx, figura, grupo, color_, seleccion = false, color_seleccion = "#39ff14") {
-        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
-        dibujar_punto(ctx, color_, x, y, 2)
-        if (seleccion) {
-            this.actualizarPuntoCentro(figura, grupo)
-            dibujar_rectangulo(ctx, color_seleccion, this.p_centro.x, this.p_centro.y,
-                this.p_centro.w, this.p_centro.h)
-        }
-    }
-
     actualizarLienzo() {
         const canvas = document.getElementById(this.id_canvas);
         if(canvas === null)
