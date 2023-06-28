@@ -6,7 +6,8 @@ const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
 const TRABAJO_LISTA_FIGURAS = 1;
 const TRABAJO_GRUPOS = 2;
-//const TRABAJO_GRUPOS = 3;
+const TRABAJO_PINTADO_GRUPO = 3;
+const TRABAJO_EDICION_FIGURAS = [TRABAJO_FIGURA, TRABAJO_LISTA_FIGURAS, TRABAJO_GRUPOS]
 
 const MOVER_NADA = 0
 const MOVER_CENTRO_FIGURA = 1;
@@ -1082,14 +1083,15 @@ class GestionLienzoAnimacion {
         const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
         this.animacion_.procesarPosicionFinalFiguras()
         this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
-        for (let i = 0; i < lista_grupo_root.length; i++) {
-            const grupo = lista_grupo_root[i]
-            for (let j = 0; j < grupo.lista_figuras.length; j++) {
-                const figura = grupo.lista_figuras[j];
-                let seleccion = null;
-                let color_figura = grupo.color;
-                if (true)//(this.categoria_trabajo === TRABAJO_FIGURA || this.categoria_trabajo === TRABAJO_LISTA_FIGURAS)
-                {
+
+        if(TRABAJO_EDICION_FIGURAS.includes(this.categoria_trabajo)){
+            for (let i = 0; i < lista_grupo_root.length; i++) {
+                const grupo = lista_grupo_root[i]
+                for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                    const figura = grupo.lista_figuras[j];
+                    let seleccion = null;
+                    let color_figura = grupo.color;
+
                     seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
                     if(this.lista_id_figuras.includes(figura.nombre)){
                         color_figura = "#ff00a1";
@@ -1105,54 +1107,77 @@ class GestionLienzoAnimacion {
                     if (figura.tipo_figura === "CIRCULO") {
                         this.imprimir_circulo(ctx, figura, grupo, color_figura, seleccion);
                     }
+
                 }
+                //pintarGrupo(ctx, grupo)
+
             }
-            pintarGrupo(ctx, grupo)
+            if (this.seleccion_figuras) {
+                //console.log(this.seleccion_figuras)
+                dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
+                    this.puntero_seleccion.w, this.puntero_seleccion.h)
+            }
 
-        }
-        if (this.seleccion_figuras) {
-            //console.log(this.seleccion_figuras)
-            dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
-                this.puntero_seleccion.w, this.puntero_seleccion.h)
-        }
+            if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
+                const rect_seleccion = this.calcularCentroFigurasSeleccionadas()
+                dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
+                    rect_seleccion.ancho, rect_seleccion.alto)
+                dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.centro_x, rect_seleccion.centro_y,
+                    this.p_centro.w, this.p_centro.h)
 
-        if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
-            const rect_seleccion = this.calcularCentroFigurasSeleccionadas()
-            dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
-                rect_seleccion.ancho, rect_seleccion.alto)
-            dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.centro_x, rect_seleccion.centro_y,
-                this.p_centro.w, this.p_centro.h)
-
-            //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
+                //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
                 dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
-            //}
-        }
+                //}
+            }
 
-
-        if(this.categoria_trabajo === TRABAJO_GRUPOS){
-            const rect_seleccion = this.calcularCentroGruposSeleccionados()
-            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
-                rect_seleccion.ancho, rect_seleccion.alto)
-            //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
-            dibujar_circulo(ctx, "#76ff14", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
-            //}
-            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.centro_x, rect_seleccion.centro_y,
-                this.p_centro.w, this.p_centro.h)
-            if(this.mover_figura === MOVER_ROTAR_GRUPOS){
-                console.log("imprime el pivote 12121212")
-                dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 5, 5)
-                dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
-                    rect_seleccion.centro_x+1, rect_seleccion.centro_y-1)
-
-                if(this.rotar_lista_grupos){
+            if(this.categoria_trabajo === TRABAJO_GRUPOS){
+                const rect_seleccion = this.calcularCentroGruposSeleccionados()
+                dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
+                    rect_seleccion.ancho, rect_seleccion.alto)
+                //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
+                dibujar_circulo(ctx, "#76ff14", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
+                //}
+                dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.centro_x, rect_seleccion.centro_y,
+                    this.p_centro.w, this.p_centro.h)
+                if(this.mover_figura === MOVER_ROTAR_GRUPOS){
+                    console.log("imprime el pivote 12121212")
+                    dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 5, 5)
                     dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
-                        this.puntero.x, this.puntero.y)
-                }
-            }else{
+                        rect_seleccion.centro_x+1, rect_seleccion.centro_y-1)
 
+                    if(this.rotar_lista_grupos){
+                        dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
+                            this.puntero.x, this.puntero.y)
+                    }
+                }else{
+
+                }
             }
         }
 
+        this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
+
+        if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
+            const grupo = this.animacion_.getGrupo("marco")
+            for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                const figura = grupo.lista_figuras[j];
+                let seleccion = null;
+                let color_figura = grupo.color;
+
+                if (figura.tipo_figura === "RECTA") {
+                    this.imprimir_recta(ctx, figura, grupo, color_figura);
+                }
+
+                if (figura.tipo_figura === "PUNTO") {
+                    this.imprimir_punto(ctx, figura, grupo, color_figura);
+                }
+
+                if (figura.tipo_figura === "CIRCULO") {
+                    this.imprimir_circulo(ctx, figura, grupo, color_figura);
+                }
+
+            }
+        }
     }
 
     calcularCentroFigurasSeleccionadas(){
