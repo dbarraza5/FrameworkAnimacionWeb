@@ -81,6 +81,25 @@ function imprimirListaGrupos(ctx, lista_grupo_root, id_grupo_selec, id_figura_se
     }
 }
 
+function imprimirGrupoPintado(ctx, grupo){
+    for (let j = 0; j < grupo.lista_figuras.length; j++) {
+        const figura = grupo.lista_figuras[j];
+        let seleccion = null;
+        let color_figura = grupo.color;
+
+        if (figura.tipo_figura === "RECTA") {
+            imprimir_recta(ctx, figura, grupo, color_figura);
+        }
+
+        if (figura.tipo_figura === "PUNTO") {
+            imprimir_punto(ctx, figura, grupo, color_figura);
+        }
+
+        if (figura.tipo_figura === "CIRCULO") {
+            imprimir_circulo(ctx, figura, grupo, color_figura);
+        }
+    }
+}
 
 function imprimir_recta(ctx, figura, grupo, color_, p1_recta, p2_recta, p_centro,
                         seleccion = false,color_seleccion = "#39ff14" ) {
@@ -210,5 +229,5 @@ function dibujar_rectangulo(ctx, color, x, y, w, h) {
 }
 
 
-export {pintarGrupo, imprimirListaGrupos, imprimir_recta, imprimir_circulo, imprimir_punto,
+export {pintarGrupo, imprimirListaGrupos, imprimirGrupoPintado,imprimir_recta, imprimir_circulo, imprimir_punto,
     dibujar_punto, dibujar_circulo, dibujar_linea, dibujar_rectangulo, dibujar_linea_segmentada};

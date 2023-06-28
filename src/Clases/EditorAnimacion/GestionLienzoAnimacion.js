@@ -5,7 +5,7 @@ import {
     imprimirListaGrupos,
     dibujar_rectangulo,
     dibujar_circulo,
-    dibujar_linea_segmentada, dibujar_linea, dibujar_punto, imprimir_recta
+    dibujar_linea_segmentada, dibujar_linea, dibujar_punto, imprimir_recta, imprimirGrupoPintado
 } from "./ImprimirAnimacion";
 
 const TRABAJO_NONE = -1
@@ -1091,28 +1091,12 @@ class GestionLienzoAnimacion {
             }
         }
 
-        //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
+        this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
 
         if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
-            /*const grupo = this.animacion_.getGrupo("marco")
-            for (let j = 0; j < grupo.lista_figuras.length; j++) {
-                const figura = grupo.lista_figuras[j];
-                let seleccion = null;
-                let color_figura = grupo.color;
+            const grupo = this.animacion_.getGrupo("marco")
+            imprimirGrupoPintado(ctx, grupo)
 
-                if (figura.tipo_figura === "RECTA") {
-                    imprimir_recta(ctx, figura, grupo, color_figura);
-                }
-
-                if (figura.tipo_figura === "PUNTO") {
-                    imprimir_punto(ctx, figura, grupo, color_figura);
-                }
-
-                if (figura.tipo_figura === "CIRCULO") {
-                    imprimir_circulo(ctx, figura, grupo, color_figura);
-                }
-
-            }*/
         }
     }
 
@@ -1240,12 +1224,10 @@ function rectsColliding(r1, r2) {
        r_1.x+=r_1.w;
        r_1.w = r_1.w*-1
     }
-
     if(r_1.h < 0){
         r_1.y+=r_1.h;
         r_1.h = r_1.h*-1
     }
-
     return !(r_1.x > r2.x + r2.w || r_1.x + r_1.w < r2.x || r_1.y > r2.y + r2.h || r_1.y + r_1.h < r2.y);
 }
 
