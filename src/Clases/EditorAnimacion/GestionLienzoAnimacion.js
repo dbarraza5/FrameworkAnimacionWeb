@@ -1,6 +1,12 @@
 import Fisica from "./Fisica";
 import {normalizar_recta} from "./GestionAnimacion";
-import pintarGrupo from "./ImprimirAnimacion";
+import {
+    pintarGrupo,
+    imprimirListaGrupos,
+    dibujar_rectangulo,
+    dibujar_circulo,
+    dibujar_linea_segmentada, dibujar_linea, dibujar_punto, imprimir_recta
+} from "./ImprimirAnimacion";
 
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
@@ -1085,33 +1091,8 @@ class GestionLienzoAnimacion {
         this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
         if(TRABAJO_EDICION_FIGURAS.includes(this.categoria_trabajo)){
-            for (let i = 0; i < lista_grupo_root.length; i++) {
-                const grupo = lista_grupo_root[i]
-                for (let j = 0; j < grupo.lista_figuras.length; j++) {
-                    const figura = grupo.lista_figuras[j];
-                    let seleccion = null;
-                    let color_figura = grupo.color;
-
-                    seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
-                    if(this.lista_id_figuras.includes(figura.nombre)){
-                        color_figura = "#ff00a1";
-                    }
-                    if (figura.tipo_figura === "RECTA") {
-                        this.imprimir_recta(ctx, figura, grupo, color_figura, seleccion);
-                    }
-
-                    if (figura.tipo_figura === "PUNTO") {
-                        this.imprimir_punto(ctx, figura, grupo, color_figura, seleccion);
-                    }
-
-                    if (figura.tipo_figura === "CIRCULO") {
-                        this.imprimir_circulo(ctx, figura, grupo, color_figura, seleccion);
-                    }
-
-                }
-                //pintarGrupo(ctx, grupo)
-
-            }
+            imprimirListaGrupos(ctx, lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
+                this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
             if (this.seleccion_figuras) {
                 //console.log(this.seleccion_figuras)
                 dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
@@ -1155,28 +1136,28 @@ class GestionLienzoAnimacion {
             }
         }
 
-        this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
+        //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
 
         if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
-            const grupo = this.animacion_.getGrupo("marco")
+            /*const grupo = this.animacion_.getGrupo("marco")
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
                 const figura = grupo.lista_figuras[j];
                 let seleccion = null;
                 let color_figura = grupo.color;
 
                 if (figura.tipo_figura === "RECTA") {
-                    this.imprimir_recta(ctx, figura, grupo, color_figura);
+                    imprimir_recta(ctx, figura, grupo, color_figura);
                 }
 
                 if (figura.tipo_figura === "PUNTO") {
-                    this.imprimir_punto(ctx, figura, grupo, color_figura);
+                    imprimir_punto(ctx, figura, grupo, color_figura);
                 }
 
                 if (figura.tipo_figura === "CIRCULO") {
-                    this.imprimir_circulo(ctx, figura, grupo, color_figura);
+                    imprimir_circulo(ctx, figura, grupo, color_figura);
                 }
 
-            }
+            }*/
         }
     }
 
@@ -1294,83 +1275,6 @@ class GestionLienzoAnimacion {
     }
 };
 
-function dibujar_punto(ctx, color, x, y, size=1) {
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, size, size);
-    //ctx.stroke();
-}
-
-function dibujar_circulo(ctx, color, xc, yc, rx, ry) {
-    let x = 0;
-    let y = ry;
-    const rx2 = Math.pow(rx, 2);
-    const ry2 = Math.pow(ry, 2);
-    let p1 = ry2 - (rx2 * ry) + (0.25 * rx2);
-    while ((ry2 * x) < (rx2 * y)) {
-        if (p1 < 0) {
-            x++;
-            p1 = p1 + (2 * ry2 * x) + ry2;
-        } else {
-            x++;
-            y--;
-            p1 = p1 + (2 * ry2 * x) - (2 * rx2 * y) + ry2;
-        }
-        dibujar_punto(ctx, color, xc + x, yc + y)
-        dibujar_punto(ctx, color, xc - x, yc + y)
-        dibujar_punto(ctx, color, xc + x, yc - y)
-        dibujar_punto(ctx, color, xc - x, yc - y)
-        /*grupoPixeles.push_back(unPixel(xc+x, yc+y));
-        grupoPixeles.push_back(unPixel(xc-x, yc+y));
-        grupoPixeles.push_back(unPixel(xc+x, yc-y));
-        grupoPixeles.push_back(unPixel(xc-x, yc-y));*/
-    }
-    let p2 = (ry2) * Math.pow((x + 0.5), 2) + (rx2) * Math.pow((y - 1), 2) - (rx2 * ry2);
-    while (y > 0) {
-        if (p2 > 0) {
-            y--;
-            p2 = p2 - (2 * rx2 * y) + rx2;
-        } else {
-            x++;
-            y--;
-            p2 = p2 + (2 * ry2 * x) - (2 * rx2 * y) + rx2;
-        }
-        dibujar_punto(ctx, color, xc + x, yc + y)
-        dibujar_punto(ctx, color, xc - x, yc + y)
-        dibujar_punto(ctx, color, xc + x, yc - y)
-        dibujar_punto(ctx, color, xc - x, yc - y)
-    }
-
-    function zoomLocalizacion(){
-        const canvas = document.getElementById(this.id_canvas);
-        const ctx = canvas.getContext('2d');
-    }
-}
-
-function dibujar_linea(ctx, color, x1, y1, x2, y2) {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.strokeStyle = color;
-    ctx.stroke();
-}
-
-function dibujar_linea_segmentada(ctx, color, x1, y1, x2, y2) {
-    ctx.beginPath();
-    ctx.setLineDash([5, 15]);
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.strokeStyle = color;
-    ctx.stroke();
-    ctx.setLineDash([]);
-}
-
-function dibujar_rectangulo(ctx, color, x, y, w, h) {
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.rect(x, y, w, h);
-    ctx.stroke();
-}
 
 function rectsColliding(r1, r2) {
     if(r1.w === 0 || r1.h === 0 || r2.w === 0 || r2.h === 0){
