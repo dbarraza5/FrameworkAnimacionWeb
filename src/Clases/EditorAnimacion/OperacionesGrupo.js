@@ -6,6 +6,20 @@ const REFLEJO_VERTICAL = 2;
 
 class OperacionesGrupo{
 
+    static moverGrupo(grupo_, grupo_copia, orig_x, orig_y, des_x,  des_y){
+        let x = des_x ;
+        let y = des_y ;
+        let x_move =  x- orig_x;
+        let y_move = y- orig_y;
+
+        for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+            const figura = grupo_.lista_figuras[j];
+            const f_copia = grupo_copia.lista_figuras[j];
+            figura.atributos.cx = f_copia.atributos.cx + x_move;
+            figura.atributos.cy = f_copia.atributos.cy + y_move;
+        }
+    }
+
     static calcularLimitesFigura(figura, grupo, inf_hor, sup_hor, inf_ver, sup_ver){
         if (figura.tipo_figura === "RECTA") {
             const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);

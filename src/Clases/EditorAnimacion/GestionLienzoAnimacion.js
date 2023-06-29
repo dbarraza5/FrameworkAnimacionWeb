@@ -792,21 +792,11 @@ class GestionLienzoAnimacion {
         }
     }
 
-    mover_lista_grupos(orig_x, orig_y, des_x,  des_y){
+    mover_lista_grupos( orig_x, orig_y, des_x,  des_y){
         for (let i=0; i<this.copia_lista_grupos.length; i++){
             const grupo_copia = this.copia_lista_grupos[i]
             const grupo_ =this.animacion_.getGrupo(grupo_copia.nombre);
-            let x = des_x ;
-            let y = des_y ;
-            let x_move =  x- orig_x;
-            let y_move = y- orig_y;
-
-            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
-                const figura = grupo_.lista_figuras[j];
-                const f_copia = grupo_copia.lista_figuras[j];
-                figura.atributos.cx = f_copia.atributos.cx + x_move;
-                figura.atributos.cy = f_copia.atributos.cy + y_move;
-            }
+            OperacionesGrupo.moverGrupo(grupo_, grupo_copia, orig_x, orig_y, des_x,  des_y)
         }
     }
 

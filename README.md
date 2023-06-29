@@ -1,6 +1,8 @@
 # Documentacion de requerimientos
 
-
+(*) cuando se seleccionan pares de figuras todos los grupos se ponene
+de color seleccionado  
+(*) el rectangulo de seleccion no se actualiza cuando se infla o rota los grupos
 ### Cosas que faltan
 
 trabajo en el movimiento de las figuras usando el mouse.
