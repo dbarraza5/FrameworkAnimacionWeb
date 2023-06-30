@@ -6,7 +6,9 @@ function PintadoGrupo(props){
     const [nombre_grupo, setNombreGrupo] = useState("default");
 
     const cambiar_grupo=(nombre_grupo_)=>{
+        props.gestionLienzo.seleccionGrupoPintar(nombre_grupo_)
         setNombreGrupo(nombre_grupo_)
+
     }
     return (<>
         <br/>

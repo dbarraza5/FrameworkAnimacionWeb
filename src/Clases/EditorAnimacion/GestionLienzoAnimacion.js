@@ -8,6 +8,7 @@ import {
     dibujar_linea_segmentada, dibujar_linea, dibujar_punto, imprimir_recta, imprimirGrupoPintado
 } from "./ImprimirAnimacion";
 import OperacionesGrupo from "./OperacionesGrupo";
+import GestionPintado from "./GestionPintado";
 
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
@@ -152,7 +153,9 @@ class GestionLienzoAnimacion {
     act_grupos_concurrente = false
     grupos_figuras_concurrent = null;
     //desactivar el proceso principal
-    proceso_principal_activo = true
+    proceso_principal_activo = true;
+
+    gestion_pintado = new GestionPintado();
 
 
     constructor(animacion_) {
@@ -175,6 +178,11 @@ class GestionLienzoAnimacion {
             this.mover_figura = MOVER_NADA
             this.categoria_trabajo = TRABAJO_NONE;
         }
+    }
+
+    seleccionGrupoPintar(nombre_grupo){
+        this.categoria_trabajo = TRABAJO_PINTADO_GRUPO;
+        this.gestion_pintado.inicializarGrupo(this.animacion_.getGrupo(nombre_grupo))
     }
 
 
@@ -921,8 +929,7 @@ class GestionLienzoAnimacion {
         //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
 
         if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
-            const grupo = this.animacion_.getGrupo("marco")
-            imprimirGrupoPintado(ctx, grupo)
+            imprimirGrupoPintado(ctx, this.gestion_pintado.grupo_copia)
 
         }
     }

@@ -9,3 +9,6 @@ class GestionPintado{
         this.grupo_copia = JSON.parse(JSON.stringify(grupo_))
     }
 };
+
+
+export default GestionPintado;
