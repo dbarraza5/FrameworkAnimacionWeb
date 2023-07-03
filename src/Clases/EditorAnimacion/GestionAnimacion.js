@@ -80,9 +80,32 @@ class GestionAnimacion{
 
                 lista_figuras: [
                 ],
+                lista_pintado:[
+                    {
+                        color: "#000000",
+                        visible: true,
+                        elementos: []
+                    },
+                    {
+                        color: "#1115f5",
+                        visible: true,
+                        elementos: []
+                    }
+                ]
             }
         }
         return null;
+    }
+
+    agregar_pintado_grupo(nombre_grupo){
+        const grupo_ = this.getGrupo(nombre_grupo)
+        if(grupo_ !== null){
+            grupo_.lista_pintado.push({
+                color: "#000000",
+                visible: true,
+                elementos: []
+            })
+        }
     }
 
     crear_id_figura(nombre_grupo, tipo_figura){
