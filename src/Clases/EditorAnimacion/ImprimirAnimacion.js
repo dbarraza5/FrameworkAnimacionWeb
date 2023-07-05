@@ -81,14 +81,21 @@ function imprimirListaGrupos(ctx, lista_grupo_root, id_grupo_selec, id_figura_se
     }
 }
 
-function imprimirGrupoPintado(ctx, grupo){
+function imprimirGrupoPintado(ctx, gestion_pintado){
+    const grupo = gestion_pintado.grupo_copia
     for (let j = 0; j < grupo.lista_figuras.length; j++) {
         const figura = grupo.lista_figuras[j];
         let seleccion = null;
         let color_figura = grupo.color;
-
+        const componente_g = gestion_pintado.figuraSeleccionada(figura.nombre, 0);
         if (figura.tipo_figura === "RECTA") {
             imprimir_recta(ctx, figura, grupo, color_figura);
+            if(componente_g === null){
+                const coor = getCoorRecta(figura, grupo)
+                dibujar_circulo(ctx, "#ff2f14", coor.x1, coor.y1, 5, 5);
+                dibujar_circulo(ctx, "#ff2f14", coor.x2, coor.y2, 5, 5);
+                console.log("dibujar_circulo");
+            }
         }
 
         if (figura.tipo_figura === "PUNTO") {
@@ -101,13 +108,19 @@ function imprimirGrupoPintado(ctx, grupo){
     }
 }
 
+function getCoorRecta(figura, grupo){
+    return {
+         x1 : parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
+         y1 : parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid),
+         x2 : parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
+         y2 : parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid)
+    }
+}
+
 function imprimir_recta(ctx, figura, grupo, color_, p1_recta, p2_recta, p_centro,
                         seleccion = false,color_seleccion = "#39ff14" ) {
-    const x1 = parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-    const y1 = parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
-    const x2 = parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-    const y2 = parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
-    dibujar_linea(ctx, color_, x1, y1, x2, y2)
+    const coor = getCoorRecta(figura, grupo)
+    dibujar_linea(ctx, color_, coor.x1, coor.y1, coor.x2, coor.y2)
 
     if (seleccion) {
         dibujar_rectangulo(ctx, color_seleccion, p1_recta.x, p1_recta.y,

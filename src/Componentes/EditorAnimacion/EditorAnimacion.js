@@ -63,7 +63,7 @@ function EditorAnimacion(props) {
     }, []);
 
     useInterval(() => {
-        console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
+        //console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
         gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
     }, startLoopLienzo ? 500 : null);
 

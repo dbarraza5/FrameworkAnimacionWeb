@@ -43,16 +43,29 @@ class Fisica{
         const h = Math.sqrt(Math.pow(d,2)+Math.pow(r,2))//d/Math.cos(a)
         const x = Math.cos(g)*h
         const y = Math.sin(g)*h
-        console.log(x+", "+y)
+        //console.log(x+", "+y)
 
         const new_x = x+px;
         const new_y = y+py;
-        console.log(new_x+", "+new_y)
+        //console.log(new_x+", "+new_y)
         //console.log
-
-
-
         return [a_r, g]
+    }
+
+    static rectsColliding(r1, r2) {
+        if(r1.w === 0 || r1.h === 0 || r2.w === 0 || r2.h === 0){
+            return false;
+        }
+        let r_1 = {...r1}
+        if(r_1.w < 0){
+            r_1.x+=r_1.w;
+            r_1.w = r_1.w*-1
+        }
+        if(r_1.h < 0){
+            r_1.y+=r_1.h;
+            r_1.h = r_1.h*-1
+        }
+        return !(r_1.x > r2.x + r2.w || r_1.x + r_1.w < r2.x || r_1.y > r2.y + r2.h || r_1.y + r_1.h < r2.y);
     }
 
     //console.log(calcularTangente(6, 6, 2, 9, 9))

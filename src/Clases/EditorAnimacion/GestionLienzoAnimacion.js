@@ -335,7 +335,7 @@ class GestionLienzoAnimacion {
                     if (figura.tipo_figura === "CIRCULO") {
                         this.actualizarPuntosCirculo(figura, grupo)
                     }
-                    if(rectsColliding(this.puntero_seleccion, this.p_centro)){
+                    if(Fisica.rectsColliding(this.puntero_seleccion, this.p_centro)){
                         if(!this.lista_id_figuras.includes(figura.nombre)){
                             this.lista_id_figuras.push(figura.nombre);
                         }
@@ -383,7 +383,7 @@ class GestionLienzoAnimacion {
                 w: 3,
                 h: 3
             }
-            if (eventoLienzoFigura.mouse_click_down && rectsColliding(this.puntero, p_sup)){
+            if (eventoLienzoFigura.mouse_click_down && Fisica.rectsColliding(this.puntero, p_sup)){
                 console.log("INFLAR POR LA ESQUINA")
                 this.mover_figura = MOVER_INFLAR_FIGURAS;
                 this.copia_lista_figuras = this.animacion_.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
@@ -512,13 +512,13 @@ class GestionLienzoAnimacion {
 
             if (fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click && this.mover_figura !== MOVER_FIGURA_AGREGADA) {
                 this.actualizarPuntosRectas(fig_, grupo_)
-                if (rectsColliding(this.puntero, this.p1_recta)) {
+                if (Fisica.rectsColliding(this.puntero, this.p1_recta)) {
                     this.mover_figura = MOVER_RECTA_PUNTO1;
-                } else if (rectsColliding(this.puntero, this.p2_recta)) {
+                } else if (Fisica.rectsColliding(this.puntero, this.p2_recta)) {
                     this.mover_figura = MOVER_RECTA_PUNTO2;
                 } else if (this.mover_figura !== MOVER_CENTRO_FIGURA) {
 
-                    if (rectsColliding(this.puntero, this.p_centro)) {
+                    if (Fisica.rectsColliding(this.puntero, this.p_centro)) {
                         this.mover_figura = MOVER_CENTRO_FIGURA;
                         mover_centro_figura = true;
                     }
@@ -527,11 +527,11 @@ class GestionLienzoAnimacion {
 
             if (fig_.tipo_figura === "CIRCULO" && eventoLienzoFigura.mouse_only_click) {
                 this.actualizarPuntosCirculo(fig_, grupo_)
-                if (rectsColliding(this.puntero, this.p_circulo)) {
+                if (Fisica.rectsColliding(this.puntero, this.p_circulo)) {
                     this.mover_figura = MOVER_RADIO_CIRCULO;
                 } else {
                     if (this.mover_figura !== MOVER_CENTRO_FIGURA) {
-                        if (rectsColliding(this.puntero, this.p_centro)) {
+                        if (Fisica.rectsColliding(this.puntero, this.p_centro)) {
                             this.mover_figura = MOVER_CENTRO_FIGURA;
                             mover_centro_figura = true;
                         }
@@ -541,7 +541,7 @@ class GestionLienzoAnimacion {
 
             if (fig_.tipo_figura === "PUNTO" && eventoLienzoFigura.mouse_only_click) {
                 this.actualizarPuntoCentro(fig_, grupo_)
-                if (this.mover_figura !== MOVER_CENTRO_FIGURA && rectsColliding(this.puntero, this.p_centro)) {
+                if (this.mover_figura !== MOVER_CENTRO_FIGURA && Fisica.rectsColliding(this.puntero, this.p_centro)) {
                     this.mover_figura = MOVER_CENTRO_FIGURA;
                     mover_centro_figura = true;
                 }
@@ -645,7 +645,7 @@ class GestionLienzoAnimacion {
                 h: 3
             }
             if(this.inflar_grupos === false){
-                if(eventoLienzoFigura.mouse_click_down && rectsColliding(this.puntero, p_sup)){
+                if(eventoLienzoFigura.mouse_click_down && Fisica.rectsColliding(this.puntero, p_sup)){
                     console.log("inflar_lista_grupos")
                     this.inflar_grupos = true;
                     this.mover_centros=OperacionesGrupo.calcularCentroGruposSeleccionados(this.copia_lista_grupos)
@@ -685,7 +685,7 @@ class GestionLienzoAnimacion {
         }
 
         if(this.mover_figura === MOVER_ROTAR_GRUPOS){
-            let tocando_pivote = rectsColliding(this.puntero, this.pivote_rotacion) &&
+            let tocando_pivote = Fisica.rectsColliding(this.puntero, this.pivote_rotacion) &&
                 eventoLienzoFigura.mouse_only_click;
 
             if(this.rotar_lista_grupos === false){
@@ -823,6 +823,10 @@ class GestionLienzoAnimacion {
                 this.procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion, actListaTrabajo)
 
             }
+
+            if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
+                this.gestion_pintado.procesarTrabajoPintado(eventoLienzoFigura)
+            }
             this.procesarSeleccionPuntero(eventoLienzoFigura);
             this.aplicarCambiosConcurrente();
             this.actualizarLienzo()
@@ -929,7 +933,7 @@ class GestionLienzoAnimacion {
         //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
 
         if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
-            imprimirGrupoPintado(ctx, this.gestion_pintado.grupo_copia)
+            imprimirGrupoPintado(ctx, this.gestion_pintado)
 
         }
     }
@@ -973,20 +977,6 @@ class GestionLienzoAnimacion {
 };
 
 
-function rectsColliding(r1, r2) {
-    if(r1.w === 0 || r1.h === 0 || r2.w === 0 || r2.h === 0){
-        return false;
-    }
-   let r_1 = {...r1}
-   if(r_1.w < 0){
-       r_1.x+=r_1.w;
-       r_1.w = r_1.w*-1
-    }
-    if(r_1.h < 0){
-        r_1.y+=r_1.h;
-        r_1.h = r_1.h*-1
-    }
-    return !(r_1.x > r2.x + r2.w || r_1.x + r_1.w < r2.x || r_1.y > r2.y + r2.h || r_1.y + r_1.h < r2.y);
-}
+
 
 export default GestionLienzoAnimacion
