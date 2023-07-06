@@ -299,7 +299,7 @@ class GestionLienzoAnimacion {
                     }
                     this.puntero_seleccion.w = eventoLienzoFigura.mouse_x - this.puntero_seleccion.x;
                     this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
-                    console.log(this.puntero_seleccion)
+                    //console.log(this.puntero_seleccion)
                 }
                 if (eventoLienzoFigura.mouse_click_up) {
                     if(this.lista_id_figuras.length == 1 && this.seleccion_figuras){

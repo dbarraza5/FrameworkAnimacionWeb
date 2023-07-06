@@ -455,4 +455,13 @@ function normalizar_recta(recta1){
     return recta
 }
 
-export {GestionAnimacion, normalizar_recta}
+function getCoorRecta(figura, grupo){
+    return {
+        x1 : parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
+        y1 : parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid),
+        x2 : parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
+        y2 : parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid)
+    }
+}
+
+export {GestionAnimacion, normalizar_recta, getCoorRecta}

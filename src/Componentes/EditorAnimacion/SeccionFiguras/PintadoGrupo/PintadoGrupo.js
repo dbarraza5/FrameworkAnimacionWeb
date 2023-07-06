@@ -4,11 +4,15 @@ import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
 function PintadoGrupo(props){
-    const lista_grupos = props.animacion.get_lista_nombres_grupos();
-    const [nombre_grupo, setNombreGrupo] = useState("default");
+    const lista_grupos = ["...", ...props.animacion.get_lista_nombres_grupos()];
+    //lista_grupos = ["...", ...lista_grupos]
+    const [nombre_grupo, setNombreGrupo] = useState("...");
+    const [indice_pintura, setIndicePintado] = useState(0)
 
     const cambiar_grupo=(nombre_grupo_)=>{
-        props.gestionLienzo.seleccionGrupoPintar(nombre_grupo_)
+        if(nombre_grupo_ !== "..."){
+            props.gestionLienzo.seleccionGrupoPintar(nombre_grupo_)
+        }
         setNombreGrupo(nombre_grupo_)
     }
 
@@ -21,9 +25,13 @@ function PintadoGrupo(props){
 
     const toggleAccordion = (index) => {
         setActiveIndex(index === activeIndex ? null : index);
+        props.gestionLienzo.gestion_pintado.indice_seleccion_pintado = index;
+        setIndicePintado(index)
+        console.log(index)
     };
 
-    const grupo = props.animacion.getGrupo(nombre_grupo)
+    const grupo = props.animacion.getGrupo(nombre_grupo);
+    const lista_pintado = grupo === null? []: grupo.lista_pintado;
     return (<>
         <br/>
         <row>
@@ -38,7 +46,7 @@ function PintadoGrupo(props){
 
 
         <div className="accordion" id="accordionExample">
-            {grupo.lista_pintado.map((item, index) => {
+            {lista_pintado.map((item, index) => {
 
                 const checked = {}
                 if(item.visible === true){

@@ -1,3 +1,5 @@
+import {getCoorRecta} from "./GestionAnimacion";
+
 function obtenerPuntosGrupo(grupo){
     let x, y;
     let lista_puntos = [];
@@ -87,15 +89,28 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
         const figura = grupo.lista_figuras[j];
         let seleccion = null;
         let color_figura = grupo.color;
-        const componente_g = gestion_pintado.figuraSeleccionada(figura.nombre, 0);
+        const componente_g = gestion_pintado.figuraSeleccionada(figura.nombre,
+            gestion_pintado.indice_seleccion_pintado);
+        console.log(componente_g)
+
         if (figura.tipo_figura === "RECTA") {
             imprimir_recta(ctx, figura, grupo, color_figura);
+
+            let validar_p1 = false, validar_p2 = false;
             if(componente_g === null){
-                const coor = getCoorRecta(figura, grupo)
-                dibujar_circulo(ctx, "#ff2f14", coor.x1, coor.y1, 5, 5);
-                dibujar_circulo(ctx, "#ff2f14", coor.x2, coor.y2, 5, 5);
-                console.log("dibujar_circulo");
+                validar_p1= validar_p2= true
+            }else{
+                validar_p1 = !componente_g.includes("PUNTO1")
+                validar_p2 = !componente_g.includes("PUNTO2")
             }
+
+            const coor = getCoorRecta(figura, grupo)
+            if(validar_p1)
+            dibujar_circulo(ctx, "#ff2f14", coor.x1, coor.y1, 5, 5);
+            if(validar_p2)
+            dibujar_circulo(ctx, "#ff2f14", coor.x2, coor.y2, 5, 5);
+            //console.log("dibujar_circulo");
+
         }
 
         if (figura.tipo_figura === "PUNTO") {
@@ -108,14 +123,7 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
     }
 }
 
-function getCoorRecta(figura, grupo){
-    return {
-         x1 : parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
-         y1 : parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid),
-         x2 : parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
-         y2 : parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid)
-    }
-}
+
 
 function imprimir_recta(ctx, figura, grupo, color_, p1_recta, p2_recta, p_centro,
                         seleccion = false,color_seleccion = "#39ff14" ) {
