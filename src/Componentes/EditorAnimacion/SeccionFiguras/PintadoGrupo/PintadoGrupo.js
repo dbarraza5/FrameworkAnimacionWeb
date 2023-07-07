@@ -30,20 +30,36 @@ function PintadoGrupo(props){
         console.log(index)
     };
 
+    const rellenarPintura=(event)=>{
+        console.log(event.target.checked)
+        props.gestionLienzo.gestion_pintado.relleno_pintura = event.target.checked
+    }
+
     const grupo = props.animacion.getGrupo(nombre_grupo);
     const lista_pintado = grupo === null? []: grupo.lista_pintado;
     return (<>
         <br/>
-        <row>
-            <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo} nombre_grupo={nombre_grupo}/>
-            <div className="btn-group" role="group" aria-label="Basic example">
-                <button type="button" className="btn btn-primary"
-                        onClick={agregar_pintura}>Agregar
-                </button>
+        <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo} nombre_grupo={nombre_grupo}/>
+        <div className="row">
+            <div className="col-6">
+                <div className="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" className="btn btn-primary"
+                            onClick={agregar_pintura}>Agregar
+                    </button>
+                </div>
             </div>
-            <hr/>
-        </row>
 
+            <div className="col-6">
+                <div className="form-check form-switch">
+                    <input className="form-check-input" onChange={rellenarPintura} type="checkbox" id="flexSwitchCheckDefault"/>
+                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Relleno</label>
+                </div>
+            </div>
+
+
+
+        </div>
+        <hr/>
 
         <div className="accordion" id="accordionExample">
             {lista_pintado.map((item, index) => {

@@ -22,6 +22,8 @@ class GestionPintado {
         w: 5
     }
 
+    relleno_pintura = false;
+
     constructor() {
     }
 

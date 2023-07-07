@@ -133,9 +133,11 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
             imprimir_circulo(ctx, figura, grupo, color_figura);
         }
     }
-    if(gestion_pintado.indice_seleccion_pintado>-1)
-    pintarDimensionGrupo(ctx, grupo,
-        grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado])
+    if(gestion_pintado.indice_seleccion_pintado>-1){
+        const pintura = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado]
+        pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+    }
+
 }
 
 function obtenerPuntosContorno(grupo_, elementos){
