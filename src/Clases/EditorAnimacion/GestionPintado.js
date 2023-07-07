@@ -68,6 +68,11 @@ class GestionPintado {
         })
     }
 
+    getPintadoGrupo(indice){
+        return this.grupo_copia.lista_pintado[indice]
+    }
+
+
     procesarTrabajoPintado(eventoLienzoFigura){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;

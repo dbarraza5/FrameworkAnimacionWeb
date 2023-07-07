@@ -9,16 +9,30 @@ function PintadoGrupo(props){
     const [nombre_grupo, setNombreGrupo] = useState("...");
     const [indice_pintura, setIndicePintado] = useState(0)
 
+    const grupo = props.animacion.getGrupo(nombre_grupo);
+    const [lista_pintado, setListadoPintado] = useState(grupo === null? []: [...grupo.lista_pintado])
+
     const cambiar_grupo=(nombre_grupo_)=>{
         if(nombre_grupo_ !== "..."){
             props.gestionLienzo.seleccionGrupoPintar(nombre_grupo_)
+            const grupo_copia = props.gestionLienzo.gestion_pintado.grupo_copia
+            setListadoPintado(grupo_copia === null? []: [...grupo_copia.lista_pintado])
         }
         setNombreGrupo(nombre_grupo_)
     }
 
     const agregar_pintura=()=>{
-        props.animacion.agregar_pintado_grupo(nombre_grupo)
-        props.setAnimacion({"edicion": props.animacion})
+
+        if(props.gestionLienzo.gestion_pintado.grupo_copia !== null){
+            props.gestionLienzo.gestion_pintado.grupo_copia.lista_pintado.push({
+                color: "#000000",
+                visible: true,
+                elementos: []
+            })
+            setListadoPintado([...props.gestionLienzo.gestion_pintado.grupo_copia.lista_pintado])
+        }
+        //props.animacion.agregar_pintado_grupo(nombre_grupo)
+        //props.setAnimacion({"edicion": props.animacion})
     }
 
     const [activeIndex, setActiveIndex] = useState(null);
@@ -33,10 +47,19 @@ function PintadoGrupo(props){
     const rellenarPintura=(event)=>{
         console.log(event.target.checked)
         props.gestionLienzo.gestion_pintado.relleno_pintura = event.target.checked
+    };
+
+    const cambiarColor=(indice, color)=>{
+        const pintura = props.gestionLienzo.gestion_pintado.getPintadoGrupo(parseInt(indice))
+        pintura.color = color;
+        const grupo_copia = props.gestionLienzo.gestion_pintado.grupo_copia
+        setListadoPintado(grupo_copia === null? []: [...grupo_copia.lista_pintado])
+        console.log("indice: ", indice)
+        console.log("color: ", color)
     }
 
-    const grupo = props.animacion.getGrupo(nombre_grupo);
-    const lista_pintado = grupo === null? []: grupo.lista_pintado;
+    //const grupo = props.animacion.getGrupo(nombre_grupo);
+    //const lista_pintado = grupo === null? []: grupo.lista_pintado;
     return (<>
         <br/>
         <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo} nombre_grupo={nombre_grupo}/>
@@ -92,7 +115,7 @@ function PintadoGrupo(props){
                                 <div className="input-group input-group-sm mb-3">
                                     <label htmlFor="exampleFormControlInput1" className="input-group-text">Color</label>
                                     <input type="color" className="form-control" value={item.color}
-                                           onChange={(e)=>console.log("fsdfsdsdfsdf")}
+                                           onChange={(e)=>cambiarColor(index, e.target.value)}
                                     />
                                 </div>
                                 <div className="input-group input-group-sm mb-3">
