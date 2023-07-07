@@ -464,4 +464,11 @@ function getCoorRecta(figura, grupo){
     }
 }
 
-export {GestionAnimacion, normalizar_recta, getCoorRecta}
+function getCoorPunto(figura, grupo){
+    return {
+        x: parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
+        y: parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid)
+    }
+}
+
+export {GestionAnimacion, normalizar_recta, getCoorRecta, getCoorPunto}

@@ -1,6 +1,6 @@
 import OperacionesGrupo from "./OperacionesGrupo";
 import Fisica from "./Fisica";
-import {getCoorRecta} from "./GestionAnimacion";
+import {getCoorPunto, getCoorRecta} from "./GestionAnimacion";
 
 class GestionPintado {
     grupo = null;
@@ -44,10 +44,10 @@ class GestionPintado {
 
     figuraSeleccionada(nombre_figura, indice){
         if(this.grupo.lista_pintado.length>indice && indice>-1){
-            console.log("console.log(this.grupo_copia.lista_pintado)")
-            console.log(this.grupo_copia.lista_pintado)
+            //console.log("console.log(this.grupo_copia.lista_pintado)")
+            //console.log(this.grupo_copia.lista_pintado)
             const elementos = (this.grupo_copia.lista_pintado[indice]).elementos;
-            console.log(elementos, indice)
+            //console.log(elementos, indice)
             const filtro_elemento = elementos.filter(e=>e.nombre === nombre_figura)
             if(filtro_elemento.length>0){
                 return filtro_elemento.map(e=>e.componente)
@@ -72,10 +72,10 @@ class GestionPintado {
         //console.log("procesarTrabajoPintado")
         for (let j = 0; j < this.grupo_copia.lista_figuras.length; j++){
             const figura = this.grupo_copia.lista_figuras[j];
-            if (figura.tipo_figura === "RECTA"){
+            const componente_g = this.figuraSeleccionada(figura.nombre,
+                this.indice_seleccion_pintado);
 
-                const componente_g = this.figuraSeleccionada(figura.nombre,
-                    this.indice_seleccion_pintado);
+            if (figura.tipo_figura === "RECTA"){
                 let validar_p1 = false, validar_p2 = false;
                 if(componente_g === null){
                     validar_p1= validar_p2= true
@@ -99,6 +99,26 @@ class GestionPintado {
                     eventoLienzoFigura.mouse_click_down && validar_p2){
                     console.log("Colision recta P2")
                     this.agregarAristaPintado(figura.nombre, "PUNTO2",
+                        this.indice_seleccion_pintado)
+                }
+            }
+
+            if (figura.tipo_figura === "PUNTO"){
+                let validar_punto = false;
+                if(componente_g === null){
+                    validar_punto=  true
+                }else{
+                    validar_punto = !componente_g.includes("PUNTO_C")
+                }
+
+                const coor = getCoorPunto(figura, this.grupo_copia)
+                this.rect_figura_.x = coor.x;
+                this.rect_figura_.y = coor.y;
+
+                if(Fisica.rectsColliding(this.puntero, this.rect_figura_ )&&
+                    eventoLienzoFigura.mouse_click_down && validar_punto){
+                    console.log("Colision CIRCULO CENTRO")
+                    this.agregarAristaPintado(figura.nombre, "PUNTO_C",
                         this.indice_seleccion_pintado)
                 }
             }

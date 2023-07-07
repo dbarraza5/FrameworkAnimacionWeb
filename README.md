@@ -61,6 +61,11 @@ falta el mover los atributos usando el mouse.
     3.- tiene problemas con cambio de tamaño no registra el cambio para guardar
     4(*).- en la seccion de grupos al cambiar la raiz no se actualiza en el lienzo  
     
+### requerimiento de pintado
+    1.- un boton para aumentar el porcenjaje de zoom
+    2.- que se pueda desplazar el lienzo en caso de que el zoom este muy cerca
+    3.- una forma de borrar las alistas agregadas ya sea por el lienzo o por una tabla
+    4.- boton con el que se pueda aplicar los cambios
 ## Atajos de teclado
 
 | Atajo | Descripcion |

@@ -1,4 +1,4 @@
-import {getCoorRecta} from "./GestionAnimacion";
+import {getCoorPunto, getCoorRecta} from "./GestionAnimacion";
 
 function obtenerPuntosGrupo(grupo){
     let x, y;
@@ -91,7 +91,7 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
         let color_figura = grupo.color;
         const componente_g = gestion_pintado.figuraSeleccionada(figura.nombre,
             gestion_pintado.indice_seleccion_pintado);
-        console.log(componente_g)
+        //console.log(componente_g)
 
         if (figura.tipo_figura === "RECTA") {
             imprimir_recta(ctx, figura, grupo, color_figura);
@@ -106,21 +106,115 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
 
             const coor = getCoorRecta(figura, grupo)
             if(validar_p1)
-            dibujar_circulo(ctx, "#ff2f14", coor.x1, coor.y1, 5, 5);
+                dibujar_circulo(ctx, "#ff2f14", coor.x1, coor.y1, 5, 5);
             if(validar_p2)
-            dibujar_circulo(ctx, "#ff2f14", coor.x2, coor.y2, 5, 5);
+                dibujar_circulo(ctx, "#ff2f14", coor.x2, coor.y2, 5, 5);
             //console.log("dibujar_circulo");
 
         }
 
         if (figura.tipo_figura === "PUNTO") {
             imprimir_punto(ctx, figura, grupo, color_figura);
+
+            let validar_punto = false;
+            if(componente_g === null){
+                validar_punto=  true
+            }else{
+                validar_punto = !componente_g.includes("PUNTO_C")
+            }
+
+            const coor = getCoorPunto(figura, grupo)
+            if(validar_punto)
+                dibujar_circulo(ctx, "#ff2f14", coor.x, coor.y, 5, 5);
+
         }
 
         if (figura.tipo_figura === "CIRCULO") {
             imprimir_circulo(ctx, figura, grupo, color_figura);
         }
     }
+    if(gestion_pintado.indice_seleccion_pintado>-1)
+    pintarDimensionGrupo(ctx, grupo,
+        grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado])
+}
+
+function obtenerPuntosContorno(grupo_, elementos){
+    const lista_coor = []
+    for (let i = 0; i < elementos.length; i++) {
+        const e = elementos[i];
+        let figura = grupo_.lista_figuras.filter((f)=>f.nombre===e.nombre)
+        let x, y;
+        if(figura.length>0){
+            figura = figura[0];
+            if (figura.tipo_figura === "RECTA"){
+                const coor = getCoorRecta(figura, grupo_)
+                if(e.componente === "PUNTO1"){
+                    x = coor.x1;
+                    y = coor.y1;
+                }
+                if(e.componente === "PUNTO2"){
+                    x = coor.x2;
+                    y = coor.y2;
+                }
+            }
+            if (figura.tipo_figura === "PUNTO"){
+                const coor = getCoorPunto(figura, grupo_)
+                if(e.componente === "PUNTO_C"){
+                    x = coor.x;
+                    y = coor.y;
+                }
+            }
+            lista_coor.push({
+                x: x,
+                y: y
+            })
+        }
+    }
+    return lista_coor;
+}
+
+function pintarDimensionGrupo(ctx, grupo_, pintura, relleno=false){
+    const elementos = pintura.elementos
+    const lista_puntos = obtenerPuntosContorno(grupo_, elementos);
+    //console.log(lista_puntos)
+
+    if(relleno){
+        ctx.strokeStyle = 'black';
+        ctx.fillStyle = pintura.color; // Color de relleno (rojo semitransparente en este caso)
+        ctx.lineWidth = 2; // Grosor de la línea de contorno
+    }
+
+
+    for (let i=0; i<lista_puntos.length-1; i++){
+        const p1 = lista_puntos[i]
+        const p2 = lista_puntos[i+1]
+
+        if(relleno){
+            if (i === 0) {
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+            } else {
+                ctx.lineTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+            }
+        }else{
+            dibujar_linea_segmentada(ctx, "#39ff14", p1.x, p1.y, p2.x, p2.y)
+        }
+
+    }
+    if(relleno){
+        ctx.closePath();
+        ctx.stroke();
+        if(lista_puntos.length>2){
+            const p1 = lista_puntos[0];
+            ctx.lineTo(p1.x, p1.y);
+            ctx.fill();
+        }
+    }
+
+// Rellenar el interior con otro color
+
+
 }
 
 
@@ -161,8 +255,9 @@ function imprimir_circulo(ctx, figura, grupo, color_, p_circulo, p_centro, selec
 
 function imprimir_punto(ctx, figura, grupo, color_, p_centro,
                         seleccion = false, color_seleccion = "#39ff14") {
-    const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-    const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
+    const coor = getCoorPunto(figura, grupo)
+    const x = coor.x;
+    const y = coor.y;
     dibujar_punto(ctx, color_, x, y, 2)
     if (seleccion) {
         //this.actualizarPuntoCentro(figura, grupo)
