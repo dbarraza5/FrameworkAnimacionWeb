@@ -85,11 +85,6 @@ class GestionAnimacion{
                         color: "#000000",
                         visible: true,
                         elementos: []//{nombre: f1, componente: punto2}
-                    },
-                    {
-                        color: "#1115f5",
-                        visible: true,
-                        elementos: []
                     }
                 ]
             }

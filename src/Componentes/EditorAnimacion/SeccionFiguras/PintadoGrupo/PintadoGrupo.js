@@ -12,6 +12,8 @@ function PintadoGrupo(props){
     const grupo = props.animacion.getGrupo(nombre_grupo);
     const [lista_pintado, setListadoPintado] = useState(grupo === null? []: [...grupo.lista_pintado])
 
+    const [porcentaje_zoom, setPorcentajeZoom] = useState(0)
+
     const cambiar_grupo=(nombre_grupo_)=>{
         if(nombre_grupo_ !== "..."){
             props.gestionLienzo.seleccionGrupoPintar(nombre_grupo_)
@@ -31,8 +33,6 @@ function PintadoGrupo(props){
             })
             setListadoPintado([...props.gestionLienzo.gestion_pintado.grupo_copia.lista_pintado])
         }
-        //props.animacion.agregar_pintado_grupo(nombre_grupo)
-        //props.setAnimacion({"edicion": props.animacion})
     }
 
     const [activeIndex, setActiveIndex] = useState(null);
@@ -64,23 +64,34 @@ function PintadoGrupo(props){
         <br/>
         <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo} nombre_grupo={nombre_grupo}/>
         <div className="row">
-            <div className="col-6">
+            <div className="col-4">
                 <div className="btn-group" role="group" aria-label="Basic example">
-                    <button type="button" className="btn btn-primary"
-                            onClick={agregar_pintura}>Agregar
+                    <button type="button" className="btn btn-primary" onClick={agregar_pintura}>
+                        Agregar
                     </button>
                 </div>
             </div>
 
-            <div className="col-6">
+            <div className="col-4">
                 <div className="form-check form-switch">
-                    <input className="form-check-input" onChange={rellenarPintura} type="checkbox" id="flexSwitchCheckDefault"/>
-                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Relleno</label>
+                    <input className="form-check-input" onChange={rellenarPintura} type="checkbox" id="flexSwitchCheckDefault" />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                        Relleno
+                    </label>
                 </div>
             </div>
 
-
-
+            <div className="col-4">
+                <div className="d-flex">
+                    <button id="zoomInBtn" className="btn btn-primary me-2">
+                        <i className="bi bi-plus"></i>
+                    </button>
+                    <button id="zoomOutBtn" className="btn btn-primary me-2">
+                        <i className="bi bi-dash"></i>
+                    </button>
+                    <input id="zoomValue" className="form-control form-control-sm" type="number" readOnly />
+                </div>
+            </div>
         </div>
         <hr/>
 

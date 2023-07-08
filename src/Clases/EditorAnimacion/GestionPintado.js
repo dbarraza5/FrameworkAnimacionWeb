@@ -31,15 +31,21 @@ class GestionPintado {
         this.grupo = grupo_;
         this.grupo_copia = JSON.parse(JSON.stringify(grupo_))
         let centro_grupo = OperacionesGrupo.calcularCentroGruposSeleccionados([this.grupo_copia])
+        const max_medida = centro_grupo.alto>centro_grupo.ancho? centro_grupo.alto : centro_grupo.ancho;
+        const porcentaje = (600 -max_medida)/600
+
         OperacionesGrupo.moverGrupo(this.grupo_copia, grupo_, centro_grupo.centro_x,
             centro_grupo.centro_y, 300, 300)
         console.log(centro_grupo)
-        const grupo_aux = JSON.parse(JSON.stringify(this.grupo_copia))
-        centro_grupo = OperacionesGrupo.calcularCentroGruposSeleccionados(
-            [grupo_aux])
-        const max_medida = centro_grupo.alto>centro_grupo.ancho? centro_grupo.alto : centro_grupo.ancho;
-        const porcentaje = (600 -max_medida)/600
         console.log(porcentaje)
+        this.zoomGrupo(porcentaje)
+
+    }
+
+    zoomGrupo(porcentaje){
+        const grupo_aux = JSON.parse(JSON.stringify(this.grupo_copia))
+        const centro_grupo = OperacionesGrupo.calcularCentroGruposSeleccionados(
+            [grupo_aux])
         this.inflar_grupo(this.grupo_copia, grupo_aux,porcentaje, centro_grupo.centro_x,
             centro_grupo.centro_y)
     }

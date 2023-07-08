@@ -85,6 +85,12 @@ function imprimirListaGrupos(ctx, lista_grupo_root, id_grupo_selec, id_figura_se
 
 function imprimirGrupoPintado(ctx, gestion_pintado){
     const grupo = gestion_pintado.grupo_copia
+
+    if(gestion_pintado.indice_seleccion_pintado>-1){
+        const pintura = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado]
+        pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+    }
+
     for (let j = 0; j < grupo.lista_figuras.length; j++) {
         const figura = grupo.lista_figuras[j];
         let seleccion = null;
@@ -133,10 +139,7 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
             imprimir_circulo(ctx, figura, grupo, color_figura);
         }
     }
-    if(gestion_pintado.indice_seleccion_pintado>-1){
-        const pintura = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado]
-        pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
-    }
+
 
 }
 
