@@ -4,6 +4,8 @@ import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
 function PintadoGrupo(props){
+    const gestion_pintado=props.gestionLienzo.gestion_pintado;
+
     const lista_grupos = ["...", ...props.animacion.get_lista_nombres_grupos()];
     //lista_grupos = ["...", ...lista_grupos]
     const [nombre_grupo, setNombreGrupo] = useState("...");
@@ -13,11 +15,18 @@ function PintadoGrupo(props){
     const [lista_pintado, setListadoPintado] = useState(grupo === null? []: [...grupo.lista_pintado])
 
     const [porcentaje_zoom, setPorcentajeZoom] = useState(0)
+    const escalaZoom = 0.1
+    const zoomGrupoSeleccionado=(zoom)=>{
+        let zoom_truncate =parseFloat(porcentaje_zoom+zoom)//.toFixed(3) ;
+        setPorcentajeZoom(zoom_truncate)
+        gestion_pintado.zoomGrupo(zoom)
+
+    }
 
     const cambiar_grupo=(nombre_grupo_)=>{
         if(nombre_grupo_ !== "..."){
             props.gestionLienzo.seleccionGrupoPintar(nombre_grupo_)
-            const grupo_copia = props.gestionLienzo.gestion_pintado.grupo_copia
+            const grupo_copia = gestion_pintado.grupo_copia
             setListadoPintado(grupo_copia === null? []: [...grupo_copia.lista_pintado])
         }
         setNombreGrupo(nombre_grupo_)
@@ -25,13 +34,13 @@ function PintadoGrupo(props){
 
     const agregar_pintura=()=>{
 
-        if(props.gestionLienzo.gestion_pintado.grupo_copia !== null){
-            props.gestionLienzo.gestion_pintado.grupo_copia.lista_pintado.push({
+        if(gestion_pintado.grupo_copia !== null){
+            gestion_pintado.grupo_copia.lista_pintado.push({
                 color: "#000000",
                 visible: true,
                 elementos: []
             })
-            setListadoPintado([...props.gestionLienzo.gestion_pintado.grupo_copia.lista_pintado])
+            setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
         }
     }
 
@@ -39,20 +48,20 @@ function PintadoGrupo(props){
 
     const toggleAccordion = (index) => {
         setActiveIndex(index === activeIndex ? null : index);
-        props.gestionLienzo.gestion_pintado.indice_seleccion_pintado = index;
+        gestion_pintado.indice_seleccion_pintado = index;
         setIndicePintado(index)
         console.log(index)
     };
 
     const rellenarPintura=(event)=>{
         console.log(event.target.checked)
-        props.gestionLienzo.gestion_pintado.relleno_pintura = event.target.checked
+        gestion_pintado.relleno_pintura = event.target.checked
     };
 
     const cambiarColor=(indice, color)=>{
-        const pintura = props.gestionLienzo.gestion_pintado.getPintadoGrupo(parseInt(indice))
+        const pintura = gestion_pintado.getPintadoGrupo(parseInt(indice))
         pintura.color = color;
-        const grupo_copia = props.gestionLienzo.gestion_pintado.grupo_copia
+        const grupo_copia = gestion_pintado.grupo_copia
         setListadoPintado(grupo_copia === null? []: [...grupo_copia.lista_pintado])
         console.log("indice: ", indice)
         console.log("color: ", color)
@@ -83,13 +92,13 @@ function PintadoGrupo(props){
 
             <div className="col-4">
                 <div className="d-flex">
-                    <button id="zoomInBtn" className="btn btn-primary me-2">
+                    <button id="zoomInBtn" className="btn btn-primary me-2" onClick={()=>zoomGrupoSeleccionado(escalaZoom)}>
                         <i className="bi bi-plus"></i>
                     </button>
-                    <button id="zoomOutBtn" className="btn btn-primary me-2">
+                    <button id="zoomOutBtn" className="btn btn-primary me-2" onClick={()=>zoomGrupoSeleccionado(escalaZoom*-1)}>
                         <i className="bi bi-dash"></i>
                     </button>
-                    <input id="zoomValue" className="form-control form-control-sm" type="number" readOnly />
+                    <input id="zoomValue" className="form-control form-control-sm" type="number" value={porcentaje_zoom} readOnly />
                 </div>
             </div>
         </div>
