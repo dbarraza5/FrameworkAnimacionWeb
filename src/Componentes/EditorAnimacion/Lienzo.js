@@ -80,7 +80,9 @@ function Lienzo(props){
     }
 
     const manejarRueda = (event) => {
-        console.log("EL RATON RATON");
+        const movimiento = event.deltaY;
+        props.lienzo.mouse_delta_scroll = movimiento;
+        //console.log("EL RATON RATON: ",movimiento);
     };
 
     return(<canvas {...props}

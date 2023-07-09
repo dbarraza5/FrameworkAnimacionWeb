@@ -24,6 +24,10 @@ class GestionPintado {
 
     relleno_pintura = false;
 
+    mover_grupo = false;
+    x_inicial = 0;
+    y_inicial = 0;
+    escalaZoom = 0.2
     constructor() {
     }
 
@@ -82,7 +86,7 @@ class GestionPintado {
     procesarTrabajoPintado(eventoLienzoFigura){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
-        //console.log("procesarTrabajoPintado")
+        console.log("SCROLL: ", eventoLienzoFigura.mouse_delta_scroll)
         for (let j = 0; j < this.grupo_copia.lista_figuras.length; j++){
             const figura = this.grupo_copia.lista_figuras[j];
             const componente_g = this.figuraSeleccionada(figura.nombre,
@@ -139,6 +143,26 @@ class GestionPintado {
 
         if(eventoLienzoFigura.mouse_click_down && eventoLienzoFigura.mouse_type_button === 1){
             console.log("ARRASTRAR CON SCROLL!!!")
+            if(!this.mover_grupo){
+                this.mover_grupo = true;
+                this.x_inicial=eventoLienzoFigura.mouse_x;
+                this.y_inicial=eventoLienzoFigura.mouse_y;
+            }
+            const diff_x = eventoLienzoFigura.mouse_x - this.x_inicial;
+            const diff_y = eventoLienzoFigura.mouse_y - this.y_inicial;
+            this.grupo_copia.cx_solid = diff_x;
+            this.grupo_copia.cy_solid = diff_y;
+            console.log(diff_x)
+
+        }else{
+            this.mover_grupo= false;
+        }
+        if(eventoLienzoFigura.mouse_delta_scroll !==0){
+            if(eventoLienzoFigura.mouse_delta_scroll<0){
+                this.zoomGrupo(this.escalaZoom)
+            }else{
+                this.zoomGrupo(this.escalaZoom*-1)
+            }
         }
     }
 

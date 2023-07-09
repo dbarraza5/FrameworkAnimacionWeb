@@ -16,10 +16,13 @@ class ControlEventoLienzoFigura{
     * */
     mouse_type_button = -1
 
+    mouse_delta_scroll = 0
+
     stack_event_teclado = []
 
     reset(){
         this.mouse_only_click = false;
+        this.mouse_delta_scroll = 0;
     }
 }
 

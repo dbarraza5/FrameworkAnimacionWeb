@@ -26,7 +26,6 @@ function EdicionFiguras(props){
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
         props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
-        eventoLienzoFigura.reset()
     }
 
 

@@ -836,6 +836,7 @@ class GestionLienzoAnimacion {
                 this.funcion_editar_lienzo();
                 this.editar_lienzo = false;
             }
+            eventoLienzoFigura.reset()
         }
     }
 
