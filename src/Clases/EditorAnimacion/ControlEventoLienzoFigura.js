@@ -9,6 +9,12 @@ class ControlEventoLienzoFigura{
     mouse_click_down = false;
     mouse_click_up = false;
     mouse_only_click = false;
+    /*
+    click_left: 0
+    click_right: 2
+    click_scroll: 1
+    * */
+    mouse_type_button = -1
 
     stack_event_teclado = []
 

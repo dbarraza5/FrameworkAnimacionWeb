@@ -136,6 +136,10 @@ class GestionPintado {
                 }
             }
         }
+
+        if(eventoLienzoFigura.mouse_click_down && eventoLienzoFigura.mouse_type_button === 1){
+            console.log("ARRASTRAR CON SCROLL!!!")
+        }
     }
 
     inflar_grupo(grupo_, grupo_copia_, porcentaje, centrox, centroy) {

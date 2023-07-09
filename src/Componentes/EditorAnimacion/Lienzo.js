@@ -19,8 +19,10 @@ function Lienzo(props){
     }
 
     const eventoMouseUp=(e)=>{
-        console.log(e.buttons)
+
         console.log("levantar click")
+        console.log(e.button)
+        console.log(e.buttons)
         props.lienzo.mouse_click_down=false;
         props.lienzo.mouse_click_up=true;
         props.setEventLienzoFigura(props.lienzo);
@@ -28,8 +30,11 @@ function Lienzo(props){
     }
 
     const eventoMouseDown=(e)=>{
-        console.log(e.buttons)
+
         console.log("apretar click")
+        console.log(e.button)
+        console.log(e.buttons)
+        props.lienzo.mouse_type_button = e.button
         props.lienzo.mouse_click_down=true;
         props.lienzo.mouse_click_up=false;
         props.lienzo.mouse_only_click = true;
@@ -74,6 +79,10 @@ function Lienzo(props){
         props.editar_animacion()
     }
 
+    const manejarRueda = (event) => {
+        console.log("EL RATON RATON");
+    };
+
     return(<canvas {...props}
                    onMouseMove={(e)=>eventoMouseMove(e)}
                    onMouseUp={(e)=>eventoMouseUp(e)}
@@ -83,6 +92,7 @@ function Lienzo(props){
                    tabIndex="0"
                    onKeyDown={(e)=>eventoKeyDown(e)}
                    onKeyUp={(e)=>eventoKeyUp(e)}
+                   onWheel={manejarRueda}
                    width="600" height="600" style={style}></canvas>)
 }
 
