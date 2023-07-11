@@ -86,7 +86,7 @@ class GestionPintado {
     procesarTrabajoPintado(eventoLienzoFigura){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
-        console.log("SCROLL: ", eventoLienzoFigura.mouse_delta_scroll)
+        //console.log("SCROLL: ", eventoLienzoFigura.mouse_delta_scroll)
         for (let j = 0; j < this.grupo_copia.lista_figuras.length; j++){
             const figura = this.grupo_copia.lista_figuras[j];
             const componente_g = this.figuraSeleccionada(figura.nombre,

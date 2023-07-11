@@ -100,7 +100,7 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
         //console.log(componente_g)
 
         if (figura.tipo_figura === "RECTA") {
-            imprimir_recta(ctx, figura, grupo, color_figura);
+
 
             let validar_p1 = false, validar_p2 = false;
             if(componente_g === null){
@@ -111,16 +111,19 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
             }
 
             const coor = getCoorRecta(figura, grupo)
-            if(validar_p1)
-                dibujar_circulo(ctx, "#ff2f14", coor.x1, coor.y1, 5, 5);
-            if(validar_p2)
-                dibujar_circulo(ctx, "#ff2f14", coor.x2, coor.y2, 5, 5);
+            const color_cr1 = validar_p1? "#FF0000" : "#008000";
+
+            dibujar_rectangulo(ctx, color_cr1, coor.x1-4, coor.y1-4, 9, 9, true);
+
+            const color_cr2 = validar_p2? "#FF0000" : "#008000";
+            dibujar_rectangulo(ctx, color_cr2, coor.x2-4, coor.y2-4, 9, 9, true);
+            imprimir_recta(ctx, figura, grupo, color_figura);
             //console.log("dibujar_circulo");
 
         }
 
         if (figura.tipo_figura === "PUNTO") {
-            imprimir_punto(ctx, figura, grupo, color_figura);
+
 
             let validar_punto = false;
             if(componente_g === null){
@@ -130,8 +133,10 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
             }
 
             const coor = getCoorPunto(figura, grupo)
-            if(validar_punto)
-                dibujar_circulo(ctx, "#ff2f14", coor.x, coor.y, 5, 5);
+            const color_p = validar_punto? "#FF0000" : "#008000";
+
+            dibujar_rectangulo(ctx, color_p, coor.x-4, coor.y-4, 9, 9, true);
+            imprimir_punto(ctx, figura, grupo, color_figura);
 
         }
 
@@ -216,13 +221,7 @@ function pintarDimensionGrupo(ctx, grupo_, pintura, relleno=false){
             ctx.fill();
         }
     }
-
-// Rellenar el interior con otro color
-
-
 }
-
-
 
 function imprimir_recta(ctx, figura, grupo, color_, p1_recta, p2_recta, p_centro,
                         seleccion = false,color_seleccion = "#39ff14" ) {
@@ -342,11 +341,16 @@ function dibujar_linea_segmentada(ctx, color, x1, y1, x2, y2) {
     ctx.setLineDash([]);
 }
 
-function dibujar_rectangulo(ctx, color, x, y, w, h) {
+function dibujar_rectangulo(ctx, color, x, y, w, h, relleno=false) {
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.rect(x, y, w, h);
     ctx.stroke();
+    if(relleno){
+        ctx.fillStyle = color;
+        ctx.fill()
+    }
+
 }
 
 
