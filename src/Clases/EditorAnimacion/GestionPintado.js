@@ -28,6 +28,9 @@ class GestionPintado {
     x_inicial = 0;
     y_inicial = 0;
     escalaZoom = 0.2
+
+    arrastrando_punto =false;
+    componente_arrastrado = null;
     constructor() {
     }
 
@@ -68,18 +71,35 @@ class GestionPintado {
         return null;
     }
 
-    agregarAristaPintado(nombre_figura, nombre_componente, indice_pintado){
+    agregarAristaPintado(nombre_figura, nombre_componente, indice_pintado, indice = -1){
         console.log("PINTARRRR: ", indice_pintado)
         const pintar = this.grupo_copia.lista_pintado[indice_pintado]
         console.log(this.grupo_copia.lista_pintado)
-        pintar.elementos.push({
+        const componente = {
             nombre: nombre_figura,
             componente: nombre_componente
-        })
+        }
+        if(indice<0){
+            pintar.elementos.push(componente)
+        }else{
+            pintar.elementos.splice(indice, 0, componente)
+        }
+
     }
 
     getPintadoGrupo(indice){
         return this.grupo_copia.lista_pintado[indice]
+    }
+
+    getIndiceComponente(indice_pintado, nombre_figura, componente){
+        const elementos = (this.grupo_copia.lista_pintado[indice_pintado]).elementos;
+        for(let i=0; i<elementos.length; i++){
+            const elemento = elementos[i];
+            if(elemento.nombre === nombre_figura && componente === elemento.componente){
+                return i;
+            }
+        }
+        return -1;
     }
 
 
@@ -132,13 +152,43 @@ class GestionPintado {
                 this.rect_figura_.x = coor.x;
                 this.rect_figura_.y = coor.y;
 
-                if(Fisica.rectsColliding(this.puntero, this.rect_figura_ )&&
-                    eventoLienzoFigura.mouse_click_down && validar_punto){
-                    console.log("Colision CIRCULO CENTRO")
-                    this.agregarAristaPintado(figura.nombre, "PUNTO_C",
-                        this.indice_seleccion_pintado)
+                if(this.arrastrando_punto === false){
+                    if(Fisica.rectsColliding(this.puntero, this.rect_figura_ )&&
+                        eventoLienzoFigura.mouse_click_down && validar_punto){
+                        console.log("Colision CIRCULO CENTRO")
+                        this.agregarAristaPintado(figura.nombre, "PUNTO_C",
+                            this.indice_seleccion_pintado)
+                    }
+                    if(Fisica.rectsColliding(this.puntero, this.rect_figura_ )&&
+                        eventoLienzoFigura.mouse_click_down && validar_punto===false && !this.arrastrando_punto){
+                        console.log("ARRASTRANDO EL PUNTOOOO")
+                        this.arrastrando_punto = true;
+                        this.componente_arrastrado = {
+                            nombre: figura.nombre,
+                            componente: "PUNTO_C"
+                        }
+                    }
+                }else{
+                    if(eventoLienzoFigura.mouse_click_up){
+                        if(this.componente_arrastrado.nombre !== figura.nombre){
+                            console.log(this.puntero, this.rect_figura_)
+                            if(Fisica.rectsColliding(this.puntero, this.rect_figura_ )){
+                                const indice_arista = this.getIndiceComponente(this.indice_seleccion_pintado,
+                                    this.componente_arrastrado.nombre,
+                                    this.componente_arrastrado.componente)
+                                console.log("Colision ARRASTREEEEEEEE!!!!!", indice_arista)
+                                this.agregarAristaPintado(figura.nombre, "PUNTO_C",
+                                    this.indice_seleccion_pintado, indice_arista+1)
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        if(eventoLienzoFigura.mouse_click_up){
+            this.arrastrando_punto = false;
+            this.componente_arrastrado = null;
         }
 
         if(eventoLienzoFigura.mouse_click_down && eventoLienzoFigura.mouse_type_button === 1){
