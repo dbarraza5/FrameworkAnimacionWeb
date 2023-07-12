@@ -66,7 +66,7 @@ function Lienzo(props){
 
         }
         //console.log(props.lienzo.stack_event_teclado)
-        console.log("key: "+code)
+        //console.log("key: "+code)
         props.editar_animacion()
     }
 
@@ -86,14 +86,15 @@ function Lienzo(props){
     };
 
     return(<canvas {...props}
+                   onKeyDown={(e)=>eventoKeyDown(e)}
+                   onKeyUp={(e)=>eventoKeyUp(e)}
                    onMouseMove={(e)=>eventoMouseMove(e)}
                    onMouseUp={(e)=>eventoMouseUp(e)}
                    onMouseDown={(e)=>eventoMouseDown(e)}
                    onMouseOver={(e)=>eventoMouseEntrada(e)}
                    onMouseOut={(e)=>eventoMouseSalida(e)}
                    tabIndex="0"
-                   onKeyDown={(e)=>eventoKeyDown(e)}
-                   onKeyUp={(e)=>eventoKeyUp(e)}
+
                    onWheel={manejarRueda}
                    width="600" height="600" style={style}></canvas>)
 }

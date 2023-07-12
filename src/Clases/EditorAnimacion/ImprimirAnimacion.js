@@ -138,6 +138,10 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
             dibujar_rectangulo(ctx, color_p, coor.x-4, coor.y-4, 9, 9, true);
             imprimir_punto(ctx, figura, grupo, color_figura);
 
+            if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO_C")){
+                dibujar_circulo(ctx, "#008000", coor.x, coor.y, 11, 11)
+            }
+
         }
 
         if (figura.tipo_figura === "CIRCULO") {
