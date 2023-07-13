@@ -35,7 +35,8 @@ class GestionPintado {
     ultimo_componente_agregado = null
 
     //seleccion de componente para borrar
-    list_comp_select = []
+    list_comp_select = [];
+    act_select_comp = false;
     constructor() {
     }
 
@@ -132,6 +133,9 @@ class GestionPintado {
             this.list_comp_select = []
         }
 
+        this.act_select_comp = eventoLienzoFigura.stack_event_teclado.includes("KeyS") && !this.act_select_comp;
+        console.log(eventoLienzoFigura.stack_event_teclado)
+
 
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
@@ -181,9 +185,19 @@ class GestionPintado {
                 this.rect_figura_.x = coor.x;
                 this.rect_figura_.y = coor.y;
 
-                if(this.arrastrando_punto === false){
-                    const col_punt_comp = Fisica.rectsColliding(this.puntero, this.rect_figura_ )
+                const col_punt_comp = Fisica.rectsColliding(this.puntero, this.rect_figura_ )
+                if(this.act_select_comp && col_punt_comp && eventoLienzoFigura.mouse_click_down){
+                    const nombre_compuesto =figura.nombre+"|"+"PUNTO_C"
+                    if(this.list_comp_select.includes(nombre_compuesto)){
+                        this.list_comp_select=
+                            this.list_comp_select.filter(comp=>comp !== nombre_compuesto)
+                    }else{
+                        this.list_comp_select.push(nombre_compuesto)
+                    }
+                    continue;
+                }
 
+                if(this.arrastrando_punto === false){
                     if(col_punt_comp &&
                         eventoLienzoFigura.mouse_click_down && validar_punto){
                         console.log("Colision CIRCULO CENTRO")
@@ -201,7 +215,7 @@ class GestionPintado {
                     }
                 }else{
                     if(eventoLienzoFigura.mouse_click_up){
-                        const col_punt_comp = Fisica.rectsColliding(this.puntero, this.rect_figura_ )
+                        //const col_punt_comp = Fisica.rectsColliding(this.puntero, this.rect_figura_ )
                         if(this.componente_arrastrado.nombre !== figura.nombre){
                             //console.log(this.puntero, this.rect_figura_)
                             if(col_punt_comp){
@@ -210,18 +224,6 @@ class GestionPintado {
                                     this.componente_arrastrado.componente)
                                 this.agregarAristaPintado(figura.nombre, "PUNTO_C",
                                     this.indice_seleccion_pintado, indice_arista+1)
-                            }
-                        }else{
-                            if(col_punt_comp){
-                                console.log("[Seleccion de componente]")
-                                const nombre_compuesto =figura.nombre+"|"+"PUNTO_C"
-                                if(this.list_comp_select.includes(nombre_compuesto)){
-                                    this.list_comp_select=
-                                        this.list_comp_select.filter(comp=>comp !== nombre_compuesto)
-                                }else{
-                                    this.list_comp_select.push(nombre_compuesto)
-                                }
-
                             }
                         }
                     }
