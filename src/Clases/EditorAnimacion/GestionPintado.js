@@ -78,19 +78,21 @@ class GestionPintado {
     }
 
     agregarAristaPintado(nombre_figura, nombre_componente, indice_pintado, indice = -1){
-        console.log("PINTARRRR: ", indice_pintado)
-        const pintar = this.grupo_copia.lista_pintado[indice_pintado]
-        console.log(this.grupo_copia.lista_pintado)
-        const componente = {
-            nombre: nombre_figura,
-            componente: nombre_componente
+        if(this.getIndiceComponente(this.indice_seleccion_pintado, nombre_figura, nombre_componente)===-1){
+            console.log("PINTARRRR: ", indice_pintado)
+            const pintar = this.grupo_copia.lista_pintado[indice_pintado]
+            console.log(this.grupo_copia.lista_pintado)
+            const componente = {
+                nombre: nombre_figura,
+                componente: nombre_componente
+            }
+            if(indice<0){
+                pintar.elementos.push(componente)
+            }else{
+                pintar.elementos.splice(indice, 0, componente)
+            }
+            this.ultimo_componente_agregado = {...componente, indice_pintado: this.indice_seleccion_pintado}
         }
-        if(indice<0){
-            pintar.elementos.push(componente)
-        }else{
-            pintar.elementos.splice(indice, 0, componente)
-        }
-        this.ultimo_componente_agregado = {...componente, indice_pintado: this.indice_seleccion_pintado}
     }
 
     eliminarUltimoComponente(){
