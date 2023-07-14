@@ -11,8 +11,8 @@ class GestionPintado {
     rect_figura_ = {
         x: 0,
         y: 0,
-        h: 5,
-        w: 5
+        h: 9,
+        w: 9
     }
 
     puntero = {
@@ -133,8 +133,8 @@ class GestionPintado {
             this.list_comp_select = []
         }
 
-        this.act_select_comp = eventoLienzoFigura.stack_event_teclado.includes("KeyS") && !this.act_select_comp;
-        console.log(eventoLienzoFigura.stack_event_teclado)
+        this.act_select_comp = eventoLienzoFigura.stack_event_teclado.includes("KeyS")// && !this.act_select_comp;
+        //console.log(eventoLienzoFigura.stack_event_teclado)
 
 
         this.puntero.x = eventoLienzoFigura.mouse_x;
@@ -153,24 +153,49 @@ class GestionPintado {
                     validar_p1 = !componente_g.includes("PUNTO1")
                     validar_p2 = !componente_g.includes("PUNTO2")
                 }
+
                 const coor = getCoorRecta(figura, this.grupo_copia)
-                this.rect_figura_.x = coor.x1;
-                this.rect_figura_.y = coor.y1;
-                if(Fisica.rectsColliding(this.puntero, this.rect_figura_ )&&
-                    eventoLienzoFigura.mouse_click_down && validar_p1){
-                    console.log("Colision recta P1")
-                    this.agregarAristaPintado(figura.nombre, "PUNTO1",
-                        this.indice_seleccion_pintado)
+
+                this.rect_figura_.x = coor.x1-4;
+                this.rect_figura_.y = coor.y1-4;
+                const col_punt_comp1 = Fisica.rectsColliding(this.puntero, this.rect_figura_ )
+
+                if(this.act_select_comp){
+                    if(col_punt_comp1 && eventoLienzoFigura.mouse_only_click){
+                        this.seleccionarComponente(figura.nombre+"|"+"PUNTO1")
+                    }
+                    //continue;
                 }
 
-                this.rect_figura_.x = coor.x2;
-                this.rect_figura_.y = coor.y2;
-                if(Fisica.rectsColliding(this.puntero, this.rect_figura_ )&&
-                    eventoLienzoFigura.mouse_click_down && validar_p2){
-                    console.log("Colision recta P2")
-                    this.agregarAristaPintado(figura.nombre, "PUNTO2",
-                        this.indice_seleccion_pintado)
+                this.rect_figura_.x = coor.x2-4;
+                this.rect_figura_.y = coor.y2-4;
+                const col_punt_comp2 = Fisica.rectsColliding(this.puntero, this.rect_figura_ )
+
+                if(this.act_select_comp){
+                    if(col_punt_comp2 && eventoLienzoFigura.mouse_only_click){
+                        this.seleccionarComponente(figura.nombre+"|"+"PUNTO2")
+                    }
+                    //continue;
                 }
+                console.log(this.act_select_comp)
+                if (!this.act_select_comp){
+                    if(col_punt_comp1 &&
+                        eventoLienzoFigura.mouse_click_down && validar_p1){
+                        console.log("Colision recta P1")
+                        this.agregarAristaPintado(figura.nombre, "PUNTO1",
+                            this.indice_seleccion_pintado)
+                    }
+
+
+                    if(col_punt_comp2 &&
+                        eventoLienzoFigura.mouse_click_down && validar_p2){
+                        console.log("Colision recta P2")
+                        this.agregarAristaPintado(figura.nombre, "PUNTO2",
+                            this.indice_seleccion_pintado)
+                    }
+                }
+
+
             }
 
             if (figura.tipo_figura === "PUNTO"){
@@ -186,16 +211,11 @@ class GestionPintado {
                 this.rect_figura_.y = coor.y;
 
                 const col_punt_comp = Fisica.rectsColliding(this.puntero, this.rect_figura_ )
-                if(this.act_select_comp && col_punt_comp && eventoLienzoFigura.mouse_click_down){
-                    const nombre_compuesto =figura.nombre+"|"+"PUNTO_C"
-                    if(this.list_comp_select.includes(nombre_compuesto)){
-                        this.list_comp_select=
-                            this.list_comp_select.filter(comp=>comp !== nombre_compuesto)
-                    }else{
-                        this.list_comp_select.push(nombre_compuesto)
-                    }
+                if(this.act_select_comp && col_punt_comp && eventoLienzoFigura.mouse_only_click){
+                    this.seleccionarComponente(figura.nombre+"|"+"PUNTO_C")
                     continue;
                 }
+                
 
                 if(this.arrastrando_punto === false){
                     if(col_punt_comp &&
@@ -258,6 +278,15 @@ class GestionPintado {
             }else{
                 this.zoomGrupo(this.escalaZoom*-1)
             }
+        }
+    }
+
+    seleccionarComponente(nombre_compuesto){
+        if(this.list_comp_select.includes(nombre_compuesto)){
+            this.list_comp_select=
+                this.list_comp_select.filter(comp=>comp !== nombre_compuesto)
+        }else{
+            this.list_comp_select.push(nombre_compuesto)
         }
     }
 

@@ -120,6 +120,14 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
             imprimir_recta(ctx, figura, grupo, color_figura);
             //console.log("dibujar_circulo");
 
+            if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO1")){
+                dibujar_circulo(ctx, "#008000", coor.x1, coor.y1, 11, 11)
+            }
+
+            if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO2")){
+                dibujar_circulo(ctx, "#008000", coor.x2, coor.y2, 11, 11)
+            }
+
         }
 
         if (figura.tipo_figura === "PUNTO") {
