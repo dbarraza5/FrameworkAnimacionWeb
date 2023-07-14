@@ -64,7 +64,7 @@ class GestionPintado {
     }
 
     figuraSeleccionada(nombre_figura, indice){
-        if(this.grupo.lista_pintado.length>indice && indice>-1){
+        if(this.grupo_copia.lista_pintado.length>indice && indice>-1){
             //console.log("console.log(this.grupo_copia.lista_pintado)")
             //console.log(this.grupo_copia.lista_pintado)
             const elementos = (this.grupo_copia.lista_pintado[indice]).elementos;
