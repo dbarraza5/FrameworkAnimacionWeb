@@ -121,13 +121,22 @@ class GestionPintado {
 
     procesarTrabajoPintado(eventoLienzoFigura){
         if(eventoLienzoFigura.stack_event_teclado.includes("Delete")){
+            console.log(this.list_comp_select)
             for (let i=0; i<this.list_comp_select.length; i++){
                 const clave_comp = this.list_comp_select[i];
                 const comp_ = clave_comp.split("|")
                 const indice = this.getIndiceComponente(this.indice_seleccion_pintado, comp_[0], comp_[1])
+                console.log(comp_[0], comp_[1])
                 console.log(indice)
                 if(indice>=0){
-                    this.grupo_copia.lista_pintado[this.indice_seleccion_pintado].elementos.splice(indice, 1)
+
+                    const pintado = this.grupo_copia.lista_pintado[this.indice_seleccion_pintado]
+                    console.log(pintado)
+                    pintado.elementos = pintado.elementos.filter((e, index)=>index!==indice)
+                    console.log("ELIMINANDO []=>: ",indice)
+                    console.log(pintado)
+                    //.splice(indice, 1)
+
                 }
             }
             this.list_comp_select = []
@@ -177,24 +186,68 @@ class GestionPintado {
                     }
                     //continue;
                 }
-                console.log(this.act_select_comp)
-                if (!this.act_select_comp){
-                    if(col_punt_comp1 &&
-                        eventoLienzoFigura.mouse_click_down && validar_p1){
-                        console.log("Colision recta P1")
-                        this.agregarAristaPintado(figura.nombre, "PUNTO1",
-                            this.indice_seleccion_pintado)
+
+                if(this.arrastrando_punto === false){
+                    if (!this.act_select_comp){
+                        if(col_punt_comp1 &&
+                            eventoLienzoFigura.mouse_click_down && validar_p1){
+                            this.agregarAristaPintado(figura.nombre, "PUNTO1",
+                                this.indice_seleccion_pintado)
+                        }
+
+                        if(col_punt_comp1 &&
+                            eventoLienzoFigura.mouse_click_down && validar_p1===false && !this.arrastrando_punto){
+                            console.log("ARRASTRANDO EL PUNTOOOO1111 de la RECTA")
+                            this.arrastrando_punto = true;
+                            this.componente_arrastrado = {
+                                nombre: figura.nombre,
+                                componente: "PUNTO1"
+                            }
+                        }
+
+                        if(col_punt_comp2 &&
+                            eventoLienzoFigura.mouse_click_down && validar_p2){
+                            this.agregarAristaPintado(figura.nombre, "PUNTO2",
+                                this.indice_seleccion_pintado)
+                        }
+
+                        if(col_punt_comp2 &&
+                            eventoLienzoFigura.mouse_click_down && validar_p2===false && !this.arrastrando_punto){
+                            console.log("ARRASTRANDO EL PUNTOOOO2222 de la RECTA")
+                            this.arrastrando_punto = true;
+                            this.componente_arrastrado = {
+                                nombre: figura.nombre,
+                                componente: "PUNTO2"
+                            }
+                        }
                     }
+                }else{
+                    if(eventoLienzoFigura.mouse_click_up){
+                        if(true)//(this.componente_arrastrado.nombre !== figura.nombre)
+                        {
+                            //console.log(this.puntero, this.rect_figura_)
+                            if(col_punt_comp1){
+                                const indice_arista = this.getIndiceComponente(this.indice_seleccion_pintado,
+                                    this.componente_arrastrado.nombre,
+                                    this.componente_arrastrado.componente)
+                                this.agregarAristaPintado(figura.nombre, "PUNTO1",
+                                    this.indice_seleccion_pintado, indice_arista+1)
+                                break;
+                            }
 
-
-                    if(col_punt_comp2 &&
-                        eventoLienzoFigura.mouse_click_down && validar_p2){
-                        console.log("Colision recta P2")
-                        this.agregarAristaPintado(figura.nombre, "PUNTO2",
-                            this.indice_seleccion_pintado)
+                            if(col_punt_comp2){
+                                const indice_arista = this.getIndiceComponente(this.indice_seleccion_pintado,
+                                    this.componente_arrastrado.nombre,
+                                    this.componente_arrastrado.componente)
+                                this.agregarAristaPintado(figura.nombre, "PUNTO2",
+                                    this.indice_seleccion_pintado, indice_arista+1)
+                                break;
+                            }
+                            //const pintado = this.grupo_copia.lista_pintado[this.indice_seleccion_pintado]
+                            //console.log(pintado)
+                        }
                     }
                 }
-
 
             }
 
