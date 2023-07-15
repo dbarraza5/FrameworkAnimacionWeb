@@ -33,13 +33,19 @@ function PintadoGrupo(props){
     }
 
     const agregar_pintura=()=>{
-
         if(gestion_pintado.grupo_copia !== null){
             gestion_pintado.grupo_copia.lista_pintado.push({
                 color: "#000000",
                 visible: true,
                 elementos: []
             })
+            setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+        }
+    }
+
+    const eliminar_pintura=(indice)=>{
+        if(gestion_pintado.grupo_copia !== null){
+            gestion_pintado.eliminarPintura(indice)
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
         }
     }
@@ -151,7 +157,8 @@ function PintadoGrupo(props){
                                 </div>
 
                                 <div className="btn-group" role="group" aria-label="Basic outlined example">
-                                    <button type="button" className="btn btn-outline-primary"><i
+                                    <button type="button" className="btn btn-outline-primary"
+                                            onClick={()=>eliminar_pintura(index)}><i
                                         className="bi bi-eraser"></i></button>
                                 </div>
                             </div>

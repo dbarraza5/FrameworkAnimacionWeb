@@ -100,8 +100,6 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
         //console.log(componente_g)
 
         if (figura.tipo_figura === "RECTA") {
-
-
             let validar_p1 = false, validar_p2 = false;
             if(componente_g === null){
                 validar_p1= validar_p2= true
@@ -131,8 +129,6 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
         }
 
         if (figura.tipo_figura === "PUNTO") {
-
-
             let validar_punto = false;
             if(componente_g === null){
                 validar_punto=  true

@@ -105,6 +105,10 @@ class GestionPintado {
         }
     }
 
+    eliminarPintura(indice){
+        this.grupo_copia.lista_pintado = this.grupo_copia.lista_pintado.filter((p, index)=>indice !==index)
+    }
+
     getPintadoGrupo(indice){
         return this.grupo_copia.lista_pintado[indice]
     }
