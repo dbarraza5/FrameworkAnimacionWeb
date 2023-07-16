@@ -23,6 +23,8 @@ class GestionPintado {
     }
 
     relleno_pintura = false;
+    //aplicar todas las pinturas
+    pintar_todo = false
 
     mover_grupo = false;
     x_inicial = 0;

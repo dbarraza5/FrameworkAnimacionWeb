@@ -86,10 +86,18 @@ function imprimirListaGrupos(ctx, lista_grupo_root, id_grupo_selec, id_figura_se
 function imprimirGrupoPintado(ctx, gestion_pintado){
     const grupo = gestion_pintado.grupo_copia
 
-    if(gestion_pintado.indice_seleccion_pintado>-1){
-        const pintura = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado]
-        pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+    if(gestion_pintado.pintar_todo){
+        for(let i = 0; i<grupo.lista_pintado.length; i++){
+            const pintura = grupo.lista_pintado[i];
+            pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+        }
+    }else{
+        if(gestion_pintado.indice_seleccion_pintado>-1){
+            const pintura = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado]
+            pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+        }
     }
+
 
     for (let j = 0; j < grupo.lista_figuras.length; j++) {
         const figura = grupo.lista_figuras[j];
@@ -195,7 +203,7 @@ function pintarDimensionGrupo(ctx, grupo_, pintura, relleno=false){
     const elementos = pintura.elementos
     const lista_puntos = obtenerPuntosContorno(grupo_, elementos);
     //console.log(lista_puntos)
-
+    ctx.beginPath();
     if(relleno){
         ctx.strokeStyle = 'black';
         ctx.fillStyle = pintura.color; // Color de relleno (rojo semitransparente en este caso)
@@ -221,13 +229,13 @@ function pintarDimensionGrupo(ctx, grupo_, pintura, relleno=false){
 
     }
     if(relleno){
-        ctx.closePath();
         ctx.stroke();
         if(lista_puntos.length>2){
             const p1 = lista_puntos[0];
             ctx.lineTo(p1.x, p1.y);
             ctx.fill();
         }
+        ctx.closePath();
     }
 }
 

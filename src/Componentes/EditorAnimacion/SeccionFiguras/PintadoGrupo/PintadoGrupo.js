@@ -64,6 +64,11 @@ function PintadoGrupo(props){
         gestion_pintado.relleno_pintura = event.target.checked
     };
 
+    const pintar_todo=(event)=>{
+        console.log(event.target.checked)
+        gestion_pintado.pintar_todo= event.target.checked
+    };
+
     const cambiarColor=(indice, color)=>{
         const pintura = gestion_pintado.getPintadoGrupo(parseInt(indice))
         pintura.color = color;
@@ -79,7 +84,7 @@ function PintadoGrupo(props){
         <br/>
         <SeleccionGrupo lista_grupos={lista_grupos} setNombreGrupo={cambiar_grupo} nombre_grupo={nombre_grupo}/>
         <div className="row">
-            <div className="col-4">
+            <div className="col-3">
                 <div className="btn-group" role="group" aria-label="Basic example">
                     <button type="button" className="btn btn-primary" onClick={agregar_pintura}>
                         Agregar
@@ -87,7 +92,16 @@ function PintadoGrupo(props){
                 </div>
             </div>
 
-            <div className="col-4">
+            <div className="col-3">
+                <div className="form-check form-switch">
+                    <input className="form-check-input" onChange={pintar_todo} type="checkbox" id="cambio-visibilidad" />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                        pintar todo
+                    </label>
+                </div>
+            </div>
+
+            <div className="col-3">
                 <div className="form-check form-switch">
                     <input className="form-check-input" onChange={rellenarPintura} type="checkbox" id="flexSwitchCheckDefault" />
                     <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
@@ -96,7 +110,7 @@ function PintadoGrupo(props){
                 </div>
             </div>
 
-            <div className="col-4">
+            <div className="col-3">
                 <div className="d-flex">
                     <button id="zoomInBtn" className="btn btn-primary me-2" onClick={()=>zoomGrupoSeleccionado(escalaZoom)}>
                         <i className="bi bi-plus"></i>
@@ -155,7 +169,6 @@ function PintadoGrupo(props){
                                         </label>
                                     </div>
                                 </div>
-
                                 <div className="btn-group" role="group" aria-label="Basic outlined example">
                                     <button type="button" className="btn btn-outline-primary"
                                             onClick={()=>eliminar_pintura(index)}><i
