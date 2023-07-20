@@ -78,6 +78,11 @@ function PintadoGrupo(props){
         console.log("color: ", color)
     }
 
+    const aplicaCambios=()=>{
+        console.log("aplicando cambiossss")
+        gestion_pintado.aplicarCambioGrupo()
+    }
+
     //const grupo = props.animacion.getGrupo(nombre_grupo);
     //const lista_pintado = grupo === null? []: grupo.lista_pintado;
     return (<>
@@ -99,9 +104,6 @@ function PintadoGrupo(props){
                         pintar todo
                     </label>
                 </div>
-            </div>
-
-            <div className="col-3">
                 <div className="form-check form-switch">
                     <input className="form-check-input" onChange={rellenarPintura} type="checkbox" id="flexSwitchCheckDefault" />
                     <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
@@ -118,7 +120,15 @@ function PintadoGrupo(props){
                     <button id="zoomOutBtn" className="btn btn-primary me-2" onClick={()=>zoomGrupoSeleccionado(escalaZoom*-1)}>
                         <i className="bi bi-dash"></i>
                     </button>
-                    <input id="zoomValue" className="form-control form-control-sm" type="number" value={porcentaje_zoom} readOnly />
+                    {/*<input id="zoomValue" className="form-control form-control-sm" type="number" value={porcentaje_zoom} readOnly />*/}
+                </div>
+            </div>
+
+            <div className="col-3">
+                <div className="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" className="btn btn-primary" onClick={aplicaCambios}>
+                        Aplicar
+                    </button>
                 </div>
             </div>
         </div>

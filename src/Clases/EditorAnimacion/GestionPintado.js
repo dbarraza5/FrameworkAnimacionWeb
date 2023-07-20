@@ -65,6 +65,10 @@ class GestionPintado {
             centro_grupo.centro_y)
     }
 
+    aplicarCambioGrupo(){
+        this.grupo.lista_pintado = [...this.grupo_copia.lista_pintado]
+    }
+
     figuraSeleccionada(nombre_figura, indice){
         if(this.grupo_copia.lista_pintado.length>indice && indice>-1){
             //console.log("console.log(this.grupo_copia.lista_pintado)")
