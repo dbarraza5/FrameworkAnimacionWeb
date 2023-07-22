@@ -73,7 +73,7 @@ function EditorAnimacion(props) {
         const raw_animacion = JSON.stringify(animacion.edicion.grupos_figuras);
         dispatch(actualizarBackup(raw_animacion))
     }
-    gestionLienzo.funcion_editar_lienzo = editar_lienzo;
+    gestionLienzo.setFuncionEditarLienzo(editar_lienzo);
 
     const obtenerAnimacion=async ()=>{
         const token = datos_usuario.token

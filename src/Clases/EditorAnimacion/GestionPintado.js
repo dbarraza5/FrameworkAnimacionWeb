@@ -39,6 +39,10 @@ class GestionPintado {
     //seleccion de componente para borrar
     list_comp_select = [];
     act_select_comp = false;
+
+    //funcion del backup
+    funcion_editar_lienzo = null;
+
     constructor() {
     }
 

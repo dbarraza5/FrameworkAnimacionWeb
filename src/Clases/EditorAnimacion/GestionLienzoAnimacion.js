@@ -165,6 +165,11 @@ class GestionLienzoAnimacion {
         this.animacion_ = animacion_
     }
 
+    setFuncionEditarLienzo(funcion){
+        this.funcion_editar_lienzo = funcion
+        this.gestion_pintado.funcion_editar_lienzo = funcion
+    }
+
     setGrupoFigurasCurrent(grupos_){
         this.act_grupos_concurrente =true;
         this.grupos_figuras_concurrent = grupos_;
