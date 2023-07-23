@@ -27,8 +27,11 @@ class GestionPintado {
     pintar_todo = false
 
     mover_grupo = false;
-    x_inicial = 0;
-    y_inicial = 0;
+    x_inicial_mouse = 0;
+    y_inicial_mouse = 0;
+    x_inicial_group = 0;
+    y_inicial_group = 0;
+
     escalaZoom = 0.2
 
     arrastrando_punto =false;
@@ -49,6 +52,8 @@ class GestionPintado {
     inicializarGrupo(grupo_) {
         this.grupo = grupo_;
         this.grupo_copia = JSON.parse(JSON.stringify(grupo_))
+        this.grupo_copia.cx_solid = 0;
+        this.grupo_copia.cy_solid = 0;
         let centro_grupo = OperacionesGrupo.calcularCentroGruposSeleccionados([this.grupo_copia])
         const max_medida = centro_grupo.alto>centro_grupo.ancho? centro_grupo.alto : centro_grupo.ancho;
         const porcentaje = (600 -max_medida)/600
@@ -143,17 +148,10 @@ class GestionPintado {
                 const clave_comp = this.list_comp_select[i];
                 const comp_ = clave_comp.split("|")
                 const indice = this.getIndiceComponente(this.indice_seleccion_pintado, comp_[0], comp_[1])
-                console.log(comp_[0], comp_[1])
-                console.log(indice)
+
                 if(indice>=0){
-
                     const pintado = this.grupo_copia.lista_pintado[this.indice_seleccion_pintado]
-                    console.log(pintado)
                     pintado.elementos = pintado.elementos.filter((e, index)=>index!==indice)
-                    console.log("ELIMINANDO []=>: ",indice)
-                    console.log(pintado)
-                    //.splice(indice, 1)
-
                 }
             }
             this.list_comp_select = []
@@ -161,7 +159,6 @@ class GestionPintado {
 
         this.act_select_comp = eventoLienzoFigura.stack_event_teclado.includes("KeyS")// && !this.act_select_comp;
         //console.log(eventoLienzoFigura.stack_event_teclado)
-
 
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
@@ -330,13 +327,15 @@ class GestionPintado {
             console.log("ARRASTRAR CON SCROLL!!!")
             if(!this.mover_grupo){
                 this.mover_grupo = true;
-                this.x_inicial=eventoLienzoFigura.mouse_x;
-                this.y_inicial=eventoLienzoFigura.mouse_y;
+                this.x_inicial_mouse=eventoLienzoFigura.mouse_x;
+                this.y_inicial_mouse=eventoLienzoFigura.mouse_y;
+                this.x_inicial_group = this.grupo_copia.cx_solid;
+                this.y_inicial_group = this.grupo_copia.cy_solid;
             }
-            const diff_x = eventoLienzoFigura.mouse_x - this.x_inicial;
-            const diff_y = eventoLienzoFigura.mouse_y - this.y_inicial;
-            this.grupo_copia.cx_solid = diff_x;
-            this.grupo_copia.cy_solid = diff_y;
+            const diff_x = eventoLienzoFigura.mouse_x - this.x_inicial_mouse;
+            const diff_y = eventoLienzoFigura.mouse_y - this.y_inicial_mouse;
+            this.grupo_copia.cx_solid = this.x_inicial_group+diff_x;
+            this.grupo_copia.cy_solid = this.y_inicial_group+diff_y;
             console.log(diff_x)
 
         }else{

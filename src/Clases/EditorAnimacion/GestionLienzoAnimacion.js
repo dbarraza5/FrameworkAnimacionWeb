@@ -901,7 +901,6 @@ class GestionLienzoAnimacion {
 
         if(espacio_trabajo_val){
             if (this.seleccion_figuras) {
-                //console.log(this.seleccion_figuras)
                 dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
                     this.puntero_seleccion.w, this.puntero_seleccion.h)
             }
