@@ -890,9 +890,16 @@ class GestionLienzoAnimacion {
         this.animacion_.procesarPosicionFinalFiguras()
         this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
-        if(TRABAJO_EDICION_FIGURAS.includes(this.categoria_trabajo)){
+        const espacio_trabajo_val = TRABAJO_EDICION_FIGURAS.includes(this.categoria_trabajo);
+        const imprimir_lienzo_completo = this.categoria_trabajo === TRABAJO_NONE
+            || espacio_trabajo_val;
+
+        if(imprimir_lienzo_completo){
             imprimirListaGrupos(ctx, lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
                 this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
+        }
+
+        if(espacio_trabajo_val){
             if (this.seleccion_figuras) {
                 //console.log(this.seleccion_figuras)
                 dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
