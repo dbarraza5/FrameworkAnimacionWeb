@@ -71,6 +71,7 @@ class GestionPintado {
 
     aplicarCambioGrupo(){
         this.grupo.lista_pintado = [...this.grupo_copia.lista_pintado]
+        this.funcion_editar_lienzo()
     }
 
     figuraSeleccionada(nombre_figura, indice){
