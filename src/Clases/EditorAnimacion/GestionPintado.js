@@ -76,6 +76,12 @@ class GestionPintado {
             centro_grupo.centro_y)
     }
 
+    zoomMouseGrupo(porcentaje, x_mouse, y_mouse){
+        const grupo_aux = JSON.parse(JSON.stringify(this.grupo_copia))
+        this.inflar_grupo(this.grupo_copia, grupo_aux, porcentaje, x_mouse,
+            y_mouse)
+    }
+
     aplicarCambioGrupo(){
         this.grupo.lista_pintado = [...this.grupo_copia.lista_pintado]
         this.funcion_editar_lienzo()
@@ -357,9 +363,11 @@ class GestionPintado {
         }
         if(eventoLienzoFigura.mouse_delta_scroll !==0){
             if(eventoLienzoFigura.mouse_delta_scroll<0){
-                this.zoomGrupo(this.escalaZoom)
+                this.zoomMouseGrupo(this.escalaZoom, eventoLienzoFigura.mouse_x,
+                    eventoLienzoFigura.mouse_y)
             }else{
-                this.zoomGrupo(this.escalaZoom*-1)
+                this.zoomMouseGrupo(this.escalaZoom*-1, eventoLienzoFigura.mouse_x,
+                    eventoLienzoFigura.mouse_y)
             }
         }
     }
