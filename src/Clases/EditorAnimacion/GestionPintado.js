@@ -32,6 +32,9 @@ class GestionPintado {
     x_inicial_group = 0;
     y_inicial_group = 0;
 
+    x_diff_grupo = 0;
+    y_diff_grupo = 0;
+
     escalaZoom = 0.2
 
     arrastrando_punto =false;
@@ -357,17 +360,30 @@ class GestionPintado {
             this.grupo_copia.cx_solid = this.x_inicial_group+diff_x;
             this.grupo_copia.cy_solid = this.y_inicial_group+diff_y;
             console.log(diff_x)
+            const centro_grupo = OperacionesGrupo.calcularCentroGruposSeleccionados([this.grupo_copia])
+            this.x_diff_grupo = centro_grupo.centro_x-300;//diff_x;
+            this.y_diff_grupo = centro_grupo.centro_y-300;//diff_y;
+            console.log("=============================")
+            console.log(this.x_diff_grupo )
+            console.log(this.y_diff_grupo )
+            console.log("=============================")
+
 
         }else{
             this.mover_grupo= false;
         }
         if(eventoLienzoFigura.mouse_delta_scroll !==0){
+            /*
+            casi resuelto lo que pasa es que cuando se mueve varias veces se hecha perder porque no sabe cuanto se movio
+            desde el inicio, asi que es mejor calcular el centro con respecto al origen 0,0
+            * */
+            const centro_grupo = OperacionesGrupo.calcularCentroGruposSeleccionados([this.grupo_copia])
+            const x_delta = eventoLienzoFigura.mouse_x-this.x_diff_grupo//*2-this.x_inicial_mouse;
+            const y_delta = eventoLienzoFigura.mouse_y-this.y_diff_grupo//*2 -this.y_inicial_mouse;
             if(eventoLienzoFigura.mouse_delta_scroll<0){
-                this.zoomMouseGrupo(this.escalaZoom, eventoLienzoFigura.mouse_x,
-                    eventoLienzoFigura.mouse_y)
+                this.zoomMouseGrupo(this.escalaZoom, x_delta, y_delta)
             }else{
-                this.zoomMouseGrupo(this.escalaZoom*-1, eventoLienzoFigura.mouse_x,
-                    eventoLienzoFigura.mouse_y)
+                this.zoomMouseGrupo(this.escalaZoom*-1, x_delta, y_delta)
             }
         }
     }

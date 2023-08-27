@@ -65,7 +65,9 @@ falta el mover los atributos usando el mouse.
     1.- un boton para aumentar el porcenjaje de zoom
     2.- que se pueda desplazar el lienzo en caso de que el zoom este muy cerca
     3.- una forma de borrar las alistas agregadas ya sea por el lienzo o por una tabla
-    4.- boton con el que se pueda aplicar los cambios
+    4.- boton con el que se pueda aplicar los cambios.
+    5.- crear un area de seleccion de zoom para mayor control.
+    6.- crear otra forma de arrastrar los puntos cuando estos no son visibles
 ## Atajos de teclado
 
 | Atajo | Descripcion |
