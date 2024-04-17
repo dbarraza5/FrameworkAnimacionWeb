@@ -78,4 +78,17 @@ falta el mover los atributos usando el mouse.
 | Q+R | Rotar lista de figuras de un grupo. |
 
 
-pendientes
+### pendientes
+
+    - no se actualiza las lineas marcadas de los contorno 
+    cuando se selecciona un elemento de las figuras o el cambio del centrado
+    - deberia haber un editar solo para un grupo y poder hacerle zoom para modificarlo
+    -
+    
+    
+### intrucciones de pintado
+
+1.- cuando se selecciona un punto se agrega a la lista de puntos de pintado  
+2.- cuando se selecciona y se mantiene apretado y se arrastra hasta otro punto no seleccionado
+este punto nuevo se indexa entre el punto seleccionado y el que sigue.  
+3.- aprete s mantenido para seleccionar punto que quiere borrar con la tecla DEL

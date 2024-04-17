@@ -11,7 +11,6 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
-    "bootstrap-treeview": "^1.2.0",
     "canvas": "^2.9.1",
     "jquery": "2.1.1",
     "react": "^18.1.0",
@@ -48,5 +47,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000/"
+  "proxy": "http://docker_back_frame:5000/"
 }
