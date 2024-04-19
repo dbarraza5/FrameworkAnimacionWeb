@@ -47,5 +47,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://docker_back_frame:5000/"
+  "proxy": "http://backend_container:5000/"
 }
