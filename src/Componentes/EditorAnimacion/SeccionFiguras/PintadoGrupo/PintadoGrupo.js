@@ -37,7 +37,14 @@ function PintadoGrupo(props){
             gestion_pintado.grupo_copia.lista_pintado.push({
                 color: "#000000",
                 visible: true,
-                elementos: []
+                elementos: [[
+                    {
+                        "nombre": "frec0",
+                        "componente": "PUNTO2"
+                    }
+                ],
+                    []
+                ]
             })
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
         }
@@ -92,7 +99,7 @@ function PintadoGrupo(props){
             <div className="col-3">
                 <div className="btn-group" role="group" aria-label="Basic example">
                     <button type="button" className="btn btn-primary" onClick={agregar_pintura}>
-                        Agregar
+                        Agregar1
                     </button>
                 </div>
             </div>
@@ -162,27 +169,67 @@ function PintadoGrupo(props){
                             data-bs-parent="#accordionExample"
                         >
                             <div className="accordion-body d-flex">
-                                <div className="input-group input-group-sm mb-3">
-                                    <label htmlFor="exampleFormControlInput1" className="input-group-text">Color</label>
-                                    <input type="color" className="form-control" value={item.color}
-                                           onChange={(e)=>cambiarColor(index, e.target.value)}
-                                    />
-                                </div>
-                                <div className="input-group input-group-sm mb-3">
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" value=""
-                                               id="flexCheckDefault" {...checked}
-                                               onChange={(e)=>console.log("dsfdsfsdf")}
-                                        />
-                                        <label className="form-check-label" htmlFor="flexCheckDefault">
-                                            Visible
-                                        </label>
+                                <div className="row w-100">
+                                    <div className="col">
+                                        <div className="row w-100">
+                                            <div className="col">
+                                                <div className="input-group input-group-sm mb-3">
+                                                    <label htmlFor="exampleFormControlInput1" className="input-group-text">Color</label>
+                                                    <input type="color" className="form-control" value={item.color}
+                                                           onChange={(e)=>cambiarColor(index, e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col">
+                                                <div className="input-group input-group-sm mb-3">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="checkbox" value=""
+                                                               id="flexCheckDefault" {...checked}
+                                                               onChange={(e)=>console.log("dsfdsfsdf")}
+                                                        />
+                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                            Visible
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col">
+                                                <div className="input-group input-group-sm mb-3">
+                                                    <div className="btn-group" role="group" aria-label="Basic outlined example">
+                                                        <button type="button" className="btn btn-outline-primary btn-sm"
+                                                                onClick={()=>eliminar_pintura(index)}><i
+                                                            className="bi bi-eraser"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div className="row w-100">
+                                            <div className="col">
+                                                <table className="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">item</th>
+                                                        <th scope="col">operaciones</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {item.elementos.map((grupo_p, index_gr_p)=>{
+                                                        return(<tr>
+                                                            <th scope="row">{index_gr_p+1}</th>
+                                                            <td>
+                                                                <input className="form-check-input" type="radio"
+                                                                       name={`radio-${nombre_grupo}-pintura-${index}`} id={`radio-${nombre_grupo}-pintura-${index}-index-${index_gr_p}`}/>
+                                                            </td>
+                                                            <td>borrar</td>
+                                                        </tr>);
+                                                    })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="btn-group" role="group" aria-label="Basic outlined example">
-                                    <button type="button" className="btn btn-outline-primary"
-                                            onClick={()=>eliminar_pintura(index)}><i
-                                        className="bi bi-eraser"></i></button>
                                 </div>
                             </div>
                         </div>

@@ -200,43 +200,48 @@ function obtenerPuntosContorno(grupo_, elementos){
 }
 
 function pintarDimensionGrupo(ctx, grupo_, pintura, relleno=false){
-    const elementos = pintura.elementos
-    const lista_puntos = obtenerPuntosContorno(grupo_, elementos);
-    //console.log(lista_puntos)
-    ctx.beginPath();
-    if(relleno){
-        ctx.strokeStyle = 'black';
-        ctx.fillStyle = pintura.color; // Color de relleno (rojo semitransparente en este caso)
-        ctx.lineWidth = 2; // Grosor de la línea de contorno
-    }
+    const grupo_elementos = pintura.elementos
 
-
-    for (let i=0; i<lista_puntos.length-1; i++){
-        const p1 = lista_puntos[i]
-        const p2 = lista_puntos[i+1]
-
+    for (let i_elementos=0; i_elementos<grupo_elementos.length; i_elementos++){
+        const elementos = grupo_elementos[i_elementos];
+        const lista_puntos = obtenerPuntosContorno(grupo_, elementos);
+        //console.log(lista_puntos)
+        ctx.beginPath();
         if(relleno){
-            if (i === 0) {
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-            } else {
-                ctx.lineTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-            }
-        }else{
-            dibujar_linea_segmentada(ctx, "#39ff14", p1.x, p1.y, p2.x, p2.y)
+            ctx.strokeStyle = 'black';
+            ctx.fillStyle = pintura.color; // Color de relleno (rojo semitransparente en este caso)
+            ctx.lineWidth = 2; // Grosor de la línea de contorno
         }
 
-    }
-    if(relleno){
-        ctx.stroke();
-        if(lista_puntos.length>2){
-            const p1 = lista_puntos[0];
-            ctx.lineTo(p1.x, p1.y);
-            ctx.fill();
+
+        for (let i=0; i<lista_puntos.length-1; i++){
+            const p1 = lista_puntos[i]
+            const p2 = lista_puntos[i+1]
+
+            if(relleno){
+                if (i === 0) {
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                } else {
+                    ctx.lineTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                }
+            }else{
+                dibujar_linea_segmentada(ctx, "#39ff14", p1.x, p1.y, p2.x, p2.y)
+            }
         }
-        ctx.closePath();
+        if(relleno){
+            ctx.stroke();
+            if(lista_puntos.length>2){
+                const p1 = lista_puntos[0];
+                ctx.lineTo(p1.x, p1.y);
+                ctx.fill();
+            }
+            ctx.closePath();
+        }
     }
+
+
 }
 
 function imprimir_recta(ctx, figura, grupo, color_, p1_recta, p2_recta, p_centro,

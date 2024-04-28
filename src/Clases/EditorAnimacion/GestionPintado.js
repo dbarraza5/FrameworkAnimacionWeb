@@ -7,6 +7,7 @@ class GestionPintado {
     grupo_copia = null;
     elementos_pintar = []//{nombre: f1, comp: punto1}
     indice_seleccion_pintado = -1;
+    indice_seleccion_grupo_pintado = -1;
 
     rect_figura_ = {
         x: 0,
