@@ -91,11 +91,11 @@ class GestionPintado {
         this.funcion_editar_lienzo()
     }
 
-    figuraSeleccionada(nombre_figura, indice){
+    figuraSeleccionada(nombre_figura, indice, indice_grupo_pintura){
         if(this.grupo_copia.lista_pintado.length>indice && indice>-1){
             //console.log("console.log(this.grupo_copia.lista_pintado)")
             //console.log(this.grupo_copia.lista_pintado)
-            const elementos = (this.grupo_copia.lista_pintado[indice]).elementos;
+            const elementos = (this.grupo_copia.lista_pintado[indice]).elementos[indice_grupo_pintura];
             //console.log(elementos, indice)
             const filtro_elemento = elementos.filter(e=>e.nombre === nombre_figura)
             if(filtro_elemento.length>0){
@@ -105,8 +105,8 @@ class GestionPintado {
         return null;
     }
 
-    agregarAristaPintado(nombre_figura, nombre_componente, indice_pintado, indice = -1){
-        if(this.getIndiceComponente(this.indice_seleccion_pintado, nombre_figura, nombre_componente)===-1){
+    agregarAristaPintado(nombre_figura, nombre_componente, indice_pintado,indice_grupo_pintura, indice = -1){
+        if(this.getIndiceComponente(indice_pintado,indice_grupo_pintura, nombre_figura, nombre_componente)===-1){
             console.log("PINTARRRR: ", indice_pintado)
             const pintar = this.grupo_copia.lista_pintado[indice_pintado]
             console.log(this.grupo_copia.lista_pintado)
@@ -115,9 +115,9 @@ class GestionPintado {
                 componente: nombre_componente
             }
             if(indice<0){
-                pintar.elementos.push(componente)
+                pintar.elementos[indice_grupo_pintura].push(componente)
             }else{
-                pintar.elementos.splice(indice, 0, componente)
+                pintar.elementos[indice_grupo_pintura].splice(indice, 0, componente)
             }
             this.ultimo_componente_agregado = {...componente, indice_pintado: this.indice_seleccion_pintado}
         }
@@ -125,7 +125,7 @@ class GestionPintado {
 
     eliminarUltimoComponente(){
         if(this.indice_seleccion_pintado === this.ultimo_componente_agregado.indice_pintado){
-            const indice = this.getIndiceComponente(this.indice_seleccion_pintado,
+            const indice = this.getIndiceComponente(this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado,
                 this.ultimo_componente_agregado.nombre,
                 this.ultimo_componente_agregado.componente)
             if(indice>=0)
@@ -141,8 +141,9 @@ class GestionPintado {
         return this.grupo_copia.lista_pintado[indice]
     }
 
-    getIndiceComponente(indice_pintado, nombre_figura, componente){
-        const elementos = (this.grupo_copia.lista_pintado[indice_pintado]).elementos;
+    getIndiceComponente(indice_pintado, indice_grupo_pintado, nombre_figura, componente){
+        const elementos = (this.grupo_copia.lista_pintado[indice_pintado]).elementos[indice_grupo_pintado];
+        if(elementos)
         for(let i=0; i<elementos.length; i++){
             const elemento = elementos[i];
             if(elemento.nombre === nombre_figura && componente === elemento.componente){
@@ -159,11 +160,12 @@ class GestionPintado {
             for (let i=0; i<this.list_comp_select.length; i++){
                 const clave_comp = this.list_comp_select[i];
                 const comp_ = clave_comp.split("|")
-                const indice = this.getIndiceComponente(this.indice_seleccion_pintado, comp_[0], comp_[1])
+                const indice = this.getIndiceComponente(this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado
+                    , comp_[0], comp_[1])
 
                 if(indice>=0){
                     const pintado = this.grupo_copia.lista_pintado[this.indice_seleccion_pintado]
-                    pintado.elementos = pintado.elementos.filter((e, index)=>index!==indice)
+                    pintado.elementos[this.indice_seleccion_grupo_pintado] = pintado.elementos[this.indice_seleccion_grupo_pintado].filter((e, index)=>index!==indice)
                 }
             }
             this.list_comp_select = []
@@ -175,11 +177,12 @@ class GestionPintado {
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
         //console.log("SCROLL: ", eventoLienzoFigura.mouse_delta_scroll)
+        if(this.indice_seleccion_pintado !== -1 && this.indice_seleccion_grupo_pintado !== -1)
         if(!this.seleccion_comp_agregar){
             for (let j = 0; j < this.grupo_copia.lista_figuras.length; j++){
                 const figura = this.grupo_copia.lista_figuras[j];
                 const componente_g = this.figuraSeleccionada(figura.nombre,
-                    this.indice_seleccion_pintado);
+                    this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado);
 
                 if (figura.tipo_figura === "RECTA"){
                     let validar_p1 = false, validar_p2 = false;
@@ -219,7 +222,7 @@ class GestionPintado {
                             if(col_punt_comp1 &&
                                 eventoLienzoFigura.mouse_click_down && validar_p1){
                                 this.agregarAristaPintado(figura.nombre, "PUNTO1",
-                                    this.indice_seleccion_pintado)
+                                    this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado)
                                 this.seleccion_comp_agregar = true;
                                 break;
                             }
@@ -238,7 +241,7 @@ class GestionPintado {
                             if(col_punt_comp2 &&
                                 eventoLienzoFigura.mouse_click_down && validar_p2){
                                 this.agregarAristaPintado(figura.nombre, "PUNTO2",
-                                    this.indice_seleccion_pintado)
+                                    this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado)
                                 this.seleccion_comp_agregar = true;
                                 break;
                             }
@@ -261,19 +264,21 @@ class GestionPintado {
                                 //console.log(this.puntero, this.rect_figura_)
                                 if(col_punt_comp1){
                                     const indice_arista = this.getIndiceComponente(this.indice_seleccion_pintado,
+                                        this.indice_seleccion_grupo_pintado,
                                         this.componente_arrastrado.nombre,
                                         this.componente_arrastrado.componente)
                                     this.agregarAristaPintado(figura.nombre, "PUNTO1",
-                                        this.indice_seleccion_pintado, indice_arista+1)
+                                        this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado,indice_arista+1)
                                     break;
                                 }
 
                                 if(col_punt_comp2){
                                     const indice_arista = this.getIndiceComponente(this.indice_seleccion_pintado,
+                                        this.indice_seleccion_grupo_pintado,
                                         this.componente_arrastrado.nombre,
                                         this.componente_arrastrado.componente)
                                     this.agregarAristaPintado(figura.nombre, "PUNTO2",
-                                        this.indice_seleccion_pintado, indice_arista+1)
+                                        this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado,indice_arista+1)
                                     break;
                                 }
                                 //const pintado = this.grupo_copia.lista_pintado[this.indice_seleccion_pintado]
@@ -308,7 +313,7 @@ class GestionPintado {
                             eventoLienzoFigura.mouse_click_down && validar_punto){
                             console.log("Colision CIRCULO CENTRO")
                             this.agregarAristaPintado(figura.nombre, "PUNTO_C",
-                                this.indice_seleccion_pintado)
+                                this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado)
                             this.seleccion_comp_agregar = true;
                             break;
                         }
@@ -328,10 +333,11 @@ class GestionPintado {
                                 //console.log(this.puntero, this.rect_figura_)
                                 if(col_punt_comp){
                                     const indice_arista = this.getIndiceComponente(this.indice_seleccion_pintado,
+                                        this.indice_seleccion_grupo_pintado,
                                         this.componente_arrastrado.nombre,
                                         this.componente_arrastrado.componente)
                                     this.agregarAristaPintado(figura.nombre, "PUNTO_C",
-                                        this.indice_seleccion_pintado, indice_arista+1)
+                                        this.indice_seleccion_pintado, this.indice_seleccion_grupo_pintado, indice_arista+1)
                                 }
                             }
                         }

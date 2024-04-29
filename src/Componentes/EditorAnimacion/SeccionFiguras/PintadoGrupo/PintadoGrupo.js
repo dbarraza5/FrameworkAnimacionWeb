@@ -62,6 +62,7 @@ function PintadoGrupo(props){
     const toggleAccordion = (index) => {
         setActiveIndex(index === activeIndex ? null : index);
         gestion_pintado.indice_seleccion_pintado = index;
+        gestion_pintado.indice_seleccion_grupo_pintado=0;
         setIndicePintado(index)
         console.log(index)
     };

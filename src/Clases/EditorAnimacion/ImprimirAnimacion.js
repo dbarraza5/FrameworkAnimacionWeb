@@ -98,70 +98,75 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
         }
     }
 
-
+    if(gestion_pintado.indice_seleccion_pintado !== -1)
     for (let j = 0; j < grupo.lista_figuras.length; j++) {
         const figura = grupo.lista_figuras[j];
         let seleccion = null;
         let color_figura = grupo.color;
-        const componente_g = gestion_pintado.figuraSeleccionada(figura.nombre,
-            gestion_pintado.indice_seleccion_pintado);
+
+
+        const pintura_ = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado];
+        //const grupo_pintura = pintura_[gestion_pintado.indice_seleccion_grupo_pintado];
+        for(let k=0; k<pintura_.elementos.length; k++ ){
+            const componente_g = gestion_pintado.figuraSeleccionada(figura.nombre,
+                gestion_pintado.indice_seleccion_pintado, k);
+
+
+            if (figura.tipo_figura === "RECTA") {
+                let validar_p1 = false, validar_p2 = false;
+                if(componente_g === null){
+                    validar_p1= validar_p2= true
+                }else{
+                    validar_p1 = !componente_g.includes("PUNTO1")
+                    validar_p2 = !componente_g.includes("PUNTO2")
+                }
+
+                const coor = getCoorRecta(figura, grupo)
+                const color_cr1 = validar_p1? "#FF0000" : "#008000";
+
+                dibujar_rectangulo(ctx, color_cr1, coor.x1-4, coor.y1-4, 9, 9, true);
+
+                const color_cr2 = validar_p2? "#FF0000" : "#008000";
+                dibujar_rectangulo(ctx, color_cr2, coor.x2-4, coor.y2-4, 9, 9, true);
+                imprimir_recta(ctx, figura, grupo, color_figura);
+                //console.log("dibujar_circulo");
+
+                if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO1")){
+                    dibujar_circulo(ctx, "#008000", coor.x1, coor.y1, 11, 11)
+                }
+
+                if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO2")){
+                    dibujar_circulo(ctx, "#008000", coor.x2, coor.y2, 11, 11)
+                }
+
+            }
+
+            if (figura.tipo_figura === "PUNTO") {
+                let validar_punto = false;
+                if(componente_g === null){
+                    validar_punto=  true
+                }else{
+                    validar_punto = !componente_g.includes("PUNTO_C")
+                }
+
+                const coor = getCoorPunto(figura, grupo)
+                const color_p = validar_punto? "#FF0000" : "#008000";
+
+                dibujar_rectangulo(ctx, color_p, coor.x-4, coor.y-4, 9, 9, true);
+                imprimir_punto(ctx, figura, grupo, color_figura);
+
+                if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO_C")){
+                    dibujar_circulo(ctx, "#008000", coor.x, coor.y, 11, 11)
+                }
+
+            }
+
+            if (figura.tipo_figura === "CIRCULO") {
+                imprimir_circulo(ctx, figura, grupo, color_figura);
+            }
+        }
         //console.log(componente_g)
-
-        if (figura.tipo_figura === "RECTA") {
-            let validar_p1 = false, validar_p2 = false;
-            if(componente_g === null){
-                validar_p1= validar_p2= true
-            }else{
-                validar_p1 = !componente_g.includes("PUNTO1")
-                validar_p2 = !componente_g.includes("PUNTO2")
-            }
-
-            const coor = getCoorRecta(figura, grupo)
-            const color_cr1 = validar_p1? "#FF0000" : "#008000";
-
-            dibujar_rectangulo(ctx, color_cr1, coor.x1-4, coor.y1-4, 9, 9, true);
-
-            const color_cr2 = validar_p2? "#FF0000" : "#008000";
-            dibujar_rectangulo(ctx, color_cr2, coor.x2-4, coor.y2-4, 9, 9, true);
-            imprimir_recta(ctx, figura, grupo, color_figura);
-            //console.log("dibujar_circulo");
-
-            if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO1")){
-                dibujar_circulo(ctx, "#008000", coor.x1, coor.y1, 11, 11)
-            }
-
-            if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO2")){
-                dibujar_circulo(ctx, "#008000", coor.x2, coor.y2, 11, 11)
-            }
-
-        }
-
-        if (figura.tipo_figura === "PUNTO") {
-            let validar_punto = false;
-            if(componente_g === null){
-                validar_punto=  true
-            }else{
-                validar_punto = !componente_g.includes("PUNTO_C")
-            }
-
-            const coor = getCoorPunto(figura, grupo)
-            const color_p = validar_punto? "#FF0000" : "#008000";
-
-            dibujar_rectangulo(ctx, color_p, coor.x-4, coor.y-4, 9, 9, true);
-            imprimir_punto(ctx, figura, grupo, color_figura);
-
-            if(gestion_pintado.list_comp_select.includes(figura.nombre+"|"+"PUNTO_C")){
-                dibujar_circulo(ctx, "#008000", coor.x, coor.y, 11, 11)
-            }
-
-        }
-
-        if (figura.tipo_figura === "CIRCULO") {
-            imprimir_circulo(ctx, figura, grupo, color_figura);
-        }
     }
-
-
 }
 
 function obtenerPuntosContorno(grupo_, elementos){
