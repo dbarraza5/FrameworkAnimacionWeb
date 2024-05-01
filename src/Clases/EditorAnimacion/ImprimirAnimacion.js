@@ -86,17 +86,20 @@ function imprimirListaGrupos(ctx, lista_grupo_root, id_grupo_selec, id_figura_se
 function imprimirGrupoPintado(ctx, gestion_pintado){
     const grupo = gestion_pintado.grupo_copia
 
-    if(gestion_pintado.pintar_todo){
-        for(let i = 0; i<grupo.lista_pintado.length; i++){
-            const pintura = grupo.lista_pintado[i];
-            pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
-        }
-    }else{
-        if(gestion_pintado.indice_seleccion_pintado>-1){
-            const pintura = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado]
-            pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+    if(gestion_pintado.indice_seleccion_pintado !== -1){
+        if(gestion_pintado.pintar_todo){
+            for(let i = 0; i<grupo.lista_pintado.length; i++){
+                const pintura = grupo.lista_pintado[i];
+                pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+            }
+        }else{
+            if(gestion_pintado.indice_seleccion_pintado>-1){
+                const pintura = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado]
+                pintarDimensionGrupo(ctx, grupo, pintura, gestion_pintado.relleno_pintura)
+            }
         }
     }
+
 
     if(gestion_pintado.indice_seleccion_pintado !== -1)
     for (let j = 0; j < grupo.lista_figuras.length; j++) {

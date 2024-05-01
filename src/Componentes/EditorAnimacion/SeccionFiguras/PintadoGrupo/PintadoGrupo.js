@@ -37,21 +37,22 @@ function PintadoGrupo(props){
             gestion_pintado.grupo_copia.lista_pintado.push({
                 color: "#000000",
                 visible: true,
-                elementos: [[
-                    {
-                        "nombre": "frec0",
-                        "componente": "PUNTO2"
-                    }
-                ],
+                elementos: [
+                    [],
                     []
                 ]
             })
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+            if(gestion_pintado.grupo_copia.lista_pintado.length ===1){
+                const index_aux = gestion_pintado.grupo_copia.lista_pintado.length-1;
+                gestion_pintado.indice_seleccion_pintado = index_aux;
+            }
         }
     }
 
     const eliminar_pintura=(indice)=>{
         if(gestion_pintado.grupo_copia !== null){
+            gestion_pintado.indice_seleccion_pintado = -1;
             gestion_pintado.eliminarPintura(indice)
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
         }
@@ -66,6 +67,11 @@ function PintadoGrupo(props){
         setIndicePintado(index)
         console.log(index)
     };
+
+    const seleccionIndiceGrupoPintado=(index_grupo_p)=>{
+        gestion_pintado.indice_seleccion_grupo_pintado=index_grupo_p;
+        console.log("seleccionIndiceGrupoPintado: "+index_grupo_p)
+    }
 
     const rellenarPintura=(event)=>{
         console.log(event.target.checked)
@@ -217,11 +223,14 @@ function PintadoGrupo(props){
                                                     </thead>
                                                     <tbody>
                                                     {item.elementos.map((grupo_p, index_gr_p)=>{
+                                                        const primero_radio_btn = index_gr_p === 0;
                                                         return(<tr>
                                                             <th scope="row">{index_gr_p+1}</th>
                                                             <td>
-                                                                <input className="form-check-input" type="radio"
-                                                                       name={`radio-${nombre_grupo}-pintura-${index}`} id={`radio-${nombre_grupo}-pintura-${index}-index-${index_gr_p}`}/>
+                                                                <input className="form-check-input" type="radio" onChange={(e)=>seleccionIndiceGrupoPintado(e.target.value)}
+                                                                       name={`radio-${nombre_grupo}-pintura-${index}`} id={`radio-${nombre_grupo}-pintura-${index}-index-${index_gr_p}`} value={index_gr_p}
+                                                                       checked={primero_radio_btn}
+                                                                />
                                                             </td>
                                                             <td>borrar</td>
                                                         </tr>);
