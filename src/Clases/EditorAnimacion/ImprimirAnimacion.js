@@ -110,26 +110,50 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
 
         const pintura_ = grupo.lista_pintado[gestion_pintado.indice_seleccion_pintado];
         //const grupo_pintura = pintura_[gestion_pintado.indice_seleccion_grupo_pintado];
+        let validar_p1 = null, validar_p2 = null;
+        let validar_punto = null;
         for(let k=0; k<pintura_.elementos.length; k++ ){
             const componente_g = gestion_pintado.figuraSeleccionada(figura.nombre,
                 gestion_pintado.indice_seleccion_pintado, k);
 
 
             if (figura.tipo_figura === "RECTA") {
-                let validar_p1 = false, validar_p2 = false;
-                if(componente_g === null){
-                    validar_p1= validar_p2= true
+                /*if(componente_g === null){
+                    validar_p1= true;
+                    validar_p2= true;
                 }else{
+                    if(validar_p1===true)
                     validar_p1 = !componente_g.includes("PUNTO1")
+                    if(validar_p2 === true)
                     validar_p2 = !componente_g.includes("PUNTO2")
+                }*/
+                if(validar_p1 == null && componente_g === null){
+                    validar_p1 = false;
+                }else
+                if(validar_p1 == null && componente_g !== null){
+                    validar_p1 = componente_g.includes("PUNTO1")
+                }else
+                if(validar_p1 === false && componente_g !== null){
+                    validar_p1 = componente_g.includes("PUNTO1")
+                }
+
+                if(validar_p2 == null && componente_g === null){
+                    validar_p2 = false;
+                }else
+                if(validar_p2 == null && componente_g !== null){
+                    validar_p2 = componente_g.includes("PUNTO2")
+                }else
+                if(validar_p2 === false && componente_g !== null){
+                    validar_p2= componente_g.includes("PUNTO2")
                 }
 
                 const coor = getCoorRecta(figura, grupo)
-                const color_cr1 = validar_p1? "#FF0000" : "#008000";
+
+                const color_cr1 = validar_p1? "#008000"  : "#ff0000";
 
                 dibujar_rectangulo(ctx, color_cr1, coor.x1-4, coor.y1-4, 9, 9, true);
 
-                const color_cr2 = validar_p2? "#FF0000" : "#008000";
+                const color_cr2 = validar_p2? "#008000"  : "#ff0000";
                 dibujar_rectangulo(ctx, color_cr2, coor.x2-4, coor.y2-4, 9, 9, true);
                 imprimir_recta(ctx, figura, grupo, color_figura);
                 //console.log("dibujar_circulo");
@@ -145,11 +169,22 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
             }
 
             if (figura.tipo_figura === "PUNTO") {
-                let validar_punto = false;
-                if(componente_g === null){
+
+                /*if(componente_g === null){
                     validar_punto=  true
                 }else{
+                    if(validar_punto === false)
                     validar_punto = !componente_g.includes("PUNTO_C")
+                }*/
+
+                if(validar_punto == null && componente_g === null){
+                    validar_punto = false;
+                }else
+                if(validar_punto == null && componente_g !== null){
+                    validar_punto = componente_g.includes("PUNTO_C")
+                }else
+                if(validar_punto === false && componente_g !== null){
+                    validar_punto= componente_g.includes("PUNTO_C")
                 }
 
                 const coor = getCoorPunto(figura, grupo)

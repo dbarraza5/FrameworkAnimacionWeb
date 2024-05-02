@@ -91,11 +91,11 @@ class GestionPintado {
         this.funcion_editar_lienzo()
     }
 
-    figuraSeleccionada(nombre_figura, indice, indice_grupo_pintura){
+    figuraSeleccionada(nombre_figura, indice, indice_grupo_pintura_aux){
         if(this.grupo_copia.lista_pintado.length>indice && indice>-1){
             //console.log("console.log(this.grupo_copia.lista_pintado)")
             //console.log(this.grupo_copia.lista_pintado)
-            const elementos = (this.grupo_copia.lista_pintado[indice]).elementos[indice_grupo_pintura];
+            const elementos = this.grupo_copia.lista_pintado[indice].elementos[indice_grupo_pintura_aux];
             //console.log(elementos, indice)
             const filtro_elemento = elementos.filter(e=>e.nombre === nombre_figura)
             if(filtro_elemento.length>0){

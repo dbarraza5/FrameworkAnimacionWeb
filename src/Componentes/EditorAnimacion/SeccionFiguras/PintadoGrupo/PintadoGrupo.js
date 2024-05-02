@@ -10,6 +10,7 @@ function PintadoGrupo(props){
     //lista_grupos = ["...", ...lista_grupos]
     const [nombre_grupo, setNombreGrupo] = useState("...");
     const [indice_pintura, setIndicePintado] = useState(0)
+    const [indice_grupo_pintura, setIndiceGrupoPintado] = useState(0)
 
     const grupo = props.animacion.getGrupo(nombre_grupo);
     const [lista_pintado, setListadoPintado] = useState(grupo === null? []: [...grupo.lista_pintado])
@@ -43,6 +44,7 @@ function PintadoGrupo(props){
                 ]
             })
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+            setIndiceGrupoPintado(0);
             if(gestion_pintado.grupo_copia.lista_pintado.length ===1){
                 const index_aux = gestion_pintado.grupo_copia.lista_pintado.length-1;
                 gestion_pintado.indice_seleccion_pintado = index_aux;
@@ -55,6 +57,7 @@ function PintadoGrupo(props){
             gestion_pintado.indice_seleccion_pintado = -1;
             gestion_pintado.eliminarPintura(indice)
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+            setIndiceGrupoPintado(0);
         }
     }
 
@@ -64,11 +67,13 @@ function PintadoGrupo(props){
         setActiveIndex(index === activeIndex ? null : index);
         gestion_pintado.indice_seleccion_pintado = index;
         gestion_pintado.indice_seleccion_grupo_pintado=0;
+        setIndiceGrupoPintado(0);
         setIndicePintado(index)
         console.log(index)
     };
 
     const seleccionIndiceGrupoPintado=(index_grupo_p)=>{
+        setIndiceGrupoPintado(index_grupo_p)
         gestion_pintado.indice_seleccion_grupo_pintado=index_grupo_p;
         console.log("seleccionIndiceGrupoPintado: "+index_grupo_p)
     }
@@ -223,11 +228,11 @@ function PintadoGrupo(props){
                                                     </thead>
                                                     <tbody>
                                                     {item.elementos.map((grupo_p, index_gr_p)=>{
-                                                        const primero_radio_btn = index_gr_p === 0;
+                                                        const primero_radio_btn = indice_grupo_pintura === index_gr_p;
                                                         return(<tr>
                                                             <th scope="row">{index_gr_p+1}</th>
                                                             <td>
-                                                                <input className="form-check-input" type="radio" onChange={(e)=>seleccionIndiceGrupoPintado(e.target.value)}
+                                                                <input className="form-check-input" type="radio" onClick={(e)=>seleccionIndiceGrupoPintado(index_gr_p)}
                                                                        name={`radio-${nombre_grupo}-pintura-${index}`} id={`radio-${nombre_grupo}-pintura-${index}-index-${index_gr_p}`} value={index_gr_p}
                                                                        checked={primero_radio_btn}
                                                                 />
