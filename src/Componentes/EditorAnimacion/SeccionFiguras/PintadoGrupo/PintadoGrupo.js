@@ -39,7 +39,6 @@ function PintadoGrupo(props){
                 color: "#000000",
                 visible: true,
                 elementos: [
-                    [],
                     []
                 ]
             })
@@ -59,6 +58,26 @@ function PintadoGrupo(props){
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
             setIndiceGrupoPintado(0);
         }
+    }
+
+    const agregar_grupo_pintado =(indece_pintura_, indice_posicion)=>{
+        console.log("agregar_grupo_pintado: "+indece_pintura_+" | "+indice_posicion);
+        gestion_pintado.grupo_copia.lista_pintado[indece_pintura_].elementos.splice(indice_posicion, 0, [])
+        //console.log(gestion_pintado.grupo_copia);
+        setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+    }
+
+    const vaciar_grupo_pintado =(indece_pintura_, indice_grupo_pintura_)=>{
+        gestion_pintado.grupo_copia.lista_pintado[indece_pintura_].elementos[indice_grupo_pintura_] = [];
+        //gestion_pintado.indice_seleccion_grupo_pintado=0;
+        //setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+    }
+
+    const eliminar_grupo_pintado =(indece_pintura_, indice_grupo_pintura_)=>{
+        gestion_pintado.grupo_copia.lista_pintado[indece_pintura_].elementos.splice(indice_grupo_pintura_, 1);
+        gestion_pintado.indice_seleccion_grupo_pintado=0;
+        setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+        setIndiceGrupoPintado(0);
     }
 
     const [activeIndex, setActiveIndex] = useState(null);
@@ -237,7 +256,19 @@ function PintadoGrupo(props){
                                                                        checked={primero_radio_btn}
                                                                 />
                                                             </td>
-                                                            <td>borrar</td>
+                                                            <td>
+                                                                <button type="button" className="btn btn-outline-primary btn-sm"
+                                                                        onClick={()=>agregar_grupo_pintado(index, index_gr_p+1)}><i
+                                                                    className="bi bi-plus"></i></button>
+                                                                <button type="button" className="btn btn-outline-primary btn-sm"
+                                                                        onClick={()=>vaciar_grupo_pintado(index, index_gr_p)}><i
+                                                                    className="bi bi-trash"></i></button>
+                                                                <button type="button" className="btn btn-outline-primary btn-sm"
+                                                                        onClick={()=>eliminar_grupo_pintado(index, index_gr_p)}
+                                                                        hidden={index_gr_p === 0}
+                                                                ><i
+                                                                    className="bi bi-eraser"></i></button>
+                                                            </td>
                                                         </tr>);
                                                     })}
                                                     </tbody>

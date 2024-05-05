@@ -95,11 +95,13 @@ class GestionPintado {
         if(this.grupo_copia.lista_pintado.length>indice && indice>-1){
             //console.log("console.log(this.grupo_copia.lista_pintado)")
             //console.log(this.grupo_copia.lista_pintado)
-            const elementos = this.grupo_copia.lista_pintado[indice].elementos[indice_grupo_pintura_aux];
-            //console.log(elementos, indice)
-            const filtro_elemento = elementos.filter(e=>e.nombre === nombre_figura)
-            if(filtro_elemento.length>0){
-                return filtro_elemento.map(e=>e.componente)
+            if(this.grupo_copia.lista_pintado[indice].elementos.length>indice_grupo_pintura_aux){
+                const elementos = this.grupo_copia.lista_pintado[indice].elementos[indice_grupo_pintura_aux];
+                //console.log(elementos, indice)
+                const filtro_elemento = elementos.filter(e=>e.nombre === nombre_figura)
+                if(filtro_elemento.length>0){
+                    return filtro_elemento.map(e=>e.componente)
+                }
             }
         }
         return null;
