@@ -6,9 +6,15 @@ import GestionFiguras from "./GestionFiguras/GestionFiguras";
 import TreeViewElement from "../../TreeView/TreeViewElement";
 import GestionGruposLienzo from "./GestionGrupoLienzo/GestionGruposLienzo";
 import PintadoGrupo from "./PintadoGrupo/PintadoGrupo";
+import {TRABAJO_GRUPOS, TRABAJO_PINTADO_GRUPO} from "../../../Clases/EditorAnimacion/ConstanteAnimacion";
 
 
 function NavFiguras(props){
+
+    const cambioEspacioTrabajo=(id_)=>{
+        props.gestionLienzo.categoria_trabajo = id_;
+    }
+
     return (<div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item" role="presentation">
@@ -20,11 +26,11 @@ function NavFiguras(props){
             <li className="nav-item" role="presentation">
                 <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1">Figuras</ButtonNav>
             </li>
-            <li className="nav-item" role="presentation">
+            <li className="nav-item" role="presentation" onClick={()=>cambioEspacioTrabajo(TRABAJO_GRUPOS)}>
                 <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel">Lienzo</ButtonNav>
             </li>
 
-            <li className="nav-item" role="presentation">
+            <li className="nav-item" role="presentation" onClick={()=>cambioEspacioTrabajo(TRABAJO_PINTADO_GRUPO)}>
                 <ButtonNav id="puntero-tab" data-bs-target="#pintar-tab-panel">Pintar</ButtonNav>
             </li>
         </ul>

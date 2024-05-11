@@ -92,3 +92,14 @@ falta el mover los atributos usando el mouse.
 2.- cuando se selecciona y se mantiene apretado y se arrastra hasta otro punto no seleccionado
 este punto nuevo se indexa entre el punto seleccionado y el que sigue.  
 3.- aprete s mantenido para seleccionar punto que quiere borrar con la tecla DEL
+
+bugs  
+1.- cuando se ingressa en el pintado y depues va a otras secciones y vuelve no pesca nuevamente el pintado
+pasa especificamente cuando se modifica el grupo.  
+2.- se necesita un boton de reset de  centrado y de zoom  
+3.- implementar trasparencia  
+  
+cuando seleccione alguna de las pesteñas deberia cambiarse de trabajo
+a.- puse el trabajo de pintado y el de grupo pero de las figura es mas complejo porque no estan separa por pestaña
+
+deberia documentarse debidamente cada operacion que se puede hacer sobre lienzo
