@@ -17,6 +17,7 @@ function PintadoGrupo(props){
 
     const [porcentaje_zoom, setPorcentajeZoom] = useState(0)
     const escalaZoom = 0.1
+
     const zoomGrupoSeleccionado=(zoom)=>{
         let zoom_truncate =parseFloat(porcentaje_zoom+zoom)//.toFixed(3) ;
         setPorcentajeZoom(zoom_truncate)
@@ -29,6 +30,13 @@ function PintadoGrupo(props){
             props.gestionLienzo.seleccionGrupoPintar(nombre_grupo_)
             const grupo_copia = gestion_pintado.grupo_copia
             setListadoPintado(grupo_copia === null? []: [...grupo_copia.lista_pintado])
+            if(grupo_copia.lista_pintado.length>0){
+                setIndicePintado(0);
+                setIndiceGrupoPintado(0);
+                setActiveIndex(0);
+                gestion_pintado.indice_seleccion_pintado = 0;
+            }
+
         }
         setNombreGrupo(nombre_grupo_)
     }
@@ -56,7 +64,12 @@ function PintadoGrupo(props){
             gestion_pintado.indice_seleccion_pintado = -1;
             gestion_pintado.eliminarPintura(indice)
             setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
-            setIndiceGrupoPintado(0);
+            if(gestion_pintado.grupo_copia.lista_pintado.length>0){
+                gestion_pintado.indice_seleccion_pintado = 0;
+                setIndiceGrupoPintado(0);
+                setActiveIndex(0);
+            }
+
         }
     }
 
@@ -65,6 +78,8 @@ function PintadoGrupo(props){
         gestion_pintado.grupo_copia.lista_pintado[indece_pintura_].elementos.splice(indice_posicion, 0, [])
         //console.log(gestion_pintado.grupo_copia);
         setListadoPintado([...gestion_pintado.grupo_copia.lista_pintado])
+        setIndiceGrupoPintado(indice_posicion)
+        gestion_pintado.indice_seleccion_grupo_pintado=indice_posicion;
     }
 
     const vaciar_grupo_pintado =(indece_pintura_, indice_grupo_pintura_)=>{
@@ -130,7 +145,7 @@ function PintadoGrupo(props){
             <div className="col-3">
                 <div className="btn-group" role="group" aria-label="Basic example">
                     <button type="button" className="btn btn-primary" onClick={agregar_pintura}>
-                        Agregar1
+                        Agregar
                     </button>
                 </div>
             </div>

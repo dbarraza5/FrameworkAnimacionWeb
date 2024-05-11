@@ -103,3 +103,11 @@ cuando seleccione alguna de las pesteñas deberia cambiarse de trabajo
 a.- puse el trabajo de pintado y el de grupo pero de las figura es mas complejo porque no estan separa por pestaña
 
 deberia documentarse debidamente cada operacion que se puede hacer sobre lienzo
+  
+puper requerimiento   
+agregar la funcionalidad de IMAN cuando se creen rectas y puntos presionando un boton y cuando el componente
+detecte que esta en colision con otro componente se posicione justo en las coordenadas del otro componente.
+
+  
+  1.- agrupar la vista de los grupos en una sola pestaña  
+  2.- cuando se agrega un nuevo grupo de piintura este debe ser el actual a pintar
