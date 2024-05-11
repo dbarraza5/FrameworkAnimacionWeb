@@ -188,7 +188,7 @@ function imprimirGrupoPintado(ctx, gestion_pintado){
                 }
 
                 const coor = getCoorPunto(figura, grupo)
-                const color_p = validar_punto? "#FF0000" : "#008000";
+                const color_p = validar_punto? "#008000" : "#FF0000";
 
                 dibujar_rectangulo(ctx, color_p, coor.x-4, coor.y-4, 9, 9, true);
                 imprimir_punto(ctx, figura, grupo, color_figura);

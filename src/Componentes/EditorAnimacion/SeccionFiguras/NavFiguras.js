@@ -7,12 +7,16 @@ import TreeViewElement from "../../TreeView/TreeViewElement";
 import GestionGruposLienzo from "./GestionGrupoLienzo/GestionGruposLienzo";
 import PintadoGrupo from "./PintadoGrupo/PintadoGrupo";
 import {TRABAJO_GRUPOS, TRABAJO_PINTADO_GRUPO} from "../../../Clases/EditorAnimacion/ConstanteAnimacion";
+import {useState} from "react";
 
 
 function NavFiguras(props){
 
+    const [selectNav, setSelectNav] = useState(0);
+
     const cambioEspacioTrabajo=(id_)=>{
         props.gestionLienzo.categoria_trabajo = id_;
+        setSelectNav(id_);
     }
 
     return (<div>
@@ -60,7 +64,7 @@ function NavFiguras(props){
             <div className="tab-pane fade" id="pintar-tab-panel" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                <PintadoGrupo {...props}/>
+                <PintadoGrupo {...props} selectNav={selectNav}/>
             </div>
         </div>
     </div>)

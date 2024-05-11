@@ -1,5 +1,5 @@
 import SeleccionGrupo from "../GestionFiguras/SeleccionGrupo";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
@@ -18,6 +18,15 @@ function PintadoGrupo(props){
     const [porcentaje_zoom, setPorcentajeZoom] = useState(0)
     const escalaZoom = 0.1
 
+
+    useEffect(() => {
+        //setAtributoHijo(props.nuevoValor);
+        setNombreGrupo('...');
+        gestion_pintado.indice_seleccion_pintado = -1;
+        setListadoPintado([]);
+        //console.log("CAMBIO DE NAVVVVV");
+    }, [props.selectNav]);
+
     const zoomGrupoSeleccionado=(zoom)=>{
         let zoom_truncate =parseFloat(porcentaje_zoom+zoom)//.toFixed(3) ;
         setPorcentajeZoom(zoom_truncate)
@@ -35,6 +44,7 @@ function PintadoGrupo(props){
                 setIndiceGrupoPintado(0);
                 setActiveIndex(0);
                 gestion_pintado.indice_seleccion_pintado = 0;
+                gestion_pintado.indice_seleccion_grupo_pintado=0;
             }
 
         }
