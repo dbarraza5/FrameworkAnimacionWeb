@@ -6,7 +6,11 @@ import GestionFiguras from "./GestionFiguras/GestionFiguras";
 import TreeViewElement from "../../TreeView/TreeViewElement";
 import GestionGruposLienzo from "./GestionGrupoLienzo/GestionGruposLienzo";
 import PintadoGrupo from "./PintadoGrupo/PintadoGrupo";
-import {TRABAJO_GRUPOS, TRABAJO_PINTADO_GRUPO} from "../../../Clases/EditorAnimacion/ConstanteAnimacion";
+import {
+    TRABAJO_GRUPOS,
+    TRABAJO_LISTA_FIGURAS,
+    TRABAJO_PINTADO_GRUPO
+} from "../../../Clases/EditorAnimacion/ConstanteAnimacion";
 import {useState} from "react";
 
 
@@ -28,7 +32,7 @@ function NavFiguras(props){
                 <ButtonNav id="btn-nav-propiedades-grupo" data-bs-target="#nav-propiedades-grupo">Grupos</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
-                <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1">Figuras</ButtonNav>
+                <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1" onClick={()=>cambioEspacioTrabajo(TRABAJO_LISTA_FIGURAS)}>Figuras</ButtonNav>
             </li>
             <li className="nav-item" role="presentation" onClick={()=>cambioEspacioTrabajo(TRABAJO_GRUPOS)}>
                 <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel">Lienzo</ButtonNav>
