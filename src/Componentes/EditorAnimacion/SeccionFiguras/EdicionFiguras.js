@@ -28,8 +28,6 @@ function EdicionFiguras(props){
         props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
     }
 
-
-
     return(
         <div>
             <br/>
@@ -41,11 +39,16 @@ function EdicionFiguras(props){
                     <div className="card text-bg-light mb-3">
                         <div className="card-header d-flex justify-content-between align-items-center">
                             <h6 className="card-title mb-0 text-start">Animación <strong>{animacion_redux.nombre_animacion}</strong></h6>
-                            <div className="d-flex">
-                                <button className="btn  me-2 btn-icon" onClick={()=>dispatch(deshacer())} disabled={backup.deshacer.length===0}>
+
+                            <div className="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" className="btn btn-primary"
+                                        onClick={()=>dispatch(deshacer())}
+                                        disabled={backup.deshacer.length===0}>
                                     <i className="bi bi-arrow-left"></i>
                                 </button>
-                                <button className="btn btn-icon" onClick={()=>dispatch(rehacer())} disabled={backup.rehacer.length===0}>
+                                <button type="button" className="btn btn-primary"
+                                        onClick={()=>dispatch(rehacer())}
+                                        disabled={backup.rehacer.length===0}>
                                     <i className="bi bi-arrow-right"></i>
                                 </button>
                             </div>
