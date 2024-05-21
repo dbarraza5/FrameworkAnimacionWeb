@@ -20,11 +20,14 @@
 
 ### Edicion de grupos de figuras
 
+- [ ] problema con el arbol de grupos por la nueva restructuracion.
 - [ ] desface en la interfaz cuando selecciona un grupo o varios
 - [ ] implementar la funcionalidad de capas en los grupos
 
 ### Edicion de pintura de grupos
+
 - [ ] implementar un modal de guardado cuando se sale de la seccion de pintado.
+- [ ] cuando se elimine una figura en la pintura estaba referenciada ese componente deberia de eliminarse de la pintura tambien.
 
 
 #### vitacora
