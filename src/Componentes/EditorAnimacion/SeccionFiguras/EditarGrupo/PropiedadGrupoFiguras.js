@@ -1,8 +1,13 @@
 import {useEffect, useState} from "react";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
 import InputEnteroPropiedadGrupo from "./InputEnteroPropiedadGrupo";
+import {useDispatch, useSelector} from "react-redux";
+import {actualizarBackup} from "../../../../Store/Animacion/animacionSlice";
 
 function PropiedadGrupoFiguras(props){
+    const backup = useSelector((state) => state.animacion.backup);
+    const dispatch = useDispatch();
+
     let grupo = props.grupo;
 
     const seleccionado = grupo.ciclo;
@@ -30,6 +35,9 @@ function PropiedadGrupoFiguras(props){
         if(validacion){
             props.animacion.set_atributo_grupo(nombre, atributo, valor);
             props.setAnimacion({"edicion":props.animacion})
+
+            const raw_animacion = JSON.stringify(props.animacion.grupos_figuras);
+            dispatch(actualizarBackup(raw_animacion))
         }
         console.log("[===========cambio de propiedades del gruo======================]")
         console.log(nombre)
