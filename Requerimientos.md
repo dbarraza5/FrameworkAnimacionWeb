@@ -7,6 +7,8 @@
 - [ ] implementar guardar como
 - [ ] implementar redireccion cuando expira la sesion
 - [ ] funcinalidad de crear animacion dentro del proyecto
+- [ ] agregar assets de otras animaciones al proyecto en el que se este trabajando, estos assets seran de la version en la 
+que se importaron al proyecto.
 
 ### Edicion de figuras
 
@@ -20,7 +22,7 @@
 
 ### Edicion de grupos de figuras
 
-- [ ] problema con el arbol de grupos por la nueva restructuracion.
+- [x] problema con el arbol de grupos por la nueva restructuracion.
 - [ ] desface en la interfaz cuando selecciona un grupo o varios
 - [ ] implementar la funcionalidad de capas en los grupos
 

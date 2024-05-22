@@ -27,12 +27,13 @@ function NavFiguras(props){
         <ul className="nav nav-tabs" id="myTab" role="tablist">
 
             <li className="nav-item" role="presentation">
-                <ButtonNav id="btn-nav-propiedades-grupo" data-bs-target="#nav-propiedades-grupo">Grupos</ButtonNav>
+                <ButtonNav id="btn-nav-propiedades-grupo" data-bs-target="#nav-propiedades-grupo"
+                           onClick={()=>cambioEspacioTrabajo(TRABAJO_GRUPOS)}>Grupos</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
                 <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1" onClick={()=>cambioEspacioTrabajo(TRABAJO_LISTA_FIGURAS)}>Figuras</ButtonNav>
             </li>
-            <li className="nav-item" role="presentation" onClick={()=>cambioEspacioTrabajo(TRABAJO_GRUPOS)}>
+            <li className="nav-item" role="presentation" >
                 <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel">Lienzo</ButtonNav>
             </li>
 
