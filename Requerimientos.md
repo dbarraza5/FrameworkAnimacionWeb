@@ -38,3 +38,7 @@ talvez para simular el zoom y el desplazamiento podemos, virtualizar los datos r
 apezar de que el mouse nunca sale del lienzo el puntero virtual podria estar en cualquier parte dentro del lienzo.
   si se desplaza el lienzo debe mostrarse las coordenadas (0,0)  
   ademas debe mostrar si tiene zoom el lienzo
+  
+  21-05-24
+  
+  el canvas se adquiere como un documento del dom usando javascript usando el id del lienzo

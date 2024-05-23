@@ -12,6 +12,7 @@ import {
     TRABAJO_PINTADO_GRUPO
 } from "../../../Clases/EditorAnimacion/ConstanteAnimacion";
 import {useState} from "react";
+import ConfigLienzo from "./ConfigLienzo/ConfigLienzo";
 
 
 function NavFiguras(props){
@@ -56,7 +57,7 @@ function NavFiguras(props){
             <div className="tab-pane fade" id="puntero-tab-panel" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                Aqui la configuracion del lienzo
+                <ConfigLienzo {...props}/>
             </div>
             <div className="tab-pane fade" id="pintar-tab-panel" role="tabpanel"
                  aria-labelledby="contact-tab1"

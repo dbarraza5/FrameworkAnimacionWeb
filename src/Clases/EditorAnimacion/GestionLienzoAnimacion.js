@@ -890,6 +890,9 @@ class GestionLienzoAnimacion {
         this.animacion_.procesarPosicionFinalFiguras()
         this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
+        //imprimir las imagenes subidas al lienzoo
+
+
         const espacio_trabajo_val = TRABAJO_EDICION_FIGURAS.includes(this.categoria_trabajo);
         const imprimir_lienzo_completo = this.categoria_trabajo === TRABAJO_NONE
             || espacio_trabajo_val;

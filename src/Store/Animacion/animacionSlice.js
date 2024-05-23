@@ -34,6 +34,10 @@ const inicializarState= {
         //0: se mantiene o se acutaliza | 1: se rehace el estado | -1: se dehace
         estado: 0
     },
+    imagenes_lienzo:{
+        list_img:[]
+    }
+    ,
     status: 'idle',
     error: null
 }
