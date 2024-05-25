@@ -1,9 +1,14 @@
 import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {agregarIimagen} from "../../../../Store/Animacion/animacionSlice";
 
 function ConfigLienzo(props){
 
     const [imageName, setImageName] = useState('');
     const [imagen, setImage] = useState(null);
+
+    const dispatch = useDispatch();
+    //const backup = useSelector((state) => state.animacion.backup);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -31,7 +36,7 @@ function ConfigLienzo(props){
     };
 
     const agregandoImagen =()=>{
-        const data ={
+        /*const data ={
             img: imagen,
             nombre: imageName,
             visible: true,
@@ -40,12 +45,15 @@ function ConfigLienzo(props){
             ancho:imagen.width,
             alto:imagen.height,
         };
-
+        dispatch(agregarIimagen(data));*/
         //aqui agregar el dispach
     }
 
     return(<div>
         <br/>
+        <div id="lista_imagenes_animacion">
+
+        </div>
         <form id="formImagen" onSubmit={()=>console.log("subiendo...")}>
             <div className="mb-3">
                 <input

@@ -35,6 +35,8 @@ const inicializarState= {
         estado: 0
     },
     imagenes_lienzo:{
+        x: 0,
+        y: 0,
         list_img:[]
     }
     ,
@@ -92,6 +94,12 @@ const animacionSlice = createSlice({
             }
         },
 
+        agregarIimagen: (state, action) => {
+            state.imagenes_lienzo.list_img.push(action.payload);
+            console.log(state.imagenes_lienzo.list_img.length);
+        }
+        ,
+
         restaurarState: ()=>inicializarState
     },
     extraReducers:
@@ -121,5 +129,5 @@ const animacionSlice = createSlice({
 
 export const {setNombreAnimacion, setListaGrupoTrabajo,
     deshacer, rehacer, actualizarBackup, restaurarState,
-    setIdHiloLienzo} = animacionSlice.actions;
+    setIdHiloLienzo, agregarIimagen} = animacionSlice.actions;
 export default animacionSlice.reducer;
