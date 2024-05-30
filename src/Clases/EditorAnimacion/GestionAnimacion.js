@@ -10,10 +10,12 @@ class GestionAnimacion{
 
     constructor() {
         this.grupos_figuras = [
-        ]
+        ];
 
         this.grupo_movimientos = [
-        ]
+        ];
+
+        this.lista_imagenes = [];
     }
 
     version = 0;
@@ -25,7 +27,8 @@ class GestionAnimacion{
             meta_figuras: this.meta_figuras,
             meta_movimiento: this.meta_movimientos,
             grupos_figuras: this.grupos_figuras,
-            grupo_movimientos: this.grupo_movimientos
+            grupo_movimientos: this.grupo_movimientos,
+            lista_imagenes: this.lista_imagenes
         }
     }
 

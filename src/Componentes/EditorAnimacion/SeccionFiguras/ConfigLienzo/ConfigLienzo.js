@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {agregarIimagen} from "../../../../Store/Animacion/animacionSlice";
 import axios from "axios";
@@ -14,6 +14,60 @@ function ConfigLienzo(props){
     const datos_usuario = cookie.get("usuario");
     //const backup = useSelector((state) => state.animacion.backup);
 
+
+    const obtenerImagen = async(data_img)=>{
+        try {
+
+            const url = "/api/imagen/"+data_img.url;
+            const token = datos_usuario.token;
+
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                responseType: 'blob' // Para obtener la respuesta como un blob
+            });
+
+            // Crear una URL local para el blob recibido
+            const blobUrl = URL.createObjectURL(response.data);
+            //console.log(blobUrl);
+            data_img.url_temp = blobUrl;
+            //lista_imagenes.push(data_img);
+            return data_img;
+            //setListaImagenes([...lista_imagenes, data_img]);
+        } catch (error) {
+            console.error('Error al obtener la imagen:', error);
+        }
+        return null;
+    }
+
+    /*const mapperListaImagenes = (imagenes_)=>{
+        return imagenes_.map((img_)=>{
+            //img_.url_temp = obtenerImagen(img_);
+            return obtenerImagen(img_);
+        })
+    }*/
+
+
+
+    const [lista_imagenes, setListaImagenes] = useState(props.animacion.lista_imagenes);
+
+    useEffect(() => {
+        // Ejecutar lógica asincrónica en useEffect
+        const fetchData = async () => {
+            const updatedImages = await Promise.all(lista_imagenes.map((img) => obtenerImagen(img)));
+            setListaImagenes(updatedImages);
+        };
+
+        fetchData();
+    }, []);
+
+
+
+    console.log("LISTA IMAGENES __________________________________");
+    console.log(lista_imagenes)
+
+    //props.animacion.lista_imagenes
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setImageName(file.name);
@@ -77,6 +131,8 @@ function ConfigLienzo(props){
                 .then(function (response) {
                     console.log("funciono imageen")
                     console.log(response.data);
+                    //setListaImagenes([response.data])
+                    obtenerImagen(response.data)
                 })
                 .catch(function (respuesta) {
                     console.log(respuesta);
@@ -86,10 +142,14 @@ function ConfigLienzo(props){
         }
     }
 
+
+
     return(<div>
         <br/>
         <div id="lista_imagenes_animacion">
-
+            {lista_imagenes.map((img)=>{
+                return ( <img src={img.url_temp} alt={img.nombre} width={img.ancho} height={img.alto}/> )
+            })}
         </div>
         <form id="formImagen" onSubmit={()=>console.log("subiendo...")}>
             <div className="mb-3">
