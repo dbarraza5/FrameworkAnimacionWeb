@@ -127,16 +127,12 @@ function ConfigLienzo(props){
                 data : formData
             }
 
-            let res = await axios(config_request)
-                .then(function (response) {
-                    console.log("funciono imageen")
-                    console.log(response.data);
-                    //setListaImagenes([response.data])
-                    obtenerImagen(response.data)
-                })
-                .catch(function (respuesta) {
-                    console.log(respuesta);
-                });
+            const response = await axios(config_request);
+            console.log("funcionó imagen");
+            console.log(response.data);
+
+            const imagen_aux = await obtenerImagen(response.data);
+            setListaImagenes(prevLista => [...prevLista, imagen_aux]);
         } catch (err) {
             console.log(err);
         }
@@ -146,9 +142,10 @@ function ConfigLienzo(props){
 
     return(<div>
         <br/>
+        {lista_imagenes.length}
         <div id="lista_imagenes_animacion">
             {lista_imagenes.map((img)=>{
-                return ( <img src={img.url_temp} alt={img.nombre} width={img.ancho} height={img.alto}/> )
+                return ( <img key={'img_'+img.url} src={img.url_temp} alt={img.nombre} width={img.ancho} height={img.alto}/> )
             })}
         </div>
         <form id="formImagen" onSubmit={()=>console.log("subiendo...")}>
