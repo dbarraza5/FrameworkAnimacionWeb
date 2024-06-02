@@ -143,9 +143,9 @@ function ConfigLienzo(props){
     return(<div>
         <br/>
         {lista_imagenes.length}
-        <div id="lista_imagenes_animacion">
+        <div id="lista_imagenes_animacion" hidden>
             {lista_imagenes.map((img)=>{
-                return ( <img key={'img_'+img.url} src={img.url_temp} alt={img.nombre} width={img.ancho} height={img.alto}/> )
+                return ( <img key={'img_'+img.url} id={'img_'+img.url} src={img.url_temp} alt={img.nombre} width={img.ancho} height={img.alto}/> )
             })}
         </div>
         <form id="formImagen" onSubmit={()=>console.log("subiendo...")}>
