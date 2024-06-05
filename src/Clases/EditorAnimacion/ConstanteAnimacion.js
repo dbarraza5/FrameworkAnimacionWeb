@@ -27,6 +27,10 @@ export const MOVER_BORRAR_GRUPOS = 15;
 export const MOVER_CENTRAR_GRUPOS = 16;
 export const MOVER_ESPEJO_GRUPOS = 17;
 
+export const MOVER_CENTRO_IMAGEN = 18;
+export const MOVER_INFLAR_IMAGEN = 19;
+export const MOVER_SELECIONAR_IMAGEN = 20;
+
 export const REFLEJO_NONE = 0;
 export const REFLEJO_HORIZONTAL = 1;
 export const REFLEJO_VERTICAL = 2;

@@ -7,6 +7,7 @@ import TreeViewElement from "../../TreeView/TreeViewElement";
 import GestionGruposLienzo from "./GestionGrupoLienzo/GestionGruposLienzo";
 import PintadoGrupo from "./PintadoGrupo/PintadoGrupo";
 import {
+    TRABAJO_CONFIG_LIENZO,
     TRABAJO_GRUPOS,
     TRABAJO_LISTA_FIGURAS,
     TRABAJO_PINTADO_GRUPO
@@ -32,14 +33,16 @@ function NavFiguras(props){
                            onClick={()=>cambioEspacioTrabajo(TRABAJO_GRUPOS)}>Grupos</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
-                <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1" onClick={()=>cambioEspacioTrabajo(TRABAJO_LISTA_FIGURAS)}>Figuras</ButtonNav>
+                <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1"
+                           onClick={()=>cambioEspacioTrabajo(TRABAJO_LISTA_FIGURAS)}>Figuras</ButtonNav>
             </li>
             <li className="nav-item" role="presentation" >
-                <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel">Lienzo</ButtonNav>
+                <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel"
+                           onClick={()=>cambioEspacioTrabajo(TRABAJO_CONFIG_LIENZO)}>Lienzo</ButtonNav>
             </li>
-
-            <li className="nav-item" role="presentation" onClick={()=>cambioEspacioTrabajo(TRABAJO_PINTADO_GRUPO)}>
-                <ButtonNav id="puntero-tab" data-bs-target="#pintar-tab-panel">Pintar</ButtonNav>
+            <li className="nav-item" role="presentation">
+                <ButtonNav id="puntero-tab" data-bs-target="#pintar-tab-panel"
+                           onClick={()=>cambioEspacioTrabajo(TRABAJO_PINTADO_GRUPO)}>Pintar</ButtonNav>
             </li>
         </ul>
         <div className="tab-content" id="myTabContent">

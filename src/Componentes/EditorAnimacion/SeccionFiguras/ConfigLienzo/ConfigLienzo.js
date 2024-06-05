@@ -31,7 +31,14 @@ function ConfigLienzo(props){
             // Crear una URL local para el blob recibido
             const blobUrl = URL.createObjectURL(response.data);
             //console.log(blobUrl);
+            const imagen = new Image();
+            imagen.src = blobUrl;
+            imagen.onload = function() {
+                console.log('Imagen cargada:', imagen);
+            };
+
             data_img.url_temp = blobUrl;
+            data_img.img =imagen;
             //lista_imagenes.push(data_img);
             return data_img;
             //setListaImagenes([...lista_imagenes, data_img]);
@@ -57,6 +64,8 @@ function ConfigLienzo(props){
         const fetchData = async () => {
             const updatedImages = await Promise.all(lista_imagenes.map((img) => obtenerImagen(img)));
             setListaImagenes(updatedImages);
+            props.animacion.lista_imagenes =updatedImages;
+            props.setAnimacion({"edicion": props.animacion})
         };
 
         fetchData();

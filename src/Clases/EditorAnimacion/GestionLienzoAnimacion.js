@@ -9,6 +9,8 @@ import {
 } from "./ImprimirAnimacion";
 import OperacionesGrupo from "./OperacionesGrupo";
 import GestionPintado from "./GestionPintado";
+import {TRABAJO_CONFIG_LIENZO} from "./ConstanteAnimacion";
+import ConfiguracionLienzo from "./ConfiguracionLienzo";
 
 const TRABAJO_NONE = -1
 const TRABAJO_FIGURA = 0;
@@ -156,6 +158,8 @@ class GestionLienzoAnimacion {
     proceso_principal_activo = true;
 
     gestion_pintado = new GestionPintado();
+
+    configuracion_lienzo = new ConfiguracionLienzo();
 
 
     constructor(animacion_) {
@@ -832,6 +836,10 @@ class GestionLienzoAnimacion {
             if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
                 this.gestion_pintado.procesarTrabajoPintado(eventoLienzoFigura)
             }
+
+            if(this.categoria_trabajo === TRABAJO_CONFIG_LIENZO){
+                this.configuracion_lienzo.procesarTrabajoConfiguracion(eventoLienzoFigura, setAnimacion);
+            }
             this.procesarSeleccionPuntero(eventoLienzoFigura);
             this.aplicarCambiosConcurrente();
             this.actualizarLienzo()
@@ -891,6 +899,9 @@ class GestionLienzoAnimacion {
         this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
         //imprimir las imagenes subidas al lienzoo
+
+        //imprimir las imagenes del lienzo de configuracion
+        this.configuracion_lienzo.imprimirImagenesLienzo(ctx, this.animacion_);
 
 
         const espacio_trabajo_val = TRABAJO_EDICION_FIGURAS.includes(this.categoria_trabajo);
