@@ -838,7 +838,7 @@ class GestionLienzoAnimacion {
             }
 
             if(this.categoria_trabajo === TRABAJO_CONFIG_LIENZO){
-                this.configuracion_lienzo.procesarTrabajoConfiguracion(eventoLienzoFigura, setAnimacion);
+                this.configuracion_lienzo.procesarTrabajoConfiguracion(eventoLienzoFigura, this.animacion_);
             }
             this.procesarSeleccionPuntero(eventoLienzoFigura);
             this.aplicarCambiosConcurrente();

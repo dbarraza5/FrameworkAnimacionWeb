@@ -23,16 +23,20 @@ class ConfiguracionLienzo{
     x_inicial_mouse = 0;
     y_inicial_mouse = 0;
 
-    imagen_seleccionada_lienzo = null;
+    indice_imagen_seleccionada = -1;
 
     tipo_trabajo = -1;
 
-    procesarTrabajoConfiguracion(eventoLienzoFigura, setAnimacion){
+    procesarTrabajoConfiguracion(eventoLienzoFigura, animacion_){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
         console.log("TRABAJO CONFIG_ LIENZO");
-        if(this.imagen_seleccionada_lienzo !== null){
-
+        if(this.indice_imagen_seleccionada > -1){
+            if(this.tipo_trabajo === MOVER_CENTRO_IMAGEN){
+                animacion_.lista_imagenes[this.indice_imagen_seleccionada].x = this.puntero.x;
+                animacion_.lista_imagenes[this.indice_imagen_seleccionada].y = this.puntero.y;
+                console.log("MOVIENDO LA  IMAGEN DEL LIENZO")
+            }
         }
     }
 
@@ -61,13 +65,15 @@ class ConfiguracionLienzo{
         animacion_.lista_imagenes.map((imagen)=>{
             if(imagen.img){
                 //console.log(imagen.nombre);
+                ctx.globalAlpha = imagen.opacidad;
                 ctx.drawImage(imagen.img, imagen.x, imagen.y, imagen.ancho, imagen.alto);
+                ctx.globalAlpha = 1.0;
             }
         });
     }
 
-    seleccionarImagenOperar(imagen){
-        this.imagen_seleccionada_lienzo = imagen;
+    seleccionarImagenOperar(indice){
+        this.indice_imagen_seleccionada = indice;
     }
 
     moverImagen(){

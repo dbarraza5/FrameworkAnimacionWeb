@@ -141,7 +141,12 @@ function ConfigLienzo(props){
             console.log(response.data);
 
             const imagen_aux = await obtenerImagen(response.data);
+
             setListaImagenes(prevLista => [...prevLista, imagen_aux]);
+            console.log("LISTA IAMGNES =>=========> "+lista_imagenes.length)
+            props.animacion.lista_imagenes =[...lista_imagenes, imagen_aux];
+            props.gestionLienzo.configuracion_lienzo.seleccionarImagenOperar(0);
+            props.gestionLienzo.configuracion_lienzo.moverImagen();
         } catch (err) {
             console.log(err);
         }
