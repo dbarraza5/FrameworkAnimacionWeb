@@ -1,4 +1,5 @@
 
+const MOVER_NADA = -1;
 const MOVER_CENTRO_IMAGEN = 18;
 const MOVER_INFLAR_IMAGEN = 19;
 const MOVER_SELECIONAR_IMAGEN = 20;
@@ -25,17 +26,20 @@ class ConfiguracionLienzo{
 
     indice_imagen_seleccionada = -1;
 
-    tipo_trabajo = -1;
+    tipo_trabajo = MOVER_NADA;
 
     procesarTrabajoConfiguracion(eventoLienzoFigura, animacion_){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
         console.log("TRABAJO CONFIG_ LIENZO");
-        if(this.indice_imagen_seleccionada > -1){
+        if(this.indice_imagen_seleccionada > MOVER_NADA){
             if(this.tipo_trabajo === MOVER_CENTRO_IMAGEN){
                 animacion_.lista_imagenes[this.indice_imagen_seleccionada].x = this.puntero.x;
                 animacion_.lista_imagenes[this.indice_imagen_seleccionada].y = this.puntero.y;
                 console.log("MOVIENDO LA  IMAGEN DEL LIENZO")
+                if(eventoLienzoFigura.mouse_only_click){
+                    this.tipo_trabajo=MOVER_NADA;
+                }
             }
         }
     }
