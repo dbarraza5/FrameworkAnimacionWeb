@@ -20,3 +20,11 @@ posicion deseada.
 
 
 ### Edicion de pintura de grupos
+
+### Edicion de imagenes de lienzo
+
+
+| Atajo | Descripcion |
+|---|---|
+| T+SCROLL | cambiar el tamaño usando el scroll. |
+| O+SCROLL | cambiar la opacidad usando el scroll. |

@@ -16,9 +16,6 @@ function ConfigLienzo(props){
     const datos_usuario = cookie.get("usuario");
     //const backup = useSelector((state) => state.animacion.backup);
 
-
-
-
     const [lista_imagenes, setListaImagenes] = useState(props.animacion.lista_imagenes);
 
     const obtenerImagen = async(data_img)=>{

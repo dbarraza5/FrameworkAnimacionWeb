@@ -41,19 +41,29 @@ class ConfiguracionLienzo{
                 elemento.x = this.puntero.x;
                 elemento.y = this.puntero.y;
 
-                const cambiarTamano = eventoLienzoFigura.stack_event_teclado.includes("KeyE");
+                const cambiarTamano = eventoLienzoFigura.stack_event_teclado.includes("KeyT");
+                const cambiarOpacidad = eventoLienzoFigura.stack_event_teclado.includes("KeyO");
                 console.log("size: "+cambiarTamano);
                 if(eventoLienzoFigura.mouse_delta_scroll>0){
                     if(cambiarTamano){
                         elemento.ancho=Math.round(elemento.ancho*REDUCCION);
                         elemento.alto=Math.round(elemento.alto*REDUCCION);
                     }
-
+                    if(cambiarOpacidad){
+                        if(elemento.opacidad > 0.1){
+                            elemento.opacidad=elemento.opacidad-0.1;
+                        }
+                    }
                 }
                 if(eventoLienzoFigura.mouse_delta_scroll<0){
                     if(cambiarTamano){
                         elemento.ancho=Math.round(elemento.ancho*AUMENTO);
                         elemento.alto=Math.round(elemento.alto*AUMENTO);
+                    }
+                    if(cambiarOpacidad){
+                        if(elemento.opacidad < 1){
+                            elemento.opacidad=elemento.opacidad+0.1;
+                        }
                     }
                 }
 

@@ -48,7 +48,7 @@ function Lienzo(props){
         props.lienzo.mouse_sobre_lienzo = true;
         props.setEventLienzoFigura(props.lienzo);
         props.editar_animacion()
-        document.getElementById("lienzo-edicion-figuras").focus();
+        document.getElementById("lienzo-animacion").focus();
     }
 
     const eventoMouseSalida=(e)=>{
@@ -89,7 +89,6 @@ function Lienzo(props){
 
 
     return(<canvas {...props}
-                    id='lienzo-edicion-figuras'
                    autofocus
                    onKeyDown={(e)=>eventoKeyDown(e)}
                    onKeyUp={(e)=>eventoKeyUp(e)}
