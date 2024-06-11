@@ -2,7 +2,7 @@
 
 ### Administrador general
 
-- [ ] agrupar la seccion de creacion de grupo junto a la edicion de grupo en el misma pestaña
+- [X] agrupar la seccion de creacion de grupo junto a la edicion de grupo en el misma pestaña
 - [ ] arreglar la exportacion de animacion
 - [ ] implementar guardar como
 - [ ] implementar redireccion cuando expira la sesion
@@ -42,3 +42,8 @@ apezar de que el mouse nunca sale del lienzo el puntero virtual podria estar en 
   21-05-24
   
   el canvas se adquiere como un documento del dom usando javascript usando el id del lienzo
+  
+  10-06-24
+  
+  evento sobre el lienzo: los eventos del teclado no se detectan hasta que se haga click sobre el lienzo.
+  tal vez dea buena idea no sacar los eventos declado del lienzo sino que de windows :)

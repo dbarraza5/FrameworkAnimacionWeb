@@ -1,3 +1,4 @@
+import {useEffect, useRef} from "react";
 
 
 const style = {
@@ -47,10 +48,11 @@ function Lienzo(props){
         props.lienzo.mouse_sobre_lienzo = true;
         props.setEventLienzoFigura(props.lienzo);
         props.editar_animacion()
+        document.getElementById("lienzo-edicion-figuras").focus();
     }
 
     const eventoMouseSalida=(e)=>{
-        //console.log("salida al lienzo")
+        console.log("salida al lienzo")
         props.lienzo.mouse_sobre_lienzo = false;
         props.lienzo.mouse_mueve_sobre_lienzo = false;
         props.setEventLienzoFigura(props.lienzo);
@@ -65,8 +67,8 @@ function Lienzo(props){
             props.lienzo.stack_event_teclado.push(code)
 
         }
-        //console.log(props.lienzo.stack_event_teclado)
-        //console.log("key: "+code)
+        console.log(props.lienzo.stack_event_teclado)
+        console.log("key: "+code)
         props.editar_animacion()
     }
 
@@ -83,9 +85,12 @@ function Lienzo(props){
         const movimiento = event.deltaY;
         props.lienzo.mouse_delta_scroll = movimiento;
         //console.log("EL RATON RATON: ",movimiento);
-    };
+    }
+
 
     return(<canvas {...props}
+                    id='lienzo-edicion-figuras'
+                   autofocus
                    onKeyDown={(e)=>eventoKeyDown(e)}
                    onKeyUp={(e)=>eventoKeyUp(e)}
                    onMouseMove={(e)=>eventoMouseMove(e)}
@@ -93,7 +98,7 @@ function Lienzo(props){
                    onMouseDown={(e)=>eventoMouseDown(e)}
                    onMouseOver={(e)=>eventoMouseEntrada(e)}
                    onMouseOut={(e)=>eventoMouseSalida(e)}
-                   tabIndex="0"
+                   tabindex='0'
 
                    onWheel={manejarRueda}
                    width="600" height="600" style={style}></canvas>)

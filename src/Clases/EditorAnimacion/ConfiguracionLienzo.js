@@ -4,6 +4,9 @@ const MOVER_CENTRO_IMAGEN = 18;
 const MOVER_INFLAR_IMAGEN = 19;
 const MOVER_SELECIONAR_IMAGEN = 20;
 
+const PORCENTAJE = 0.1
+const REDUCCION = 1-PORCENTAJE;
+const AUMENTO = 1+PORCENTAJE;
 
 class ConfiguracionLienzo{
 
@@ -31,12 +34,29 @@ class ConfiguracionLienzo{
     procesarTrabajoConfiguracion(eventoLienzoFigura, animacion_){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
-        console.log("TRABAJO CONFIG_ LIENZO");
+        console.log(eventoLienzoFigura.stack_event_teclado);
         if(this.indice_imagen_seleccionada > MOVER_NADA){
+            const elemento = animacion_.lista_imagenes[this.indice_imagen_seleccionada];
             if(this.tipo_trabajo === MOVER_CENTRO_IMAGEN){
-                animacion_.lista_imagenes[this.indice_imagen_seleccionada].x = this.puntero.x;
-                animacion_.lista_imagenes[this.indice_imagen_seleccionada].y = this.puntero.y;
-                console.log("MOVIENDO LA  IMAGEN DEL LIENZO")
+                elemento.x = this.puntero.x;
+                elemento.y = this.puntero.y;
+
+                const cambiarTamano = eventoLienzoFigura.stack_event_teclado.includes("KeyE");
+                console.log("size: "+cambiarTamano);
+                if(eventoLienzoFigura.mouse_delta_scroll>0){
+                    if(cambiarTamano){
+                        elemento.ancho=Math.round(elemento.ancho*REDUCCION);
+                        elemento.alto=Math.round(elemento.alto*REDUCCION);
+                    }
+
+                }
+                if(eventoLienzoFigura.mouse_delta_scroll<0){
+                    if(cambiarTamano){
+                        elemento.ancho=Math.round(elemento.ancho*AUMENTO);
+                        elemento.alto=Math.round(elemento.alto*AUMENTO);
+                    }
+                }
+
                 if(eventoLienzoFigura.mouse_only_click){
                     this.tipo_trabajo=MOVER_NADA;
                 }
