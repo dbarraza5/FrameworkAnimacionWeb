@@ -35,7 +35,7 @@ class ConfiguracionLienzo{
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
         console.log(eventoLienzoFigura.stack_event_teclado);
-        if(this.indice_imagen_seleccionada > MOVER_NADA){
+        if(this.indice_imagen_seleccionada >= 0){
             const elemento = animacion_.lista_imagenes[this.indice_imagen_seleccionada];
             if(this.tipo_trabajo === MOVER_CENTRO_IMAGEN){
                 elemento.x = this.puntero.x;
@@ -70,6 +70,13 @@ class ConfiguracionLienzo{
                 if(eventoLienzoFigura.mouse_only_click){
                     this.tipo_trabajo=MOVER_NADA;
                 }
+            }
+        }
+        if(this.tipo_trabajo === MOVER_NADA){
+            const mover = eventoLienzoFigura.stack_event_teclado.includes("KeyE");
+            if(mover){
+                this.tipo_trabajo = MOVER_CENTRO_IMAGEN;
+                console.log("MOVER LA IMAGEN: "+this.indice_imagen_seleccionada);
             }
         }
     }

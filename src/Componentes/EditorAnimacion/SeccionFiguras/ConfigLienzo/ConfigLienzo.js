@@ -70,7 +70,7 @@ function ConfigLienzo(props){
                      obtenerImagen={obtenerImagen} {...props}/>
 
         <br/>
-         <TablaImagenes lista_imagenes={lista_imagenes}/>
+         <TablaImagenes lista_imagenes={lista_imagenes} {...props}/>
     </div>)
 }
 

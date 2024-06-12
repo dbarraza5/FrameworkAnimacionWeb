@@ -4,8 +4,9 @@ function TablaImagenes(props){
 
     const [openIndex, setOpenIndex] = useState(null);
 
-    const handleToggle = (index) => {
+    const seleccionAcordeonImagen = (index) => {
         setOpenIndex(openIndex === index ? null : index);
+        props.gestionLienzo.configuracion_lienzo.seleccionarImagenOperar(index);
     };
 
     const handleChange = (index, e) => {
@@ -23,15 +24,17 @@ function TablaImagenes(props){
         //console.log('Formulario enviado:', lista_imagenes);
     };
 
+
     return (
         <div className="accordion" id="accordionExample">
+            {props.gestionLienzo.configuracion_lienzo.indice_imagen_seleccionada}
             {props.lista_imagenes.map((img, index) => (
                 <div className="accordion-item" key={img._id}>
                     <h2 className="accordion-header" id={`heading${index}`}>
                         <button
                             className={`accordion-button ${openIndex === index ? '' : 'collapsed'}`}
                             type="button"
-                            onClick={() => handleToggle(index)}
+                            onClick={() => seleccionAcordeonImagen(index)}
                             aria-expanded={openIndex === index}
                             aria-controls={`collapse${index}`}
                         >
