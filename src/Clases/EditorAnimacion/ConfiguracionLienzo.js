@@ -34,7 +34,7 @@ class ConfiguracionLienzo{
     procesarTrabajoConfiguracion(eventoLienzoFigura, animacion_){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
-        console.log(eventoLienzoFigura.stack_event_teclado);
+        //console.log(eventoLienzoFigura.stack_event_teclado);
         if(this.indice_imagen_seleccionada >= 0){
             const elemento = animacion_.lista_imagenes[this.indice_imagen_seleccionada];
             if(this.tipo_trabajo === MOVER_CENTRO_IMAGEN){

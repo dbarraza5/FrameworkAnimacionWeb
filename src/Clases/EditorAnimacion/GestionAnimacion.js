@@ -425,6 +425,12 @@ class GestionAnimacion{
         }
         return lista_duplicada.map((g)=>g.nombre)
     }
+
+    eliminar_imagen(id_imagen){
+        this.lista_imagenes = this.lista_imagenes.filter((img)=>{
+            return img._id !== id_imagen;
+        })
+    }
 }
 
 function normalizar_recta(recta1){

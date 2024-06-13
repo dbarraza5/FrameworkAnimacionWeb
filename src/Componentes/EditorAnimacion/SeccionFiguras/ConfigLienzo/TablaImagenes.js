@@ -1,8 +1,13 @@
 import {useState} from "react";
+import axios from "axios";
+import {Cookies} from 'react-cookie';
 
 function TablaImagenes(props){
 
     const [openIndex, setOpenIndex] = useState(null);
+
+    const cookie = new Cookies();
+    const datos_usuario = cookie.get("usuario");
 
     const seleccionAcordeonImagen = (index) => {
         setOpenIndex(openIndex === index ? null : index);
@@ -24,10 +29,43 @@ function TablaImagenes(props){
         //console.log('Formulario enviado:', lista_imagenes);
     };
 
+    const eliminarImagenLienzo = async (index)=>{
+        const id_animacion = props.animacion.id_animacion;
+        const id_imagen = props.lista_imagenes[index]._id;
+        console.log(id_animacion);
+        console.log(id_imagen);
+
+
+        const url = "/api/animacion/eliminar-imagen/"+id_animacion+'/'+id_imagen;
+
+        const token = datos_usuario.token;
+        console.log("token: "+token);
+        const config_request = {
+            method: 'get',
+            url: url,
+            headers: {
+                "Content-Type": "application/json",
+                'Accept': 'application/json',
+                'Authorization': 'Bearer '+token,
+            }
+        }
+
+        try {
+            const response = await axios(config_request);
+            // Mostrar alerta de éxito si la solicitud se realiza correctamente
+            props.animacion.eliminar_imagen(id_imagen);
+            props.setListaImagenes(props.animacion.lista_imagenes)
+            alert('Imagen eliminada exitosamente');
+        } catch (error) {
+            // Mostrar alerta de fallo si ocurre algún error
+            alert('Error al eliminar la imagen');
+            console.error('Error:', error);
+        }
+    }
+
 
     return (
         <div className="accordion" id="accordionExample">
-            {props.gestionLienzo.configuracion_lienzo.indice_imagen_seleccionada}
             {props.lista_imagenes.map((img, index) => (
                 <div className="accordion-item" key={img._id}>
                     <h2 className="accordion-header" id={`heading${index}`}>
@@ -160,7 +198,7 @@ function TablaImagenes(props){
                                     </div>
                                 </div>
                                 <button type="submit" className="btn btn-primary">Enviar</button>
-                                <button className="btn btn-primary">Borrar</button>
+                                <button className="btn btn-primary" onClick={()=>eliminarImagenLienzo(index)}>Borrar</button>
                             </form>
                         </div>
                     </div>
