@@ -32,6 +32,21 @@ que se importaron al proyecto.
 - [ ] cuando se elimine una figura en la pintura estaba referenciada ese componente deberia de eliminarse de la pintura tambien.
 
 
+### CONFIGURACION DEL LIENZO
+
+#### agregar imagenes al lienzo
+- [x] agregar imagenes al lienzo.
+- [ ] actualizar propiedades de las imagenes.
+- [ ] implementar un atajo propio para cambiar la resolucion de la imagen.
+- [ ] implementar un atajo propio para cambiar la opacidad de la imagen.
+- [ ] implementar un atajo propio para cambiar el posicionamiento de la imagen.
+- [ ] implementar un atajo propio para cambiar la visibilidad de la iamgen.
+#### agregar propiedades al lienzo
+- [ ] agregar la propiedad de desplazamiento en el lienzo.
+- [ ] implementar la funcionalidad de desplazar el lienzo.
+- [ ] integrar todas las funcionalidades con el desplazamiento del lienzo
+ 
+
 #### vitacora
 
 talvez para simular el zoom y el desplazamiento podemos, virtualizar los datos reales poniendo una capa. por ejemplo
