@@ -16,11 +16,28 @@ function TablaImagenes(props){
 
     const handleChange = (index, e) => {
         const { name, value, type, checked } = e.target;
-        const newImages = [...props.lista_imagenes];
+        /*const newImages = [...props.lista_imagenes];
         newImages[index] = {
             ...newImages[index],
             [name]: type === 'checkbox' ? checked : value
-        };
+        };*/
+        //props.animacion.lista_imagenes[index].visible = checked;
+        props.lista_imagenes[index].visible = checked;
+        props.setListaImagenes(props.lista_imagenes);
+        // Aquí debes actualizar el estado correspondiente si estás utilizando un estado en el componente padre.
+    };
+
+    const cambioVisible = (index, e) => {
+        const { name, value, type, checked } = e.target;
+        /*const newImages = [...props.lista_imagenes];
+        newImages[index] = {
+            ...newImages[index],
+            [name]: type === 'checkbox' ? checked : value
+        };*/
+        //props.animacion.lista_imagenes[index].visible = checked;
+        console.log(checked);
+        props.lista_imagenes[index].visible = checked;
+        props.setListaImagenes([...props.lista_imagenes]);
         // Aquí debes actualizar el estado correspondiente si estás utilizando un estado en el componente padre.
     };
 
@@ -32,9 +49,6 @@ function TablaImagenes(props){
     const eliminarImagenLienzo = async (index)=>{
         const id_animacion = props.animacion.id_animacion;
         const id_imagen = props.lista_imagenes[index]._id;
-        console.log(id_animacion);
-        console.log(id_imagen);
-
 
         const url = "/api/animacion/eliminar-imagen/"+id_animacion+'/'+id_imagen;
 
@@ -55,7 +69,40 @@ function TablaImagenes(props){
             // Mostrar alerta de éxito si la solicitud se realiza correctamente
             props.animacion.eliminar_imagen(id_imagen);
             props.setListaImagenes(props.animacion.lista_imagenes)
-            alert('Imagen eliminada exitosamente');
+        } catch (error) {
+            // Mostrar alerta de fallo si ocurre algún error
+            alert('Error al eliminar la imagen');
+            console.error('Error:', error);
+        }
+    }
+
+    const actualizarImagen =async (index)=>{
+        const id_animacion = props.animacion.id_animacion;
+        //const id_imagen = props.lista_imagenes[index]._id;
+
+        const image_ = props.lista_imagenes[index];
+        const url = "/api/animacion/actualizar-imagen/"+id_animacion;
+
+        const token = datos_usuario.token;
+        console.log("token: "+token);
+        const config_request = {
+            method: 'put',
+            url: url,
+            headers: {
+                "Content-Type": "application/json",
+                'Accept': 'application/json',
+                'Authorization': 'Bearer '+token,
+            },
+            withCredentials: true,
+            data : image_
+        };
+
+        try {
+            const response = await axios(config_request);
+            console.log(response.data);
+            // Mostrar alerta de éxito si la solicitud se realiza correctamente
+            //props.animacion.eliminar_imagen(id_imagen);
+            //props.setListaImagenes(props.animacion.lista_imagenes)
         } catch (error) {
             // Mostrar alerta de fallo si ocurre algún error
             alert('Error al eliminar la imagen');
@@ -191,14 +238,18 @@ function TablaImagenes(props){
                                                 id={`visible${index}`}
                                                 name="visible"
                                                 checked={img.visible}
-                                                onChange={(e) => handleChange(index, e)}
+                                                onChange={(e) => cambioVisible(index, e)}
                                             />
                                             <label className="form-check-label" htmlFor={`visible${index}`}>Visible</label>
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-primary">Enviar</button>
-                                <button className="btn btn-primary" onClick={()=>eliminarImagenLienzo(index)}>Borrar</button>
+                                <button className="btn btn-primary" onClick={()=>actualizarImagen(index)}>
+                                    Enviar
+                                </button>
+                                <button className="btn btn-primary" onClick={()=>eliminarImagenLienzo(index)}>
+                                    Borrar
+                                </button>
                             </form>
                         </div>
                     </div>

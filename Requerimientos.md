@@ -41,7 +41,9 @@ que se importaron al proyecto.
 - [ ] implementar un atajo propio para cambiar la opacidad de la imagen.
 - [ ] implementar un atajo propio para cambiar el posicionamiento de la imagen.
 - [ ] implementar un atajo propio para cambiar la visibilidad de la iamgen.
+- [ ] seleccionar el pigmento de la imagen del canvas.
 #### agregar propiedades al lienzo
+- [ ] pintado de los grupos activar y desactivar.
 - [ ] agregar la propiedad de desplazamiento en el lienzo.
 - [ ] implementar la funcionalidad de desplazar el lienzo.
 - [ ] integrar todas las funcionalidades con el desplazamiento del lienzo

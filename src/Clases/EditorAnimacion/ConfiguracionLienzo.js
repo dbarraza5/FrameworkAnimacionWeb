@@ -82,33 +82,14 @@ class ConfiguracionLienzo{
     }
 
     imprimirImagenesLienzo(ctx, animacion_){
-
-        /*
-        ctx.globalAlpha = 0.7;
-            ctx.drawImage(img1, 50, 50);
-
-            // Dibujar la segunda imagen (encima de la primera) con opacidad 0.5 (50%)
-            ctx.globalAlpha = 0.5;
-            ctx.drawImage(img2, 100, 100);
-
-            // Restaurar la opacidad global si es necesario
-            ctx.globalAlpha = 1.0;
-
-
-            var x = 50;
-            var y = 50;
-            var width = 200;
-            var height = 150;
-            ctx.drawImage(img, x, y, width, height);
-         */
-        //console.log("IMPRIMIR IMAGENES DEL LIENZO");
-        //console.log(animacion_.lista_imagenes);
         animacion_.lista_imagenes.map((imagen)=>{
             if(imagen.img){
-                //console.log(imagen.nombre);
-                ctx.globalAlpha = imagen.opacidad;
-                ctx.drawImage(imagen.img, imagen.x, imagen.y, imagen.ancho, imagen.alto);
-                ctx.globalAlpha = 1.0;
+                if(imagen.visible){
+                    //console.log(imagen.nombre);
+                    ctx.globalAlpha = imagen.opacidad;
+                    ctx.drawImage(imagen.img, imagen.x, imagen.y, imagen.ancho, imagen.alto);
+                    ctx.globalAlpha = 1.0;
+                }
             }
         });
     }

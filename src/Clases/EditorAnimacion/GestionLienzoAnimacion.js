@@ -908,7 +908,7 @@ class GestionLienzoAnimacion {
         const imprimir_lienzo_completo = this.categoria_trabajo === TRABAJO_NONE
             || espacio_trabajo_val;
 
-        if(imprimir_lienzo_completo){
+        if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO){
             imprimirListaGrupos(ctx, lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
                 this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
         }
