@@ -3,6 +3,7 @@ const MOVER_NADA = -1;
 const MOVER_CENTRO_IMAGEN = 18;
 const MOVER_INFLAR_IMAGEN = 19;
 const MOVER_SELECIONAR_IMAGEN = 20;
+const MOVER_OPACIDAD_IMAGEN = 21;
 
 const PORCENTAJE = 0.1
 const REDUCCION = 1-PORCENTAJE;
@@ -41,34 +42,32 @@ class ConfiguracionLienzo{
                 elemento.x = this.puntero.x;
                 elemento.y = this.puntero.y;
 
-                const cambiarTamano = eventoLienzoFigura.stack_event_teclado.includes("KeyT");
-                const cambiarOpacidad = eventoLienzoFigura.stack_event_teclado.includes("KeyO");
-                console.log("size: "+cambiarTamano);
+                if(eventoLienzoFigura.mouse_only_click){
+                    this.tipo_trabajo=MOVER_NADA;
+                }
+            }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyT")){
                 if(eventoLienzoFigura.mouse_delta_scroll>0){
-                    if(cambiarTamano){
-                        elemento.ancho=Math.round(elemento.ancho*REDUCCION);
-                        elemento.alto=Math.round(elemento.alto*REDUCCION);
-                    }
-                    if(cambiarOpacidad){
-                        if(elemento.opacidad > 0.1){
-                            elemento.opacidad=elemento.opacidad-0.1;
-                        }
+                    elemento.ancho=Math.round(elemento.ancho*REDUCCION);
+                    elemento.alto=Math.round(elemento.alto*REDUCCION);
+                }
+                if(eventoLienzoFigura.mouse_delta_scroll<0){
+                    elemento.ancho=Math.round(elemento.ancho*AUMENTO);
+                    elemento.alto=Math.round(elemento.alto*AUMENTO);
+                }
+            }
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyO")){
+                console.log(eventoLienzoFigura.mouse_delta_scroll);
+                if(eventoLienzoFigura.mouse_delta_scroll>0){
+                    if(elemento.opacidad > 0.2){
+                        elemento.opacidad=elemento.opacidad-0.1;
                     }
                 }
                 if(eventoLienzoFigura.mouse_delta_scroll<0){
-                    if(cambiarTamano){
-                        elemento.ancho=Math.round(elemento.ancho*AUMENTO);
-                        elemento.alto=Math.round(elemento.alto*AUMENTO);
+                    if(elemento.opacidad < 1){
+                        elemento.opacidad=elemento.opacidad+0.1;
                     }
-                    if(cambiarOpacidad){
-                        if(elemento.opacidad < 1){
-                            elemento.opacidad=elemento.opacidad+0.1;
-                        }
-                    }
-                }
-
-                if(eventoLienzoFigura.mouse_only_click){
-                    this.tipo_trabajo=MOVER_NADA;
                 }
             }
         }
