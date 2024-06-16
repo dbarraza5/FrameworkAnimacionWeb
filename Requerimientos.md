@@ -36,11 +36,11 @@ que se importaron al proyecto.
 
 #### agregar imagenes al lienzo
 - [x] agregar imagenes al lienzo.
-- [ ] actualizar propiedades de las imagenes.
-- [ ] implementar un atajo propio para cambiar la resolucion de la imagen.
-- [ ] implementar un atajo propio para cambiar la opacidad de la imagen.
-- [ ] implementar un atajo propio para cambiar el posicionamiento de la imagen.
-- [ ] implementar un atajo propio para cambiar la visibilidad de la iamgen.
+- [x] actualizar propiedades de las imagenes.
+- [x] implementar un atajo propio para cambiar la resolucion de la imagen.
+- [x] implementar un atajo propio para cambiar la opacidad de la imagen.
+- [x] implementar un atajo propio para cambiar el posicionamiento de la imagen.
+- [x] implementar un atajo propio para cambiar la visibilidad de la iamgen.
 - [ ] seleccionar el pigmento de la imagen del canvas.
 #### agregar propiedades al lienzo
 - [ ] pintado de los grupos activar y desactivar.
