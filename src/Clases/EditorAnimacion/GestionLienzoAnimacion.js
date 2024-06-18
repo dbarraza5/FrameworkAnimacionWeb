@@ -166,7 +166,8 @@ class GestionLienzoAnimacion {
         this.id_canvas = "lienzo-animacion"
         this.x = 0;
         this.y = 0;
-        this.animacion_ = animacion_
+        this.animacion_ = animacion_;
+        this.id_grupo_selec = "default";
     }
 
     setFuncionEditarLienzo(funcion){
@@ -308,9 +309,12 @@ class GestionLienzoAnimacion {
                     }
                     this.puntero_seleccion.w = eventoLienzoFigura.mouse_x - this.puntero_seleccion.x;
                     this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
+                    this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
                     //console.log(this.puntero_seleccion)
                 }
                 if (eventoLienzoFigura.mouse_click_up) {
+                    console.log("SELECCIONAR FIGURAAAAAS")
+                    console.log(this.lista_id_figuras)
                     if(this.lista_id_figuras.length == 1 && this.seleccion_figuras){
                         console.log(this.puntero_seleccion)
                         this.seleccion_figuras = false
@@ -392,7 +396,7 @@ class GestionLienzoAnimacion {
                 w: 3,
                 h: 3
             }
-            if (eventoLienzoFigura.mouse_click_down && Fisica.rectsColliding(this.puntero, p_sup)){
+            if (eventoLienzoFigura.mouse_only_click && Fisica.rectsColliding(this.puntero, p_sup)){
                 console.log("INFLAR POR LA ESQUINA")
                 this.mover_figura = MOVER_INFLAR_FIGURAS;
                 this.copia_lista_figuras = this.animacion_.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
@@ -840,6 +844,8 @@ class GestionLienzoAnimacion {
             if(this.categoria_trabajo === TRABAJO_CONFIG_LIENZO){
                 this.configuracion_lienzo.procesarTrabajoConfiguracion(eventoLienzoFigura, this.animacion_);
             }
+
+            if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS || this.categoria_trabajo === TRABAJO_FIGURA)
             this.procesarSeleccionPuntero(eventoLienzoFigura);
             this.aplicarCambiosConcurrente();
             this.actualizarLienzo()

@@ -7,7 +7,8 @@ import TreeViewElement from "../../TreeView/TreeViewElement";
 import GestionGruposLienzo from "./GestionGrupoLienzo/GestionGruposLienzo";
 import PintadoGrupo from "./PintadoGrupo/PintadoGrupo";
 import {
-    TRABAJO_CONFIG_LIENZO,
+    MOVER_FIGURA_AGREGADA, MOVER_NADA,
+    TRABAJO_CONFIG_LIENZO, TRABAJO_EDICION_FIGURAS, TRABAJO_FIGURA,
     TRABAJO_GRUPOS,
     TRABAJO_LISTA_FIGURAS,
     TRABAJO_PINTADO_GRUPO
@@ -22,6 +23,7 @@ function NavFiguras(props){
 
     const cambioEspacioTrabajo=(id_)=>{
         props.gestionLienzo.categoria_trabajo = id_;
+        //props.gestionLienzo.mover_figura = MOVER_NADA;
         setSelectNav(id_);
     }
 

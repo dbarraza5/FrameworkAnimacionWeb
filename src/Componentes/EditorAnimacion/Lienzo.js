@@ -21,9 +21,9 @@ function Lienzo(props){
 
     const eventoMouseUp=(e)=>{
 
-        console.log("levantar click")
-        console.log(e.button)
-        console.log(e.buttons)
+        //console.log("levantar click")
+        //console.log(e.button)
+        //console.log(e.buttons)
         props.lienzo.mouse_click_down=false;
         props.lienzo.mouse_click_up=true;
         props.setEventLienzoFigura(props.lienzo);
@@ -32,9 +32,9 @@ function Lienzo(props){
 
     const eventoMouseDown=(e)=>{
 
-        console.log("apretar click")
-        console.log(e.button)
-        console.log(e.buttons)
+        //console.log("apretar click")
+        //console.log(e.button)
+        //console.log(e.buttons)
         props.lienzo.mouse_type_button = e.button
         props.lienzo.mouse_click_down=true;
         props.lienzo.mouse_click_up=false;
@@ -52,7 +52,7 @@ function Lienzo(props){
     }
 
     const eventoMouseSalida=(e)=>{
-        console.log("salida al lienzo")
+        //console.log("salida al lienzo")
         props.lienzo.mouse_sobre_lienzo = false;
         props.lienzo.mouse_mueve_sobre_lienzo = false;
         props.setEventLienzoFigura(props.lienzo);
