@@ -309,7 +309,6 @@ class GestionLienzoAnimacion {
                     }
                     this.puntero_seleccion.w = eventoLienzoFigura.mouse_x - this.puntero_seleccion.x;
                     this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
-                    this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
                     //console.log(this.puntero_seleccion)
                 }
                 if (eventoLienzoFigura.mouse_click_up) {
@@ -845,7 +844,8 @@ class GestionLienzoAnimacion {
                 this.configuracion_lienzo.procesarTrabajoConfiguracion(eventoLienzoFigura, this.animacion_);
             }
 
-            if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS || this.categoria_trabajo === TRABAJO_FIGURA)
+            if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS || this.categoria_trabajo === TRABAJO_FIGURA ||
+                this.categoria_trabajo === TRABAJO_GRUPOS)
             this.procesarSeleccionPuntero(eventoLienzoFigura);
             this.aplicarCambiosConcurrente();
             this.actualizarLienzo()

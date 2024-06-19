@@ -34,6 +34,7 @@ function GestionFiguras(props){
     const cambiar_grupo=(nombre_grupo_)=>{
         setFigura(null)
         setNombreGrupo(nombre_grupo_)
+        props.gestionLienzo.seleccionarFigurasTransformar(nombre_grupo_);
     }
 
     const cambiar_tipo_figura=(tipo_figura_)=>{
