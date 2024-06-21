@@ -936,29 +936,29 @@ class GestionLienzoAnimacion {
                 dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
                 //}
             }
+        }
 
-            if(this.categoria_trabajo === TRABAJO_GRUPOS){
-                const rect_seleccion = OperacionesGrupo.calcularCentroGruposSeleccionados(this.copia_lista_grupos)
-                dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
-                    rect_seleccion.ancho, rect_seleccion.alto)
-                //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
-                dibujar_circulo(ctx, "#76ff14", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
-                //}
-                dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.centro_x, rect_seleccion.centro_y,
-                    this.p_centro.w, this.p_centro.h)
-                if(this.mover_figura === MOVER_ROTAR_GRUPOS){
-                    console.log("imprime el pivote 12121212")
-                    dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 5, 5)
+        if(this.categoria_trabajo === TRABAJO_GRUPOS){
+            const rect_seleccion =
+                OperacionesGrupo.calcularCentroGruposSeleccionados(this.animacion_.get_lista_grupos_by_IDs(this.lista_grupos_trabajando))
+            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
+                rect_seleccion.ancho, rect_seleccion.alto)
+            //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
+            dibujar_circulo(ctx, "#76ff14", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
+            //}
+            dibujar_rectangulo(ctx, "#76ff14", rect_seleccion.centro_x, rect_seleccion.centro_y,
+                this.p_centro.w, this.p_centro.h)
+            if(this.mover_figura === MOVER_ROTAR_GRUPOS){
+                dibujar_circulo(ctx, "#ff2f14", this.pivote_rotacion.x, this.pivote_rotacion.y, 5, 5)
+                dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
+                    rect_seleccion.centro_x+1, rect_seleccion.centro_y-1)
+
+                if(this.rotar_lista_grupos){
                     dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
-                        rect_seleccion.centro_x+1, rect_seleccion.centro_y-1)
-
-                    if(this.rotar_lista_grupos){
-                        dibujar_linea_segmentada(ctx, "#ff2f14", this.pivote_rotacion.x+2, this.pivote_rotacion.y-2,
-                            this.puntero.x, this.puntero.y)
-                    }
-                }else{
-
+                        this.puntero.x, this.puntero.y)
                 }
+            }else{
+
             }
         }
 

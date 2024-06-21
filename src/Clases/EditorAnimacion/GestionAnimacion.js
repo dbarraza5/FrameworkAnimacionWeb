@@ -393,6 +393,12 @@ class GestionAnimacion{
         }
     }
 
+    get_lista_grupos_by_IDs(lista_nombres_grupos){
+        return this.grupos_figuras.filter((g)=>{
+            return lista_nombres_grupos.includes(g.nombre);
+        })
+    }
+
     duplicar_grupo(nombre_grupo){
         const grupo_ = this.getGrupo(nombre_grupo)
         const grupo_duplicado = JSON.parse(JSON.stringify(grupo_))
