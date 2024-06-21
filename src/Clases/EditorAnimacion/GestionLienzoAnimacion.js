@@ -632,10 +632,10 @@ class GestionLienzoAnimacion {
     procesarTrabajoListaGrupos(eventoLienzoFigura, setAnimacion, actListaTrabajo){
         if(eventoLienzoFigura.stack_event_teclado.includes("KeyQ") && this.mover_figura === MOVER_NADA){
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyE")){
-                console.log("[SELECCION DE GRUPOS]")
-                this.mover_figura = MOVER_CENTRO_GRUPOS;
-                this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(["marco","rayos_rueda"])
-                this.mover_centros=OperacionesGrupo.calcularCentroGruposSeleccionados(this.copia_lista_grupos)
+                //console.log("[SELECCION DE GRUPOS]")
+                //this.mover_figura = MOVER_CENTRO_GRUPOS;
+                //this.copia_lista_grupos = this.animacion_.duplicar_lista_grupos(["marco","rayos_rueda"])
+                //this.mover_centros=OperacionesGrupo.calcularCentroGruposSeleccionados(this.copia_lista_grupos)
             }
         }
 
