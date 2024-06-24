@@ -312,8 +312,6 @@ class GestionLienzoAnimacion {
                     //console.log(this.puntero_seleccion)
                 }
                 if (eventoLienzoFigura.mouse_click_up) {
-                    console.log("SELECCIONAR FIGURAAAAAS")
-                    console.log(this.lista_id_figuras)
                     if(this.lista_id_figuras.length == 1 && this.seleccion_figuras){
                         console.log(this.puntero_seleccion)
                         this.seleccion_figuras = false
@@ -847,6 +845,21 @@ class GestionLienzoAnimacion {
             if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS || this.categoria_trabajo === TRABAJO_FIGURA ||
                 this.categoria_trabajo === TRABAJO_GRUPOS)
             this.procesarSeleccionPuntero(eventoLienzoFigura);
+
+            if(this.categoria_trabajo === TRABAJO_FIGURA){
+                const grupo = this.animacion_.getGrupo(this.id_grupo_selec);
+                const figura =  this.animacion_.get_figura(grupo.nombre, this.id_figura_selec);
+                if (figura.tipo_figura === "RECTA") {
+                    this.actualizarPuntosRectas(figura, grupo);
+                }
+
+                if (figura.tipo_figura === "PUNTO") {
+                    this.actualizarPuntoCentro(figura, grupo)
+                }
+            }else{
+                this.id_figura_selec = null;
+            }
+
             this.aplicarCambiosConcurrente();
             this.actualizarLienzo()
 
@@ -903,8 +916,6 @@ class GestionLienzoAnimacion {
         const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
         this.animacion_.procesarPosicionFinalFiguras()
         this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
-
-        //imprimir las imagenes subidas al lienzoo
 
         //imprimir las imagenes del lienzo de configuracion
         this.configuracion_lienzo.imprimirImagenesLienzo(ctx, this.animacion_);
