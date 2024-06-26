@@ -311,7 +311,7 @@ class GestionLienzoAnimacion {
                     this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
                     //console.log(this.puntero_seleccion)
                 }
-                if (eventoLienzoFigura.mouse_click_up) {
+                if (eventoLienzoFigura.mouse_click_up && this.categoria_trabajo === TRABAJO_LISTA_FIGURAS) {
                     if(this.lista_id_figuras.length == 1 && this.seleccion_figuras){
                         console.log(this.puntero_seleccion)
                         this.seleccion_figuras = false
@@ -399,6 +399,12 @@ class GestionLienzoAnimacion {
                 this.copia_lista_figuras = this.animacion_.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
                 this.mover_centros=this.calcularCentroFigurasSeleccionadas()
             }
+            /*p_sup.x = rect_seleccion.centro_x;
+            p_sup.y = rect_seleccion.centro_y;
+            if (eventoLienzoFigura.mouse_only_click && Fisica.rectsColliding(this.puntero, p_sup)){
+                this.mover_figura = MOVER_CENTROS_FIGURAS;
+                this.mover_centros=this.calcularCentroFigurasSeleccionadas()
+            }*/
         }
 
         if(this.mover_figura === MOVER_CENTROS_FIGURAS){

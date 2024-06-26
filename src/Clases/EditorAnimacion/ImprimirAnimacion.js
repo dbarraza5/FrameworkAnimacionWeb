@@ -63,7 +63,7 @@ function imprimirListaGrupos(ctx, lista_grupo_root, id_grupo_selec, id_figura_se
             let color_figura = grupo.color;
 
             seleccion = grupo.nombre === id_grupo_selec && figura.nombre === id_figura_selec;
-            if(lista_id_figuras.includes(figura.nombre)){
+            if(lista_id_figuras.includes(figura.nombre) && id_grupo_selec === grupo.nombre){
                 color_figura = "#ff00a1";
             }
             if (figura.tipo_figura === "RECTA") {
