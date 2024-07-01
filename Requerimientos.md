@@ -47,7 +47,30 @@ que se importaron al proyecto.
 - [ ] agregar la propiedad de desplazamiento en el lienzo.
 - [ ] implementar la funcionalidad de desplazar el lienzo.
 - [ ] integrar todas las funcionalidades con el desplazamiento del lienzo
+
+
+#### implementacion del zoom como una propiedad escalable.
+el zoom debe implementarse como capa abstracta donde no se tiene que intefirer con los elementos de las figuras 
+para alcanzar el objetivo. la idea de implementar el zoom es que pueda ser un cocepto que se integre tanto con lo
+visual como con la funcional. la funcionalidad de los elementos dentro del lienzo seguiran siendo los mismos pero 
+la interaccion del mouse con el lienzo se modificara para que el mouse pueda emular el desplzamiento dentro 
+del lienzo
+- [ ] desacoplar la impresion din decoraciones de todas las figuras.
+- [ ] implementar una gestion de seleccion de area hacer zoom.
+- [ ] implementar una gestion de desplazamiento en el lienzo.
+- [ ] mostrar el desplazamiento en la quina inzquierda superior "(x, y)"
+- [ ] mostrar el zoom que tiene el lienzo en la quina derecha superior "x%"
+- [ ] recodificar el desplazamiento cuando se muestra
+- [ ] emular  y recodificar el comportamiento del mouse, la interaccion que tiene cos componentes es la misma solo
+que si existe desplazamiento o un zoom debe de convertir esos valores desfazados a valores reales. 
+- [ ] prueba de desplzamiento debe de constuirse un objeto sin zoom ni desplazamiento y una vez creado debe 
+de construirse el mismo objeto sobre el otro pero con zoom y desplzamiento, pudiendo dejar las posiciones,
+una vez quitado los efectos deberian estar sobrelapados.
  
+ 
+#### BUGs del sistema 
+- [ ] no se puede desplazar el centro con el puntero cuando se selecciona varias figuras.
+- [ ] cuando se hace el efecto espejo de un grupo de forma reitirativa presenta una deformacion de las figuras
 
 #### vitacora
 
