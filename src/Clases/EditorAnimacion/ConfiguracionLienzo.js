@@ -5,6 +5,9 @@ const MOVER_INFLAR_IMAGEN = 19;
 const MOVER_SELECIONAR_IMAGEN = 20;
 const MOVER_OPACIDAD_IMAGEN = 21;
 
+const MOVER_AUMENTO_LIENZO = 23;
+const MOVER_REDUCCION_LIENZO = 24;
+
 const PORCENTAJE = 0.1
 const REDUCCION = 1-PORCENTAJE;
 const AUMENTO = 1+PORCENTAJE;
@@ -31,6 +34,21 @@ class ConfiguracionLienzo{
     indice_imagen_seleccionada = -1;
 
     tipo_trabajo = MOVER_NADA;
+
+    // coordenadas iniciales de desplazamiento del lienzo
+    x_original = 0;
+    y_original = 0;
+    // zoom 100% = normal
+    zoom = 100;
+
+    //area a la que le hara el zoom
+    seleccion_zoom = {
+        x: 0,
+        y: 0,
+        h: 5,
+        w: 5
+    }
+
 
     procesarTrabajoConfiguracion(eventoLienzoFigura, animacion_){
         this.puntero.x = eventoLienzoFigura.mouse_x;
