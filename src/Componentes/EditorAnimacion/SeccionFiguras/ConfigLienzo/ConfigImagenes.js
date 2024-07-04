@@ -7,7 +7,7 @@ import SubirImagen from "./SubirImagen";
 import TablaImagenes from "./TablaImagenes";
 import ButtonNav from "../../../EditorMapa/ButtonNav";
 import {
-    TRABAJO_CONFIG_LIENZO,
+    TRABAJO_CONFIG_LIENZO_IMAGENES,
     TRABAJO_GRUPOS,
     TRABAJO_LISTA_FIGURAS, TRABAJO_PINTADO_GRUPO
 } from "../../../../Clases/EditorAnimacion/ConstanteAnimacion";
@@ -29,7 +29,6 @@ function ConfigImagenes(props){
 
     const obtenerImagen = async(data_img)=>{
         try {
-
             const url = "/api/imagen/"+data_img.url;
             const token = datos_usuario.token;
 

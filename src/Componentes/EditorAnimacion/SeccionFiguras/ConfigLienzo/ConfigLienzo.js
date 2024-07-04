@@ -7,7 +7,7 @@ import SubirImagen from "./SubirImagen";
 import TablaImagenes from "./TablaImagenes";
 import ButtonNav from "../../../EditorMapa/ButtonNav";
 import {
-    TRABAJO_CONFIG_LIENZO,
+    TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES,
     TRABAJO_GRUPOS,
     TRABAJO_LISTA_FIGURAS, TRABAJO_PINTADO_GRUPO
 } from "../../../../Clases/EditorAnimacion/ConstanteAnimacion";
@@ -24,11 +24,11 @@ function ConfigLienzo(props){
         <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item" role="presentation">
                 <ButtonNav id="btn-nav-config-lienzo" data-bs-target="#nav-config-lienzo"
-                           onClick={()=>console.log("config")}>Configuracion</ButtonNav>
+                           onClick={()=>props.cambioEspacioTrabajo(TRABAJO_CONFIG_LIENZO_ATRIBUTOS)}>Configuracion</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
                 <ButtonNav id="btn-contact-tab1" data-bs-target="#nav-imagenes-lienzo"
-                           onClick={()=>console.log("config imagenes")}>Imagenes</ButtonNav>
+                           onClick={()=>props.cambioEspacioTrabajo(TRABAJO_CONFIG_LIENZO_IMAGENES)}>Imagenes</ButtonNav>
             </li>
         </ul>
         <div className="tab-content" id="myTabContent">

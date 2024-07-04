@@ -8,7 +8,7 @@ import GestionGruposLienzo from "./GestionGrupoLienzo/GestionGruposLienzo";
 import PintadoGrupo from "./PintadoGrupo/PintadoGrupo";
 import {
     MOVER_FIGURA_AGREGADA, MOVER_NADA,
-    TRABAJO_CONFIG_LIENZO, TRABAJO_EDICION_FIGURAS, TRABAJO_FIGURA,
+    TRABAJO_CONFIG_LIENZO_IMAGENES, TRABAJO_EDICION_FIGURAS, TRABAJO_FIGURA,
     TRABAJO_GRUPOS,
     TRABAJO_LISTA_FIGURAS,
     TRABAJO_PINTADO_GRUPO
@@ -40,7 +40,7 @@ function NavFiguras(props){
             </li>
             <li className="nav-item" role="presentation" >
                 <ButtonNav id="puntero-tab" data-bs-target="#puntero-tab-panel"
-                           onClick={()=>cambioEspacioTrabajo(TRABAJO_CONFIG_LIENZO)}>Lienzo</ButtonNav>
+                           onClick={()=>null}>Lienzo</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
                 <ButtonNav id="puntero-tab" data-bs-target="#pintar-tab-panel"
@@ -62,7 +62,7 @@ function NavFiguras(props){
             <div className="tab-pane fade" id="puntero-tab-panel" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                <ConfigLienzo {...props}/>
+                <ConfigLienzo {...props} cambioEspacioTrabajo={cambioEspacioTrabajo}/>
             </div>
             <div className="tab-pane fade" id="pintar-tab-panel" role="tabpanel"
                  aria-labelledby="contact-tab1"

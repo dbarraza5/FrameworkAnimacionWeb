@@ -99,6 +99,14 @@ class ConfiguracionLienzo{
     }
 
     imprimirImagenesLienzo(ctx, animacion_){
+        ctx.font = '15px Arial';        // Tamaño y fuente del texto
+        ctx.fillStyle = 'blue';         // Color del texto
+
+        // Dibujar el texto en el canvas
+        const coor = '('+this.x_original+', '+this.y_original+')'
+        //ctx.fillText(coor, 0, 15);
+        ctx.fillText("x: "+this.x_original, 0, 15);
+        ctx.fillText("y: "+this.y_original, 0, 30);
         animacion_.lista_imagenes.map((imagen)=>{
             if(imagen.img){
                 if(imagen.visible){
