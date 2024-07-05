@@ -7,6 +7,7 @@ const MOVER_OPACIDAD_IMAGEN = 21;
 
 const MOVER_AUMENTO_LIENZO = 23;
 const MOVER_REDUCCION_LIENZO = 24;
+const MOVER_DESPLAZAR_LIENZO = 25;
 
 const PORCENTAJE = 0.1
 const REDUCCION = 1-PORCENTAJE;
@@ -38,8 +39,13 @@ class ConfiguracionLienzo{
     // coordenadas iniciales de desplazamiento del lienzo
     x_original = 0;
     y_original = 0;
+    x_original_aux = 0;
+    y_original_aux = 0;
     // zoom 100% = normal
     zoom = 100;
+
+    x_original_mouse = 0;
+    y_original_mouse = 0;
 
     //area a la que le hara el zoom
     seleccion_zoom = {
@@ -49,10 +55,35 @@ class ConfiguracionLienzo{
         w: 5
     }
 
-
-    procesarTrabajoConfiguracion(eventoLienzoFigura, animacion_){
+    procesarTrabajoConfiguracionAtributosLienzo(eventoLienzoFigura){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
+        if(this.tipo_trabajo === MOVER_NADA){
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyE") && eventoLienzoFigura.mouse_click_down){
+                this.x_original_mouse = eventoLienzoFigura.mouse_x;
+                this.y_original_mouse = eventoLienzoFigura.mouse_y;
+                this.x_original_aux = this.x_original;
+                this.y_original_aux = this.y_original;
+                this.tipo_trabajo = MOVER_DESPLAZAR_LIENZO;
+            }
+        }
+
+        if(this.tipo_trabajo === MOVER_DESPLAZAR_LIENZO){
+            const x_delta = eventoLienzoFigura.mouse_x - this.x_original_mouse;
+            const y_delta = eventoLienzoFigura.mouse_y - this.y_original_mouse;
+            this.x_original = this.x_original_aux+ x_delta;
+            this.y_original = this.y_original_aux+ y_delta;
+            if(eventoLienzoFigura.mouse_click_up){
+                this.tipo_trabajo = MOVER_NADA;
+            }
+        }
+
+    }
+
+    procesarTrabajoConfiguracionImagenesLiento(eventoLienzoFigura, animacion_){
+        this.puntero.x = eventoLienzoFigura.mouse_x;
+        this.puntero.y = eventoLienzoFigura.mouse_y;
+
         //console.log(eventoLienzoFigura.stack_event_teclado);
         if(this.indice_imagen_seleccionada >= 0){
             const elemento = animacion_.lista_imagenes[this.indice_imagen_seleccionada];
@@ -98,7 +129,7 @@ class ConfiguracionLienzo{
         }
     }
 
-    imprimirImagenesLienzo(ctx, animacion_){
+    imprimirVariablesLienzo(ctx){
         ctx.font = '15px Arial';        // Tamaño y fuente del texto
         ctx.fillStyle = 'blue';         // Color del texto
 
@@ -107,6 +138,10 @@ class ConfiguracionLienzo{
         //ctx.fillText(coor, 0, 15);
         ctx.fillText("x: "+this.x_original, 0, 15);
         ctx.fillText("y: "+this.y_original, 0, 30);
+    }
+
+    imprimirImagenesLienzo(ctx, animacion_){
+
         animacion_.lista_imagenes.map((imagen)=>{
             if(imagen.img){
                 if(imagen.visible){

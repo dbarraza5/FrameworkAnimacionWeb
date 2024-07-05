@@ -9,7 +9,7 @@ import {
 } from "./ImprimirAnimacion";
 import OperacionesGrupo from "./OperacionesGrupo";
 import GestionPintado from "./GestionPintado";
-import {TRABAJO_CONFIG_LIENZO_IMAGENES} from "./ConstanteAnimacion";
+import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "./ConstanteAnimacion";
 import ConfiguracionLienzo from "./ConfiguracionLienzo";
 
 const TRABAJO_NONE = -1
@@ -844,8 +844,12 @@ class GestionLienzoAnimacion {
                 this.gestion_pintado.procesarTrabajoPintado(eventoLienzoFigura)
             }
 
+            if(this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
+                this.configuracion_lienzo.procesarTrabajoConfiguracionAtributosLienzo(eventoLienzoFigura);
+            }
+
             if(this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES){
-                this.configuracion_lienzo.procesarTrabajoConfiguracion(eventoLienzoFigura, this.animacion_);
+                this.configuracion_lienzo.procesarTrabajoConfiguracionImagenesLiento(eventoLienzoFigura, this.animacion_);
             }
 
             if (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS || this.categoria_trabajo === TRABAJO_FIGURA ||
@@ -931,7 +935,8 @@ class GestionLienzoAnimacion {
         const imprimir_lienzo_completo = this.categoria_trabajo === TRABAJO_NONE
             || espacio_trabajo_val;
 
-        if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES){
+        if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES ||
+            this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
             imprimirListaGrupos(ctx, lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
                 this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
         }
@@ -985,6 +990,8 @@ class GestionLienzoAnimacion {
             imprimirGrupoPintado(ctx, this.gestion_pintado)
 
         }
+
+        this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
     }
 
     calcularCentroFigurasSeleccionadas(){
