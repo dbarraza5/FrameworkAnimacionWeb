@@ -2,8 +2,13 @@
 
 class ControlEventoLienzoFigura{
 
+    // coordenadas reales dentro del lienzo
     mouse_x = 0;
     mouse_y = 0;
+    // coordenadas ficticias de desplazamiento
+    mouse_virtual_x = 0;
+    mouse_virtual_y = 0;
+
     mouse_sobre_lienzo = false;
     mouse_mueve_sobre_lienzo = false
     mouse_click_down = false;

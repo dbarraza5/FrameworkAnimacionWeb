@@ -826,7 +826,8 @@ class GestionLienzoAnimacion {
     }
 
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
-
+        eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x +this.configuracion_lienzo.x_original;
+        eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y +this.configuracion_lienzo.y_original;
         if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {
                 this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
