@@ -5,7 +5,7 @@ import {
     imprimirListaGrupos,
     dibujar_rectangulo,
     dibujar_circulo,
-    dibujar_linea_segmentada, dibujar_linea, dibujar_punto, imprimir_recta, imprimirGrupoPintado
+    dibujar_linea_segmentada, dibujar_linea, dibujar_punto, imprimir_recta, imprimirGrupoPintado, ImprimirAnimacion
 } from "./ImprimirAnimacion";
 import OperacionesGrupo from "./OperacionesGrupo";
 import GestionPintado from "./GestionPintado";
@@ -158,8 +158,8 @@ class GestionLienzoAnimacion {
     proceso_principal_activo = true;
 
     gestion_pintado = new GestionPintado();
-
     configuracion_lienzo = new ConfiguracionLienzo();
+    imprimir_animacion = null;
 
 
     constructor(animacion_) {
@@ -168,6 +168,7 @@ class GestionLienzoAnimacion {
         this.y = 0;
         this.animacion_ = animacion_;
         this.id_grupo_selec = "default";
+        this.imprimir_animacion = new ImprimirAnimacion(animacion_,this.configuracion_lienzo, this.id_canvas);
     }
 
     setFuncionEditarLienzo(funcion){
@@ -937,7 +938,7 @@ class GestionLienzoAnimacion {
 
         if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES ||
             this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
-            imprimirListaGrupos(ctx, lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
+            this.imprimir_animacion.imprimirListaGrupos(lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
                 this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
         }
 
@@ -987,7 +988,7 @@ class GestionLienzoAnimacion {
         //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
 
         if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
-            imprimirGrupoPintado(ctx, this.gestion_pintado)
+            this.imprimir_animacion.imprimirGrupoPintado(this.gestion_pintado)
 
         }
 
