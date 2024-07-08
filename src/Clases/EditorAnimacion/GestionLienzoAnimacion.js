@@ -161,6 +161,9 @@ class GestionLienzoAnimacion {
     configuracion_lienzo = new ConfiguracionLienzo();
     imprimir_animacion = null;
 
+    x_mouse = 0;
+    y_mouse = 0;
+
 
     constructor(animacion_) {
         this.id_canvas = "lienzo-animacion"
@@ -828,6 +831,8 @@ class GestionLienzoAnimacion {
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
         eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x -this.configuracion_lienzo.x_original;
         eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y -this.configuracion_lienzo.y_original;
+        this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
+        this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
         if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {
                 this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
@@ -945,19 +950,28 @@ class GestionLienzoAnimacion {
 
         if(espacio_trabajo_val){
             if (this.seleccion_figuras) {
-                dibujar_rectangulo(ctx, "#1447ff", this.puntero_seleccion.x, this.puntero_seleccion.y,
+                const x_select = this.puntero_seleccion.x+this.configuracion_lienzo.x_original;
+                const y_select = this.puntero_seleccion.y+this.configuracion_lienzo.y_original;
+                dibujar_rectangulo(ctx, "#1447ff", x_select, y_select,
                     this.puntero_seleccion.w, this.puntero_seleccion.h)
             }
 
             if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
-                const rect_seleccion = this.calcularCentroFigurasSeleccionadas()
-                dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.inf_hor, rect_seleccion.inf_ver,
+                const rect_seleccion = this.calcularCentroFigurasSeleccionadas();
+                const x_select = rect_seleccion.inf_hor+this.configuracion_lienzo.x_original;
+                const y_select = rect_seleccion.inf_ver+this.configuracion_lienzo.y_original;
+                dibujar_rectangulo(ctx, "#14f7ff", x_select, y_select,
                     rect_seleccion.ancho, rect_seleccion.alto)
-                dibujar_rectangulo(ctx, "#14f7ff", rect_seleccion.centro_x, rect_seleccion.centro_y,
+
+                const x_centro = rect_seleccion.centro_x+this.configuracion_lienzo.x_original;
+                const y_centro = rect_seleccion.centro_y+this.configuracion_lienzo.y_original;
+                dibujar_rectangulo(ctx, "#14f7ff", x_centro, y_centro,
                     this.p_centro.w, this.p_centro.h)
 
                 //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
-                dibujar_circulo(ctx, "#14f7ff", rect_seleccion.sup_hor, rect_seleccion.sup_ver, 3, 3)
+                const x_tam = rect_seleccion.sup_hor+this.configuracion_lienzo.x_original;
+                const y_ram = rect_seleccion.sup_ver+this.configuracion_lienzo.y_original;
+                dibujar_circulo(ctx, "#14f7ff", x_tam, y_ram, 3, 3)
                 //}
             }
         }
