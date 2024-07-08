@@ -296,20 +296,20 @@ class GestionLienzoAnimacion {
         let nombre_grupo = this.id_grupo_selec;
         let nombre_figura = this.id_figura_selec;
 
-        this.puntero.x = eventoLienzoFigura.mouse_x;
-        this.puntero.y = eventoLienzoFigura.mouse_y;
+        this.puntero.x = eventoLienzoFigura.mouse_virtual_x;
+        this.puntero.y = eventoLienzoFigura.mouse_virtual_y;
         //console.log(this.mover_figura)
         if (this.mover_figura === MOVER_NADA) {//this.categoria_trabajo === TRABAJO_NONE
             if (eventoLienzoFigura.mouse_sobre_lienzo) {
                 if (eventoLienzoFigura.mouse_click_down) {
                     if (eventoLienzoFigura.mouse_only_click) {
-                        this.puntero_seleccion.x = eventoLienzoFigura.mouse_x;
-                        this.puntero_seleccion.y = eventoLienzoFigura.mouse_y;
+                        this.puntero_seleccion.x = eventoLienzoFigura.mouse_virtual_x;
+                        this.puntero_seleccion.y = eventoLienzoFigura.mouse_virtual_y;
                         this.seleccion_figuras = true;
                         this.lista_id_figuras = []
                     }
-                    this.puntero_seleccion.w = eventoLienzoFigura.mouse_x - this.puntero_seleccion.x;
-                    this.puntero_seleccion.h = eventoLienzoFigura.mouse_y - this.puntero_seleccion.y;
+                    this.puntero_seleccion.w = eventoLienzoFigura.mouse_virtual_x - this.puntero_seleccion.x;
+                    this.puntero_seleccion.h = eventoLienzoFigura.mouse_virtual_y - this.puntero_seleccion.y;
                     //console.log(this.puntero_seleccion)
                 }
                 if (eventoLienzoFigura.mouse_click_up && this.categoria_trabajo === TRABAJO_LISTA_FIGURAS) {
@@ -413,8 +413,8 @@ class GestionLienzoAnimacion {
             //this.calcularCentroFigurasSeleccionadas(animacion)
             let nombre_grupo = this.id_grupo_selec;
             const grupo = this.animacion_.getGrupo(nombre_grupo)
-            let x = eventoLienzoFigura.mouse_x - grupo.cx;
-            let y = eventoLienzoFigura.mouse_y - grupo.cy;
+            let x = eventoLienzoFigura.mouse_virtual_x - grupo.cx;
+            let y = eventoLienzoFigura.mouse_virtual_y - grupo.cy;
             let x_move =  x- this.mover_centros.centro_x;
             let y_move = y- this.mover_centros.centro_y;
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
@@ -457,8 +457,8 @@ class GestionLienzoAnimacion {
             let nombre_grupo = this.id_grupo_selec;
             const grupo = this.animacion_.getGrupo(nombre_grupo)
 
-            if(eventoLienzoFigura.mouse_x> (this.mover_centros.centro_x+20)){
-                const diff_ancho = (eventoLienzoFigura.mouse_x-10)-(this.mover_centros.sup_hor-10);
+            if(eventoLienzoFigura.mouse_virtual_x> (this.mover_centros.centro_x+20)){
+                const diff_ancho = (eventoLienzoFigura.mouse_virtual_x-10)-(this.mover_centros.sup_hor-10);
                 const total_ancho = (this.mover_centros.ancho/2) -20
                 const porcentaje = diff_ancho/total_ancho
 
@@ -488,7 +488,7 @@ class GestionLienzoAnimacion {
 
             if(true){
                 const angulo_rotacion = Fisica.angulo_recta(this.mover_centros.centro_x, this.mover_centros.centro_y
-                    ,eventoLienzoFigura.mouse_x, eventoLienzoFigura.mouse_y);
+                    ,eventoLienzoFigura.mouse_virtual_x, eventoLienzoFigura.mouse_virtual_y);
 
                 for (let j = 0; j < grupo.lista_figuras.length; j++) {
                     let figura = grupo.lista_figuras[j];
@@ -565,8 +565,8 @@ class GestionLienzoAnimacion {
             }
 
             if (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2) {
-                let x = eventoLienzoFigura.mouse_x - grupo_.cx - fig_.atributos.cx;
-                let y = eventoLienzoFigura.mouse_y - grupo_.cy - fig_.atributos.cy;
+                let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
+                let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy - fig_.atributos.cy;
                 if (this.mover_figura === MOVER_RECTA_PUNTO1) {
                     fig_.atributos["x1"] = x;
                     fig_.atributos["y1"] = y;
@@ -583,8 +583,8 @@ class GestionLienzoAnimacion {
             }
 
             if(this.mover_figura === MOVER_FIGURA_AGREGADA){
-                let x = eventoLienzoFigura.mouse_x - grupo_.cx - fig_.atributos.cx;
-                let y = eventoLienzoFigura.mouse_y - grupo_.cy - fig_.atributos.cy;
+                let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
+                let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy - fig_.atributos.cy;
                 if (this.movimiento_recta_agregada === RECTA_MOVER_TODO){
                     fig_.atributos["x1"] = fig_.atributos["x2"] = x;
                     fig_.atributos["y1"] = fig_.atributos["y2"] = y;
@@ -592,7 +592,7 @@ class GestionLienzoAnimacion {
             }
 
             if (this.mover_figura === MOVER_RADIO_CIRCULO) {
-                let radio_ = eventoLienzoFigura.mouse_x - grupo_.cx - fig_.atributos.cx;
+                let radio_ = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
                 if (radio_ > 0) {
                     fig_.atributos["radiox"] = radio_;
                     fig_.atributos["radioy"] = radio_;
@@ -602,8 +602,8 @@ class GestionLienzoAnimacion {
             }
 
             if (this.mover_figura === MOVER_CENTRO_FIGURA) {
-                let x = eventoLienzoFigura.mouse_x - grupo_.cx;
-                let y = eventoLienzoFigura.mouse_y - grupo_.cy;
+                let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx;
+                let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy;
                 fig_.atributos["cx"] = x;
                 fig_.atributos["cy"] = y;
                 this.animacion_.set_figura(nombre_grupo, fig_)
@@ -680,7 +680,7 @@ class GestionLienzoAnimacion {
 
         if(this.mover_figura === MOVER_CENTRO_GRUPOS){
             this.mover_lista_grupos(this.mover_centros.centro_x, this.mover_centros.centro_y,
-                eventoLienzoFigura.mouse_x, eventoLienzoFigura.mouse_y  )
+                eventoLienzoFigura.mouse_virtual_x, eventoLienzoFigura.mouse_virtual_y  )
             if(eventoLienzoFigura.mouse_click_down){
                 setAnimacion({"edicion": this.animacion_})
                 this.mover_figura = MOVER_NADA
@@ -727,7 +727,7 @@ class GestionLienzoAnimacion {
                 }
 
                 const angulo_rotacion = Fisica.angulo_recta(this.pivote_rotacion.x, this.pivote_rotacion.y
-                    ,eventoLienzoFigura.mouse_x, eventoLienzoFigura.mouse_y);
+                    ,eventoLienzoFigura.mouse_virtual_x, eventoLienzoFigura.mouse_virtual_y);
 
                 for (let i=0; i<this.copia_lista_grupos.length; i++){
                     const grupo_copia = this.copia_lista_grupos[i]
@@ -750,8 +750,8 @@ class GestionLienzoAnimacion {
 
         if(this.mover_figura === MOVER_INFLAR_GRUPOS){
             if (this.inflar_grupos){
-                if(eventoLienzoFigura.mouse_x> (this.mover_centros.centro_x+20)){
-                    const diff_ancho = (eventoLienzoFigura.mouse_x-10)-(this.mover_centros.sup_hor-10);
+                if(eventoLienzoFigura.mouse_virtual_x> (this.mover_centros.centro_x+20)){
+                    const diff_ancho = (eventoLienzoFigura.mouse_virtual_x-10)-(this.mover_centros.sup_hor-10);
                     const total_ancho = (this.mover_centros.ancho/2) -20
                     const porcentaje = diff_ancho/total_ancho
 
@@ -826,8 +826,8 @@ class GestionLienzoAnimacion {
     }
 
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
-        eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x +this.configuracion_lienzo.x_original;
-        eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y +this.configuracion_lienzo.y_original;
+        eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x -this.configuracion_lienzo.x_original;
+        eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y -this.configuracion_lienzo.y_original;
         if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {
                 this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
