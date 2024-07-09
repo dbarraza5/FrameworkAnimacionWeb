@@ -71,6 +71,8 @@ una vez quitado los efectos deberian estar sobrelapados.
 #### BUGs del sistema 
 - [ ] no se puede desplazar el centro con el puntero cuando se selecciona varias figuras.
 - [ ] cuando se hace el efecto espejo de un grupo de forma reitirativa presenta una deformacion de las figuras
+- [ ] cuando se selecciona una sola figura y despues seleccionas con el puntero a mas de una, no quedan seleccionadas.
+no sale de ese estdo hasta que termines de mover esa unica figura o cambias de espacio de trabajo.
 
 #### vitacora
 
