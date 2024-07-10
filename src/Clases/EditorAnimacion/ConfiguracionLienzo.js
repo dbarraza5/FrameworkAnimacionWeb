@@ -81,8 +81,8 @@ class ConfiguracionLienzo{
     }
 
     procesarTrabajoConfiguracionImagenesLiento(eventoLienzoFigura, animacion_){
-        this.puntero.x = eventoLienzoFigura.mouse_x;
-        this.puntero.y = eventoLienzoFigura.mouse_y;
+        this.puntero.x = eventoLienzoFigura.mouse_virtual_x;
+        this.puntero.y = eventoLienzoFigura.mouse_virtual_y;
 
         //console.log(eventoLienzoFigura.stack_event_teclado);
         if(this.indice_imagen_seleccionada >= 0){
@@ -147,7 +147,9 @@ class ConfiguracionLienzo{
                 if(imagen.visible){
                     //console.log(imagen.nombre);
                     ctx.globalAlpha = imagen.opacidad;
-                    ctx.drawImage(imagen.img, imagen.x, imagen.y, imagen.ancho, imagen.alto);
+                    const x_image = imagen.x+this.x_original;
+                    const y_image = imagen.y+this.y_original;
+                    ctx.drawImage(imagen.img, x_image, y_image, imagen.ancho, imagen.alto);
                     ctx.globalAlpha = 1.0;
                 }
             }
