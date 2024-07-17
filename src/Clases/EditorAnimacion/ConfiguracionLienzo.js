@@ -55,6 +55,9 @@ class ConfiguracionLienzo{
         w: 5
     }
 
+    escala = 1;
+    proporcion_escala = 1.1;
+
     procesarTrabajoConfiguracionAtributosLienzo(eventoLienzoFigura){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
@@ -66,6 +69,16 @@ class ConfiguracionLienzo{
                 this.y_original_aux = this.y_original;
                 this.tipo_trabajo = MOVER_DESPLAZAR_LIENZO;
             }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyZ")){
+                if(eventoLienzoFigura.mouse_delta_scroll>0){
+                    this.tipo_trabajo = MOVER_AUMENTO_LIENZO;
+                }
+                if(eventoLienzoFigura.mouse_delta_scroll<0){
+                    this.tipo_trabajo = MOVER_REDUCCION_LIENZO;
+                    //this.escala/=this.proporcion_escala;
+                }
+            }
         }
 
         if(this.tipo_trabajo === MOVER_DESPLAZAR_LIENZO){
@@ -76,6 +89,32 @@ class ConfiguracionLienzo{
             if(eventoLienzoFigura.mouse_click_up){
                 this.tipo_trabajo = MOVER_NADA;
             }
+        }
+
+        if(this.tipo_trabajo === MOVER_AUMENTO_LIENZO){
+            if(this.escala === 1){
+                this.x_original_mouse = 0;
+                this.y_original_mouse = 0;
+            }
+            if(this.escala<2){
+                this.escala*=this.proporcion_escala;
+                this.x_original_mouse  = this.puntero.x - (this.puntero.x - this.x_original_mouse) * this.proporcion_escala;
+                this.y_original_mouse  = this.puntero.y - (this.puntero.y - this.y_original_mouse) * this.proporcion_escala;
+            }
+            this.tipo_trabajo = MOVER_NADA;
+        }
+
+        if(this.tipo_trabajo === MOVER_REDUCCION_LIENZO){
+            if(this.escala === 1){
+                this.x_original_mouse = 0;
+                this.y_original_mouse = 0;
+            }
+            if(this.escala>1){
+                this.escala/=this.proporcion_escala;
+                this.x_original_mouse  = this.puntero.x - (this.puntero.x - this.x_original_mouse) / this.proporcion_escala;
+                this.y_original_mouse  = this.puntero.y - (this.puntero.y - this.y_original_mouse) / this.proporcion_escala;
+            }
+            this.tipo_trabajo = MOVER_NADA;
         }
 
     }
@@ -154,6 +193,16 @@ class ConfiguracionLienzo{
                 }
             }
         });
+    }
+
+    inicioZoomLienzo(ctx){
+        ctx.save();
+        ctx.translate(this.x_original_mouse, this.y_original_mouse);
+        ctx.scale(this.escala, this.escala);
+    }
+
+    finZoomLienzo(ctx){
+        ctx.restore();
     }
 
     seleccionarImagenOperar(indice){

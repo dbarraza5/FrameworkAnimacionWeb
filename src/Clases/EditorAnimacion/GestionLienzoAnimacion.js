@@ -934,6 +934,9 @@ class GestionLienzoAnimacion {
         this.animacion_.procesarPosicionFinalFiguras()
         this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
+
+        this.configuracion_lienzo.inicioZoomLienzo(ctx);
+
         //imprimir las imagenes del lienzo de configuracion
         this.configuracion_lienzo.imprimirImagenesLienzo(ctx, this.animacion_);
 
@@ -1013,6 +1016,7 @@ class GestionLienzoAnimacion {
 
             }
         }
+        this.configuracion_lienzo.finZoomLienzo(ctx);
 
         //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
 
