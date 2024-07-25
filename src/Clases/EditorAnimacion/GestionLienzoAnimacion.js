@@ -1,5 +1,5 @@
 import Fisica from "./Fisica";
-import {normalizar_recta} from "./GestionAnimacion";
+import {getCoorPunto, getCoorRecta, normalizar_recta} from "./GestionAnimacion";
 import {
     pintarGrupo,
     imprimirListaGrupos,
@@ -66,7 +66,14 @@ class GestionLienzoAnimacion {
 
     lista_id_figuras = []
 
-    puntero = {
+    puntero_virtual = {
+        x: 0,
+        y: 0,
+        w: 10,
+        h: 10
+    }
+
+    puntero_real = {
         x: 0,
         y: 0,
         w: 10,
@@ -299,8 +306,8 @@ class GestionLienzoAnimacion {
         let nombre_grupo = this.id_grupo_selec;
         let nombre_figura = this.id_figura_selec;
 
-        this.puntero.x = eventoLienzoFigura.mouse_virtual_x;
-        this.puntero.y = eventoLienzoFigura.mouse_virtual_y;
+        this.puntero_virtual.x = eventoLienzoFigura.mouse_virtual_x;
+        this.puntero_virtual.y = eventoLienzoFigura.mouse_virtual_y;
         //console.log(this.mover_figura)
         if (this.mover_figura === MOVER_NADA) {//this.categoria_trabajo === TRABAJO_NONE
             if (eventoLienzoFigura.mouse_sobre_lienzo) {
@@ -397,7 +404,7 @@ class GestionLienzoAnimacion {
                 w: 3,
                 h: 3
             }
-            if (eventoLienzoFigura.mouse_only_click && Fisica.rectsColliding(this.puntero, p_sup)){
+            if (eventoLienzoFigura.mouse_only_click && Fisica.rectsColliding(this.puntero_virtual, p_sup)){
                 console.log("INFLAR POR LA ESQUINA")
                 this.mover_figura = MOVER_INFLAR_FIGURAS;
                 this.copia_lista_figuras = this.animacion_.get_lista_figuras_duplicadas(this.id_grupo_selec, this.lista_id_figuras)
@@ -405,7 +412,7 @@ class GestionLienzoAnimacion {
             }
             /*p_sup.x = rect_seleccion.centro_x;
             p_sup.y = rect_seleccion.centro_y;
-            if (eventoLienzoFigura.mouse_only_click && Fisica.rectsColliding(this.puntero, p_sup)){
+            if (eventoLienzoFigura.mouse_only_click && Fisica.rectsColliding(this.puntero_virtual, p_sup)){
                 this.mover_figura = MOVER_CENTROS_FIGURAS;
                 this.mover_centros=this.calcularCentroFigurasSeleccionadas()
             }*/
@@ -532,13 +539,13 @@ class GestionLienzoAnimacion {
 
             if (fig_.tipo_figura === "RECTA" && eventoLienzoFigura.mouse_only_click && this.mover_figura !== MOVER_FIGURA_AGREGADA) {
                 this.actualizarPuntosRectas(fig_, grupo_)
-                if (Fisica.rectsColliding(this.puntero, this.p1_recta)) {
+                if (Fisica.rectsColliding(this.puntero_virtual, this.p1_recta)) {
                     this.mover_figura = MOVER_RECTA_PUNTO1;
-                } else if (Fisica.rectsColliding(this.puntero, this.p2_recta)) {
+                } else if (Fisica.rectsColliding(this.puntero_virtual, this.p2_recta)) {
                     this.mover_figura = MOVER_RECTA_PUNTO2;
                 } else if (this.mover_figura !== MOVER_CENTRO_FIGURA) {
 
-                    if (Fisica.rectsColliding(this.puntero, this.p_centro)) {
+                    if (Fisica.rectsColliding(this.puntero_virtual, this.p_centro)) {
                         this.mover_figura = MOVER_CENTRO_FIGURA;
                         mover_centro_figura = true;
                     }
@@ -547,11 +554,11 @@ class GestionLienzoAnimacion {
 
             if (fig_.tipo_figura === "CIRCULO" && eventoLienzoFigura.mouse_only_click) {
                 this.actualizarPuntosCirculo(fig_, grupo_)
-                if (Fisica.rectsColliding(this.puntero, this.p_circulo)) {
+                if (Fisica.rectsColliding(this.puntero_virtual, this.p_circulo)) {
                     this.mover_figura = MOVER_RADIO_CIRCULO;
                 } else {
                     if (this.mover_figura !== MOVER_CENTRO_FIGURA) {
-                        if (Fisica.rectsColliding(this.puntero, this.p_centro)) {
+                        if (Fisica.rectsColliding(this.puntero_virtual, this.p_centro)) {
                             this.mover_figura = MOVER_CENTRO_FIGURA;
                             mover_centro_figura = true;
                         }
@@ -561,7 +568,7 @@ class GestionLienzoAnimacion {
 
             if (fig_.tipo_figura === "PUNTO" && eventoLienzoFigura.mouse_only_click) {
                 this.actualizarPuntoCentro(fig_, grupo_)
-                if (this.mover_figura !== MOVER_CENTRO_FIGURA && Fisica.rectsColliding(this.puntero, this.p_centro)) {
+                if (this.mover_figura !== MOVER_CENTRO_FIGURA && Fisica.rectsColliding(this.puntero_virtual, this.p_centro)) {
                     this.mover_figura = MOVER_CENTRO_FIGURA;
                     mover_centro_figura = true;
                 }
@@ -665,7 +672,7 @@ class GestionLienzoAnimacion {
                 h: 3
             }
             if(this.inflar_grupos === false){
-                if(eventoLienzoFigura.mouse_click_down && Fisica.rectsColliding(this.puntero, p_sup)){
+                if(eventoLienzoFigura.mouse_click_down && Fisica.rectsColliding(this.puntero_virtual, p_sup)){
                     console.log("inflar_lista_grupos")
                     this.inflar_grupos = true;
                     this.mover_centros=OperacionesGrupo.calcularCentroGruposSeleccionados(this.copia_lista_grupos)
@@ -705,7 +712,7 @@ class GestionLienzoAnimacion {
         }
 
         if(this.mover_figura === MOVER_ROTAR_GRUPOS){
-            let tocando_pivote = Fisica.rectsColliding(this.puntero, this.pivote_rotacion) &&
+            let tocando_pivote = Fisica.rectsColliding(this.puntero_virtual, this.pivote_rotacion) &&
                 eventoLienzoFigura.mouse_only_click;
 
             if(this.rotar_lista_grupos === false){
@@ -718,8 +725,8 @@ class GestionLienzoAnimacion {
                     if (tocando_pivote){
                         this.moviendo_pivote_r = false;
                     }
-                    this.pivote_rotacion.x = this.puntero.x;
-                    this.pivote_rotacion.y = this.puntero.y;
+                    this.pivote_rotacion.x = this.puntero_virtual.x;
+                    this.pivote_rotacion.y = this.puntero_virtual.y;
                 }
             }else{
 
@@ -833,6 +840,8 @@ class GestionLienzoAnimacion {
         eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y -this.configuracion_lienzo.y_original;
         this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
         this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
+        this.puntero_real.x= eventoLienzoFigura.mouse_x;
+        this.puntero_real.y= eventoLienzoFigura.mouse_y;
         if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {
                 this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
@@ -1007,8 +1016,8 @@ class GestionLienzoAnimacion {
                     x_centro+1, y_centro-1)
 
                 if(this.rotar_lista_grupos){
-                    const x_puntero = this.puntero.x + this.configuracion_lienzo.x_original;
-                    const y_puntero = this.puntero.y + this.configuracion_lienzo.y_original;
+                    const x_puntero = this.puntero_virtual.x + this.configuracion_lienzo.x_original;
+                    const y_puntero = this.puntero_virtual.y + this.configuracion_lienzo.y_original;
                     dibujar_linea_segmentada(ctx, "#ff2f14", x_pivote, y_pivote,
                         x_puntero, y_puntero)
                 }
@@ -1019,6 +1028,74 @@ class GestionLienzoAnimacion {
         this.configuracion_lienzo.finZoomLienzo(ctx);
 
         //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
+
+        const mouse_virtual_x =this.puntero_real.x -this.configuracion_lienzo.x_original;
+        const mouse_virtual_y = this.puntero_real.y -this.configuracion_lienzo.y_original;
+
+        dibujar_circulo(ctx, "#39ff14", mouse_virtual_x, mouse_virtual_y, 3, 3);
+        for (let i = 0; i < lista_grupo_root.length; i++) {
+            const grupo = lista_grupo_root[i]
+            for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                const figura = grupo.lista_figuras[j];
+                let seleccion = null;
+                let color_figura = grupo.color;
+
+                seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
+                //if(lista_id_figuras.includes(figura.nombre) && id_grupo_selec === grupo.nombre){
+                    color_figura = "#ff00a1";
+                //}
+                if (figura.tipo_figura === "RECTA") {
+                    //this.imprimir_animacion.imprimir_recta(figura, grupo, color_figura,this.p1_recta, this.p2_recta, this.p_centro,
+                    //    seleccion);
+
+                    const coor = getCoorRecta(figura, grupo)
+                    const x1_ = coor.x1;
+                    const y1_ = coor.y1;
+                    const x2_ = coor.x2;
+                    const y2_ = coor.y2;
+
+                    dibujar_linea(ctx, color_figura, x1_, y1_, x2_, y2_)
+
+
+                        const xp1_ = this.p1_recta.x;
+                        const xp2_ = this.p2_recta.x;
+                        const xpc_ = this.p_centro.x;
+                        const yp1_ = this.p1_recta.y;
+                        const yp2_ = this.p2_recta.y;
+                        const ypc_ = this.p_centro.y;
+                        dibujar_rectangulo(ctx, color_figura, xp1_, yp1_,
+                            this.p1_recta.w, this.p1_recta.h)
+
+                        dibujar_rectangulo(ctx, color_figura, xp2_, yp2_,
+                            this.p2_recta.w, this.p2_recta.h)
+
+                        dibujar_rectangulo(ctx, color_figura, xpc_, ypc_,
+                            this.p_centro.w, this.p_centro.h)
+
+                }
+
+                if (figura.tipo_figura === "PUNTO") {
+                    //this.imprimir_animacion.imprimir_punto(figura, grupo, color_figura, this.p_centro, seleccion);
+                    const coor = getCoorPunto(figura, grupo)
+                    const x = coor.x;
+                    const y = coor.y;
+                    const xpc_ = this.p_centro.x;
+                    const ypc_ = this.p_centro.y;
+                    dibujar_punto(ctx, color_figura, x, y, 2)
+                    //if (seleccion) {
+                        //this.actualizarPuntoCentro(figura, grupo)
+                        dibujar_rectangulo(ctx, color_figura, xpc_, ypc_,
+                            this.p_centro.w, this.p_centro.h)
+                    //}
+                }
+            }
+        }
+
+        /*if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES ||
+            this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
+            this.imprimir_animacion.imprimirListaGrupos(lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
+                this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
+        }*/
 
         if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
             this.imprimir_animacion.imprimirGrupoPintado(this.gestion_pintado)

@@ -36,15 +36,17 @@ class ConfiguracionLienzo{
 
     tipo_trabajo = MOVER_NADA;
 
-    // coordenadas iniciales de desplazamiento del lienzo
+    // diferencia de distancias con respecto a las coordenadas originales
     x_original = 0;
     y_original = 0;
+    // variables auxiliares
     x_original_aux = 0;
     y_original_aux = 0;
     // zoom 100% = normal
     zoom = 100;
     x_des_zoom = 0;
     y_des_zoom = 0;
+
 
     x_original_mouse = 0;
     y_original_mouse = 0;
