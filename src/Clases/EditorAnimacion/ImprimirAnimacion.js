@@ -51,20 +51,20 @@ class ImprimirAnimacion{
     imprimir_recta(figura, grupo, color_, p1_recta, p2_recta, p_centro,
                             seleccion = false,color_seleccion = "#39ff14" ) {
         const coor = getCoorRecta(figura, grupo)
-        const x1_ = coor.x1+this.configuracion_lienzo.x_original;
-        const y1_ = coor.y1+this.configuracion_lienzo.y_original;
-        const x2_ = coor.x2+this.configuracion_lienzo.x_original;
-        const y2_ = coor.y2+this.configuracion_lienzo.y_original;
+        const x1_ = coor.x1+this.configuracion_lienzo.x_delta_original;
+        const y1_ = coor.y1+this.configuracion_lienzo.y_delta_original;
+        const x2_ = coor.x2+this.configuracion_lienzo.x_delta_original;
+        const y2_ = coor.y2+this.configuracion_lienzo.y_delta_original;
 
         dibujar_linea(this.ctx, color_, x1_, y1_, x2_, y2_)
 
         if (seleccion) {
-            const xp1_ = p1_recta.x+this.configuracion_lienzo.x_original;
-            const xp2_ = p2_recta.x+this.configuracion_lienzo.x_original;
-            const xpc_ = p_centro.x+this.configuracion_lienzo.x_original;
-            const yp1_ = p1_recta.y+this.configuracion_lienzo.y_original;
-            const yp2_ = p2_recta.y+this.configuracion_lienzo.y_original;
-            const ypc_ = p_centro.y+this.configuracion_lienzo.y_original;
+            const xp1_ = p1_recta.x+this.configuracion_lienzo.x_delta_original;
+            const xp2_ = p2_recta.x+this.configuracion_lienzo.x_delta_original;
+            const xpc_ = p_centro.x+this.configuracion_lienzo.x_delta_original;
+            const yp1_ = p1_recta.y+this.configuracion_lienzo.y_delta_original;
+            const yp2_ = p2_recta.y+this.configuracion_lienzo.y_delta_original;
+            const ypc_ = p_centro.y+this.configuracion_lienzo.y_delta_original;
             dibujar_rectangulo(this.ctx, color_seleccion, xp1_, yp1_,
                 p1_recta.w, p1_recta.h)
 
@@ -96,10 +96,10 @@ class ImprimirAnimacion{
     imprimir_punto(figura, grupo, color_, p_centro,
                             seleccion = false, color_seleccion = "#39ff14") {
         const coor = getCoorPunto(figura, grupo)
-        const x = coor.x+this.configuracion_lienzo.x_original;
-        const y = coor.y+this.configuracion_lienzo.y_original;
-        const xpc_ = p_centro.x+this.configuracion_lienzo.x_original;
-        const ypc_ = p_centro.y+this.configuracion_lienzo.y_original;
+        const x = coor.x+this.configuracion_lienzo.x_delta_original;
+        const y = coor.y+this.configuracion_lienzo.y_delta_original;
+        const xpc_ = p_centro.x+this.configuracion_lienzo.x_delta_original;
+        const ypc_ = p_centro.y+this.configuracion_lienzo.y_delta_original;
         dibujar_punto(this.ctx, color_, x, y, 2)
         if (seleccion) {
             //this.actualizarPuntoCentro(figura, grupo)

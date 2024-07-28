@@ -37,8 +37,17 @@ class ConfiguracionLienzo{
     tipo_trabajo = MOVER_NADA;
 
     // diferencia de distancias con respecto a las coordenadas originales
-    x_original = 0;
-    y_original = 0;
+    x_delta_original = 0;
+    y_delta_original = 0;
+
+    // diferencia en desplazamiento
+    x_delta_desplazamiento = 0
+    y_delta_desplazamiento = 0
+
+    // diferencia en zoom
+    x_delta_zoom = 0
+    y_delta_zoom = 0
+
     // variables auxiliares
     x_original_aux = 0;
     y_original_aux = 0;
@@ -70,8 +79,8 @@ class ConfiguracionLienzo{
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyE") && eventoLienzoFigura.mouse_click_down){
                 this.x_original_mouse = eventoLienzoFigura.mouse_x;
                 this.y_original_mouse = eventoLienzoFigura.mouse_y;
-                this.x_original_aux = this.x_original;
-                this.y_original_aux = this.y_original;
+                this.x_original_aux = this.x_delta_original;
+                this.y_original_aux = this.y_delta_original;
                 this.tipo_trabajo = MOVER_DESPLAZAR_LIENZO;
             }
 
@@ -89,8 +98,10 @@ class ConfiguracionLienzo{
         if(this.tipo_trabajo === MOVER_DESPLAZAR_LIENZO){
             const x_delta = eventoLienzoFigura.mouse_x - this.x_original_mouse;
             const y_delta = eventoLienzoFigura.mouse_y - this.y_original_mouse;
-            this.x_original = this.x_original_aux+ x_delta;
-            this.y_original = this.y_original_aux+ y_delta;
+            this.x_delta_desplazamiento = this.x_original_aux+ x_delta;
+            this.y_delta_desplazamiento = this.y_original_aux+ y_delta;
+            this.x_delta_original = this.x_delta_desplazamiento + this.x_delta_zoom;
+            this.y_delta_original = this.y_delta_desplazamiento + this.y_delta_zoom;
             if(eventoLienzoFigura.mouse_click_up){
                 this.tipo_trabajo = MOVER_NADA;
             }
@@ -103,8 +114,8 @@ class ConfiguracionLienzo{
             }
             if(this.escala<2){
                 this.escala*=this.proporcion_escala;
-                this.x_des_zoom  = this.puntero.x - (this.puntero.x - this.x_des_zoom) * this.proporcion_escala;
-                this.y_des_zoom  = this.puntero.y - (this.puntero.y - this.y_des_zoom) * this.proporcion_escala;
+                this.x_des_zoom  = 300 - (300- this.x_des_zoom) * this.proporcion_escala;
+                this.y_des_zoom  = 300 - (300- this.y_des_zoom) * this.proporcion_escala;
             }
             this.tipo_trabajo = MOVER_NADA;
         }
@@ -116,8 +127,10 @@ class ConfiguracionLienzo{
             }
             if(this.escala>1){
                 this.escala/=this.proporcion_escala;
-                this.x_des_zoom  = this.puntero.x - (this.puntero.x - this.x_des_zoom) / this.proporcion_escala;
-                this.y_des_zoom  = this.puntero.y - (this.puntero.y - this.y_des_zoom) / this.proporcion_escala;
+                //this.x_des_zoom  = this.puntero.x - (this.puntero.x - this.x_des_zoom) / this.proporcion_escala;
+                //this.y_des_zoom  = this.puntero.y - (this.puntero.y - this.y_des_zoom) / this.proporcion_escala;
+                this.x_des_zoom  = 300 - (300- this.x_des_zoom) / this.proporcion_escala;
+                this.y_des_zoom  = 300 - (300- this.y_des_zoom) / this.proporcion_escala;
             }
             this.tipo_trabajo = MOVER_NADA;
         }
@@ -180,10 +193,10 @@ class ConfiguracionLienzo{
         ctx.fillStyle = 'blue';         // Color del texto
 
         // Dibujar el texto en el canvas
-        const coor = '('+this.x_original+', '+this.y_original+')'
+        const coor = '('+this.x_delta_original+', '+this.y_delta_original+')'
         //ctx.fillText(coor, 0, 15);
-        ctx.fillText("x: "+this.x_original, 0, 15);
-        ctx.fillText("y: "+this.y_original, 0, 30);
+        ctx.fillText("x: "+this.x_delta_original, 0, 15);
+        ctx.fillText("y: "+this.y_delta_original, 0, 30);
     }
 
     imprimirImagenesLienzo(ctx, animacion_){
@@ -193,8 +206,8 @@ class ConfiguracionLienzo{
                 if(imagen.visible){
                     //console.log(imagen.nombre);
                     ctx.globalAlpha = imagen.opacidad;
-                    const x_image = imagen.x+this.x_original;
-                    const y_image = imagen.y+this.y_original;
+                    const x_image = imagen.x+this.x_delta_original;
+                    const y_image = imagen.y+this.y_delta_original;
                     ctx.drawImage(imagen.img, x_image, y_image, imagen.ancho, imagen.alto);
                     ctx.globalAlpha = 1.0;
                 }

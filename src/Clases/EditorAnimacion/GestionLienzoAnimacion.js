@@ -836,12 +836,18 @@ class GestionLienzoAnimacion {
     }
 
     procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
-        eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x -this.configuracion_lienzo.x_original;
-        eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y -this.configuracion_lienzo.y_original;
-        this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
-        this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
+
         this.puntero_real.x= eventoLienzoFigura.mouse_x;
         this.puntero_real.y= eventoLienzoFigura.mouse_y;
+
+        const deltax =this.puntero_real.x-(300- (300-this.puntero_real.x)/this.configuracion_lienzo.escala);
+        const deltay =this.puntero_real.y-(300- (300-this.puntero_real.y)/this.configuracion_lienzo.escala);
+
+        eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x -this.configuracion_lienzo.x_delta_original-deltax;
+        eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y -this.configuracion_lienzo.y_delta_original-deltay;
+        this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
+        this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
+
         if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {
                 this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
@@ -962,27 +968,27 @@ class GestionLienzoAnimacion {
 
         if(espacio_trabajo_val){
             if (this.seleccion_figuras) {
-                const x_select = this.puntero_seleccion.x+this.configuracion_lienzo.x_original;
-                const y_select = this.puntero_seleccion.y+this.configuracion_lienzo.y_original;
+                const x_select = this.puntero_seleccion.x+this.configuracion_lienzo.x_delta_original;
+                const y_select = this.puntero_seleccion.y+this.configuracion_lienzo.y_delta_original;
                 dibujar_rectangulo(ctx, "#1447ff", x_select, y_select,
                     this.puntero_seleccion.w, this.puntero_seleccion.h)
             }
 
             if(this.categoria_trabajo === TRABAJO_LISTA_FIGURAS){
                 const rect_seleccion = this.calcularCentroFigurasSeleccionadas();
-                const x_select = rect_seleccion.inf_hor+this.configuracion_lienzo.x_original;
-                const y_select = rect_seleccion.inf_ver+this.configuracion_lienzo.y_original;
+                const x_select = rect_seleccion.inf_hor+this.configuracion_lienzo.x_delta_original;
+                const y_select = rect_seleccion.inf_ver+this.configuracion_lienzo.y_delta_original;
                 dibujar_rectangulo(ctx, "#14f7ff", x_select, y_select,
                     rect_seleccion.ancho, rect_seleccion.alto)
 
-                const x_centro = rect_seleccion.centro_x+this.configuracion_lienzo.x_original;
-                const y_centro = rect_seleccion.centro_y+this.configuracion_lienzo.y_original;
+                const x_centro = rect_seleccion.centro_x+this.configuracion_lienzo.x_delta_original;
+                const y_centro = rect_seleccion.centro_y+this.configuracion_lienzo.y_delta_original;
                 dibujar_rectangulo(ctx, "#14f7ff", x_centro, y_centro,
                     this.p_centro.w, this.p_centro.h)
 
                 //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
-                const x_tam = rect_seleccion.sup_hor+this.configuracion_lienzo.x_original;
-                const y_ram = rect_seleccion.sup_ver+this.configuracion_lienzo.y_original;
+                const x_tam = rect_seleccion.sup_hor+this.configuracion_lienzo.x_delta_original;
+                const y_ram = rect_seleccion.sup_ver+this.configuracion_lienzo.y_delta_original;
                 dibujar_circulo(ctx, "#14f7ff", x_tam, y_ram, 3, 3)
                 //}
             }
@@ -992,32 +998,32 @@ class GestionLienzoAnimacion {
             const rect_seleccion =
                 OperacionesGrupo.calcularCentroGruposSeleccionados(this.animacion_.get_lista_grupos_by_IDs(this.lista_grupos_trabajando))
 
-            const x_select_g = rect_seleccion.inf_hor+this.configuracion_lienzo.x_original;
-            const y_select_g = rect_seleccion.inf_ver+this.configuracion_lienzo.y_original;
+            const x_select_g = rect_seleccion.inf_hor+this.configuracion_lienzo.x_delta_original;
+            const y_select_g = rect_seleccion.inf_ver+this.configuracion_lienzo.y_delta_original;
             dibujar_rectangulo(ctx, "#76ff14", x_select_g, y_select_g,
                 rect_seleccion.ancho, rect_seleccion.alto)
             //if(this.mover_figura === MOVER_INFLAR_FIGURAS){
-            const x_circulo = rect_seleccion.sup_hor+this.configuracion_lienzo.x_original;
-            const y_circulo = rect_seleccion.sup_ver+this.configuracion_lienzo.y_original;
+            const x_circulo = rect_seleccion.sup_hor+this.configuracion_lienzo.x_delta_original;
+            const y_circulo = rect_seleccion.sup_ver+this.configuracion_lienzo.y_delta_original;
             dibujar_circulo(ctx, "#76ff14", x_circulo, y_circulo, 3, 3)
             //}
 
-            const x_centro = rect_seleccion.centro_x+this.configuracion_lienzo.x_original;
-            const y_centro = rect_seleccion.centro_y+this.configuracion_lienzo.y_original;
+            const x_centro = rect_seleccion.centro_x+this.configuracion_lienzo.x_delta_original;
+            const y_centro = rect_seleccion.centro_y+this.configuracion_lienzo.y_delta_original;
             dibujar_rectangulo(ctx, "#76ff14", x_centro, y_centro,
                 this.p_centro.w, this.p_centro.h)
             if(this.mover_figura === MOVER_ROTAR_GRUPOS){
-                const x_circulo_r = this.pivote_rotacion.x+this.configuracion_lienzo.x_original;
-                const y_circulo_r = this.pivote_rotacion.y+this.configuracion_lienzo.y_original;
+                const x_circulo_r = this.pivote_rotacion.x+this.configuracion_lienzo.x_delta_original;
+                const y_circulo_r = this.pivote_rotacion.y+this.configuracion_lienzo.y_delta_original;
                 dibujar_circulo(ctx, "#ff2f14", x_circulo_r, y_circulo_r, 5, 5)
-                const x_pivote = this.pivote_rotacion.x+2+this.configuracion_lienzo.x_original;
-                const y_pivote = this.pivote_rotacion.y-2+this.configuracion_lienzo.y_original;
+                const x_pivote = this.pivote_rotacion.x+2+this.configuracion_lienzo.x_delta_original;
+                const y_pivote = this.pivote_rotacion.y-2+this.configuracion_lienzo.y_delta_original;
                 dibujar_linea_segmentada(ctx, "#ff2f14", x_pivote, y_pivote,
                     x_centro+1, y_centro-1)
 
                 if(this.rotar_lista_grupos){
-                    const x_puntero = this.puntero_virtual.x + this.configuracion_lienzo.x_original;
-                    const y_puntero = this.puntero_virtual.y + this.configuracion_lienzo.y_original;
+                    const x_puntero = this.puntero_virtual.x + this.configuracion_lienzo.x_delta_original;
+                    const y_puntero = this.puntero_virtual.y + this.configuracion_lienzo.y_delta_original;
                     dibujar_linea_segmentada(ctx, "#ff2f14", x_pivote, y_pivote,
                         x_puntero, y_puntero)
                 }
@@ -1027,34 +1033,30 @@ class GestionLienzoAnimacion {
         }
         this.configuracion_lienzo.finZoomLienzo(ctx);
 
-        //this.categoria_trabajo = TRABAJO_PINTADO_GRUPO
+        if(true){
+            dibujar_circulo(ctx, "#39ff14", this.x_mouse, this.y_mouse, 3, 3);
+            for (let i = 0; i < lista_grupo_root.length; i++) {
+                const grupo = lista_grupo_root[i]
+                for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                    const figura = grupo.lista_figuras[j];
+                    let seleccion = null;
+                    let color_figura = grupo.color;
 
-        const mouse_virtual_x =this.puntero_real.x -this.configuracion_lienzo.x_original;
-        const mouse_virtual_y = this.puntero_real.y -this.configuracion_lienzo.y_original;
-
-        dibujar_circulo(ctx, "#39ff14", mouse_virtual_x, mouse_virtual_y, 3, 3);
-        for (let i = 0; i < lista_grupo_root.length; i++) {
-            const grupo = lista_grupo_root[i]
-            for (let j = 0; j < grupo.lista_figuras.length; j++) {
-                const figura = grupo.lista_figuras[j];
-                let seleccion = null;
-                let color_figura = grupo.color;
-
-                seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
-                //if(lista_id_figuras.includes(figura.nombre) && id_grupo_selec === grupo.nombre){
+                    seleccion = grupo.nombre === this.id_grupo_selec && figura.nombre === this.id_figura_selec;
+                    //if(lista_id_figuras.includes(figura.nombre) && id_grupo_selec === grupo.nombre){
                     color_figura = "#ff00a1";
-                //}
-                if (figura.tipo_figura === "RECTA") {
-                    //this.imprimir_animacion.imprimir_recta(figura, grupo, color_figura,this.p1_recta, this.p2_recta, this.p_centro,
-                    //    seleccion);
+                    //}
+                    if (figura.tipo_figura === "RECTA") {
+                        //this.imprimir_animacion.imprimir_recta(figura, grupo, color_figura,this.p1_recta, this.p2_recta, this.p_centro,
+                        //    seleccion);
 
-                    const coor = getCoorRecta(figura, grupo)
-                    const x1_ = coor.x1;
-                    const y1_ = coor.y1;
-                    const x2_ = coor.x2;
-                    const y2_ = coor.y2;
+                        const coor = getCoorRecta(figura, grupo)
+                        const x1_ = coor.x1;
+                        const y1_ = coor.y1;
+                        const x2_ = coor.x2;
+                        const y2_ = coor.y2;
 
-                    dibujar_linea(ctx, color_figura, x1_, y1_, x2_, y2_)
+                        dibujar_linea(ctx, color_figura, x1_, y1_, x2_, y2_)
 
 
                         const xp1_ = this.p1_recta.x;
@@ -1072,24 +1074,27 @@ class GestionLienzoAnimacion {
                         dibujar_rectangulo(ctx, color_figura, xpc_, ypc_,
                             this.p_centro.w, this.p_centro.h)
 
-                }
+                    }
 
-                if (figura.tipo_figura === "PUNTO") {
-                    //this.imprimir_animacion.imprimir_punto(figura, grupo, color_figura, this.p_centro, seleccion);
-                    const coor = getCoorPunto(figura, grupo)
-                    const x = coor.x;
-                    const y = coor.y;
-                    const xpc_ = this.p_centro.x;
-                    const ypc_ = this.p_centro.y;
-                    dibujar_punto(ctx, color_figura, x, y, 2)
-                    //if (seleccion) {
+                    if (figura.tipo_figura === "PUNTO") {
+                        //this.imprimir_animacion.imprimir_punto(figura, grupo, color_figura, this.p_centro, seleccion);
+                        const coor = getCoorPunto(figura, grupo)
+                        const x = coor.x;
+                        const y = coor.y;
+                        const xpc_ = this.p_centro.x;
+                        const ypc_ = this.p_centro.y;
+                        dibujar_punto(ctx, color_figura, x, y, 2)
+                        //if (seleccion) {
                         //this.actualizarPuntoCentro(figura, grupo)
                         dibujar_rectangulo(ctx, color_figura, xpc_, ypc_,
                             this.p_centro.w, this.p_centro.h)
-                    //}
+                        //}
+                    }
                 }
             }
         }
+
+
 
         /*if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES ||
             this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
