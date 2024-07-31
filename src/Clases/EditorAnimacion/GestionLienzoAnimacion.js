@@ -308,63 +308,62 @@ class GestionLienzoAnimacion {
 
         this.puntero_virtual.x = eventoLienzoFigura.mouse_virtual_x;
         this.puntero_virtual.y = eventoLienzoFigura.mouse_virtual_y;
-        //console.log(this.mover_figura)
-        if (this.mover_figura === MOVER_NADA) {//this.categoria_trabajo === TRABAJO_NONE
-            if (eventoLienzoFigura.mouse_sobre_lienzo) {
-                if (eventoLienzoFigura.mouse_click_down) {
-                    if (eventoLienzoFigura.mouse_only_click) {
-                        this.puntero_seleccion.x = eventoLienzoFigura.mouse_virtual_x;
-                        this.puntero_seleccion.y = eventoLienzoFigura.mouse_virtual_y;
-                        this.seleccion_figuras = true;
-                        this.lista_id_figuras = []
-                    }
-                    this.puntero_seleccion.w = eventoLienzoFigura.mouse_virtual_x - this.puntero_seleccion.x;
-                    this.puntero_seleccion.h = eventoLienzoFigura.mouse_virtual_y - this.puntero_seleccion.y;
-                    //console.log(this.puntero_seleccion)
-                }
-                if (eventoLienzoFigura.mouse_click_up && this.categoria_trabajo === TRABAJO_LISTA_FIGURAS) {
-                    if(this.lista_id_figuras.length == 1 && this.seleccion_figuras){
-                        console.log(this.puntero_seleccion)
-                        this.seleccion_figuras = false
-                        this.seleccionarFiguraMover(this.lista_id_figuras[0], nombre_grupo, MOVER_NADA)
-                    }
-                    if(this.lista_id_figuras.length>0 && this.seleccion_figuras){
-                        this.seleccion_figuras = false
-                        this.copia_lista_figuras = this.animacion_.get_lista_figuras_duplicadas(nombre_grupo, this.lista_id_figuras)
-                        this.seleccionarFigurasTransformar(nombre_grupo)
-                    }
-                }
-            } else {
-                this.seleccion_figuras = false
+
+        const btn_presionado = eventoLienzoFigura.stack_event_teclado.includes("KeyF");
+        if(btn_presionado && (this.categoria_trabajo === TRABAJO_LISTA_FIGURAS || this.categoria_trabajo === TRABAJO_FIGURA) &&
+            this.mover_figura === MOVER_NADA){
+            //agregar un evento para la seccion de figuras
+
+            if (eventoLienzoFigura.mouse_only_click) {
+                //console.log("EMPEZAR LA SELECCION ");
+                this.puntero_seleccion.x = eventoLienzoFigura.mouse_virtual_x;
+                this.puntero_seleccion.y = eventoLienzoFigura.mouse_virtual_y;
+                this.seleccion_figuras = true;
+                this.lista_id_figuras = []
             }
+            // cambia de color las figuras que son seleccionadas por el rectangulo
+            if(this.seleccion_figuras && eventoLienzoFigura.mouse_click_down){
+                this.puntero_seleccion.w = eventoLienzoFigura.mouse_virtual_x - this.puntero_seleccion.x;
+                this.puntero_seleccion.h = eventoLienzoFigura.mouse_virtual_y - this.puntero_seleccion.y;
 
-        }
+                if (nombre_grupo !== null) {
+                    const grupo = this.animacion_.getGrupo(nombre_grupo)
+                    for (let j = 0; j < grupo.lista_figuras.length; j++) {
+                        const figura = grupo.lista_figuras[j];
+                        if (figura.tipo_figura === "RECTA") {
+                            this.actualizarPuntosRectas(figura, grupo);
+                        }
 
-        if(this.seleccion_figuras) {
-            if (nombre_grupo !== null) {
-                const grupo = this.animacion_.getGrupo(nombre_grupo)
-                for (let j = 0; j < grupo.lista_figuras.length; j++) {
-                    const figura = grupo.lista_figuras[j];
-                    if (figura.tipo_figura === "RECTA") {
-                        this.actualizarPuntosRectas(figura, grupo);
-                    }
+                        if (figura.tipo_figura === "PUNTO") {
+                            this.actualizarPuntoCentro(figura, grupo)
+                        }
 
-                    if (figura.tipo_figura === "PUNTO") {
-                        this.actualizarPuntoCentro(figura, grupo)
-                    }
-
-                    if (figura.tipo_figura === "CIRCULO") {
-                        this.actualizarPuntosCirculo(figura, grupo)
-                    }
-                    if(Fisica.rectsColliding(this.puntero_seleccion, this.p_centro)){
-                        if(!this.lista_id_figuras.includes(figura.nombre)){
-                            this.lista_id_figuras.push(figura.nombre);
+                        if (figura.tipo_figura === "CIRCULO") {
+                            this.actualizarPuntosCirculo(figura, grupo)
+                        }
+                        if(Fisica.rectsColliding(this.puntero_seleccion, this.p_centro)){
+                            if(!this.lista_id_figuras.includes(figura.nombre)){
+                                this.lista_id_figuras.push(figura.nombre);
+                            }
                         }
                     }
                 }
             }
+
+            if(this.seleccion_figuras && eventoLienzoFigura.mouse_click_down === false){
+                //console.log("LEVANTAR EL MOUSESS PARA LA SELECCION: "+this.lista_id_figuras.length);
+                if(this.lista_id_figuras.length === 1){
+                    //console.log(this.puntero_seleccion)
+                    //console.log("SELECCION DE UNA FIGURA");
+                    this.seleccionarFiguraMover(this.lista_id_figuras[0], nombre_grupo, MOVER_NADA)
+                }
+                if(this.lista_id_figuras.length>1){
+                    this.copia_lista_figuras = this.animacion_.get_lista_figuras_duplicadas(nombre_grupo, this.lista_id_figuras)
+                    this.seleccionarFigurasTransformar(nombre_grupo)
+                }
+                this.seleccion_figuras = false
+            }
         }
-        //this.actualizarLienzo(animacion)
     }
 
     procesarTrabajoListaFiguras(eventoLienzoFigura, setAnimacion){
