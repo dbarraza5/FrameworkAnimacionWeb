@@ -1032,7 +1032,7 @@ class GestionLienzoAnimacion {
         }
         this.configuracion_lienzo.finZoomLienzo(ctx);
 
-        if(true){
+        if(false){
             dibujar_circulo(ctx, "#39ff14", this.x_mouse, this.y_mouse, 3, 3);
             for (let i = 0; i < lista_grupo_root.length; i++) {
                 const grupo = lista_grupo_root[i]
