@@ -1,30 +1,29 @@
-# Manual de usaurio de animacion
+# Documentación de Atajos
 
-### Edicion de figuras
+## TRABAJO_LISTA_FIGURAS
+*Solo las figuras que fueron seleccionadas con el mouse dentro del rectángulo.*
 
-1. para manipular una figura basta con seleccionar solo una y se le mostrara los componentes que modificar con el mouse,
-apretando y saltando y puede mover el componente a cualquier lado del lienzo y precionando nuevamente lo deja en la
-posicion deseada.
+1. **q + e**: Mover las figuras.
+2. **q + b**: Eliminar las figuras.
+3. **q + d**: Duplicar las figuras.
+4. **q + g**: Rotar las figuras.
 
-2. cuando se selecciona varias figuras puedes tener acceso a las siguientes funcionalidades:
+## TRABAJO_GRUPOS
 
-| Atajo | Descripcion |
-|---|---|
-| Q+E | Mover lista de figuras de un grupo. |
-| Q+B | Remover lista de figuras de un grupo. |
-| Q+D | Duplicar lista de figuras de un grupo. |
-| Q+R | Rotar lista de figuras de un grupo. |
+1. **q + g**: Activar la rotación de los grupos.
 
+## TRABAJO_PINTADO_GRUPO
 
-### Edicion de grupos de figuras
+1. **s**: Seleccionar los puntos que se quieren borrar posteriormente.
+2. **delete**: Borrar los puntos seleccionados.
 
+## TRABAJO_CONFIG_LIENZO_ATRIBUTOS
 
-### Edicion de pintura de grupos
+1. **e**: Mover el lienzo.
+2. **z**: Hacer zoom al lienzo.
 
-### Edicion de imagenes de lienzo
+## TRABAJO_CONFIG_LIENZO_IMAGENES
+*Imagen seleccionada*
 
-
-| Atajo | Descripcion |
-|---|---|
-| T+SCROLL | cambiar el tamaño usando el scroll. |
-| O+SCROLL | cambiar la opacidad usando el scroll. |
+1. **t**: Hacer zoom a la imagen.
+2. **o**: Cambiar la opacidad de la imagen.

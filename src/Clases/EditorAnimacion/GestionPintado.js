@@ -157,6 +157,7 @@ class GestionPintado {
 
 
     procesarTrabajoPintado(eventoLienzoFigura){
+        //elimina los componente seleccionados
         if(eventoLienzoFigura.stack_event_teclado.includes("Delete")){
             console.log(this.list_comp_select)
             for (let i=0; i<this.list_comp_select.length; i++){

@@ -85,10 +85,10 @@ class ConfiguracionLienzo{
             }
 
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyZ")){
-                if(eventoLienzoFigura.mouse_delta_scroll>0){
+                if(eventoLienzoFigura.mouse_delta_scroll<0){
                     this.tipo_trabajo = MOVER_AUMENTO_LIENZO;
                 }
-                if(eventoLienzoFigura.mouse_delta_scroll<0){
+                if(eventoLienzoFigura.mouse_delta_scroll>0){
                     this.tipo_trabajo = MOVER_REDUCCION_LIENZO;
                     //this.escala/=this.proporcion_escala;
                 }
