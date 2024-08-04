@@ -1143,8 +1143,6 @@ class GestionLienzoAnimacion {
         centro_figuras.centro_y = inf_ver+(sup_ver-inf_ver)/2;
         return centro_figuras
     }
-
-
 };
 
 

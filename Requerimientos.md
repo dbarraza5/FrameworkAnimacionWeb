@@ -12,10 +12,10 @@ que se importaron al proyecto.
 
 ### Edicion de figuras
 
-- [ ] desface en la interfaz cuando selecciona una figura
+- [x] desface en la interfaz cuando selecciona una figura
 - [ ] mejorar la seleccion de figuras. tal vez presionando una tecla cuando pasa el mouse por encima de las figura.
 - [ ] unir los componente cuando estan en colicion por ejemplo p1 de la recta con el centro de la otra recta  o punto.
-- [ ] Funcionalidad de Zoom para diseñar en mas detalle todas las figuras.
+- [x] Funcionalidad de Zoom para diseñar en mas detalle todas las figuras.
 - [ ] Funcionalidad de agregar una capa en en la canva para insertar imagenes y poder hacer mas facil el diseño.
 - [ ] cuando se seleccione solo una figura deberia poder duplicar esa figura
 - [ ] cuando se seleccione figuras debe filtrarse en el administrador
@@ -55,15 +55,15 @@ para alcanzar el objetivo. la idea de implementar el zoom es que pueda ser un co
 visual como con la funcional. la funcionalidad de los elementos dentro del lienzo seguiran siendo los mismos pero 
 la interaccion del mouse con el lienzo se modificara para que el mouse pueda emular el desplzamiento dentro 
 del lienzo
-- [ ] desacoplar la impresion din decoraciones de todas las figuras.
-- [ ] implementar una gestion de seleccion de area hacer zoom.
-- [ ] implementar una gestion de desplazamiento en el lienzo.
-- [ ] mostrar el desplazamiento en la quina inzquierda superior "(x, y)"
+- [x] desacoplar la impresion din decoraciones de todas las figuras.
+- [x] implementar una gestion de seleccion de area hacer zoom (la seleccion del zoom no va).
+- [x] implementar una gestion de desplazamiento en el lienzo.
+- [x] mostrar el desplazamiento en la quina inzquierda superior "(x, y)"
 - [ ] mostrar el zoom que tiene el lienzo en la quina derecha superior "x%"
-- [ ] recodificar el desplazamiento cuando se muestra
-- [ ] emular  y recodificar el comportamiento del mouse, la interaccion que tiene cos componentes es la misma solo
+- [x] recodificar el desplazamiento cuando se muestra
+- [x] emular  y recodificar el comportamiento del mouse, la interaccion que tiene cos componentes es la misma solo
 que si existe desplazamiento o un zoom debe de convertir esos valores desfazados a valores reales. 
-- [ ] prueba de desplzamiento debe de constuirse un objeto sin zoom ni desplazamiento y una vez creado debe 
+- [x] prueba de desplzamiento debe de constuirse un objeto sin zoom ni desplazamiento y una vez creado debe 
 de construirse el mismo objeto sobre el otro pero con zoom y desplzamiento, pudiendo dejar las posiciones,
 una vez quitado los efectos deberian estar sobrelapados.
  
