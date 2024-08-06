@@ -847,6 +847,8 @@ class GestionLienzoAnimacion {
         this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
         this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
 
+        this.configuracion_lienzo.procesarGeneral(eventoLienzoFigura, this.categoria_trabajo, this.mover_figura)
+
         if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {
                 this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)

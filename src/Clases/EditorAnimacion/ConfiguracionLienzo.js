@@ -1,13 +1,12 @@
-
-const MOVER_NADA = -1;
-const MOVER_CENTRO_IMAGEN = 18;
-const MOVER_INFLAR_IMAGEN = 19;
-const MOVER_SELECIONAR_IMAGEN = 20;
-const MOVER_OPACIDAD_IMAGEN = 21;
-
-const MOVER_AUMENTO_LIENZO = 23;
-const MOVER_REDUCCION_LIENZO = 24;
-const MOVER_DESPLAZAR_LIENZO = 25;
+import {
+    ARRAY_TITULO_MOVIMIENTO,
+    ARRAY_TITULOS_TRABAJOS,
+    MOVER_AUMENTO_LIENZO,
+    MOVER_CENTRO_IMAGEN,
+    MOVER_DESPLAZAR_LIENZO, MOVER_INFLAR_IMAGEN,
+    MOVER_NADA,
+    MOVER_REDUCCION_LIENZO, MOVER_SELECIONAR_IMAGEN
+} from "./ConstanteAnimacion";
 
 const PORCENTAJE = 0.1
 const REDUCCION = 1-PORCENTAJE;
@@ -71,6 +70,16 @@ class ConfiguracionLienzo{
     escala = 1;
     proporcion_escala = 1.1;
     aplicar_escala = false;
+
+    titulo_categoria_trabajo = "#";
+    titulo_tipo_movimiento = "#";
+
+
+    procesarGeneral(eventoLienzoFigura, categoria_trabajo, tipo_movimiento){
+        this.titulo_categoria_trabajo = ARRAY_TITULOS_TRABAJOS[categoria_trabajo];
+        this.titulo_tipo_movimiento = ARRAY_TITULO_MOVIMIENTO[tipo_movimiento];
+
+    }
 
     procesarTrabajoConfiguracionAtributosLienzo(eventoLienzoFigura){
         this.puntero.x = eventoLienzoFigura.mouse_x;
@@ -188,7 +197,7 @@ class ConfiguracionLienzo{
         }
     }
 
-    imprimirVariablesLienzo(ctx){
+    imprimirVariablesLienzo(ctx, tipo_trabajo=0){
         ctx.font = '15px Arial';        // Tamaño y fuente del texto
         ctx.fillStyle = 'blue';         // Color del texto
 
@@ -197,6 +206,9 @@ class ConfiguracionLienzo{
         //ctx.fillText(coor, 0, 15);
         ctx.fillText("x: "+this.x_delta_original, 0, 15);
         ctx.fillText("y: "+this.y_delta_original, 0, 30);
+
+        ctx.fillText("t: "+this.titulo_categoria_trabajo, 0, 45);
+        ctx.fillText("m: "+this.titulo_tipo_movimiento, 0, 60);
     }
 
     imprimirImagenesLienzo(ctx, animacion_){
