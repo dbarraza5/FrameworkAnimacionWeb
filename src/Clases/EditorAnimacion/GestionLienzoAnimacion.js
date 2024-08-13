@@ -884,12 +884,14 @@ class GestionLienzoAnimacion {
             if(this.categoria_trabajo === TRABAJO_FIGURA){
                 const grupo = this.animacion_.getGrupo(this.id_grupo_selec);
                 const figura =  this.animacion_.get_figura(grupo.nombre, this.id_figura_selec);
-                if (figura.tipo_figura === "RECTA") {
-                    this.actualizarPuntosRectas(figura, grupo);
-                }
+                if(figura != null){
+                    if (figura.tipo_figura === "RECTA") {
+                        this.actualizarPuntosRectas(figura, grupo);
+                    }
 
-                if (figura.tipo_figura === "PUNTO") {
-                    this.actualizarPuntoCentro(figura, grupo)
+                    if (figura.tipo_figura === "PUNTO") {
+                        this.actualizarPuntoCentro(figura, grupo)
+                    }
                 }
             }else{
                 this.id_figura_selec = null;
