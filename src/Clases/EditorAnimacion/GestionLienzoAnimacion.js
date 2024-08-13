@@ -528,9 +528,10 @@ class GestionLienzoAnimacion {
         let nombre_grupo = this.id_grupo_selec;
         let nombre_figura = this.id_figura_selec;
         const grupo_ = this.animacion_.getGrupo(nombre_grupo)
-        let mover_centro_figura = false
-        if (grupo_ != null) {
-            const fig_ = this.animacion_.get_figura(nombre_grupo, nombre_figura)
+        let mover_centro_figura = false;
+        const fig_ = this.animacion_.get_figura(nombre_grupo, nombre_figura)
+        if (grupo_ != null && fig_ != null) {
+
 
             if(this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura !== "RECTA"){
                 this.mover_figura = MOVER_CENTRO_FIGURA;
@@ -847,7 +848,8 @@ class GestionLienzoAnimacion {
         this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
         this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
 
-        this.configuracion_lienzo.procesarGeneral(eventoLienzoFigura, this.categoria_trabajo, this.mover_figura)
+        this.categoria_trabajo = this.configuracion_lienzo.procesarGeneral(eventoLienzoFigura, this.categoria_trabajo,
+            this.mover_figura)
 
         if(true){
             if (this.categoria_trabajo === TRABAJO_FIGURA) {

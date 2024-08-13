@@ -1,11 +1,24 @@
 import {
+    ARRAY_EVENTO_KEY_TRABAJO,
+    ARRAY_EVENTO_TIPO_TRABAJOS,
     ARRAY_TITULO_MOVIMIENTO,
-    ARRAY_TITULOS_TRABAJOS,
+    ARRAY_TITULOS_TRABAJOS, EVENTO_KEY_CONFIG_LIENZO_ATRIBUTOS, EVENTO_KEY_CONFIG_LIENZO_IMAGENES,
+    EVENTO_KEY_FIGURA,
+    EVENTO_KEY_GRUPOS,
+    EVENTO_KEY_LISTA_FIGURAS,
+    EVENTO_KEY_NONE,
+    EVENTO_KEY_PINTADO_GRUPO,
     MOVER_AUMENTO_LIENZO,
     MOVER_CENTRO_IMAGEN,
-    MOVER_DESPLAZAR_LIENZO, MOVER_INFLAR_IMAGEN,
+    MOVER_DESPLAZAR_LIENZO,
+    MOVER_INFLAR_IMAGEN,
     MOVER_NADA,
-    MOVER_REDUCCION_LIENZO, MOVER_SELECIONAR_IMAGEN
+    MOVER_REDUCCION_LIENZO,
+    MOVER_SELECIONAR_IMAGEN, TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES,
+    TRABAJO_FIGURA,
+    TRABAJO_GRUPOS,
+    TRABAJO_LISTA_FIGURAS,
+    TRABAJO_NONE, TRABAJO_PINTADO_GRUPO
 } from "./ConstanteAnimacion";
 
 const PORCENTAJE = 0.1
@@ -76,9 +89,34 @@ class ConfiguracionLienzo{
 
 
     procesarGeneral(eventoLienzoFigura, categoria_trabajo, tipo_movimiento){
+
+        if(tipo_movimiento === MOVER_NADA){
+            if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft")){
+                //FIGURA
+                if(eventoLienzoFigura.stack_event_teclado.includes(EVENTO_KEY_NONE)){
+                    categoria_trabajo = TRABAJO_NONE;
+                }else
+                if(eventoLienzoFigura.stack_event_teclado.includes(EVENTO_KEY_FIGURA)){
+                    categoria_trabajo = TRABAJO_FIGURA;
+                }else
+                if(eventoLienzoFigura.stack_event_teclado.includes(EVENTO_KEY_LISTA_FIGURAS)){
+                    categoria_trabajo = TRABAJO_LISTA_FIGURAS;
+                }else
+                if(eventoLienzoFigura.stack_event_teclado.includes(EVENTO_KEY_GRUPOS)){
+                    categoria_trabajo = TRABAJO_GRUPOS;
+                }else
+                if(eventoLienzoFigura.stack_event_teclado.includes(EVENTO_KEY_CONFIG_LIENZO_ATRIBUTOS)){
+                    categoria_trabajo = TRABAJO_CONFIG_LIENZO_ATRIBUTOS;
+                }else
+                if(eventoLienzoFigura.stack_event_teclado.includes(EVENTO_KEY_CONFIG_LIENZO_IMAGENES)){
+                    categoria_trabajo = TRABAJO_CONFIG_LIENZO_IMAGENES;
+                }
+            }
+        }
+
         this.titulo_categoria_trabajo = ARRAY_TITULOS_TRABAJOS[categoria_trabajo];
         this.titulo_tipo_movimiento = ARRAY_TITULO_MOVIMIENTO[tipo_movimiento];
-
+        return categoria_trabajo;
     }
 
     procesarTrabajoConfiguracionAtributosLienzo(eventoLienzoFigura){
@@ -101,6 +139,11 @@ class ConfiguracionLienzo{
                     this.tipo_trabajo = MOVER_REDUCCION_LIENZO;
                     //this.escala/=this.proporcion_escala;
                 }
+            }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyR")){
+                this.x_delta_original = 0;
+                this.y_delta_original = 0;
             }
         }
 
