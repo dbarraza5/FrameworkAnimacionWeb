@@ -87,6 +87,9 @@ class ConfiguracionLienzo{
     titulo_categoria_trabajo = "#";
     titulo_tipo_movimiento = "#";
 
+    ver_info_lienzo = true;
+    presionado_s = false;
+
 
     procesarGeneral(eventoLienzoFigura, categoria_trabajo, tipo_movimiento){
 
@@ -144,6 +147,13 @@ class ConfiguracionLienzo{
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyR")){
                 this.x_delta_original = 0;
                 this.y_delta_original = 0;
+            }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyS") && !this.presionado_s){
+                this.ver_info_lienzo = !this.ver_info_lienzo;
+                this.presionado_s = true;
+            }else{
+                this.presionado_s = false;
             }
         }
 
@@ -247,11 +257,14 @@ class ConfiguracionLienzo{
         // Dibujar el texto en el canvas
         const coor = '('+this.x_delta_original+', '+this.y_delta_original+')'
         //ctx.fillText(coor, 0, 15);
-        ctx.fillText("x: "+this.x_delta_original, 0, 15);
-        ctx.fillText("y: "+this.y_delta_original, 0, 30);
 
-        ctx.fillText("t: "+this.titulo_categoria_trabajo, 0, 45);
-        ctx.fillText("m: "+this.titulo_tipo_movimiento, 0, 60);
+        if(this.ver_info_lienzo){
+            ctx.fillText("x: "+this.x_delta_original, 0, 15);
+            ctx.fillText("y: "+this.y_delta_original, 0, 30);
+
+            ctx.fillText("t: "+this.titulo_categoria_trabajo, 0, 45);
+            ctx.fillText("m: "+this.titulo_tipo_movimiento, 0, 60);
+        }
     }
 
     imprimirImagenesLienzo(ctx, animacion_){
