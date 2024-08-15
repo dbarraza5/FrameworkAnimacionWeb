@@ -9,7 +9,11 @@ import {
 } from "./ImprimirAnimacion";
 import OperacionesGrupo from "./OperacionesGrupo";
 import GestionPintado from "./GestionPintado";
-import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "./ConstanteAnimacion";
+import {
+    MOVER_AUMENTO_LIENZO, MOVER_REDUCCION_LIENZO,
+    TRABAJO_CONFIG_LIENZO_ATRIBUTOS,
+    TRABAJO_CONFIG_LIENZO_IMAGENES
+} from "./ConstanteAnimacion";
 import ConfiguracionLienzo from "./ConfiguracionLienzo";
 
 const TRABAJO_NONE = -1
@@ -524,15 +528,23 @@ class GestionLienzoAnimacion {
 
     procesarTrabajoFigura(eventoLienzoFigura, setAnimacion){
 
-
         let nombre_grupo = this.id_grupo_selec;
         let nombre_figura = this.id_figura_selec;
         const grupo_ = this.animacion_.getGrupo(nombre_grupo)
         let mover_centro_figura = false;
-        const fig_ = this.animacion_.get_figura(nombre_grupo, nombre_figura)
+        let fig_ = this.animacion_.get_figura(nombre_grupo, nombre_figura)
+
+        if(fig_ != null && this.mover_figura === MOVER_NADA){
+            if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft") &&
+                eventoLienzoFigura.stack_event_teclado.includes("KeyA")){
+                fig_ = this.animacion_.crear_figura(nombre_grupo, fig_.tipo_figura)
+                this.id_figura_selec = fig_.nombre;
+                this.mover_figura=MOVER_FIGURA_AGREGADA;
+            }
+        }
+
+
         if (grupo_ != null && fig_ != null) {
-
-
             if(this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura !== "RECTA"){
                 this.mover_figura = MOVER_CENTRO_FIGURA;
             }
