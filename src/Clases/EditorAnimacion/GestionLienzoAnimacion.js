@@ -534,9 +534,22 @@ class GestionLienzoAnimacion {
         let mover_centro_figura = false;
         let fig_ = this.animacion_.get_figura(nombre_grupo, nombre_figura)
 
+        let evento_agregar_figura = false;
+        let evento_iman_componente = false;
+
+        //eventos de trabajo de figuras
+        if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft")){
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyA")){
+                evento_agregar_figura = true;
+            }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyS")){
+                evento_iman_componente = true;
+            }
+        }
+
         if(fig_ != null && this.mover_figura === MOVER_NADA){
-            if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft") &&
-                eventoLienzoFigura.stack_event_teclado.includes("KeyA")){
+            if(evento_agregar_figura){
                 fig_ = this.animacion_.crear_figura(nombre_grupo, fig_.tipo_figura)
                 this.id_figura_selec = fig_.nombre;
                 this.mover_figura=MOVER_FIGURA_AGREGADA;
@@ -589,6 +602,45 @@ class GestionLienzoAnimacion {
             if (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2) {
                 let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
                 let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy - fig_.atributos.cy;
+
+                evento_iman_componente = true;
+                if(evento_iman_componente){
+                    //console.log("IMANTADO");
+                    for(let i=0; i<grupo_.lista_figuras.length; i++){
+                        const figura_col = grupo_.lista_figuras[i];
+                        if(figura_col.nombre !== fig_.nombre)
+                        if(figura_col.tipo_figura === "RECTA"){
+                            if(this.mover_figura === MOVER_RECTA_PUNTO1){
+                                const x1_ = parseInt(figura_col.atributos.x1) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                const y1_ = parseInt(figura_col.atributos.y1) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+                                //const x2 = parseInt(figura_col.atributos.x2) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                //const y2 = parseInt(figura_col.atributos.y2) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+
+                                const p1_ ={
+                                    x: x1_,
+                                    y: y1_,
+                                    w: 5,
+                                    h: 5
+                                }
+                                // mal reposicionamiento :/
+
+                                const punto_colision = {
+                                    x: eventoLienzoFigura.mouse_virtual_x,
+                                    y: eventoLienzoFigura.mouse_virtual_y,
+                                    w: 5,
+                                    h: 5
+                                };
+                                if(Fisica.rectsColliding(punto_colision, p1_)){
+                                    x = x1_- grupo_.cx - fig_.atributos.cx;//parseInt(figura_col.atributos.x1)+ grupo_.cx + figura_col.atributos.cx;
+                                    y = y1_- grupo_.cy - fig_.atributos.cy;//parseInt(figura_col.atributos.y1)+ grupo_.cy + figura_col.atributos.cy;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+
                 if (this.mover_figura === MOVER_RECTA_PUNTO1) {
                     fig_.atributos["x1"] = x;
                     fig_.atributos["y1"] = y;
@@ -598,6 +650,19 @@ class GestionLienzoAnimacion {
                     fig_.atributos["x2"] = x;
                     fig_.atributos["y2"] = y;
                 }
+                /*grupo_.lista_figuras.filter((figura_col)=>{
+                    if(figura_col.tipo_figura === "RECTA"){
+                        const p1 = {
+                            x: eventoLienzoFigura.mouse_virtual_x - grupo_.cx -figura_col.atributos.cx-10,
+                            y: eventoLienzoFigura.mouse_virtual_y - grupo_.cy -figura_col.atributos.cy-10,
+                            w: 20,
+                            h: 20
+                        };
+                        if(Fisica.rectsColliding(this.puntero_virtual, p1)){
+
+                        }
+                    }
+                });*/
 
 
                 this.animacion_.set_figura(nombre_grupo, fig_)
