@@ -608,35 +608,68 @@ class GestionLienzoAnimacion {
                     //console.log("IMANTADO");
                     for(let i=0; i<grupo_.lista_figuras.length; i++){
                         const figura_col = grupo_.lista_figuras[i];
-                        if(figura_col.nombre !== fig_.nombre)
-                        if(figura_col.tipo_figura === "RECTA"){
-                            if(this.mover_figura === MOVER_RECTA_PUNTO1){
-                                const x1_ = parseInt(figura_col.atributos.x1) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
-                                const y1_ = parseInt(figura_col.atributos.y1) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
-                                //const x2 = parseInt(figura_col.atributos.x2) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
-                                //const y2 = parseInt(figura_col.atributos.y2) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+                        if(figura_col.nombre !== fig_.nombre){
+                            const punto_colision = {
+                                x: eventoLienzoFigura.mouse_virtual_x,
+                                y: eventoLienzoFigura.mouse_virtual_y,
+                                w: 5,
+                                h: 5
+                            };
+                            if(figura_col.tipo_figura === "RECTA"){
+                                //---------------------COLISION CON EL PUNTO 1----------------------------------------------
+                                let x_set = parseInt(figura_col.atributos.x1) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                let y_set = parseInt(figura_col.atributos.y1) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
 
-                                const p1_ ={
-                                    x: x1_,
-                                    y: y1_,
+                                let punto_recta_ ={
+                                    x: x_set,
+                                    y: y_set,
                                     w: 5,
                                     h: 5
                                 }
-                                // mal reposicionamiento :/
 
-                                const punto_colision = {
-                                    x: eventoLienzoFigura.mouse_virtual_x,
-                                    y: eventoLienzoFigura.mouse_virtual_y,
+                                if(Fisica.rectsColliding(punto_colision, punto_recta_)){
+                                    x = x_set- grupo_.cx - fig_.atributos.cx;
+                                    y = y_set- grupo_.cy - fig_.atributos.cy;
+                                    break;
+                                }
+                                //---------------------COLISION CON EL PUNTO 2----------------------------------------------
+                                x_set = parseInt(figura_col.atributos.x2) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                y_set = parseInt(figura_col.atributos.y2) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+
+                                punto_recta_ ={
+                                    x: x_set,
+                                    y: y_set,
                                     w: 5,
                                     h: 5
-                                };
-                                if(Fisica.rectsColliding(punto_colision, p1_)){
-                                    x = x1_- grupo_.cx - fig_.atributos.cx;//parseInt(figura_col.atributos.x1)+ grupo_.cx + figura_col.atributos.cx;
-                                    y = y1_- grupo_.cy - fig_.atributos.cy;//parseInt(figura_col.atributos.y1)+ grupo_.cy + figura_col.atributos.cy;
+                                }
+
+                                if(Fisica.rectsColliding(punto_colision, punto_recta_)){
+                                    x = x_set- grupo_.cx - fig_.atributos.cx;
+                                    y = y_set- grupo_.cy - fig_.atributos.cy;
+                                    break;
+                                }
+
+                            }
+
+                            if(figura_col.tipo_figura === "PUNTO"){
+                                let x_set = parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                let y_set = parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+
+                                const punto_ ={
+                                    x: x_set,
+                                    y: y_set,
+                                    w: 5,
+                                    h: 5
+                                }
+
+                                if(Fisica.rectsColliding(punto_colision, punto_)){
+                                    x = x_set- grupo_.cx - fig_.atributos.cx;
+                                    y = y_set- grupo_.cy - fig_.atributos.cy;
                                     break;
                                 }
                             }
                         }
+
                     }
                 }
 
