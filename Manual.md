@@ -22,6 +22,8 @@
 
 5. **shift_left + a**: agregar una figura de l ultima que se agrego.
 6. **shift_left + s**: imantecion cuando se editan figuras.
+7. **shift_left + x**: deja fijado el ejex.
+8. **shift_left + y**: deja fijado el ejey.
 
 ## TRABAJO_GRUPOS
 

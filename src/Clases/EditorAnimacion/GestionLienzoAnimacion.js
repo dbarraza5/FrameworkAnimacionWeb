@@ -536,6 +536,8 @@ class GestionLienzoAnimacion {
 
         let evento_agregar_figura = false;
         let evento_iman_componente = false;
+        let evento_mov_solo_x = false;
+        let evento_mov_solo_y = false;
 
         //eventos de trabajo de figuras
         if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft")){
@@ -545,6 +547,14 @@ class GestionLienzoAnimacion {
 
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyS")){
                 evento_iman_componente = true;
+            }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyX")){
+                evento_mov_solo_x = true;
+            }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyY")){
+                evento_mov_solo_y= true;
             }
         }
 
@@ -602,7 +612,6 @@ class GestionLienzoAnimacion {
             if (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2) {
                 let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
                 let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy - fig_.atributos.cy;
-
 
                 if(evento_iman_componente){
                     //console.log("IMANTADO");
@@ -673,6 +682,14 @@ class GestionLienzoAnimacion {
                     }
                 }
 
+
+                if(evento_mov_solo_x){
+                    x = this.mover_figura === MOVER_RECTA_PUNTO1 ? fig_.atributos["x2"] : fig_.atributos["x1"];
+                }
+
+                if(evento_mov_solo_y){
+                    y = this.mover_figura === MOVER_RECTA_PUNTO1 ? fig_.atributos["y2"] : fig_.atributos["y1"];
+                }
 
                 if (this.mover_figura === MOVER_RECTA_PUNTO1) {
                     fig_.atributos["x1"] = x;
