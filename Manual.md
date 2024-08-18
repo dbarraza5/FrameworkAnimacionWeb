@@ -1,5 +1,17 @@
 # Documentación de Atajos
 
+
+## ATAJOS GENERALES
+
+1. **shift_left + num_0**: sin trabajo
+2. **shift_left + num_1**: figura
+3. **shift_left + num_2**: lista figuras
+4. **shift_left + num_3**: grupos
+5. **shift_left + num_4**: pintado
+6. **shift_left + num_5**: atributos lienzo
+7. **shift_left + num_6**: imágenes lienzo
+
+
 ## TRABAJO_LISTA_FIGURAS
 *Solo las figuras que fueron seleccionadas con el mouse dentro del rectángulo.*
 
@@ -7,6 +19,9 @@
 2. **q + b**: Eliminar las figuras.
 3. **q + d**: Duplicar las figuras.
 4. **q + g**: Rotar las figuras.
+
+5. **shift_left + a**: agregar una figura de l ultima que se agrego.
+6. **shift_left + s**: imantecion cuando se editan figuras.
 
 ## TRABAJO_GRUPOS
 
