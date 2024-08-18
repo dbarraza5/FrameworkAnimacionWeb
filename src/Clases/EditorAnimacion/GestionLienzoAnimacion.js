@@ -603,7 +603,7 @@ class GestionLienzoAnimacion {
                 let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
                 let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy - fig_.atributos.cy;
 
-                evento_iman_componente = true;
+
                 if(evento_iman_componente){
                     //console.log("IMANTADO");
                     for(let i=0; i<grupo_.lista_figuras.length; i++){
@@ -683,20 +683,6 @@ class GestionLienzoAnimacion {
                     fig_.atributos["x2"] = x;
                     fig_.atributos["y2"] = y;
                 }
-                /*grupo_.lista_figuras.filter((figura_col)=>{
-                    if(figura_col.tipo_figura === "RECTA"){
-                        const p1 = {
-                            x: eventoLienzoFigura.mouse_virtual_x - grupo_.cx -figura_col.atributos.cx-10,
-                            y: eventoLienzoFigura.mouse_virtual_y - grupo_.cy -figura_col.atributos.cy-10,
-                            w: 20,
-                            h: 20
-                        };
-                        if(Fisica.rectsColliding(this.puntero_virtual, p1)){
-
-                        }
-                    }
-                });*/
-
 
                 this.animacion_.set_figura(nombre_grupo, fig_)
                 setAnimacion({"edicion": this.animacion_})
@@ -724,6 +710,75 @@ class GestionLienzoAnimacion {
             if (this.mover_figura === MOVER_CENTRO_FIGURA) {
                 let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx;
                 let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy;
+
+                if(fig_.tipo_figura === "PUNTO" && evento_iman_componente){
+                    for(let i=0; i<grupo_.lista_figuras.length; i++){
+                        const figura_col = grupo_.lista_figuras[i];
+                        if(figura_col.nombre !== fig_.nombre){
+                            const punto_colision = {
+                                x: eventoLienzoFigura.mouse_virtual_x,
+                                y: eventoLienzoFigura.mouse_virtual_y,
+                                w: 5,
+                                h: 5
+                            };
+                            if(figura_col.tipo_figura === "RECTA"){
+                                //---------------------COLISION CON EL PUNTO 1----------------------------------------------
+                                let x_set = parseInt(figura_col.atributos.x1) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                let y_set = parseInt(figura_col.atributos.y1) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+
+                                let punto_recta_ ={
+                                    x: x_set,
+                                    y: y_set,
+                                    w: 5,
+                                    h: 5
+                                }
+
+                                if(Fisica.rectsColliding(punto_colision, punto_recta_)){
+                                    x = x_set- grupo_.cx// - fig_.atributos.cx;
+                                    y = y_set- grupo_.cy// - fig_.atributos.cy;
+                                    break;
+                                }
+                                //---------------------COLISION CON EL PUNTO 2----------------------------------------------
+                                x_set = parseInt(figura_col.atributos.x2) + parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                y_set = parseInt(figura_col.atributos.y2) + parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+
+                                punto_recta_ ={
+                                    x: x_set,
+                                    y: y_set,
+                                    w: 5,
+                                    h: 5
+                                }
+
+                                if(Fisica.rectsColliding(punto_colision, punto_recta_)){
+                                    x = x_set- grupo_.cx;// - fig_.atributos.cx;
+                                    y = y_set- grupo_.cy; //- fig_.atributos.cy;
+                                    break;
+                                }
+
+                            }
+
+                            if(figura_col.tipo_figura === "PUNTO"){
+                                let x_set = parseInt(figura_col.atributos.cx) + parseInt(grupo_.cx);
+                                let y_set = parseInt(figura_col.atributos.cy) + parseInt(grupo_.cy);
+
+                                const punto_ ={
+                                    x: x_set,
+                                    y: y_set,
+                                    w: 5,
+                                    h: 5
+                                }
+
+                                if(Fisica.rectsColliding(punto_colision, punto_)){
+                                    x = x_set- grupo_.cx;// - fig_.atributos.cx;
+                                    y = y_set- grupo_.cy;// - fig_.atributos.cy;
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+                }
+
                 fig_.atributos["cx"] = x;
                 fig_.atributos["cy"] = y;
                 this.animacion_.set_figura(nombre_grupo, fig_)
@@ -736,7 +791,7 @@ class GestionLienzoAnimacion {
                 this.mover_figura = MOVER_NADA;
             }
 
-            if (eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_CENTRO_FIGURA && mover_centro_figura == false) {
+            if (eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_CENTRO_FIGURA && mover_centro_figura === false) {
                 this.mover_figura = MOVER_NADA;
             }
             if (eventoLienzoFigura.mouse_click_up && this.mover_figura === MOVER_RADIO_CIRCULO) {
