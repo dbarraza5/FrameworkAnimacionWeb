@@ -19,6 +19,11 @@ function PintadoGrupo(props){
     const [porcentaje_zoom, setPorcentajeZoom] = useState(0)
     const escalaZoom = 0.1
 
+    const [indice_color, setIndiceColor] = useState(0);
+
+    const seleccion_color_canvas = (color)=>{
+        cambiarColor(indice_color, color);
+    }
 
     useEffect(() => {
         //setAtributoHijo(props.nuevoValor);
@@ -238,6 +243,9 @@ function PintadoGrupo(props){
                                                 </div>
                                             </div>
                                             <div className="col">
+                                                <button onClick={(e)=>setIndiceColor(index)}>open</button>
+                                            </div>
+                                            <div className="col">
                                                 <div className="input-group input-group-sm mb-3">
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="checkbox" value=""
@@ -310,7 +318,7 @@ function PintadoGrupo(props){
             })}
         </div>
 
-        <SelectorColor {...props}/>
+        <SelectorColor {...props} cambiarColor={seleccion_color_canvas}/>
     </>)
 }
 
