@@ -19,6 +19,10 @@ function SubirImagen(props){
         setImage(file);
     };
 
+    const handleNameChange = (event) => {
+        setImageName(event.target.value);
+    };
+
     const agregandoImagen =async ()=>{
         const id_animacion = props.animacion.id_animacion;
 
@@ -63,6 +67,7 @@ function SubirImagen(props){
                     value={imageName}
                     placeholder="Nombre de la imagen"
                     className="form-control"
+                    onChange={handleNameChange}
                 />
                 <label htmlFor="imagen" className="form-label">Selecciona una imagen:</label>
                 <input type="file" className="form-control" onChange={handleFileChange} id="imagen" name="imagen" accept="image/*" />

@@ -13,8 +13,8 @@ que se importaron al proyecto.
 ### Edicion de figuras
 
 - [x] desface en la interfaz cuando selecciona una figura
-- [ ] mejorar la seleccion de figuras. tal vez presionando una tecla cuando pasa el mouse por encima de las figura.
-- [ ] unir los componente cuando estan en colicion por ejemplo p1 de la recta con el centro de la otra recta  o punto.
+- [x] mejorar la seleccion de figuras. tal vez presionando una tecla cuando pasa el mouse por encima de las figura.
+- [x] unir los componente cuando estan en colicion por ejemplo p1 de la recta con el centro de la otra recta  o punto.
 - [x] Funcionalidad de Zoom para diseñar en mas detalle todas las figuras.
 - [ ] Funcionalidad de agregar una capa en en la canva para insertar imagenes y poder hacer mas facil el diseño.
 - [ ] cuando se seleccione solo una figura deberia poder duplicar esa figura

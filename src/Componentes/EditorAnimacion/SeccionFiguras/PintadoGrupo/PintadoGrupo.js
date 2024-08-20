@@ -2,6 +2,7 @@ import SeleccionGrupo from "../GestionFiguras/SeleccionGrupo";
 import {useEffect, useState} from "react";
 import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
+import SelectorColor from "./SelectorColor";
 
 function PintadoGrupo(props){
     const gestion_pintado=props.gestionLienzo.gestion_pintado;
@@ -308,6 +309,8 @@ function PintadoGrupo(props){
                 )
             })}
         </div>
+
+        <SelectorColor {...props}/>
     </>)
 }
 
