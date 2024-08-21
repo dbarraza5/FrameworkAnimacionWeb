@@ -54,41 +54,29 @@ function SelectorColor(props){
             imagen = lista_imagen[indice];
             ctx.drawImage(imagen.img, 0, 0, imagen.ancho, imagen.alto);
         }
-        /*lista_imagenes.map((imagen)=>{
-            if(imagen.img){
-                if(imagen.visible){
-                    //console.log(imagen.nombre);
-                    ctx.globalAlpha = imagen.opacidad;
-                    const x_image = imagen.x+this.x_delta_original;
-                    const y_image = imagen.y+this.y_delta_original;
-                    ctx.drawImage(imagen.img, x_image, y_image, imagen.ancho, imagen.alto);
-                    ctx.globalAlpha = 1.0;
-                }
-            }
-        });*/
     }
 
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         // Puedes dibujar algo en el canvas para probar. Ejemplo:
-        ctx.fillStyle = '#ff0000';
+        /*ctx.fillStyle = '#ff0000';
         ctx.fillRect(10, 10, 100, 100);
         ctx.fillStyle = '#00ff00';
         ctx.fillRect(120, 10, 100, 100);
         ctx.fillStyle = '#0000ff';
-        ctx.fillRect(230, 10, 100, 100);
+        ctx.fillRect(230, 10, 100, 100);*/
     }, []);
 
     return (
         <div className="container mt-5">
             {/* Botón para abrir el modal */}
-            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#colorModal">
-                Abrir Modal
-            </button>
+            {/*<button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#colorModal">*/}
+            {/*    Abrir Modal*/}
+            {/*</button>*/}
 
             {/* Modal */}
-            <div className="modal fade" id="colorModal" tabIndex="-1" aria-labelledby="colorModalLabel" aria-hidden="true">
+            <div className="modal fade" id="selector-color-modal" tabIndex="-1" aria-labelledby="colorModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -145,7 +133,7 @@ function SelectorColor(props){
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="button" className="btn btn-primary">Guardar Cambios</button>
+                            {/*<button type="button" className="btn btn-primary">Guardar Cambios</button>*/}
                         </div>
                     </div>
                 </div>

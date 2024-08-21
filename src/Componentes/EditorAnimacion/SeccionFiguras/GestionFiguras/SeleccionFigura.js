@@ -23,3 +23,4 @@ function SeleccionFigura(props){
 }
 
 export default SeleccionFigura
+

@@ -3,6 +3,11 @@ import {useEffect, useState} from "react";
 import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 import SelectorColor from "./SelectorColor";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+// Importa Bootstrap explícitamente si no está en `window`
+import * as bootstrap from 'bootstrap';
 
 function PintadoGrupo(props){
     const gestion_pintado=props.gestionLienzo.gestion_pintado;
@@ -23,6 +28,13 @@ function PintadoGrupo(props){
 
     const seleccion_color_canvas = (color)=>{
         cambiarColor(indice_color, color);
+    }
+
+    const abrirModalElegirColor=(indice_color_)=>{
+        setIndiceColor(indice_color_);
+        const modalElement = document.getElementById('selector-color-modal'); // Obtener el modal por su ID
+        const modal = new bootstrap.Modal(modalElement); // Crear instancia del modal
+        modal.show(); // Mostrar el modal
     }
 
     useEffect(() => {
@@ -240,11 +252,12 @@ function PintadoGrupo(props){
                                                     <input type="color" className="form-control" value={item.color}
                                                            onChange={(e)=>cambiarColor(index, e.target.value)}
                                                     />
+                                                    <button onClick={(e)=>abrirModalElegirColor(index)}
+                                                            className="btn btn-outline-primary btn-sm"
+                                                    >open</button>
                                                 </div>
                                             </div>
-                                            <div className="col">
-                                                <button onClick={(e)=>setIndiceColor(index)}>open</button>
-                                            </div>
+
                                             <div className="col">
                                                 <div className="input-group input-group-sm mb-3">
                                                     <div className="form-check">
