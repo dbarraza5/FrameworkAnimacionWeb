@@ -38,6 +38,9 @@
 
 1. **e**: Mover el lienzo.
 2. **z**: Hacer zoom al lienzo.
+2. **r**: Resetear coordenadas del lienzo.
+2. **s**: Ver informaicion del lienzo.
+2. **p**: activar el pintado de los grupos.
 
 ## TRABAJO_CONFIG_LIENZO_IMAGENES
 *Imagen seleccionada*

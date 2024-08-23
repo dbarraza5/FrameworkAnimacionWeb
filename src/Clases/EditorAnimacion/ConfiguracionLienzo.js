@@ -90,6 +90,8 @@ class ConfiguracionLienzo{
     ver_info_lienzo = true;
     presionado_s = false;
 
+    pintar_animacion = false;
+    presionado_p = false;
 
     procesarGeneral(eventoLienzoFigura, categoria_trabajo, tipo_movimiento){
 
@@ -120,6 +122,13 @@ class ConfiguracionLienzo{
         this.titulo_categoria_trabajo = ARRAY_TITULOS_TRABAJOS[categoria_trabajo];
         this.titulo_tipo_movimiento = ARRAY_TITULO_MOVIMIENTO[tipo_movimiento];
         return categoria_trabajo;
+    }
+
+
+    getConfiguracionGeneral(){
+        return {
+            "pintar": this.pintar_animacion
+        };
     }
 
     procesarTrabajoConfiguracionAtributosLienzo(eventoLienzoFigura){
@@ -154,6 +163,13 @@ class ConfiguracionLienzo{
                 this.presionado_s = true;
             }else{
                 this.presionado_s = false;
+            }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyP") && !this.presionado_p){
+                this.pintar_animacion = !this.pintar_animacion;
+                this.presionado_p = true;
+            }else{
+                this.presionado_p = false;
             }
         }
 

@@ -1127,6 +1127,9 @@ class GestionLienzoAnimacion {
     }
 
     actualizarLienzo() {
+
+        const configuracion_ = this.configuracion_lienzo.getConfiguracionGeneral();
+
         const canvas = document.getElementById(this.id_canvas);
         if(canvas === null)
             return null;
@@ -1149,6 +1152,11 @@ class GestionLienzoAnimacion {
 
         if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES ||
             this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
+
+            if(configuracion_["pintar"]){
+                this.imprimir_animacion.imprimirListaGrupoPintado(lista_grupo_root)
+            }
+
             this.imprimir_animacion.imprimirListaGrupos(lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
                 this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
         }
@@ -1280,8 +1288,6 @@ class GestionLienzoAnimacion {
                 }
             }
         }
-
-
 
         /*if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES ||
             this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
