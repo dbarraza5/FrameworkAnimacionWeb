@@ -20,8 +20,15 @@ class ImprimirAnimacion{
           this.ctx = canvas.getContext('2d');
       }
 
+
         for (let i = 0; i < lista_grupo_root.length; i++) {
             const grupo = lista_grupo_root[i]
+
+            for(let j = 0; j<grupo.lista_pintado.length; j++){
+                const pintura = grupo.lista_pintado[j];
+                this.pintarGrupoAnimacion(grupo, pintura, true)
+            }
+
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
                 const figura = grupo.lista_figuras[j];
                 let seleccion = null;
@@ -98,13 +105,66 @@ class ImprimirAnimacion{
         const coor = getCoorPunto(figura, grupo)
         const x = coor.x+this.configuracion_lienzo.x_delta_original;
         const y = coor.y+this.configuracion_lienzo.y_delta_original;
-        const xpc_ = p_centro.x+this.configuracion_lienzo.x_delta_original;
-        const ypc_ = p_centro.y+this.configuracion_lienzo.y_delta_original;
+
         dibujar_punto(this.ctx, color_, x, y, 2)
         if (seleccion) {
+            const xpc_ = p_centro.x+this.configuracion_lienzo.x_delta_original;
+            const ypc_ = p_centro.y+this.configuracion_lienzo.y_delta_original;
             //this.actualizarPuntoCentro(figura, grupo)
             dibujar_rectangulo(this.ctx, color_seleccion, xpc_, ypc_,
                 p_centro.w, p_centro.h)
+        }
+    }
+
+    pintarGrupoAnimacion(grupo_, pintura, relleno=false){
+        const grupo_elementos = pintura.elementos
+
+        for (let i_elementos=0; i_elementos<grupo_elementos.length; i_elementos++){
+            const elementos = grupo_elementos[i_elementos];
+            const lista_puntos = obtenerPuntosContorno(grupo_, elementos);
+            //console.log(lista_puntos)
+            this.ctx.beginPath();
+            if(relleno){
+                this.ctx.strokeStyle = pintura.color;//'black';
+                this.ctx.fillStyle = pintura.color; // Color de relleno (rojo semitransparente en este caso)
+                this.ctx.lineWidth = 0; // Grosor de la línea de contorno
+            }
+
+
+            for (let i=0; i<lista_puntos.length-1; i++){
+                const p1 = lista_puntos[i]
+                const p2 = lista_puntos[i+1]
+
+                p1.x+=this.configuracion_lienzo.x_delta_original;
+                p1.y+=this.configuracion_lienzo.y_delta_original;
+
+                //if(i===){
+                p2.x+=this.configuracion_lienzo.x_delta_original;
+                p2.y+=this.configuracion_lienzo.y_delta_original;
+                //}
+                if(relleno){
+                    if (i === 0) {
+                        this.ctx.moveTo(p1.x, p1.y);
+                        this.ctx.lineTo(p2.x, p2.y);
+                    } else {
+                        //this.ctx.lineTo(p1.x, p1.y);
+                        this.ctx.lineTo(p2.x, p2.y);
+                    }
+                }else{
+                    dibujar_linea_segmentada(this.ctx, "#39ff14", p1.x, p1.y, p2.x, p2.y)
+                }
+            }
+            if(relleno){
+                this.ctx.stroke();
+                if(lista_puntos.length>2){
+                    const p1 = lista_puntos[0];
+                    //p1.x+=this.configuracion_lienzo.x_delta_original;
+                    //p1.y+=this.configuracion_lienzo.y_delta_original;
+                    //this.ctx.lineTo(p1.x, p1.y);
+                    this.ctx.fill();
+                }
+                this.ctx.closePath();
+            }
         }
     }
 
@@ -169,7 +229,7 @@ class ImprimirAnimacion{
         }
 
 
-        if(gestion_pintado.indice_seleccion_pintado !== -1)
+        if(gestion_pintado.indice_seleccion_pintado !== -1 && false)
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
                 const figura = grupo.lista_figuras[j];
                 let seleccion = null;

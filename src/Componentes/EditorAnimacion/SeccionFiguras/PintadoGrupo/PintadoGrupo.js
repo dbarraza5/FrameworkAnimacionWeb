@@ -3,8 +3,8 @@ import {useEffect, useState} from "react";
 import CrearGrupo from "../GestionGrupos/CrearGrupo";
 import TablaGrupos from "../GestionGrupos/TablaGrupos";
 import SelectorColor from "./SelectorColor";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+//import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Importa Bootstrap explícitamente si no está en `window`
 import * as bootstrap from 'bootstrap';
