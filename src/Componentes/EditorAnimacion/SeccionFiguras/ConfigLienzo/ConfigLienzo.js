@@ -15,6 +15,7 @@ import GestionGrupos from "../GestionGrupos/GestionGrupos";
 import GestionFiguras from "../GestionFiguras/GestionFiguras";
 import PintadoGrupo from "../PintadoGrupo/PintadoGrupo";
 import ConfigImagenes from "./ConfigImagenes";
+import ConfigGeneral from "./ConfigGeneral";
 
 function ConfigLienzo(props){
 
@@ -35,7 +36,7 @@ function ConfigLienzo(props){
             <div className="tab-pane fade" id="nav-config-lienzo" role="tabpanel"
                  aria-labelledby="profile-tab1"
                  tabIndex="1">
-                <br/>
+                <ConfigGeneral {...props}/>
 
             </div>
             <div className="tab-pane fade" id="nav-imagenes-lienzo" role="tabpanel"
