@@ -11,9 +11,7 @@ import {
     TRABAJO_GRUPOS,
     TRABAJO_LISTA_FIGURAS, TRABAJO_PINTADO_GRUPO
 } from "../../../../Clases/EditorAnimacion/ConstanteAnimacion";
-import GestionGrupos from "../GestionGrupos/GestionGrupos";
-import GestionFiguras from "../GestionFiguras/GestionFiguras";
-import PintadoGrupo from "../PintadoGrupo/PintadoGrupo";
+
 import ConfigImagenes from "./ConfigImagenes";
 import ConfigGeneral from "./ConfigGeneral";
 

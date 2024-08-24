@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import {setConfiguracion, setCoordenadas} from "../../../../Store/Configuracion/ConfigAnimacionSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 function ConfigGeneral(props) {
     const [ejex, setEjex] = useState(props.gestionLienzo.configuracion_lienzo.x_delta_original);
@@ -6,20 +8,40 @@ function ConfigGeneral(props) {
     const [showCoordinates, setShowCoordinates] = useState(false);
     const [paintScreen, setPaintScreen] = useState(false);
 
-    // Update ejex only if it has actually changed in props
-    useEffect(() => {
-        console.log("actualiza: "+props.gestionLienzo.configuracion_lienzo.x_delta_original);
-        if (ejex !== props.gestionLienzo.configuracion_lienzo.x_delta_original) {
-            setEjex(props.gestionLienzo.configuracion_lienzo.x_delta_original);
-        }
-    }, [props.gestionLienzo.configuracion_lienzo.x_delta_original]);
+    const dispatch = useDispatch();
+    const x_lienzo_dis = useSelector((state) => state.configuracion.x_lienzo);
+    const y_lienzo_dis = useSelector((state) => state.configuracion.y_lienzo);
+    const mostrar_info_dis = useSelector((state) => state.configuracion.mostrar_info);
+    const pintar_animacion_dis = useSelector((state) => state.configuracion.pintar_animacion);
 
-    // Update ejey only if it has actually changed in props
     useEffect(() => {
-        if (ejey !== props.gestionLienzo.configuracion_lienzo.y_delta_original) {
-            setEjey(props.gestionLienzo.configuracion_lienzo.y_delta_original);
+       setEjex(x_lienzo_dis)
+    }, [x_lienzo_dis]);
+
+    useEffect(() => {
+        setEjey(y_lienzo_dis)
+    }, [y_lienzo_dis]);
+
+    useEffect(() => {
+        setShowCoordinates(mostrar_info_dis)
+    }, [mostrar_info_dis]);
+
+    useEffect(() => {
+        setPaintScreen(pintar_animacion_dis)
+    }, [pintar_animacion_dis]);
+
+    const editar_config=()=>{
+        const datos = {
+            x: props.gestionLienzo.configuracion_lienzo.x_delta_original,
+            y: props.gestionLienzo.configuracion_lienzo.y_delta_original,
+            mostrar_info: props.gestionLienzo.configuracion_lienzo.ver_info_lienzo,
+            pintar_animacion : props.gestionLienzo.configuracion_lienzo.pintar_animacion
         }
-    }, [props.gestionLienzo.configuracion_lienzo.y_delta_original]);
+        dispatch(setConfiguracion(datos));
+        //dispatch(setEjex(props.gestionLienzo.configuracion_lienzo.y_delta_original));
+    }
+
+    props.gestionLienzo.configuracion_lienzo.funcion_editar_config = editar_config;
 
     const resetCoordinates = () => {
         setEjex(0);
@@ -30,11 +52,23 @@ function ConfigGeneral(props) {
 
     const handleEjexChange = (e) => {
         setEjex(parseFloat(e.target.value));
+        props.gestionLienzo.configuracion_lienzo.x_delta_original=parseFloat(e.target.value);
     };
 
     const handleEjeyChange = (e) => {
         setEjey(parseFloat(e.target.value));
+        props.gestionLienzo.configuracion_lienzo.y_delta_original=parseFloat(e.target.value);
     };
+
+    const handleMostrarInfo = (valor)=>{
+        setShowCoordinates(valor);
+        props.gestionLienzo.configuracion_lienzo.ver_info_lienzo = valor;
+    }
+
+    const handlePintar= (valor)=>{
+        setPaintScreen(valor);
+        props.gestionLienzo.configuracion_lienzo.pintar_animacion = valor;
+    }
 
     return (
         <div className="container mt-4">
@@ -65,7 +99,7 @@ function ConfigGeneral(props) {
                         type="checkbox"
                         id="showCoordinates"
                         checked={showCoordinates}
-                        onChange={(e) => setShowCoordinates(e.target.checked)}
+                        onChange={(e) => handleMostrarInfo(e.target.checked)}
                     />
                     <label className="form-check-label" htmlFor="showCoordinates">
                         Mostrar Coordenadas en Pantalla
@@ -77,7 +111,7 @@ function ConfigGeneral(props) {
                         type="checkbox"
                         id="paintScreen"
                         checked={paintScreen}
-                        onChange={(e) => setPaintScreen(e.target.checked)}
+                        onChange={(e) => handlePintar(e.target.checked)}
                     />
                     <label className="form-check-label" htmlFor="paintScreen">
                         Pintar la Pantalla
@@ -91,20 +125,6 @@ function ConfigGeneral(props) {
                     Reset
                 </button>
             </form>
-
-            {showCoordinates && (
-                <div className="mt-4">
-                    <p>Coordenadas:</p>
-                    <p>Eje X: {ejex}</p>
-                    <p>Eje Y: {ejey}</p>
-                </div>
-            )}
-
-            {paintScreen && (
-                <div className="mt-4" style={{ width: '100%', height: '100px', backgroundColor: 'lightblue' }}>
-                    <p className="text-center">Pantalla Pintada</p>
-                </div>
-            )}
         </div>
     );
 }

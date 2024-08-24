@@ -25,6 +25,16 @@ const configAnimacionSlice = createSlice({
         setEjey: (state, action) => {
             state.y_lienzo = action.payload;
         },
+        setCoordenadas: (state, action) => {
+            state.x_lienzo = action.payload.x;
+            state.y_lienzo = action.payload.y;
+        },
+        setConfiguracion: (state, action) => {
+            state.x_lienzo = action.payload.x;
+            state.y_lienzo = action.payload.y;
+            state.mostrar_info = action.payload.mostrar_info;
+            state.pintar_animacion = action.payload.pintar_animacion;
+        },
         mostrarInfoLienzo: (state, action) => {
             state.mostrar_info = action.payload;
         },
@@ -32,15 +42,16 @@ const configAnimacionSlice = createSlice({
             state.pintar_animacion = action.payload;
         },
         resetLienzo: (state) => {
-            state.ejex = 0;
-            state.ejey = 0;
+            state.x_lienzo = 0;
+            state.y_lienzo = 0;
         },
         restaurarState: ()=>inicializarState
     }
 });
 
 export const {
-    setEjex, setEjey, mostrarInfoLienzo, pintarLienzo, resetLienzo
+    setEjex, setEjey, mostrarInfoLienzo, pintarLienzo, resetLienzo,
+    setCoordenadas, setConfiguracion
 }=configAnimacionSlice.actions;
 
 export default configAnimacionSlice.reducer;

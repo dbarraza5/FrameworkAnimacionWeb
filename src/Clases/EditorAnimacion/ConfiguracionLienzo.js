@@ -93,6 +93,8 @@ class ConfiguracionLienzo{
     pintar_animacion = false;
     presionado_p = false;
 
+    funcion_editar_config = null;
+
     procesarGeneral(eventoLienzoFigura, categoria_trabajo, tipo_movimiento){
 
         if(tipo_movimiento === MOVER_NADA){
@@ -215,6 +217,9 @@ class ConfiguracionLienzo{
 
         this.aplicar_escala = this.escala !== 1;
 
+        if(this.funcion_editar_config){
+            this.funcion_editar_config();
+        }
     }
 
     procesarTrabajoConfiguracionImagenesLiento(eventoLienzoFigura, animacion_){
