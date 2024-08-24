@@ -69,7 +69,7 @@ function EditorAnimacion(props) {
 
     const editar_lienzo=()=>{
         //dispatch(actualizarBackup(raw_animacion))
-        console.log("MOVER_FIGURA: "+gestionLienzo.mover_figura)
+        //console.log("MOVER_FIGURA: "+gestionLienzo.mover_figura)
         const raw_animacion = JSON.stringify(animacion.edicion.grupos_figuras);
         dispatch(actualizarBackup(raw_animacion))
     }

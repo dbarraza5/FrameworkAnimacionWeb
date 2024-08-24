@@ -8,6 +8,7 @@ function ConfigGeneral(props) {
 
     // Update ejex only if it has actually changed in props
     useEffect(() => {
+        console.log("actualiza: "+props.gestionLienzo.configuracion_lienzo.x_delta_original);
         if (ejex !== props.gestionLienzo.configuracion_lienzo.x_delta_original) {
             setEjex(props.gestionLienzo.configuracion_lienzo.x_delta_original);
         }
