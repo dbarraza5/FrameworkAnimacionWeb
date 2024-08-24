@@ -6,7 +6,8 @@ const inicializarState= {
     x_lienzo: 0,
     y_lienzo: 0,
     mostrar_info: false,
-    pintar_animacion: false
+    pintar_animacion: false,
+    mostrar_imagenes: true
 
     ,
     status: 'idle',
@@ -34,6 +35,7 @@ const configAnimacionSlice = createSlice({
             state.y_lienzo = action.payload.y;
             state.mostrar_info = action.payload.mostrar_info;
             state.pintar_animacion = action.payload.pintar_animacion;
+            state.mostrar_imagenes = action.payload.mostrar_imagenes;
         },
         mostrarInfoLienzo: (state, action) => {
             state.mostrar_info = action.payload;

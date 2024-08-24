@@ -95,6 +95,8 @@ class ConfiguracionLienzo{
 
     funcion_editar_config = null;
 
+    mostrar_imagenes = true;
+
     procesarGeneral(eventoLienzoFigura, categoria_trabajo, tipo_movimiento){
 
         if(tipo_movimiento === MOVER_NADA){
@@ -290,18 +292,20 @@ class ConfiguracionLienzo{
 
     imprimirImagenesLienzo(ctx, animacion_){
 
-        animacion_.lista_imagenes.map((imagen)=>{
-            if(imagen.img){
-                if(imagen.visible){
-                    //console.log(imagen.nombre);
-                    ctx.globalAlpha = imagen.opacidad;
-                    const x_image = imagen.x+this.x_delta_original;
-                    const y_image = imagen.y+this.y_delta_original;
-                    ctx.drawImage(imagen.img, x_image, y_image, imagen.ancho, imagen.alto);
-                    ctx.globalAlpha = 1.0;
+        if(this.mostrar_imagenes){
+            animacion_.lista_imagenes.map((imagen)=>{
+                if(imagen.img){
+                    if(imagen.visible){
+                        //console.log(imagen.nombre);
+                        ctx.globalAlpha = imagen.opacidad;
+                        const x_image = imagen.x+this.x_delta_original;
+                        const y_image = imagen.y+this.y_delta_original;
+                        ctx.drawImage(imagen.img, x_image, y_image, imagen.ancho, imagen.alto);
+                        ctx.globalAlpha = 1.0;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     inicioZoomLienzo(ctx){

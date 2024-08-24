@@ -7,12 +7,14 @@ function ConfigGeneral(props) {
     const [ejey, setEjey] = useState(props.gestionLienzo.configuracion_lienzo.y_delta_original);
     const [showCoordinates, setShowCoordinates] = useState(false);
     const [paintScreen, setPaintScreen] = useState(false);
+    const [mostrarImagenes, setMostrarImagenes] = useState(true);
 
     const dispatch = useDispatch();
     const x_lienzo_dis = useSelector((state) => state.configuracion.x_lienzo);
     const y_lienzo_dis = useSelector((state) => state.configuracion.y_lienzo);
     const mostrar_info_dis = useSelector((state) => state.configuracion.mostrar_info);
     const pintar_animacion_dis = useSelector((state) => state.configuracion.pintar_animacion);
+    const mostrar_imagenes_dis = useSelector((state) => state.configuracion.mostrar_imagenes);
 
     useEffect(() => {
        setEjex(x_lienzo_dis)
@@ -30,12 +32,17 @@ function ConfigGeneral(props) {
         setPaintScreen(pintar_animacion_dis)
     }, [pintar_animacion_dis]);
 
+    useEffect(() => {
+        setMostrarImagenes(mostrar_imagenes_dis)
+    }, [mostrar_imagenes_dis]);
+
     const editar_config=()=>{
         const datos = {
             x: props.gestionLienzo.configuracion_lienzo.x_delta_original,
             y: props.gestionLienzo.configuracion_lienzo.y_delta_original,
             mostrar_info: props.gestionLienzo.configuracion_lienzo.ver_info_lienzo,
-            pintar_animacion : props.gestionLienzo.configuracion_lienzo.pintar_animacion
+            pintar_animacion : props.gestionLienzo.configuracion_lienzo.pintar_animacion,
+            mostrar_imagenes : props.gestionLienzo.configuracion_lienzo.mostrar_imagenes
         }
         dispatch(setConfiguracion(datos));
         //dispatch(setEjex(props.gestionLienzo.configuracion_lienzo.y_delta_original));
@@ -68,6 +75,11 @@ function ConfigGeneral(props) {
     const handlePintar= (valor)=>{
         setPaintScreen(valor);
         props.gestionLienzo.configuracion_lienzo.pintar_animacion = valor;
+    }
+
+    const handleMostrarImagenes= (valor)=>{
+        setMostrarImagenes(valor);
+        props.gestionLienzo.configuracion_lienzo.mostrar_imagenes = valor;
     }
 
     return (
@@ -105,6 +117,20 @@ function ConfigGeneral(props) {
                         Mostrar Coordenadas en Pantalla
                     </label>
                 </div>
+
+                <div className="form-check form-switch mb-3">
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="mostrarImagenes"
+                        checked={mostrarImagenes}
+                        onChange={(e) => handleMostrarImagenes(e.target.checked)}
+                    />
+                    <label className="form-check-label" htmlFor="mostrarImagenes">
+                        Mostrar Imagenes
+                    </label>
+                </div>
+
                 <div className="form-check form-switch mb-3">
                     <input
                         className="form-check-input"
