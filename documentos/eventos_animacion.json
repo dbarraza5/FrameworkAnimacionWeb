@@ -1,0 +1,77 @@
+[
+  {
+    //evento general
+    "id": 342,
+    "evento_padre": "general",
+    "nombre": "conducir_auto",
+    "bucle": true,
+    "tiempo_inicio": 0,//segundos
+    "tiempo_fin" 10,
+    "animacion": {
+      "movimientos": [// se puede elegir movimientos prerdeterminados de una lista con sus configuraciones
+        {
+          "id": 213123,
+          "tipo": 1,
+          "datos:": {
+            "velocidad": 20
+          }
+        }
+      ],
+      "objetos": [
+        {
+          "tipo": 1, //si es un componente, centro figura, grupo
+          "id_objeto": {
+            "id_grupo": "auto",
+            "id_figura": null,
+            "id_componente":  null, //puede ser PUNTO1 o PUNTO2,
+            "posicionamiento": {// puede ser null en caso de que se quiere tener el ultimo registro
+              "x": 12,
+              "y": 324
+            }
+          }
+        },
+        {
+          "tipo": 2, //una figura
+          "id_objeto": {
+            "id_grupo": "auto",
+            "id_figura": "figura1",
+            "id_componente":  null //puede ser PUNTO1 o PUNTO2
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": 432,
+    "evento_padre": 342,//conducir
+    "nombre": "vibracion_carroceria",
+    "bucle": true,
+    "tiempo_inicio": 0,
+    "tiempo_fin" 3,
+    "animacion": {
+      "movimientos": [
+        {
+          "id": 213123,
+          "tipo": 1,
+          "datos:": {
+            "velocidad": 80
+          }
+        }
+      ],
+      "objetos": [
+        {
+          "tipo": 1,
+          "id_objeto": {
+            "id_grupo": "carroceria",
+            "id_figura": null,
+            "id_componente":  null,
+            "posicionamiento": null
+          }
+        }
+      ]
+    }
+
+  }
+]
+
+
