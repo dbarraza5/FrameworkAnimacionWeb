@@ -11,7 +11,8 @@
       "movimientos": [// se puede elegir movimientos prerdeterminados de una lista con sus configuraciones
         {
           "id": 213123,
-          "tipo": 1,
+          "tipo_accion": 1,// 1: movimiento, 2: visible
+          "sub_tipo_accion": 1, // los tipo de movimientos y comportamiento
           "datos:": {
             "velocidad": 20
           }

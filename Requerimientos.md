@@ -74,6 +74,11 @@ una vez quitado los efectos deberian estar sobrelapados.
 - [ ] cuando se selecciona una sola figura y despues seleccionas con el puntero a mas de una, no quedan seleccionadas.
 no sale de ese estdo hasta que termines de mover esa unica figura o cambias de espacio de trabajo.
 
+### bugs del 25-08-2024
+- [ ] no se elimino el grupo de la estructura de arbol cuando se removio de la ediciones de grupos.
+- [ ] implementar el estatus visible de los grupos.
+- [ ] no elimina un figura individual cuando la seleccionas.
+
 #### vitacora
 
 talvez para simular el zoom y el desplazamiento podemos, virtualizar los datos reales poniendo una capa. por ejemplo
