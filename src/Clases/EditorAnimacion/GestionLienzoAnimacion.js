@@ -212,7 +212,6 @@ class GestionLienzoAnimacion {
         this.gestion_pintado.inicializarGrupo(this.animacion_.getGrupo(nombre_grupo))
     }
 
-
     //proceso que es llamado por componente de react para proceder a intereactuar a nivel de grupo
     seleccionListaGrupos(lista_grupos){
         this.lista_grupos_trabajando = lista_grupos;
@@ -281,6 +280,7 @@ class GestionLienzoAnimacion {
         this.espejo_sentido_reflejo = REFLEJO_HORIZONTAL;
         this.reflejo_original_horz = !this.reflejo_original_horz;
     }
+
     espejoReflejoVertical(lista_grupos){
         console.log("espejoReflejoVertical")
         this.espejo_sentido_reflejo = REFLEJO_VERTICAL;
@@ -292,6 +292,7 @@ class GestionLienzoAnimacion {
         this.id_grupo_selec = nombre_grupo_;
         this.id_figura_selec = nombre_figura_;
         this.mover_figura = MOVER_FIGURA_AGREGADA;
+        this.movimiento_recta_agregada = 1;
     }
 
     seleccionarFiguraMover(nombre_figura_, nombre_grupo_, tipo_movimiento = MOVER_CENTRO_FIGURA) {
@@ -570,6 +571,30 @@ class GestionLienzoAnimacion {
             }
         }
 
+        if(this.movimiento_recta_agregada === 2 && fig_ != null && this.mover_figura===MOVER_FIGURA_AGREGADA){
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyA")){
+                if(!this.pulsando_agregar_figura){
+                    console.log("agregando otra figura");
+                    let fig_nuevo = this.animacion_.crear_figura(nombre_grupo, fig_.tipo_figura)
+                    this.id_figura_selec = fig_nuevo.nombre;
+                    this.mover_figura=MOVER_FIGURA_AGREGADA;
+                    fig_nuevo.atributos["x1"] = fig_.atributos["x2"];
+                    fig_nuevo.atributos["y1"] = fig_.atributos["y2"];
+                    //fig_nuevo.atributos["x2"] = fig_.atributos["x2"];
+                    //fig_nuevo.atributos["y2"] = fig_.atributos["y2"];
+                    fig_nuevo.atributos["cx"] = fig_.atributos["cx"];
+                    fig_nuevo.atributos["cy"] = fig_.atributos["cy"];
+                    fig_ = fig_nuevo;
+
+                    this.pulsando_agregar_figura = true;
+                }
+            }else{
+                this.pulsando_agregar_figura = false;
+            }
+            //fig_nuevo.atributos["x1"] = fig_.atributos["x1"];
+            //fig_nuevo.atributos["y1"] = fig_.atributos["y1"];
+        }
+
 
         if (grupo_ != null && fig_ != null) {
             if(this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura !== "RECTA"){
@@ -716,21 +741,6 @@ class GestionLienzoAnimacion {
                     if(this.movimiento_recta_agregada === 2){
                         fig_.atributos["x2"] = x;
                         fig_.atributos["y2"] = y;
-
-                        //AGREGANDO UUNA NUEVA RECTA
-                        if(eventoLienzoFigura.stack_event_teclado.includes("KeyA")){
-                            if(!this.pulsando_agregar_figura){
-                                this.animacion_.set_figura(nombre_grupo, fig_)
-                                fig_ = this.animacion_.crear_figura(nombre_grupo, fig_.tipo_figura)
-                                fig_.atributos["x1"] = fig_.atributos["x2"] = x;
-                                fig_.atributos["y1"] = fig_.atributos["y2"] = y;
-                                this.id_figura_selec = fig_.nombre;
-                                this.movimiento_recta_agregada = 2;
-                                this.pulsando_agregar_figura = true;
-                            }
-                        }else{
-                            this.pulsando_agregar_figura = false;
-                        }
                     }
 
                     //this.mover_figura = MOVER_RECTA_PUNTO2;
@@ -866,7 +876,11 @@ class GestionLienzoAnimacion {
                 this.mover_figura = MOVER_RECTA_PUNTO1;
             }*/
 
-            if(this.anterior_mover_figura !== MOVER_NADA && this.mover_figura === MOVER_NADA){
+            //if(this.anterior_mover_figura !== MOVER_NADA && this.mover_figura === MOVER_NADA){
+            //    this.editar_lienzo = true;
+            //}
+
+            if(this.mover_figura === MOVER_NADA){
                 this.editar_lienzo = true;
             }
         }

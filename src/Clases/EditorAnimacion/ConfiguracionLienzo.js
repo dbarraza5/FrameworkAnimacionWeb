@@ -194,7 +194,7 @@ class ConfiguracionLienzo{
                 this.x_des_zoom = 0;
                 this.y_des_zoom = 0;
             }
-            if(this.escala<2){
+            if(this.escala<3){
                 this.escala*=this.proporcion_escala;
                 this.x_des_zoom  = 300 - (300- this.x_des_zoom) * this.proporcion_escala;
                 this.y_des_zoom  = 300 - (300- this.y_des_zoom) * this.proporcion_escala;

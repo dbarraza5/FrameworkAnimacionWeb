@@ -112,9 +112,9 @@ export const ARRAY_TITULO_MOVIMIENTO = {
     [MOVER_AUMENTO_LIENZO]: "aumento lienzo",
     [MOVER_REDUCCION_LIENZO]: "reducción lienzo",
     [MOVER_DESPLAZAR_LIENZO]: "desplazar lienzo",
-    [REFLEJO_NONE]: "sin reflejo",
+    //[REFLEJO_NONE]: "sin reflejo",
     [REFLEJO_HORIZONTAL]: "reflejo horizontal",
     [REFLEJO_VERTICAL]: "reflejo vertical",
-    [RECTA_MOVER_TODO]: "mover todo",
+    //[RECTA_MOVER_TODO]: "mover todo",
     [RECTA_MOVER_P1]: "mover p1"
 };
