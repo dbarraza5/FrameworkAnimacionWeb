@@ -162,6 +162,8 @@ class GestionLienzoAnimacion {
     //trabajando sobre figuras agregadas recientemente
     movimiento_recta_agregada = MOVER_NADA;
 
+    pulsando_agregar_figura = false;
+
     //evitar conflicto por concurrencia
     act_grupos_concurrente = false
     grupos_figuras_concurrent = null;
@@ -541,7 +543,9 @@ class GestionLienzoAnimacion {
 
         //eventos de trabajo de figuras
         if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft")){
-            if(eventoLienzoFigura.stack_event_teclado.includes("KeyA")){
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyA") &&
+                this.mover_figura === MOVER_NADA){
+                this.movimiento_recta_agregada = 1;
                 evento_agregar_figura = true;
             }
 
@@ -609,7 +613,8 @@ class GestionLienzoAnimacion {
                 }
             }
 
-            if (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2) {
+            if (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2 ||
+                this.mover_figura === MOVER_FIGURA_AGREGADA) {
                 let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
                 let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy - fig_.atributos.cy;
 
@@ -701,18 +706,59 @@ class GestionLienzoAnimacion {
                     fig_.atributos["y2"] = y;
                 }
 
+                if(this.mover_figura === MOVER_FIGURA_AGREGADA){
+
+                    if(this.movimiento_recta_agregada === 1){
+                        fig_.atributos["x1"] = fig_.atributos["x2"] = x;
+                        fig_.atributos["y1"] = fig_.atributos["y2"] = y;
+                    }
+
+                    if(this.movimiento_recta_agregada === 2){
+                        fig_.atributos["x2"] = x;
+                        fig_.atributos["y2"] = y;
+
+                        //AGREGANDO UUNA NUEVA RECTA
+                        if(eventoLienzoFigura.stack_event_teclado.includes("KeyA")){
+                            if(!this.pulsando_agregar_figura){
+                                this.animacion_.set_figura(nombre_grupo, fig_)
+                                fig_ = this.animacion_.crear_figura(nombre_grupo, fig_.tipo_figura)
+                                fig_.atributos["x1"] = fig_.atributos["x2"] = x;
+                                fig_.atributos["y1"] = fig_.atributos["y2"] = y;
+                                this.id_figura_selec = fig_.nombre;
+                                this.movimiento_recta_agregada = 2;
+                                this.pulsando_agregar_figura = true;
+                            }
+                        }else{
+                            this.pulsando_agregar_figura = false;
+                        }
+                    }
+
+                    //this.mover_figura = MOVER_RECTA_PUNTO2;
+                    if(eventoLienzoFigura.mouse_only_click){
+                        //this.mover_figura = MOVER_RECTA_PUNTO2;
+                        this.movimiento_recta_agregada++;
+                    }
+                    if(this.movimiento_recta_agregada === 3){
+                        this.mover_figura = MOVER_NADA;
+                    }
+                }
+                else
+                if(eventoLienzoFigura.mouse_click_up){
+                    this.mover_figura = MOVER_NADA;
+                }
+
                 this.animacion_.set_figura(nombre_grupo, fig_)
                 setAnimacion({"edicion": this.animacion_})
             }
 
-            if(this.mover_figura === MOVER_FIGURA_AGREGADA){
+            /*if(this.mover_figura === MOVER_FIGURA_AGREGADA){
                 let x = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
                 let y = eventoLienzoFigura.mouse_virtual_y - grupo_.cy - fig_.atributos.cy;
                 if (this.movimiento_recta_agregada === RECTA_MOVER_TODO){
                     fig_.atributos["x1"] = fig_.atributos["x2"] = x;
                     fig_.atributos["y1"] = fig_.atributos["y2"] = y;
                 }
-            }
+            }*/
 
             if (this.mover_figura === MOVER_RADIO_CIRCULO) {
                 let radio_ = eventoLienzoFigura.mouse_virtual_x - grupo_.cx - fig_.atributos.cx;
@@ -804,9 +850,9 @@ class GestionLienzoAnimacion {
 
             this.anterior_mover_figura = this.mover_figura;
 
-            if (eventoLienzoFigura.mouse_click_up && (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2)) {
+            /*if (eventoLienzoFigura.mouse_only_click && (this.mover_figura === MOVER_RECTA_PUNTO1 || this.mover_figura === MOVER_RECTA_PUNTO2)) {
                 this.mover_figura = MOVER_NADA;
-            }
+            }*/
 
             if (eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_CENTRO_FIGURA && mover_centro_figura === false) {
                 this.mover_figura = MOVER_NADA;
@@ -815,10 +861,10 @@ class GestionLienzoAnimacion {
                 this.mover_figura = MOVER_NADA;
             }
 
-            if (eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura === "RECTA") {
+            /*if (eventoLienzoFigura.mouse_only_click && this.mover_figura === MOVER_FIGURA_AGREGADA && fig_.tipo_figura === "RECTA") {
                 console.log("MOVER AHORA EL PUNTO1")
                 this.mover_figura = MOVER_RECTA_PUNTO1;
-            }
+            }*/
 
             if(this.anterior_mover_figura !== MOVER_NADA && this.mover_figura === MOVER_NADA){
                 this.editar_lienzo = true;
