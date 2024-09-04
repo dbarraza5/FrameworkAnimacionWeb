@@ -72,14 +72,15 @@ class GestionAnimacion{
             return {
                 nombre: nombre,
                 nodo_padre: "root",
-                tiempo_inicial: 0,
-                tiempo_final: 5000,
-                ciclo: 0,
-                color: "#285de3",
+                //tiempo_inicial: 0,
+                //tiempo_final: 5000,
+                //ciclo: 0,
+                color: "#000000",
                 cx: 0,
                 cy: 0,
                 capa: 0,
-                grupo_movimientos: [],
+                //grupo_movimientos: [],
+                visible: true,
 
                 lista_figuras: [
                 ],

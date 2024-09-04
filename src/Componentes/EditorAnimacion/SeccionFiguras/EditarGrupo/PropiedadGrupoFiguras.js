@@ -96,6 +96,15 @@ function PropiedadGrupoFiguras(props){
                                    tipo="capa"
                                    cambioPropiedadGrupo={cambioPropiedadGrupo} nombre_grupo={grupo.nombre}/>
 
+
+        <div className="form-check mb-3">
+            <input className="form-check-input" type="checkbox" checked={grupo.visible}
+                   onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "visible", e.target.checked)}
+                   id={"visible-grupo-"+grupo.nombre}/>
+            <label className="form-check-label" htmlFor={"visible-grupo-"+grupo.nombre}>
+                visible
+            </label>
+        </div>
         <div className="input-group input-group-sm mb-3">
             <label htmlFor="exampleFormControlInput1" className="input-group-text">Color</label>
             <input type="color" className="form-control" value={grupo.color}
