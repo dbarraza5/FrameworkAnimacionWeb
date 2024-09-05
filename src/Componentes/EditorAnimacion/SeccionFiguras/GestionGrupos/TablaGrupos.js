@@ -1,3 +1,5 @@
+import {actualizarBackup} from "../../../../Store/Animacion/animacionSlice";
+import {useDispatch, useSelector} from "react-redux";
 const style ={
     width: "25%"
 }
@@ -5,6 +7,7 @@ const style ={
 
 function TablaGrupos(props){
     const lista_grupos = props.animacion.grupos_figuras;
+    const dispatch = useDispatch();
 
     const editarGrupo=(nombre_grupo)=>{
         const tab_grupos = document.getElementById("btn-nav-propiedades-grupo");
@@ -17,6 +20,11 @@ function TablaGrupos(props){
     const borrar_grupo=(nombre)=>{
         props.animacion.borrar_grupo(nombre);
         props.setAnimacion({"edicion": props.animacion})
+        editar_lienzo();
+    }
+    const editar_lienzo=()=>{
+        const raw_animacion = JSON.stringify(props.animacion.grupos_figuras);
+        dispatch(actualizarBackup(raw_animacion))
     }
 
     return(<table className="table">
