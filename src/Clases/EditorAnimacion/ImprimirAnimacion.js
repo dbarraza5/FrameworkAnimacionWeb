@@ -23,6 +23,10 @@ class ImprimirAnimacion{
       for (let i = 0; i < lista_grupo_root.length; i++) {
           const grupo = lista_grupo_root[i]
 
+          if(!grupo.visible){
+              continue;
+          }
+
           for(let j = 0; j<grupo.lista_pintado.length; j++){
               const pintura = grupo.lista_pintado[j];
               this.pintarGrupoAnimacion(grupo, pintura, true)
@@ -42,7 +46,9 @@ class ImprimirAnimacion{
 
         for (let i = 0; i < lista_grupo_root.length; i++) {
             const grupo = lista_grupo_root[i]
-
+            if(!grupo.visible){
+                continue;
+            }
             /*for(let j = 0; j<grupo.lista_pintado.length; j++){
                 const pintura = grupo.lista_pintado[j];
                 this.pintarGrupoAnimacion(grupo, pintura, true)
