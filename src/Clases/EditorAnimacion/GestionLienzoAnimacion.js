@@ -561,6 +561,14 @@ class GestionLienzoAnimacion {
             if(eventoLienzoFigura.stack_event_teclado.includes("KeyY")){
                 evento_mov_solo_y= true;
             }
+
+            if(eventoLienzoFigura.stack_event_teclado.includes("KeyB")){
+                //evento_mov_solo_y= true;
+                if(fig_){
+                    this.animacion_.borrar_figura(nombre_grupo, fig_.nombre);
+                    this.id_figura_selec = null;
+                }
+            }
         }
 
         if(fig_ != null && this.mover_figura === MOVER_NADA){
