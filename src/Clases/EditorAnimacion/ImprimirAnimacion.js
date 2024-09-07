@@ -36,7 +36,7 @@ class ImprimirAnimacion{
 
 
   imprimirListaGrupos(lista_grupo_root, id_grupo_selec, id_figura_selec, lista_id_figuras,
-                                 p_centro, p1_recta, p2_recta, p_circulo){
+                                 p_centro, p1_recta, p2_recta, p_circulo, pintado){
       this.seccion_pintar = false;
       if(this.ctx === null){
           const canvas = document.getElementById("lienzo-animacion");
@@ -53,6 +53,13 @@ class ImprimirAnimacion{
                 const pintura = grupo.lista_pintado[j];
                 this.pintarGrupoAnimacion(grupo, pintura, true)
             }*/
+
+            if(pintado){
+                for(let j = 0; j<grupo.lista_pintado.length; j++){
+                    const pintura = grupo.lista_pintado[j];
+                    this.pintarGrupoAnimacion(grupo, pintura, true)
+                }
+            }
 
             for (let j = 0; j < grupo.lista_figuras.length; j++) {
                 const figura = grupo.lista_figuras[j];
