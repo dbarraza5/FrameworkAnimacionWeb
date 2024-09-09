@@ -1,77 +1,84 @@
-[
-  {
-    //evento general
-    "id": 342,
-    "evento_padre": "general",
-    "nombre": "conducir_auto",
-    "bucle": true,
-    "tiempo_inicio": 0,//segundos
-    "tiempo_fin" 10,
-    "animacion": {
-      "movimientos": [// se puede elegir movimientos prerdeterminados de una lista con sus configuraciones
-        {
-          "id": 213123,
-          "tipo_accion": 1,// 1: movimiento, 2: visible
-          "sub_tipo_accion": 1, // los tipo de movimientos y comportamiento
-          "datos:": {
-            "velocidad": 20
-          }
-        }
-      ],
-      "objetos": [
-        {
-          "tipo": 1, //si es un componente, centro figura, grupo
-          "id_objeto": {
-            "id_grupo": "auto",
-            "id_figura": null,
-            "id_componente":  null, //puede ser PUNTO1 o PUNTO2,
-            "posicionamiento": {// puede ser null en caso de que se quiere tener el ultimo registro
-              "x": 12,
-              "y": 324
+{
+  "eventos": [
+    {
+      //evento general
+      "id": 1,
+      "evento_padre": 0,//"general",
+      "nombre": "conducir_auto",
+      "bucle": true,
+      "tiempo_inicio": 0,//segundos
+      "tiempo_fin" 10,
+      "x": 0,//cada evento se puede posicionar donde quiera
+      "y": 0,
+      "animacion": {
+        "movimientos": [// se puede elegir movimientos prerdeterminados de una lista con sus configuraciones
+          {
+            "id": 213123,
+            "tipo_accion": 1,// 1: movimiento, 2: visible, 3: script para personalizar
+            "sub_tipo_accion": 1, // los tipo de movimientos y comportamiento
+            "datos:": {
+              "velocidad": 20
             }
           }
-        },
-        {
-          "tipo": 2, //una figura
-          "id_objeto": {
-            "id_grupo": "auto",
-            "id_figura": "figura1",
-            "id_componente":  null //puede ser PUNTO1 o PUNTO2
+        ],
+        "objetos": [ //siempre seran objetos y no se indicara exactamente el movimiento por cada figura sino que se
+          //indicara si es algrupo o asu compisicion
+          {
+            "tipo": 1, //1: acecta al grupo 2: o asu composicion de grupos
+            "id": "grupo1", //indica que grupo es al que se le esta haciendo la fisica
+            "x_inicial": 0,//el posicionamiento inicial que tiene al comenzar el evento
+            "y_inicial": 0,
+            "reposicionar": true, //indica si quiere el repocicionamiento al empezar
+            "objeto": "obj", // es una copia del objeto
+            "clase": ["auto", "vibrando"], // es una forma mas facil de aplicar los movimientos pre fabricados
+          },
+          {
+            "tipo": 2, //una figura
+            "objeto": {
+              "id_grupo": "auto",
+              "id_figura": "figura1",
+              "id_componente":  null //puede ser PUNTO1 o PUNTO2
+            }
           }
-        }
-      ]
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "evento_padre": 1,//conducir
+      "nombre": "vibracion_carroceria",
+      "bucle": true,
+      "tiempo_inicio": 0,
+      "tiempo_fin" 3,
+      "animacion": {
+        "movimientos": [
+          {
+            "id": 213123,
+            "tipo": 1,
+            "datos:": {
+              "velocidad": 80
+            }
+          }
+        ],
+        "objetos": [
+          {
+            "tipo": 1,
+            "objeto": {
+              "id_grupo": "carroceria",
+              "id_figura": null,
+              "id_componente":  null,
+              "posicionamiento": null
+            }
+          }
+        ]
+      }
     }
-  },
-  {
-    "id": 432,
-    "evento_padre": 342,//conducir
-    "nombre": "vibracion_carroceria",
-    "bucle": true,
-    "tiempo_inicio": 0,
-    "tiempo_fin" 3,
-    "animacion": {
-      "movimientos": [
-        {
-          "id": 213123,
-          "tipo": 1,
-          "datos:": {
-            "velocidad": 80
-          }
-        }
-      ],
-      "objetos": [
-        {
-          "tipo": 1,
-          "id_objeto": {
-            "id_grupo": "carroceria",
-            "id_figura": null,
-            "id_componente":  null,
-            "posicionamiento": null
-          }
-        }
-      ]
-    }
-  }
-]
+  ],
+  "grupos": [
+
+  ]
+}
+
+
 
 
