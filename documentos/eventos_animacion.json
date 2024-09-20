@@ -10,12 +10,17 @@
       "tiempo_fin" 10,
       "x": 0,//cada evento se puede posicionar donde quiera
       "y": 0,
+      "reposicionar": true, //indica si quiere el repocicionamiento al empezar
+      "tiempo_relativo": 0,
       "animacion": {
         "movimientos": [// se puede elegir movimientos prerdeterminados de una lista con sus configuraciones
           {
             "id": 213123,
             "tipo_accion": 1,// 1: movimiento, 2: visible, 3: script para personalizar
             "sub_tipo_accion": 1, // los tipo de movimientos y comportamiento
+            "tiempo_inicio": 0,//segundos
+            "tiempo_fin" 10,
+            "bucle": true,
             "datos:": {
               "velocidad": 20
             }
@@ -28,9 +33,8 @@
             "id": "grupo1", //indica que grupo es al que se le esta haciendo la fisica
             "x_inicial": 0,//el posicionamiento inicial que tiene al comenzar el evento
             "y_inicial": 0,
-            "reposicionar": true, //indica si quiere el repocicionamiento al empezar
             "objeto": "obj", // es una copia del objeto
-            "clase": ["auto", "vibrando"], // es una forma mas facil de aplicar los movimientos pre fabricados
+            "clase": ["auto", "vibrando"] // es una forma mas facil de aplicar los movimientos pre fabricados
           },
           {
             "tipo": 2, //una figura
@@ -80,5 +84,10 @@
 }
 
 
+objetivo creacion de animacion en 2d
+1.- seccion donde se crea los eventos, los eventos tienen un nombre, puede elegir cual es el evento padre o si es la raiz principal, los eventos tambien tienen tiempo inicial, y tiempo final, si estab en bucle o no. tambien necesito coordenadas x e y para ver donde se posiciona. tambien tiene que tener un valor que indica si los elementos cuando inicia el evento deben de posicionarse en en las coordenadas iniciales o no
 
+2.- seccion de grupos; en esta seccion se importan un modal los grupos que pertenecen a un evento creado. cuando se importa un grupo ese pasa a tener un id unico dentro de una lista cada objeto tiene coordenadas x e y iniciales, tambien  tiene un array que se clase que son puros string que se le pueden agregar.
+
+3.- seccion de movimientos: una vez creado el eventos y los grupos tenemos que importar los movimientos tambien desde un modal, y quedan incorporado en una lista dentro de la seccion como si hubiera seleccionado los assets con los que trabajara, una vez tenido los movientos hay que relaccionarlo con los grupos, se selecciona un grupo y luego el movimiento . dependiendo del movimiento que seleccione se le abrira un formulario con los input necesarios para generar dicho mivimiento, los mas basicos son movimiento rectilini uniforme para dar un ejemplo, la seccion debe contar con un canvas donde se podra ver la simulacion del evento para eso necesita botones como repodrucir detener o resetear.
 
