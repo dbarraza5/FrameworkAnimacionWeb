@@ -87,6 +87,10 @@ function Animacion(props) {
         navigate("/animacion/"+id_animacion)
     }
 
+    const irEdicionEdicion=(id_evento)=>{
+        navigate("/evento/"+id_evento)
+    }
+
     return (
         <div>
             <h2>Proyecto <b>{props.nombre_proyecto}</b></h2>
@@ -201,7 +205,7 @@ function Animacion(props) {
                                                             data-bs-target={"#modal-actualizar-proyecto"}
                                                             onClick={(e) => console.log("editar")}>
                                                         <i className="bi bi-pencil"></i></button>
-                                                    <button type="button" className="btn btn-outline-primary" onClick={()=>irEdicionAnimacion(evento._id)}>
+                                                    <button type="button" className="btn btn-outline-primary" onClick={()=>irEdicionEdicion(evento._id)}>
                                                         <i className="bi bi-eye"></i>
                                                     </button>
                                                     <button type="button" className="btn btn-outline-primary"

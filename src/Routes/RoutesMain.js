@@ -10,6 +10,7 @@ import Proyectos from "../Componentes/Home/Proyectos";
 import Animacion from "../Componentes/Home/Animacion";
 import MenuLateral from "../Componentes/Home/MenuLateral";
 import MenuAnimacion from "../Componentes/EditorAnimacion/MenuAnimacion";
+import EditorEvento from "../Componentes/EditorEvento/EditorEvento";
 
 
 function RoutesMain(props){
@@ -67,6 +68,8 @@ function RoutesMain(props){
                     <Route exact path="/list-animaciones/:id_proyecto" element={<SectionListaAnimacion {...props} manejadorErrores={manejadorErrores}/>} />
 
                     <Route exact path="/animacion/:id_animacion" element={<SectionEdicionAnimacion {...props} manejadorErrores={manejadorErrores}/>} />
+
+                    <Route exact path="/evento/:id_evento" element={<SectionEdicionEditor {...props} manejadorErrores={manejadorErrores}/>} />
                 </Routes>
             </BrowserRouter>
     )
@@ -136,6 +139,16 @@ function SectionEdicionAnimacion(props) {
     return (
         <Home {...props}>
             <EditorAnimacion id_animacion={id_animacion}/>
+        </Home>
+    )
+}
+
+function SectionEdicionEditor(props) {
+    const {id_evento} = useParams();
+
+    return (
+        <Home {...props}>
+            <EditorEvento id_evento={id_evento}/>
         </Home>
     )
 }
