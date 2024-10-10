@@ -94,7 +94,8 @@ class GestionAnimacion{
                             ],
                         ]
                     }
-                ]
+                ],
+                clases:[]
             }
         }
         return null;

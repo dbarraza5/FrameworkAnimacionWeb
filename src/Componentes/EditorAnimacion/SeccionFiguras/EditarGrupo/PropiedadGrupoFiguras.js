@@ -24,6 +24,29 @@ function PropiedadGrupoFiguras(props){
         return grupo.nombre !== e;
     })
 
+    const [nuevaClase, setNuevaClase] = useState("");
+    const [clases, setClases] = useState(grupo.clases || []); // Inicializar con el valor actual del grupo
+
+    const agregarClase = () => {
+        if (nuevaClase.trim() !== "") {
+            const nuevasClases = [...clases, nuevaClase];
+            setClases(nuevasClases);
+            setNuevaClase("");
+
+            // Actualizar el grupo con las nuevas clases
+            cambioPropiedadGrupo(grupo.nombre, "clases", nuevasClases);
+        }
+    };
+
+    const eliminarClase = (claseAEliminar) => {
+        const nuevasClases = clases.filter((clase) => clase !== claseAEliminar);
+        setClases(nuevasClases);
+
+        // Actualizar el grupo con las nuevas clases
+        cambioPropiedadGrupo(grupo.nombre, "clases", nuevasClases);
+    };
+
+
     const cambioPropiedadGrupo = (nombre, atributo, valor)=>{
         let validacion = true;
 
@@ -110,6 +133,37 @@ function PropiedadGrupoFiguras(props){
             <input type="color" className="form-control" value={grupo.color}
                    onChange={(e)=>cambioPropiedadGrupo(grupo.nombre, "color", e.target.value)}
                    id={"color-grupo-"+grupo.nombre}/>
+        </div>
+
+        {/* Aquí añadimos la gestión de clases */}
+        <div className="mb-3">
+            <label className="form-label">Clases</label>
+            <div className="input-group">
+                <input
+                    type="text"
+                    className="form-control"
+                    value={nuevaClase}
+                    onChange={(e) => setNuevaClase(e.target.value)}
+                    placeholder="Agregar nueva clase"
+                />
+                <button className="btn btn-primary" type="button" onClick={agregarClase}>
+                    Agregar
+                </button>
+            </div>
+            <ul className="mt-3">
+                {clases.map((clase, index) => (
+                    <li key={index} className="d-flex justify-content-between align-items-center">
+                        {clase}
+                        <button
+                            className="btn btn-danger btn-sm"
+                            type="button"
+                            onClick={() => eliminarClase(clase)}
+                        >
+                            Eliminar
+                        </button>
+                    </li>
+                ))}
+            </ul>
         </div>
     </div>)
 }
