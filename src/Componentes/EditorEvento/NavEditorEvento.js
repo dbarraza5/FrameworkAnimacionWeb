@@ -1,4 +1,7 @@
 import ButtonNav from "../EditorMapa/ButtonNav";
+import NavFiguras from "../EditorAnimacion/SeccionFiguras/NavFiguras";
+import {deshacer, rehacer} from "../../Store/Animacion/animacionSlice";
+import Lienzo from "../EditorAnimacion/Lienzo";
 
 function NavEditorEvento(props){
 
@@ -34,7 +37,8 @@ function NavEditorEvento(props){
             console.log(nodes)
         }
     };
-
+    console.log("NAV EDITOR");
+    console.log(props.eventoAnimacion.edicion.lista_raw_evento)
     return (<div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item" role="presentation">
@@ -51,6 +55,42 @@ function NavEditorEvento(props){
             <div className="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
                  aria-labelledby="home-tab"
                  tabIndex="0">figuras
+
+                <div>
+                    <br/>
+                    <div className="row">
+                        <div className="col">
+                            {/*<NavFiguras {...props}/>*/}
+                            sdfsdfsfd;
+                            {JSON.stringify(props.eventoAnimacion.edicion.lista_raw_evento)}
+                        </div>
+                        <div className="col">
+                            <div className="card text-bg-light mb-3">
+                                <div className="card-header d-flex justify-content-between align-items-center">
+                                    <h6 className="card-title mb-0 text-start">evento <strong>;D</strong></h6>
+
+                                    <div className="btn-group" role="group" aria-label="Basic example">
+                                        <button type="button" className="btn btn-primary"
+
+                                                >
+                                            <i className="bi bi-arrow-left"></i>
+                                        </button>
+                                        <button type="button" className="btn btn-primary"
+                                                >
+                                            <i className="bi bi-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="card-body">
+                                    <Lienzo lienzo = {null} id="lienzo-animacion" editar_animacion={null}
+                                            setEventLienzoFigura={props.setEventLienzoFigura}/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
             <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel"
                  aria-labelledby="profile-tab"

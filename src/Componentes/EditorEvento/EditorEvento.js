@@ -14,7 +14,7 @@ const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
     function setCustomEvento(evento_aux){
         evento_aux.edicion.version+=1
-        setEvento_()(evento_aux)
+        setEvento_(evento_aux)
     }
     return [evento_, setCustomEvento]
 }
@@ -46,6 +46,7 @@ function EditorEvento(props){
                     console.log("funcionaaa DESCARGAAAAA")
                     console.log(response.data);
                     eventoAnimacion.edicion.inicializar(response.data.eventos);
+                    setEventoAnimacion(eventoAnimacion)
 
                 })
                 .catch(function (response) {
@@ -68,7 +69,7 @@ function EditorEvento(props){
         <div className="row">
             <MenuEvento />
             <hr/>
-            <NavEditorEvento>
+            <NavEditorEvento eventoAnimacion={eventoAnimacion}>
             </NavEditorEvento>
 
         </div>
