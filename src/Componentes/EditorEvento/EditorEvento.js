@@ -45,7 +45,8 @@ function EditorEvento(props){
                 .then(function (response) {
                     console.log("funcionaaa DESCARGAAAAA")
                     console.log(response.data);
-                    eventoAnimacion.edicion.inicializar(response.data.eventos);
+                    eventoAnimacion.edicion.inicializar(response.data.eventos,
+                        response.data.grupos_figuras);
                     setEventoAnimacion(eventoAnimacion)
 
                 })

@@ -20,9 +20,6 @@ function EdicionFiguras(props){
     const animacion_redux = useSelector((state) => state.animacion.animacion);
 
     const dispatch = useDispatch();
-
-
-
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
         props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)

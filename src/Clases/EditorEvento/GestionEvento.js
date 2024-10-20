@@ -13,6 +13,7 @@ class Evento{
 };
 
 class GestionEvento{
+    grupos=[];
     eventos=[];
     lista_raw_evento=[];
 
@@ -22,13 +23,15 @@ class GestionEvento{
     constructor() {
         this.gestion_eventos=new GestionMovimientos();
     }
-    inicializar(lista_evento){
+    inicializar(lista_evento, grupos){
+        this.grupos = grupos;
         this.lista_raw_evento = lista_evento;
         console.log("LSITA EVENTOS: ");
         console.log(this.lista_raw_evento.length)
         for(let i=0; i<lista_evento.length; i++){
             this.eventos.push(new Evento(lista_evento[i]));
         }
+        console.log(grupos);
     }
 
     iniciarRelojes(){
@@ -47,11 +50,16 @@ class GestionEvento{
                     this.eventos[i].tiempo.modPasivo();
                 }
                 const tiempo_evento = this.eventos[i].tiempo.cronometroC();
-                //this.gestion_eventos.movimientoGrupo()
+
                 for(let j=0; j<this.eventos[i].movimientos.length; j++){
                     const movimiento = this.eventos[i].movimientos[j];
                     for(let k=0; k<movimiento.ids_grupos.length; k++){
                         const id_grupo = movimiento.ids_grupos[k];
+                        const filtro = this.grupos.filter((g)=>g.nombre===id_grupo);
+                        if(filtro.length > 0){
+                            const grupo_ = filtro[0];
+                            this.gestion_eventos.movimientoGrupo(tiempo_evento, )
+                        }
                     }
                 }
             }
