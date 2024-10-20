@@ -187,4 +187,4 @@ class Tiempo {
     }
 }
 
-export {Tiempo}
+export {Tiempo,tiempo_universal}
