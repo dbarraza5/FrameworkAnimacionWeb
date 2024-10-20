@@ -11,18 +11,15 @@ class GestionMovimientos{
     constructor() {
     }
 
-    movimientoGrupo(tiempo, movimiento, objetos){
-        const tipo = movimiento["tipo"]
-        /*for(let i=0; i<objetos.length; i++){
-            if(tipo === MOV_RECTILINEO_UNIFORME){
-                const x=movRectilineoUniforme(tiempo, movimiento.datos.velocidad);
-                objetos[i].x_mov=x;
-            }
-        }*/
-
+    movimientoGrupo(tiempo, tipo, datos){
+        let x=0;
+        let y=0;
         if(tipo === MOV_RECTILINEO_UNIFORME){
-            const x=movRectilineoUniforme(tiempo, movimiento.datos.velocidad);
-            objetos[i].x_mov=x;
+            x=movRectilineoUniforme(tiempo, datos.velocidad);
+        }
+        return {
+            x: x,
+            y: y
         }
     }
 

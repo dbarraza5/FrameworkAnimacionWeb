@@ -55,6 +55,9 @@ class GestionEvento{
                     const movimiento = this.eventos[i].movimientos[j];
                     const tipo = movimiento.tipo;
                     const datos = movimiento.datos;
+                    const resultado = this.gestion_eventos.movimientoGrupo(tiempo_evento, tipo, datos);
+                    const x = resultado.x;
+                    const y = resultado.y;
 
                     for(let k=0; k<movimiento.ids_grupos.length; k++){
                         const id_grupo = movimiento.ids_grupos[k];
