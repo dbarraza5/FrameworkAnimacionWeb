@@ -61,10 +61,10 @@ class GestionEvento{
 
                     for(let k=0; k<movimiento.ids_grupos.length; k++){
                         const id_grupo = movimiento.ids_grupos[k];
-                        const filtro = this.eventos[i].objetos.filter((objeto)=>objeto.id_objeto===id_grupo);
-                        if(filtro.length > 0){
-                            const grupo_ = filtro[0];
-                            this.gestion_eventos.movimientoGrupo(tiempo_evento, )
+                        const indice = this.eventos[i].objetos.findIndex((objeto)=>objeto.id_objeto===id_grupo);
+                        if(indice > 0){
+                            this.eventos[i].objetos[indice].x_mov=x;
+                            this.eventos[i].objetos[indice].y_mov=y;
                         }
                     }
                 }

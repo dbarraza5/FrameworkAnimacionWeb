@@ -9,6 +9,7 @@ import axios from "axios";
 import {actualizarBackup, restaurarState, setNombreAnimacion} from "../../Store/Animacion/animacionSlice";
 import {Cookies} from 'react-cookie';
 import {GestionEvento} from "../../Clases/EditorEvento/GestionEvento";
+import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -22,6 +23,8 @@ const useCustomEvento=(valor_inicial=null)=>{
 
 function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
+
+    const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
 
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
@@ -70,7 +73,7 @@ function EditorEvento(props){
         <div className="row">
             <MenuEvento />
             <hr/>
-            <NavEditorEvento eventoAnimacion={eventoAnimacion}>
+            <NavEditorEvento eventoAnimacion={eventoAnimacion} eventoLienzoFigura={eventoLienzoFigura} setEventLienzoFigura={setEventLienzoFigura}>
             </NavEditorEvento>
 
         </div>

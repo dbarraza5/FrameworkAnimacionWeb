@@ -37,6 +37,12 @@ function NavEditorEvento(props){
             console.log(nodes)
         }
     };
+
+    const editar_animacion=()=>{
+        //console.log(props.gestionLienzo)
+        //props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
+    }
+
     console.log("NAV EDITOR");
     console.log(props.eventoAnimacion.edicion.lista_raw_evento)
     return (<div>
@@ -82,7 +88,7 @@ function NavEditorEvento(props){
                                     </div>
                                 </div>
                                 <div className="card-body">
-                                    <Lienzo lienzo = {null} id="lienzo-animacion" editar_animacion={null}
+                                    <Lienzo lienzo = {props.eventoLienzoFigura} id="lienzo-animacion" editar_animacion={editar_animacion}
                                             setEventLienzoFigura={props.setEventLienzoFigura}/>
                                 </div>
                             </div>
