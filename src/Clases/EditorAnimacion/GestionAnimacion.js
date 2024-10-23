@@ -302,8 +302,6 @@ class GestionAnimacion{
         return lista_nombres
     }
 
-
-
     estructura_arbol_grupos1(nombre_grupo){
         //console.log(nombre_grupo)
         let lista_grupo = this.get_nombres_grupos_hijos(nombre_grupo)
@@ -336,6 +334,7 @@ class GestionAnimacion{
         }
 
     }
+
     estructura_arbol_grupos(){
         return this.estructura_arbol_grupos1("root")
     }

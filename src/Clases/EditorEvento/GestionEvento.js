@@ -1,5 +1,8 @@
 import {Tiempo} from "./Tiempo";
 import {GestionMovimientos} from "./GestionMovimientos";
+import {GestionAnimacion} from "../EditorAnimacion/GestionAnimacion";
+import {ImprimirAnimacion} from "../EditorAnimacion/ImprimirAnimacion";
+import ConfiguracionLienzo from "../EditorAnimacion/ConfiguracionLienzo";
 let tiempo_universal=performance.now();
 
 class Evento{
@@ -20,18 +23,28 @@ class GestionEvento{
     tiempo=new Tiempo();
 
     gestion_eventos = null;
+    gestion_grupos = null;
+    imprimir_animacion = null;
+    configuracion_lienzo = null;
+    id_canvas = null;
     constructor() {
+        this.id_canvas = "lienzo-animacion"
         this.gestion_eventos=new GestionMovimientos();
+        this.gestion_grupos = new GestionAnimacion();
+        this.configuracion_lienzo = new ConfiguracionLienzo();
+        this.imprimir_animacion = new ImprimirAnimacion(this.imprimir_animacion,this.configuracion_lienzo, this.id_canvas);
     }
     inicializar(lista_evento, grupos){
-        this.grupos = grupos;
+        //this.grupos = grupos;
+        this.gestion_grupos.grupos_figuras=grupos;
         this.lista_raw_evento = lista_evento;
         console.log("LSITA EVENTOS: ");
         console.log(this.lista_raw_evento.length)
         for(let i=0; i<lista_evento.length; i++){
             this.eventos.push(new Evento(lista_evento[i]));
         }
-        console.log(grupos);
+        console.log(this.gestion_grupos.grupos_figuras);
+        this.imprimirEventos();
     }
 
     iniciarRelojes(){
@@ -76,6 +89,14 @@ class GestionEvento{
         for(let i=0; i<lista_mov.length; i++){
             this.gestion_eventos.movimientoGrupo(tiempo,lista_mov[i], objetos)
         }
+    }
+
+    imprimirEventos(){
+        const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
+        this.gestion_grupos.procesarPosicionFinalFiguras()
+        this.gestion_grupos.listaOrdenadasGrupos(lista_grupo_root)
+        this.imprimir_animacion.imprimirListaGrupos(lista_grupo_root, [], [], [],
+            null, null, null, null, true)
     }
 };
 
