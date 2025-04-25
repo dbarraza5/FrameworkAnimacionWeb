@@ -1,4 +1,4 @@
-let tiempo_universal=performance.now();
+//tiempo_universal=performance.now();
 
 class Tiempo {
     constructor() {
@@ -20,10 +20,11 @@ class Tiempo {
         this.comienzoPausa = false;
         this.desPausarTiempo = false;
         this.pausa_y_relatividad = false;
+        this.tiempo_universal=0;
     }
 
     modPasivo() {
-        this.segmentacion = this.tiempoGuardar = this.tiempoActual = tiempo_universal;
+        this.segmentacion = this.tiempoGuardar = this.tiempoActual = performance.now();
         this.contador = 0;
         this.estado = false;
         this.tiempodePausa = 0;
@@ -38,7 +39,9 @@ class Tiempo {
         this.nuevoTiempoRelativo = false;
     }
 
-    cronometroC() {
+    cronometroC(tiempo_universal) {
+        console.log("Universal: "+tiempo_universal);
+        this.tiempo_universal = tiempo_universal;
         const estaPausa = this.tiempodePausa || this.tiempoEstaPausado;
         const estaCambioRelativo = this.cambiarTiempoRelativo || this.nuevoTiempoRelativo;
 
@@ -62,7 +65,7 @@ class Tiempo {
     }
 
     procesoPausar() {
-        const tiempo_ = tiempo_universal;
+        const tiempo_ = this.tiempo_universal;
         if (this.tiempoEstaPausado) {
             if (this.comienzoPausa) {
                 this.tiempoComienzoPausa = tiempo_;
@@ -88,7 +91,7 @@ class Tiempo {
     }
 
     procesoCambiarRelatividad() {
-        const tiempo_ = tiempo_universal;
+        const tiempo_ = this.tiempo_universal;
 
         if (this.cambiarTiempoRelativo) {
             this.guardarTiempoRelativo = tiempo_;
@@ -105,7 +108,7 @@ class Tiempo {
     }
 
     procesoNormalTiempo() {
-        const tiempo_ = tiempo_universal;
+        const tiempo_ = this.tiempo_universal;
         this.tiempoActual = tiempo_ - this.tiempoGuardar;
         if (this.tiempoRelativo !== 0)
             this.tiempoActual = this.tiempoActual / this.tiempoRelativo;
@@ -116,7 +119,7 @@ class Tiempo {
     }
 
     procesoPausar_Y_CambiarRelatividad() {
-        const tiempo_ = tiempo_universal;
+        const tiempo_ = this.tiempo_universal;
 
         if (this.cambiarTiempoRelativo) {
             if (!this.comienzoPausa && this.tiempoEstaPausado)
@@ -187,4 +190,4 @@ class Tiempo {
     }
 }
 
-export {Tiempo,tiempo_universal}
+export {Tiempo}

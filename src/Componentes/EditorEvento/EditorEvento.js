@@ -10,6 +10,7 @@ import {actualizarBackup, restaurarState, setNombreAnimacion} from "../../Store/
 import {Cookies} from 'react-cookie';
 import {GestionEvento} from "../../Clases/EditorEvento/GestionEvento";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
+import {useInterval} from "react-use";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -28,6 +29,8 @@ function EditorEvento(props){
 
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
+
+    const [startLoopLienzo, setStartLoopLienzo] = useState(false);
 
     const obtenerEvento=async ()=>{
         const token = datos_usuario.token
@@ -51,6 +54,7 @@ function EditorEvento(props){
                     eventoAnimacion.edicion.inicializar(response.data.eventos,
                         response.data.grupos_figuras);
                     setEventoAnimacion(eventoAnimacion)
+                    setStartLoopLienzo(true);
 
                 })
                 .catch(function (response) {
@@ -67,6 +71,13 @@ function EditorEvento(props){
         console.log("[==============================Evento===========================]")
         obtenerEvento();
     }, []);
+
+    useInterval(() => {
+        //console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
+        //eventoLienzoFigura.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
+        console.log("Aqui proceso principal del lienzo");
+        eventoAnimacion.edicion.procesandoEventos();
+    }, startLoopLienzo ? 6000 : null);
 
 
     return(<div>

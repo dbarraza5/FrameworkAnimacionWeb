@@ -29,7 +29,7 @@ class GestionEvento{
     id_canvas = null;
     constructor() {
         this.id_canvas = "lienzo-animacion"
-        this.gestion_eventos=new GestionMovimientos();
+        this.gestion_eventos= new GestionMovimientos();
         this.gestion_grupos = new GestionAnimacion();
         this.configuracion_lienzo = new ConfiguracionLienzo();
         this.imprimir_animacion = new ImprimirAnimacion(this.imprimir_animacion,this.configuracion_lienzo, this.id_canvas);
@@ -45,6 +45,7 @@ class GestionEvento{
         }
         console.log(this.gestion_grupos.grupos_figuras);
         this.imprimirEventos();
+        this.tiempo.modPasivo();
     }
 
     iniciarRelojes(){
@@ -83,6 +84,7 @@ class GestionEvento{
                 }
             }
         }
+        console.log("tiempo: "+tiempo_universal);
     }
 
     movimientos(tiempo, lista_mov, objetos){
