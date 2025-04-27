@@ -75,9 +75,9 @@ function EditorEvento(props){
     useInterval(() => {
         //console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
         //eventoLienzoFigura.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
-        console.log("Aqui proceso principal del lienzo");
+        //console.log("Aqui proceso principal del lienzo");
         eventoAnimacion.edicion.procesandoEventos();
-    }, startLoopLienzo ? 6000 : null);
+    }, startLoopLienzo ? 3000 : null);
 
 
     return(<div>

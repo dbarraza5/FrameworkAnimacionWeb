@@ -11,7 +11,7 @@ class GestionMovimientos{
     constructor() {
     }
 
-    movimientoGrupo(tiempo, tipo, datos){
+    static movimientoGrupo(tiempo, tipo, datos){
         let x=0;
         let y=0;
         if(tipo === MOV_RECTILINEO_UNIFORME){

@@ -40,6 +40,7 @@ class GestionEvento{
         this.lista_raw_evento = lista_evento;
         console.log("LSITA EVENTOS: ");
         console.log(this.lista_raw_evento.length)
+        console.log(this.lista_raw_evento)
         for(let i=0; i<lista_evento.length; i++){
             this.eventos.push(new Evento(lista_evento[i]));
         }
@@ -69,7 +70,7 @@ class GestionEvento{
                     const movimiento = this.eventos[i].movimientos[j];
                     const tipo = movimiento.tipo;
                     const datos = movimiento.datos;
-                    const resultado = this.gestion_eventos.movimientoGrupo(tiempo_evento, tipo, datos);
+                    const resultado = GestionMovimientos.movimientoGrupo(tiempo_evento, tipo, datos);
                     const x = resultado.x;
                     const y = resultado.y;
 

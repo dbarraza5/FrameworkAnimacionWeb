@@ -40,7 +40,6 @@ class Tiempo {
     }
 
     cronometroC(tiempo_universal) {
-        console.log("Universal: "+tiempo_universal);
         this.tiempo_universal = tiempo_universal;
         const estaPausa = this.tiempodePausa || this.tiempoEstaPausado;
         const estaCambioRelativo = this.cambiarTiempoRelativo || this.nuevoTiempoRelativo;
