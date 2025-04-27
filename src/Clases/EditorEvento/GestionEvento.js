@@ -22,6 +22,7 @@ class GestionEvento{
 
     tiempo=new Tiempo();
 
+    copia_grupos = [];
     gestion_eventos = null;
     gestion_grupos = null;
     imprimir_animacion = null;
@@ -31,12 +32,14 @@ class GestionEvento{
         this.id_canvas = "lienzo-animacion"
         this.gestion_eventos= new GestionMovimientos();
         this.gestion_grupos = new GestionAnimacion();
+        this.gestion_grupos_originales = new GestionAnimacion();
         this.configuracion_lienzo = new ConfiguracionLienzo();
         this.imprimir_animacion = new ImprimirAnimacion(this.imprimir_animacion,this.configuracion_lienzo, this.id_canvas);
     }
     inicializar(lista_evento, grupos){
         //this.grupos = grupos;
         this.gestion_grupos.grupos_figuras=grupos;
+        this.gestion_grupos_originales.grupos_figuras = JSON.parse(JSON.stringify(grupos))
         this.lista_raw_evento = lista_evento;
         console.log("LSITA EVENTOS: ");
         console.log(this.lista_raw_evento.length)
@@ -57,6 +60,14 @@ class GestionEvento{
     procesandoEventos(){
         tiempo_universal=performance.now();
         const tiempo = this.tiempo.cronometroC();
+
+        for(let i=0; i<this.eventos.length; i++){
+            for(let j=0; j<this.eventos[i].evento.objetos.length; j++){
+                this.eventos[i].evento.objetos[j].x_mov =0;
+                this.eventos[i].evento.objetos[j].y_mov =0;
+            }
+        }
+
         for(let i=0; i<this.eventos.length; i++){
             if(this.eventos[i].evento.tiempo_inicio>=tiempo
                 && this.eventos[i].evento.tiempo_final<=tiempo){
@@ -78,11 +89,20 @@ class GestionEvento{
                         const id_grupo = movimiento.ids_grupos[k];
                         const indice = this.eventos[i].objetos.findIndex((objeto)=>objeto.id_objeto===id_grupo);
                         if(indice > 0){
-                            this.eventos[i].objetos[indice].x_mov=x;
-                            this.eventos[i].objetos[indice].y_mov=y;
+                            this.eventos[i].objetos[indice].x_mov+=x;
+                            this.eventos[i].objetos[indice].y_mov+=y;
                         }
                     }
                 }
+            }
+        }
+        for(let i=0; i<this.eventos.length; i++){
+            for(let j=0; j<this.eventos[i].evento.objetos.length; j++){
+                const objeto_ = this.eventos[i].evento.objetos[j];
+                const grupo_original = this.gestion_grupos_originales.getGrupo();
+
+                // this.eventos[i].evento.objetos[j].x_mov =0;
+                // this.eventos[i].evento.objetos[j].y_mov =0;
             }
         }
         console.log("tiempo: "+tiempo_universal);

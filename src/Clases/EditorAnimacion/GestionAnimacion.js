@@ -338,11 +338,10 @@ class GestionAnimacion{
     estructura_arbol_grupos(){
         return this.estructura_arbol_grupos1("root")
     }
+
     get_grupos_hijos(nombre_grupo){
         return this.grupos_figuras.filter((grupo)=>grupo.nodo_padre===nombre_grupo)
     }
-
-
 
     procesarPosicionFinalFiguras(nombre_grupo="root"){
         const grupo_padre = this.getGrupo(nombre_grupo);
