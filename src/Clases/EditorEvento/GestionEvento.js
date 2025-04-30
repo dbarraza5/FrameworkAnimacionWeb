@@ -57,7 +57,7 @@ class GestionEvento{
             this.eventos.push(new Evento(lista_evento[i]));
         }
         console.log(this.gestion_grupos.grupos_figuras);
-        this.imprimirEventos();
+        //this.imprimirEventos();
         this.tiempo.modPasivo();
         this.reseteoMovGrupos();
     }
@@ -69,7 +69,7 @@ class GestionEvento{
 
     procesandoEventos(){
         tiempo_universal=performance.now();
-        const tiempo = this.tiempo.cronometroC()/1000;
+        const tiempo = this.tiempo.cronometroC(tiempo_universal);
 
         // for(let i=0; i<this.eventos.length; i++){
         //     for(let j=0; j<this.eventos[i].evento.objetos.length; j++){
@@ -80,30 +80,31 @@ class GestionEvento{
         this.reseteoMovGrupos();
 
         for(let i=0; i<this.eventos.length; i++){
-            if(this.eventos[i].evento.tiempo_inicio>=tiempo
-                && this.eventos[i].evento.tiempo_final<=tiempo){
-                if(this.eventos[i].inicio===false){
-                    this.eventos[i].inicio=true;
-                    this.eventos[i].tiempo.modPasivo();
-                }
-                const tiempo_evento = this.eventos[i].tiempo.cronometroC()/1000;
+            const evento_ = this.eventos[i].evento;
+            if(evento_.tiempo_inicio<=tiempo
+                && evento_.tiempo_final>=tiempo){
+                // if(this.eventos[i].inicio===false){
+                //     this.eventos[i].inicio=true;
+                //     this.eventos[i].tiempo.modPasivo();
+                // }
+                const tiempo_evento = this.eventos[i].tiempo.cronometroC(tiempo_universal);
 
-                for(let j=0; j<this.eventos[i].movimientos.length; j++){
-                    const movimiento = this.eventos[i].movimientos[j];
+                for(let j=0; j<evento_.movimientos.length; j++){
+                    const movimiento = evento_.movimientos[j];
                     const tipo = movimiento.tipo;
                     const datos = movimiento.datos;
                     const resultado = GestionMovimientos.movimientoGrupo(tiempo_evento, tipo, datos);
                     const x = resultado.x;
                     const y = resultado.y;
-                    console.log("[1] MOV ${x}, ${y}");
+                    console.log(`[1] MOV ${x}, ${y}`);
                     for(let k=0; k<movimiento.ids_grupos.length; k++){
                         const id_grupo = movimiento.ids_grupos[k];
-                        const indice = this.eventos[i].objetos.findIndex((objeto)=>objeto.id_objeto===id_grupo);
-                        console.log("indice: ".indice);
+                        const indice = evento_.objetos.findIndex((objeto)=>objeto.id_objeto===id_grupo);
+                        //console.log("indice: ".indice);
                         if(indice >= 0){
                             // this.eventos[i].objetos[indice].x_mov+=x;
                             // this.eventos[i].objetos[indice].y_mov+=y;
-                            console.log("[2] MOV ${x}, ${y}");
+                            //console.log(`[2] MOV ${x}, ${y}`);
                             this.movimientos_grupos[id_grupo].x+=x;
                             this.movimientos_grupos[id_grupo].y+=y;
                         }
@@ -111,23 +112,25 @@ class GestionEvento{
                 }
             }
         }
-        for(let i=0; i<this.eventos.length; i++){
-            for(let j=0; j<this.eventos[i].evento.objetos.length; j++){
-                const objeto_ = this.eventos[i].evento.objetos[j];
-                const grupo_original = this.gestion_grupos_originales.getGrupo();
-
-                // this.eventos[i].evento.objetos[j].x_mov =0;
-                // this.eventos[i].evento.objetos[j].y_mov =0;
-            }
-        }
+        // for(let i=0; i<this.eventos.length; i++){
+        //     const evento_ = this.eventos[i].evento;
+        //     for(let j=0; j<evento_.objetos.length; j++){
+        //         const objeto_ = evento_.objetos[j];
+        //         const grupo_original = this.gestion_grupos_originales.getGrupo();
+        //
+        //         // this.eventos[i].evento.objetos[j].x_mov =0;
+        //         // this.eventos[i].evento.objetos[j].y_mov =0;
+        //     }
+        // }
         for(let i=0; i<this.gestion_grupos.grupos_figuras.length; i++){
             const grupo_ = this.gestion_grupos_originales.grupos_figuras[i];
             const x = grupo_.cx+this.movimientos_grupos[grupo_.nombre].x;
             const y = grupo_.cy+this.movimientos_grupos[grupo_.nombre].y;
             this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cx", x);
             this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
+            //console.log(`[CXY] MOV ${x}, ${y}`);
         }
-        console.log("tiempo1: "+tiempo_universal);
+        console.log("tiempo1: "+tiempo);
     }
 
     movimientos(tiempo, lista_mov, objetos){
@@ -137,6 +140,12 @@ class GestionEvento{
     }
 
     imprimirEventos(){
+        const canvas = document.getElementById(this.id_canvas);
+        if(canvas === null)
+            return null;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
         this.gestion_grupos.procesarPosicionFinalFiguras()
         this.gestion_grupos.listaOrdenadasGrupos(lista_grupo_root)
