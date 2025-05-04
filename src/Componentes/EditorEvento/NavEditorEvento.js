@@ -2,6 +2,7 @@ import ButtonNav from "../EditorMapa/ButtonNav";
 import NavFiguras from "../EditorAnimacion/SeccionFiguras/NavFiguras";
 import {deshacer, rehacer} from "../../Store/Animacion/animacionSlice";
 import Lienzo from "../EditorAnimacion/Lienzo";
+import NavEventos from "./SeccionEventos/NavEventos";
 
 function NavEditorEvento(props){
 
@@ -66,9 +67,7 @@ function NavEditorEvento(props){
                     <br/>
                     <div className="row">
                         <div className="col">
-                            {/*<NavFiguras {...props}/>*/}
-                            sdfsdfsfd;
-                            {JSON.stringify(props.eventoAnimacion.edicion.lista_raw_evento)}
+                            <NavEventos {...props}/>
                         </div>
                         <div className="col">
                             <div className="card text-bg-light mb-3">
