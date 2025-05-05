@@ -12,8 +12,19 @@ function PanelAnimacion({ eventos = [] }) {
     const [nombre, setNombre] = useState("");
     const [milisegundos, setMilisegundos] = useState(0);
     const [bucle, setBucle] = useState(false);
+    const [inicioMin, setInicioMin] = useState("00");
+    const [inicioSeg, setInicioSeg] = useState("00");
+    const [inicioMs, setInicioMs] = useState("000");
+
+    const [finMin, setFinMin] = useState("00");
+    const [finSeg, setFinSeg] = useState("00");
+    const [finMs, setFinMs] = useState("000");
     const [showModal, setShowModal] = useState(false);
     const intervalRef = useRef(null);
+
+    const [coordX, setCoordX] = useState("");
+    const [coordY, setCoordY] = useState("");
+    const [tiempoRelativo, setTiempoRelativo] = useState("");
 
     const STEP = 100;
     const MAX = 60000;
@@ -37,25 +48,9 @@ function PanelAnimacion({ eventos = [] }) {
         }
     };
 
-    const handlePlay = () => {
-        console.log("Reproduciendo:", {
-            eventoPadre: selectedEvent,
-            nombre,
-            tiempo: formatTime(milisegundos),
-            bucle
-        });
-    };
 
     const handleStop = () => {
         console.log("Detenido");
-    };
-
-    const handleReset = () => {
-        setMilisegundos(0);
-        setNombre("");
-        setSelectedEvent("");
-        setBucle(false);
-        console.log("Reset");
     };
 
     return (
@@ -134,10 +129,96 @@ function PanelAnimacion({ eventos = [] }) {
                 </label>
             </div>
 
-            <div className="d-flex gap-2">
-                <button className="btn btn-success" onClick={handlePlay}>Reproducir</button>
-                <button className="btn btn-warning" onClick={handleStop}>Detener</button>
-                <button className="btn btn-secondary" onClick={handleReset}>Resetear</button>
+            <div className="mb-3">
+                <label className="form-label">Tiempo de inicio</label>
+                <div className="d-flex gap-2">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="mm"
+                        value={inicioMin}
+                        onChange={(e) => setInicioMin(e.target.value)}
+                    />
+                    <span>:</span>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="ss"
+                        value={inicioSeg}
+                        onChange={(e) => setInicioSeg(e.target.value)}
+                    />
+                    <span>:</span>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="ms"
+                        value={inicioMs}
+                        onChange={(e) => setInicioMs(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <div className="mb-3">
+                <label className="form-label">Tiempo de fin</label>
+                <div className="d-flex gap-2">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="mm"
+                        value={finMin}
+                        onChange={(e) => setFinMin(e.target.value)}
+                    />
+                    <span>:</span>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="ss"
+                        value={finSeg}
+                        onChange={(e) => setFinSeg(e.target.value)}
+                    />
+                    <span>:</span>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="ms"
+                        value={finMs}
+                        onChange={(e) => setFinMs(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <div className="mb-3 d-flex gap-2">
+                <div className="w-100">
+                    <label className="form-label">Coordenada X</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        value={coordX}
+                        onChange={(e) => setCoordX(e.target.value)}
+                        placeholder="Ej: 100"
+                    />
+                </div>
+                <div className="w-100">
+                    <label className="form-label">Coordenada Y</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        value={coordY}
+                        onChange={(e) => setCoordY(e.target.value)}
+                        placeholder="Ej: 200"
+                    />
+                </div>
+            </div>
+
+            <div className="mb-3">
+                <label className="form-label">Tiempo relativo</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    value={tiempoRelativo}
+                    onChange={(e) => setTiempoRelativo(e.target.value)}
+                    placeholder="Ej: +500ms o -1s"
+                />
             </div>
 
             {showModal && (
