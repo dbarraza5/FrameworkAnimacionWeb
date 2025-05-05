@@ -9,7 +9,9 @@ function formatTime(ms) {
 
 function PanelAnimacion({ eventos = [] }) {
     const [selectedEvent, setSelectedEvent] = useState("");
+    const [nombre, setNombre] = useState("");
     const [milisegundos, setMilisegundos] = useState(0);
+    const [bucle, setBucle] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const intervalRef = useRef(null);
 
@@ -18,14 +20,14 @@ function PanelAnimacion({ eventos = [] }) {
     const MIN = 0;
 
     const startChangingTime = (type) => {
-        stopChangingTime(); // por si acaso ya hay uno activo
+        stopChangingTime();
         intervalRef.current = setInterval(() => {
             setMilisegundos(prev => {
                 if (type === "aumentar") return Math.min(prev + STEP, MAX);
                 if (type === "disminuir") return Math.max(prev - STEP, MIN);
                 return prev;
             });
-        }, 100); // cada 100ms cambia
+        }, 100);
     };
 
     const stopChangingTime = () => {
@@ -36,7 +38,12 @@ function PanelAnimacion({ eventos = [] }) {
     };
 
     const handlePlay = () => {
-        console.log("Reproduciendo:", selectedEvent, "desde", formatTime(milisegundos));
+        console.log("Reproduciendo:", {
+            eventoPadre: selectedEvent,
+            nombre,
+            tiempo: formatTime(milisegundos),
+            bucle
+        });
     };
 
     const handleStop = () => {
@@ -45,7 +52,9 @@ function PanelAnimacion({ eventos = [] }) {
 
     const handleReset = () => {
         setMilisegundos(0);
+        setNombre("");
         setSelectedEvent("");
+        setBucle(false);
         console.log("Reset");
     };
 
@@ -60,6 +69,33 @@ function PanelAnimacion({ eventos = [] }) {
                 <button className="btn btn-outline-success">
                     <i className="bi bi-plus"></i>
                 </button>
+            </div>
+
+            <div className="mb-3">
+                <label className="form-label">Evento padre</label>
+                <select
+                    className="form-select"
+                    value={selectedEvent}
+                    onChange={(e) => setSelectedEvent(e.target.value)}
+                >
+                    <option value="">Seleccionar evento padre</option>
+                    {eventos.map((ev) => (
+                        <option key={ev.id} value={ev.id}>
+                            {ev.nombre}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="mb-3">
+                <label className="form-label">Nombre</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    placeholder="Nombre del evento"
+                />
             </div>
 
             <div className="mb-3 text-center">
@@ -83,6 +119,19 @@ function PanelAnimacion({ eventos = [] }) {
                         +
                     </button>
                 </div>
+            </div>
+
+            <div className="form-check mb-3">
+                <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="bucleCheck"
+                    checked={bucle}
+                    onChange={() => setBucle(!bucle)}
+                />
+                <label className="form-check-label" htmlFor="bucleCheck">
+                    Bucle
+                </label>
             </div>
 
             <div className="d-flex gap-2">
