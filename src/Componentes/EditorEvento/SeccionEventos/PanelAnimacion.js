@@ -94,7 +94,6 @@ function PanelAnimacion({ eventos = [] }) {
             </div>
 
             <div className="mb-2 text-center">
-                <label className="form-label">Tiempo (mm:ss:ms)</label>
                 <div className="d-flex justify-content-center align-items-center gap-2">
                     <button
                         className="btn btn-outline-danger"
