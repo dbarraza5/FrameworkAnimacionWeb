@@ -57,7 +57,7 @@ function PanelAnimacion({ eventos = [] }) {
         <div>
             <h5>Controles de animación</h5>
 
-            <div className="mb-3 d-flex gap-2">
+            <div className="mb-2 d-flex gap-2">
                 <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
                     Lista eventos
                 </button>
@@ -66,7 +66,7 @@ function PanelAnimacion({ eventos = [] }) {
                 </button>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-2">
                 <label className="form-label">Evento padre</label>
                 <select
                     className="form-select"
@@ -82,7 +82,7 @@ function PanelAnimacion({ eventos = [] }) {
                 </select>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-2">
                 <label className="form-label">Nombre</label>
                 <input
                     type="text"
@@ -93,7 +93,7 @@ function PanelAnimacion({ eventos = [] }) {
                 />
             </div>
 
-            <div className="mb-3 text-center">
+            <div className="mb-2 text-center">
                 <label className="form-label">Tiempo (mm:ss:ms)</label>
                 <div className="d-flex justify-content-center align-items-center gap-2">
                     <button
@@ -116,7 +116,7 @@ function PanelAnimacion({ eventos = [] }) {
                 </div>
             </div>
 
-            <div className="form-check mb-3">
+            <div className="form-check mb-2">
                 <input
                     className="form-check-input"
                     type="checkbox"
@@ -129,7 +129,7 @@ function PanelAnimacion({ eventos = [] }) {
                 </label>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-2">
                 <label className="form-label">Tiempo de inicio</label>
                 <div className="d-flex gap-2">
                     <input
@@ -158,7 +158,7 @@ function PanelAnimacion({ eventos = [] }) {
                 </div>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-2">
                 <label className="form-label">Tiempo de fin</label>
                 <div className="d-flex gap-2">
                     <input
@@ -187,7 +187,7 @@ function PanelAnimacion({ eventos = [] }) {
                 </div>
             </div>
 
-            <div className="mb-3 d-flex gap-2">
+            <div className="mb-2 d-flex gap-2">
                 <div className="w-100">
                     <label className="form-label">Coordenada X</label>
                     <input
@@ -210,7 +210,7 @@ function PanelAnimacion({ eventos = [] }) {
                 </div>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-2">
                 <label className="form-label">Tiempo relativo</label>
                 <input
                     type="text"
