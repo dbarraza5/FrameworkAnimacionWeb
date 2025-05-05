@@ -1,12 +1,42 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+function formatTime(ms) {
+    const minutes = Math.floor(ms / 60000).toString().padStart(2, '0');
+    const seconds = Math.floor((ms % 60000) / 1000).toString().padStart(2, '0');
+    const milliseconds = (ms % 1000).toString().padStart(3, '0');
+    return `${minutes}:${seconds}:${milliseconds}`;
+}
 
 function PanelAnimacion({ eventos = [] }) {
     const [selectedEvent, setSelectedEvent] = useState("");
-    const [tiempo, setTiempo] = useState("00:00:000");
+    const [milisegundos, setMilisegundos] = useState(0);
     const [showModal, setShowModal] = useState(false);
+    const intervalRef = useRef(null);
+
+    const STEP = 100;
+    const MAX = 60000;
+    const MIN = 0;
+
+    const startChangingTime = (type) => {
+        stopChangingTime(); // por si acaso ya hay uno activo
+        intervalRef.current = setInterval(() => {
+            setMilisegundos(prev => {
+                if (type === "aumentar") return Math.min(prev + STEP, MAX);
+                if (type === "disminuir") return Math.max(prev - STEP, MIN);
+                return prev;
+            });
+        }, 100); // cada 100ms cambia
+    };
+
+    const stopChangingTime = () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+    };
 
     const handlePlay = () => {
-        console.log("Reproduciendo:", selectedEvent, "desde", tiempo);
+        console.log("Reproduciendo:", selectedEvent, "desde", formatTime(milisegundos));
     };
 
     const handleStop = () => {
@@ -14,7 +44,7 @@ function PanelAnimacion({ eventos = [] }) {
     };
 
     const handleReset = () => {
-        setTiempo("00:00:000");
+        setMilisegundos(0);
         setSelectedEvent("");
         console.log("Reset");
     };
@@ -32,15 +62,27 @@ function PanelAnimacion({ eventos = [] }) {
                 </button>
             </div>
 
-            <div className="mb-3">
-                <label>Tiempo (mm:ss:ms)</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    value={tiempo}
-                    onChange={(e) => setTiempo(e.target.value)}
-                    placeholder="00:00:000"
-                />
+            <div className="mb-3 text-center">
+                <label className="form-label">Tiempo (mm:ss:ms)</label>
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                    <button
+                        className="btn btn-outline-danger"
+                        onMouseDown={() => startChangingTime("disminuir")}
+                        onMouseUp={stopChangingTime}
+                        onMouseLeave={stopChangingTime}
+                    >
+                        –
+                    </button>
+                    <div style={{ minWidth: '120px', fontWeight: 'bold' }}>{formatTime(milisegundos)}</div>
+                    <button
+                        className="btn btn-outline-primary"
+                        onMouseDown={() => startChangingTime("aumentar")}
+                        onMouseUp={stopChangingTime}
+                        onMouseLeave={stopChangingTime}
+                    >
+                        +
+                    </button>
+                </div>
             </div>
 
             <div className="d-flex gap-2">
@@ -49,7 +91,6 @@ function PanelAnimacion({ eventos = [] }) {
                 <button className="btn btn-secondary" onClick={handleReset}>Resetear</button>
             </div>
 
-            {/* Modal */}
             {showModal && (
                 <div className="modal d-block" tabIndex="-1" role="dialog">
                     <div className="modal-dialog" role="document">
