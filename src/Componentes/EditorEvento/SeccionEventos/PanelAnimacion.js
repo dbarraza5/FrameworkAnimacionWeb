@@ -55,8 +55,6 @@ function PanelAnimacion({ eventos = [] }) {
 
     return (
         <div>
-            <h5>Controles de animación</h5>
-
             <div className="mb-2 d-flex gap-2">
                 <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
                     Lista eventos

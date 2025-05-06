@@ -49,20 +49,19 @@ function NavEditorEvento(props){
     return (<div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item" role="presentation">
-                <ButtonNav className="nav-link active" id="home-tab" data-bs-target="#home-tab-pane">Grupos</ButtonNav>
+                <ButtonNav className="nav-link active" id="home-tab" data-bs-target="#home-tab-pane">Edicion</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
-                <ButtonNav id="profile-tab" data-bs-target="#profile-tab-pane">Movimientos</ButtonNav>
+                <ButtonNav id="profile-tab" data-bs-target="#profile-tab-pane">Reproduccion</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
-                <ButtonNav id="contact-tab" data-bs-target="#contact-tab-pane">Composicion</ButtonNav>
+                <ButtonNav id="contact-tab" data-bs-target="#contact-tab-pane">Exportar</ButtonNav>
             </li>
         </ul>
         <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
                  aria-labelledby="home-tab"
-                 tabIndex="0">figuras
-
+                 tabIndex="0">
                 <div>
                     <br/>
                     <div className="row">

@@ -8,26 +8,36 @@ function NavEventos(props){
         <ul className="nav nav-tabs" id="myTab" role="tablist">
 
             <li className="nav-item" role="presentation">
-                <ButtonNav id="btn-nav-propiedades-grupo" data-bs-target="#nav-propiedades-grupo"
-                           onClick={()=>console.log("animacion")}>animacion</ButtonNav>
+                <ButtonNav id="btn-nav-eventos" data-bs-target="#nav-eventos"
+                           onClick={()=>console.log("animacion")}>Eventos</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
-                <ButtonNav id="contact-tab1" data-bs-target="#contact-tab-pane1"
-                           onClick={()=>console.log("edicion")}>edicion</ButtonNav>
+                <ButtonNav id="btn-nav-movimientos" data-bs-target="#nav-movimientos"
+                           onClick={()=>console.log("edicion")}>Movimientos</ButtonNav>
+            </li>
+
+            <li className="nav-item" role="presentation">
+                <ButtonNav id="btnnav-grupos" data-bs-target="#nav-grupos"
+                           onClick={()=>console.log("edicion")}>Grupos</ButtonNav>
             </li>
 
         </ul>
         <div className="tab-content" id="myTabContent">
-            <div className="tab-pane fade" id="nav-propiedades-grupo" role="tabpanel"
+            <div className="tab-pane fade" id="nav-eventos" role="tabpanel"
                  aria-labelledby="profile-tab1"
                  tabIndex="1">
                 <br/>
                 <PanelAnimacion/>
             </div>
-            <div className="tab-pane fade" id="contact-tab-pane1" role="tabpanel"
+            <div className="tab-pane fade" id="nav-movimientos" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                edicion
+                movimientos
+            </div>
+            <div className="tab-pane fade" id="nav-grupos" role="tabpanel"
+                 aria-labelledby="contact-tab1"
+                 tabIndex="2">
+                grupos
             </div>
 
         </div>
