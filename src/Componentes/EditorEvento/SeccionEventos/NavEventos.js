@@ -1,10 +1,20 @@
 import ButtonNav from "../../EditorMapa/ButtonNav";
 import PanelEventos from "./PanelEventos";
+import {useState} from "react";
 
 
 function NavEventos(props){
+    const [showModal, setShowModal] = useState(false);
 
     return (<div>
+        <div className="mb-2 d-flex gap-2">
+            <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
+                Lista eventos
+            </button>
+            <button className="btn btn-outline-success">
+                <i className="bi bi-plus"></i>
+            </button>
+        </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
 
             <li className="nav-item" role="presentation">
@@ -41,6 +51,25 @@ function NavEventos(props){
             </div>
 
         </div>
+
+        {showModal && (
+            <div className="modal d-block" tabIndex="-1" role="dialog">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Lista de eventos</h5>
+                            <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                        </div>
+                        <div className="modal-body">
+                            <p>Contenido vacío por ahora.</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>)
 }
 

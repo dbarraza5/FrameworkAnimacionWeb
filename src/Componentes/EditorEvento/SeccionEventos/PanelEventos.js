@@ -19,7 +19,6 @@ function PanelEventos({ eventos = [] }) {
     const [finMin, setFinMin] = useState("00");
     const [finSeg, setFinSeg] = useState("00");
     const [finMs, setFinMs] = useState("000");
-    const [showModal, setShowModal] = useState(false);
     const intervalRef = useRef(null);
 
     const [coordX, setCoordX] = useState("");
@@ -55,15 +54,6 @@ function PanelEventos({ eventos = [] }) {
 
     return (
         <div>
-            <div className="mb-2 d-flex gap-2">
-                <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
-                    Lista eventos
-                </button>
-                <button className="btn btn-outline-success">
-                    <i className="bi bi-plus"></i>
-                </button>
-            </div>
-
             <div className="mb-2">
                 <label className="form-label">Evento padre</label>
                 <select
@@ -218,24 +208,7 @@ function PanelEventos({ eventos = [] }) {
                 />
             </div>
 
-            {showModal && (
-                <div className="modal d-block" tabIndex="-1" role="dialog">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Lista de eventos</h5>
-                                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-                            </div>
-                            <div className="modal-body">
-                                <p>Contenido vacío por ahora.</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cerrar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 }
