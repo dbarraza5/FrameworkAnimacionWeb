@@ -7,7 +7,7 @@ function formatTime(ms) {
     return `${minutes}:${seconds}:${milliseconds}`;
 }
 
-function PanelAnimacion({ eventos = [] }) {
+function PanelEventos({ eventos = [] }) {
     const [selectedEvent, setSelectedEvent] = useState("");
     const [nombre, setNombre] = useState("");
     const [milisegundos, setMilisegundos] = useState(0);
@@ -240,4 +240,4 @@ function PanelAnimacion({ eventos = [] }) {
     );
 }
 
-export default PanelAnimacion;
+export default PanelEventos;

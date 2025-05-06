@@ -1,5 +1,5 @@
 import ButtonNav from "../../EditorMapa/ButtonNav";
-import PanelAnimacion from "./PanelAnimacion";
+import PanelEventos from "./PanelEventos";
 
 
 function NavEventos(props){
@@ -27,7 +27,7 @@ function NavEventos(props){
                  aria-labelledby="profile-tab1"
                  tabIndex="1">
                 <br/>
-                <PanelAnimacion/>
+                <PanelEventos/>
             </div>
             <div className="tab-pane fade" id="nav-movimientos" role="tabpanel"
                  aria-labelledby="contact-tab1"
