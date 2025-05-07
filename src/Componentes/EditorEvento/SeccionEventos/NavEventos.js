@@ -1,6 +1,7 @@
 import ButtonNav from "../../EditorMapa/ButtonNav";
 import PanelEventos from "./PanelEventos";
 import {useState} from "react";
+import PanelMovimientos from "./PanelMovimientos";
 
 
 function NavEventos(props){
@@ -42,7 +43,8 @@ function NavEventos(props){
             <div className="tab-pane fade" id="nav-movimientos" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                movimientos
+                <br/>
+                <PanelMovimientos/>
             </div>
             <div className="tab-pane fade" id="nav-grupos" role="tabpanel"
                  aria-labelledby="contact-tab1"
