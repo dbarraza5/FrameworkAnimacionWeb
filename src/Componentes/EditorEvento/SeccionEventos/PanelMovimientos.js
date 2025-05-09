@@ -12,6 +12,13 @@ function PanelMovimientos() {
     const [finSeg, setFinSeg] = useState("00");
     const [finMs, setFinMs] = useState("000");
 
+    const lista_movimiento = [
+        {
+            nombre:'mov1',
+            tipo: 'MRU',
+        }
+    ];
+
     return (
         <div>
             {/* Botones */}
@@ -24,79 +31,60 @@ function PanelMovimientos() {
                 </button>
             </div>
 
-            {/* Select tipo acción */}
-            <div className="mb-3">
-                <label className="form-label">Tipo de acción</label>
-                <select
-                    className="form-select"
-                    value={tipoAccion}
-                    onChange={(e) => setTipoAccion(e.target.value)}
-                >
-                    <option value="MRU">MRU</option>
-                    <option value="MRUA">MRUA</option>
-                    <option value="Trayectoria Parabólica">Trayectoria Parabólica</option>
-                </select>
+            <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
+                <table className="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">nombre</th>
+                        <th scope="col">tipo</th>
+                        <th scope="col">activo</th>
+                        <th scope="col">operaciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {lista_movimiento.map((mov, index) => {
+                        return (
+                            <tr key={index}>
+                                <th scope="row">{index + 1}</th>
+                                <td>{mov.nombre}</td>
+                                <td>{mov.tipo}</td>
+                                <td>
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id={`flexCheckDefault-${index}`}
+                                        onChange={(e) => console.log("asdsda das")}
+                                    />
+                                </td>
+                                <td>
+                                    <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-primary"
+                                            onClick={() => null}
+                                        >
+                                            <i className="bi bi-pencil"></i>
+                                        </button>
+                                        <button type="button" className="btn btn-outline-primary">
+                                            <i className="bi bi-files"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-primary"
+                                            onClick={() => null}
+                                        >
+                                            <i className="bi bi-eraser"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                    </tbody>
+                </table>
             </div>
 
-            {/* Tiempo de inicio */}
-            <div className="mb-3">
-                <label className="form-label">Tiempo de inicio</label>
-                <div className="d-flex gap-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="mm"
-                        value={inicioMin}
-                        onChange={(e) => setInicioMin(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ss"
-                        value={inicioSeg}
-                        onChange={(e) => setInicioSeg(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ms"
-                        value={inicioMs}
-                        onChange={(e) => setInicioMs(e.target.value)}
-                    />
-                </div>
-            </div>
-
-            {/* Tiempo de fin */}
-            <div className="mb-3">
-                <label className="form-label">Tiempo de fin</label>
-                <div className="d-flex gap-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="mm"
-                        value={finMin}
-                        onChange={(e) => setFinMin(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ss"
-                        value={finSeg}
-                        onChange={(e) => setFinSeg(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ms"
-                        value={finMs}
-                        onChange={(e) => setFinMs(e.target.value)}
-                    />
-                </div>
-            </div>
 
             {/* Modal vacío (placeholder) */}
             {showModal && (
@@ -121,7 +109,79 @@ function PanelMovimientos() {
                                 ></button>
                             </div>
                             <div className="modal-body">
-                                <p>(Modal vacío por ahora)</p>
+                                {/* Select tipo acción */}
+                                <div className="mb-3">
+                                    <label className="form-label">Tipo de acción</label>
+                                    <select
+                                        className="form-select"
+                                        value={tipoAccion}
+                                        onChange={(e) => null}
+                                    >
+                                        <option value="MRU">MRU</option>
+                                        <option value="MRUA">MRUA</option>
+                                        <option value="Trayectoria Parabólica">Trayectoria Parabólica</option>
+                                    </select>
+                                </div>
+
+                                {/* Tiempo de inicio */}
+                                <div className="mb-3">
+                                    <label className="form-label">Tiempo de inicio</label>
+                                    <div className="d-flex gap-2">
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="mm"
+                                            value={inicioMin}
+                                            onChange={(e) => null}
+                                        />
+                                        <span>:</span>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="ss"
+                                            value={inicioSeg}
+                                            onChange={(e) => null}
+                                        />
+                                        <span>:</span>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="ms"
+                                            value={inicioMs}
+                                            onChange={(e) => null}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Tiempo de fin */}
+                                <div className="mb-3">
+                                    <label className="form-label">Tiempo de fin</label>
+                                    <div className="d-flex gap-2">
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="mm"
+                                            value={finMin}
+                                            onChange={(e) => setFinMin(e.target.value)}
+                                        />
+                                        <span>:</span>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="ss"
+                                            value={finSeg}
+                                            onChange={(e) => setFinSeg(e.target.value)}
+                                        />
+                                        <span>:</span>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="ms"
+                                            value={finMs}
+                                            onChange={(e) => setFinMs(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             <div className="modal-footer">
                                 <button
