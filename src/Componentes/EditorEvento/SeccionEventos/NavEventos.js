@@ -2,6 +2,7 @@ import ButtonNav from "../../EditorMapa/ButtonNav";
 import PanelEventos from "./PanelEventos";
 import {useState} from "react";
 import PanelMovimientos from "./PanelMovimientos";
+import PanelScripts from "./PanelScripts";
 
 
 function NavEventos(props){
@@ -32,6 +33,11 @@ function NavEventos(props){
                            onClick={()=>console.log("edicion")}>Grupos</ButtonNav>
             </li>
 
+            <li className="nav-item" role="presentation">
+                <ButtonNav id="btnnav-scrips" data-bs-target="#nav-scrips"
+                           onClick={()=>console.log("edicion")}>Scripts</ButtonNav>
+            </li>
+
         </ul>
         <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade" id="nav-eventos" role="tabpanel"
@@ -50,6 +56,13 @@ function NavEventos(props){
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
                 grupos
+            </div>
+
+            <div className="tab-pane fade" id="nav-scrips" role="tabpanel"
+                 aria-labelledby="contact-tab1"
+                 tabIndex="2">
+                <br/>
+                <PanelScripts/>
             </div>
 
         </div>
