@@ -53,13 +53,15 @@ class GestionEvento{
         console.log("LSITA EVENTOS: ");
         console.log(this.lista_raw_evento.length)
         console.log(this.lista_raw_evento)
-        for(let i=0; i<lista_evento.length; i++){
+        this.eventos = [];
+        for(let i=0; i<this.lista_raw_evento.length; i++){
             this.eventos.push(new Evento(lista_evento[i]));
         }
         console.log(this.gestion_grupos.grupos_figuras);
         //this.imprimirEventos();
         this.tiempo.modPasivo();
         this.reseteoMovGrupos();
+        console.log("[LISTA EVENTOS] => "+this.eventos.length);
     }
 
     iniciarRelojes(){
@@ -96,7 +98,7 @@ class GestionEvento{
                     const resultado = GestionMovimientos.movimientoGrupo(tiempo_evento, tipo, datos);
                     const x = resultado.x;
                     const y = resultado.y;
-                    console.log(`[1] MOV ${x}, ${y}`);
+                    //console.log(`[1] MOV ${x}, ${y}`);
                     for(let k=0; k<movimiento.ids_grupos.length; k++){
                         const id_grupo = movimiento.ids_grupos[k];
                         const indice = evento_.objetos.findIndex((objeto)=>objeto.id_objeto===id_grupo);
@@ -130,7 +132,7 @@ class GestionEvento{
             this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
             //console.log(`[CXY] MOV ${x}, ${y}`);
         }
-        console.log("tiempo1: "+tiempo);
+        //console.log("tiempo1: "+tiempo);
     }
 
     movimientos(tiempo, lista_mov, objetos){

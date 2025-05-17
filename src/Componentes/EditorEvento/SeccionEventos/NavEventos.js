@@ -8,6 +8,7 @@ import PanelAnimacion from "./PanelAnimacion";
 
 function NavEventos(props){
     const [showModal, setShowModal] = useState(false);
+    const [evento, setEvento] = useState(null);
 
     return (<div>
         <div className="mb-2 d-flex gap-2">
@@ -87,7 +88,57 @@ function NavEventos(props){
                             <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
                         </div>
                         <div className="modal-body">
-                            <p>Contenido vacío por ahora.</p>
+                            <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
+                                <table className="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">nombre</th>
+                                        <th scope="col">activo</th>
+                                        <th scope="col">operaciones</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {props.eventoAnimacion.edicion.eventos.map((item, index) => {
+                                        return (
+                                            <tr key={index}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td>{item.evento.nombre}</td>
+                                                <td>
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        id={`flexCheckDefault-${index}`}
+                                                        onChange={(e) => console.log("asdsda das")}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-outline-primary"
+                                                            onClick={() => null}
+                                                        >
+                                                            <i className="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button type="button" className="btn btn-outline-primary">
+                                                            <i className="bi bi-files"></i>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-outline-primary"
+                                                            onClick={() => null}
+                                                        >
+                                                            <i className="bi bi-eraser"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cerrar</button>

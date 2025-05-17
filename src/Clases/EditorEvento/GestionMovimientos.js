@@ -16,7 +16,7 @@ class GestionMovimientos{
         let y=0;
         if(tipo === MOV_RECTILINEO_UNIFORME){
             x=movRectilineoUniforme(tiempo, datos.velocidad);
-            console.log("[velx: "+x+"] [tiempo: "+tiempo);
+            //console.log("[velx: "+x+"] [tiempo: "+tiempo);
         }
         return {
             x: x,
