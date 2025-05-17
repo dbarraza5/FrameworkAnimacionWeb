@@ -9,7 +9,7 @@ function formatTime(ms) {
 
 function PanelEventos(props) {
     const [selectedEvent, setSelectedEvent] = useState("");
-    const [nombre, setNombre] = useState("");
+    const [nombre, setNombre] = useState(props.evento?.evento?.nombre || "");
     const [milisegundos, setMilisegundos] = useState(0);
     const [bucle, setBucle] = useState(false);
     const [inicioMin, setInicioMin] = useState("00");

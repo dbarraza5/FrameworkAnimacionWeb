@@ -10,7 +10,17 @@ function NavEventos(props){
     const [showModal, setShowModal] = useState(false);
     const [evento, setEvento] = useState(null);
 
+
+    const seleccionEvento=(index)=>{
+        setEvento(props.eventoAnimacion.edicion.eventos[index]);
+    }
+
     return (<div>
+        {evento ? (
+            <p>Hay un evento seleccionado {evento.evento.nombre}</p>
+        ) : (
+            <p>No hay evento seleccionado</p>
+        )}
         <div className="mb-2 d-flex gap-2">
             <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
                 Lista eventos
@@ -50,7 +60,7 @@ function NavEventos(props){
                  aria-labelledby="profile-tab1"
                  tabIndex="1">
                 <br/>
-                <PanelEventos {...props}/>
+                <PanelEventos {...props} evento={evento}/>
             </div>
             <div className="tab-pane fade" id="nav-movimientos" role="tabpanel"
                  aria-labelledby="contact-tab1"
@@ -117,7 +127,7 @@ function NavEventos(props){
                                                         <button
                                                             type="button"
                                                             className="btn btn-outline-primary"
-                                                            onClick={() => null}
+                                                            onClick={() => seleccionEvento(index)}
                                                         >
                                                             <i className="bi bi-pencil"></i>
                                                         </button>
