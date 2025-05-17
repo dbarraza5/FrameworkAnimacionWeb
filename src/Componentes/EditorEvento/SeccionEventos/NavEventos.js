@@ -49,13 +49,13 @@ function NavEventos(props){
                  aria-labelledby="profile-tab1"
                  tabIndex="1">
                 <br/>
-                <PanelEventos/>
+                <PanelEventos {...props}/>
             </div>
             <div className="tab-pane fade" id="nav-movimientos" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
                 <br/>
-                <PanelMovimientos/>
+                <PanelMovimientos {...props}/>
             </div>
             <div className="tab-pane fade" id="nav-grupos" role="tabpanel"
                  aria-labelledby="contact-tab1"
@@ -67,13 +67,13 @@ function NavEventos(props){
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
                 <br/>
-                <PanelScripts/>
+                <PanelScripts {...props}/>
             </div>
             <div className="tab-pane fade" id="nav-animacion" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
                 <br/>
-                <PanelAnimacion/>
+                <PanelAnimacion {...props}/>
             </div>
 
         </div>

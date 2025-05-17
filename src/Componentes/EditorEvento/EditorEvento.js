@@ -85,7 +85,10 @@ function EditorEvento(props){
         <div className="row">
             <MenuEvento />
             <hr/>
-            <NavEditorEvento eventoAnimacion={eventoAnimacion} eventoLienzoFigura={eventoLienzoFigura} setEventLienzoFigura={setEventLienzoFigura}>
+            <NavEditorEvento eventoAnimacion={eventoAnimacion}
+                             setEventoAnimacion = {setEventoAnimacion}
+                             eventoLienzoFigura={eventoLienzoFigura}
+                             setEventLienzoFigura={setEventLienzoFigura}>
             </NavEditorEvento>
 
         </div>

@@ -7,7 +7,7 @@ function formatTime(ms) {
     return `${minutes}:${seconds}:${milliseconds}`;
 }
 
-function PanelEventos({ eventos = [] }) {
+function PanelEventos(props) {
     const [selectedEvent, setSelectedEvent] = useState("");
     const [nombre, setNombre] = useState("");
     const [milisegundos, setMilisegundos] = useState(0);
@@ -62,9 +62,9 @@ function PanelEventos({ eventos = [] }) {
                     onChange={(e) => setSelectedEvent(e.target.value)}
                 >
                     <option value="">Seleccionar evento padre</option>
-                    {eventos.map((ev) => (
-                        <option key={ev.id} value={ev.id}>
-                            {ev.nombre}
+                    {props.eventoAnimacion.edicion.eventos.map((ev) => (
+                        <option key={ev.evento.id} value={ev.evento.id}>
+                            {ev.evento.nombre}
                         </option>
                     ))}
                 </select>
