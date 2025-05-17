@@ -23,8 +23,6 @@ class GestionMovimientos{
             y: y
         }
     }
-
-
 }
 
 export {GestionMovimientos}

@@ -81,28 +81,6 @@ function PanelEventos({ eventos = [] }) {
                 />
             </div>
 
-            <div className="mb-2 text-center">
-                <div className="d-flex justify-content-center align-items-center gap-2">
-                    <button
-                        className="btn btn-outline-danger"
-                        onMouseDown={() => startChangingTime("disminuir")}
-                        onMouseUp={stopChangingTime}
-                        onMouseLeave={stopChangingTime}
-                    >
-                        –
-                    </button>
-                    <div style={{ minWidth: '120px', fontWeight: 'bold' }}>{formatTime(milisegundos)}</div>
-                    <button
-                        className="btn btn-outline-primary"
-                        onMouseDown={() => startChangingTime("aumentar")}
-                        onMouseUp={stopChangingTime}
-                        onMouseLeave={stopChangingTime}
-                    >
-                        +
-                    </button>
-                </div>
-            </div>
-
             <div className="form-check mb-2">
                 <input
                     className="form-check-input"
