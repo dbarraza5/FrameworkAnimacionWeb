@@ -52,7 +52,7 @@ function NavEditorEvento(props){
                 <ButtonNav className="nav-link active" id="home-tab" data-bs-target="#home-tab-pane">Edicion</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
-                <ButtonNav id="profile-tab" data-bs-target="#profile-tab-pane">Reproduccion</ButtonNav>
+                <ButtonNav id="profile-tab" data-bs-target="#profile-tab-pane">Animacion</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
                 <ButtonNav id="contact-tab" data-bs-target="#contact-tab-pane">Exportar</ButtonNav>

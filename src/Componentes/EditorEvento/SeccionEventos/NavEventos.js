@@ -3,6 +3,7 @@ import PanelEventos from "./PanelEventos";
 import {useState} from "react";
 import PanelMovimientos from "./PanelMovimientos";
 import PanelScripts from "./PanelScripts";
+import PanelAnimacion from "./PanelAnimacion";
 
 
 function NavEventos(props){
@@ -38,6 +39,10 @@ function NavEventos(props){
                            onClick={()=>console.log("edicion")}>Scripts</ButtonNav>
             </li>
 
+            <li className="nav-item" role="presentation">
+                <ButtonNav id="btnnav-animacion" data-bs-target="#nav-animacion"
+                           onClick={()=>console.log("animacion")}>Animacion</ButtonNav>
+            </li>
         </ul>
         <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade" id="nav-eventos" role="tabpanel"
@@ -63,6 +68,12 @@ function NavEventos(props){
                  tabIndex="2">
                 <br/>
                 <PanelScripts/>
+            </div>
+            <div className="tab-pane fade" id="nav-animacion" role="tabpanel"
+                 aria-labelledby="contact-tab1"
+                 tabIndex="2">
+                <br/>
+                <PanelAnimacion/>
             </div>
 
         </div>
