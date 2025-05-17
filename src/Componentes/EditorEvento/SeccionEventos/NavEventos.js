@@ -12,12 +12,12 @@ function NavEventos(props){
 
 
     const seleccionEvento=(index)=>{
-        setEvento(props.eventoAnimacion.edicion.eventos[index]);
+        setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
     }
 
     return (<div>
         {evento ? (
-            <p>Hay un evento seleccionado {evento.evento.nombre}</p>
+            <p>Hay un evento seleccionado {evento.nombre}</p>
         ) : (
             <p>No hay evento seleccionado</p>
         )}

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import {useState, useRef, useEffect} from "react";
 
 function formatTime(ms) {
     const minutes = Math.floor(ms / 60000).toString().padStart(2, '0');
@@ -9,7 +9,7 @@ function formatTime(ms) {
 
 function PanelEventos(props) {
     const [selectedEvent, setSelectedEvent] = useState("");
-    const [nombre, setNombre] = useState(props.evento?.evento?.nombre || "");
+    const [nombre, setNombre] = useState("");
     const [milisegundos, setMilisegundos] = useState(0);
     const [bucle, setBucle] = useState(false);
     const [inicioMin, setInicioMin] = useState("00");
@@ -28,6 +28,10 @@ function PanelEventos(props) {
     const STEP = 100;
     const MAX = 60000;
     const MIN = 0;
+
+    useEffect(() => {
+        setNombre(props.evento?.nombre || "");
+    }, [props.evento]);
 
     const startChangingTime = (type) => {
         stopChangingTime();
