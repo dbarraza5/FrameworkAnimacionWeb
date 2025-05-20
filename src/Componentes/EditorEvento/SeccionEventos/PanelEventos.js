@@ -65,9 +65,11 @@ function PanelEventos(props) {
                     value={selectedEvent}
                     onChange={(e) => setSelectedEvent(e.target.value)}
                 >
-                    <option value="">Seleccionar evento padre</option>
-                    {props.eventoAnimacion.edicion.eventos.map((ev) => (
-                        <option key={ev.evento.id} value={ev.evento.id}>
+                    <option value="">Seleccionar evento padre </option>
+                    {props.eventoAnimacion.edicion.eventos
+                        .filter(ev => ev.evento._id !== props.evento?._id)
+                        .map((ev) => (
+                        <option key={ev.evento._id} value={ev.evento._id}>
                             {ev.evento.nombre}
                         </option>
                     ))}
