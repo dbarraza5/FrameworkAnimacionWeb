@@ -12,6 +12,7 @@ function PanelEventos(props) {
     const [nombre, setNombre] = useState("");
     const [milisegundos, setMilisegundos] = useState(0);
     const [bucle, setBucle] = useState(false);
+    const [reposicionar, setReposicionar] = useState(false);
     const [inicioMin, setInicioMin] = useState("00");
     const [inicioSeg, setInicioSeg] = useState("00");
     const [inicioMs, setInicioMs] = useState("000");
@@ -30,7 +31,42 @@ function PanelEventos(props) {
     const MIN = 0;
 
     useEffect(() => {
+        console.log("[EVENTO]");
+        console.log(props.evento)
+
         setNombre(props.evento?.nombre || "");
+
+        if(props.evento){
+            // Calcular valores desde tiempo_inicio
+            const inicio = props.evento.tiempo_inicio ?? 0;
+            const inicioMin = Math.floor(inicio / 60000);
+            const inicioSeg = Math.floor((inicio % 60000) / 1000);
+            const inicioMs = inicio % 1000;
+
+            setInicioMin(String(inicioMin).padStart(2, "0"));
+            setInicioSeg(String(inicioSeg).padStart(2, "0"));
+            setInicioMs(String(inicioMs).padStart(3, "0"));
+
+            // Calcular valores desde tiempo_final
+            const fin = props.evento.tiempo_final ?? 0;
+            const finMin = Math.floor(fin / 60000);
+            const finSeg = Math.floor((fin % 60000) / 1000);
+            const finMs = fin % 1000;
+
+            setFinMin(String(finMin).padStart(2, "0"));
+            setFinSeg(String(finSeg).padStart(2, "0"));
+            setFinMs(String(finMs).padStart(3, "0"));
+
+            setCoordX(props.evento.x);
+            setCoordY(props.evento.y);
+
+            setBucle(props.evento.bucle);
+            setReposicionar(props.evento.reposicionar);
+            setTiempoRelativo(props.evento.tiempo_relativo);
+            setSelectedEvent(props.evento.nodo_padre);
+        }
+
+
     }, [props.evento]);
 
     const startChangingTime = (type) => {
@@ -66,10 +102,11 @@ function PanelEventos(props) {
                     onChange={(e) => setSelectedEvent(e.target.value)}
                 >
                     <option value="">Seleccionar evento padre </option>
+                    <option value="Nodo_Default">Nodo Default</option>
                     {props.eventoAnimacion.edicion.eventos
                         .filter(ev => ev.evento._id !== props.evento?._id)
                         .map((ev) => (
-                        <option key={ev.evento._id} value={ev.evento._id}>
+                        <option key={ev.evento._id} value={ev.evento.nombre}>
                             {ev.evento.nombre}
                         </option>
                     ))}
@@ -87,17 +124,32 @@ function PanelEventos(props) {
                 />
             </div>
 
-            <div className="form-check mb-2">
-                <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="bucleCheck"
-                    checked={bucle}
-                    onChange={() => setBucle(!bucle)}
-                />
-                <label className="form-check-label" htmlFor="bucleCheck">
-                    Bucle
-                </label>
+            <div className="d-flex gap-4 mb-2">
+                <div className="form-check">
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="bucleCheck"
+                        checked={bucle}
+                        onChange={() => setBucle(!bucle)}
+                    />
+                    <label className="form-check-label" htmlFor="bucleCheck">
+                        Bucle
+                    </label>
+                </div>
+
+                <div className="form-check">
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="reposicionarCheck"
+                        checked={reposicionar}
+                        onChange={() => setReposicionar(!reposicionar)}
+                    />
+                    <label className="form-check-label" htmlFor="reposicionarCheck">
+                        Reposicionar
+                    </label>
+                </div>
             </div>
 
             <div className="mb-2">
