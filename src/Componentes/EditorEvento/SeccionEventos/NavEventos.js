@@ -66,7 +66,7 @@ function NavEventos(props){
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
                 <br/>
-                <PanelMovimientos {...props}/>
+                <PanelMovimientos {...props} evento={evento}/>
             </div>
             <div className="tab-pane fade" id="nav-grupos" role="tabpanel"
                  aria-labelledby="contact-tab1"

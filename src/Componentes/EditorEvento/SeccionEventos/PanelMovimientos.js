@@ -1,6 +1,6 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 
-function PanelMovimientos() {
+function PanelMovimientos(props) {
     const [showModal, setShowModal] = useState(false);
     const [tipoAccion, setTipoAccion] = useState("MRU");
 
@@ -12,12 +12,18 @@ function PanelMovimientos() {
     const [finSeg, setFinSeg] = useState("00");
     const [finMs, setFinMs] = useState("000");
 
-    const lista_movimiento = [
-        {
-            nombre:'mov1',
-            tipo: 'MRU',
+    const [lista_movimiento, setListaMovimientos] = useState([]);
+
+
+    useEffect(() => {
+        console.log("[EVENTO][MOV]");
+        console.log(props.evento)
+
+        if(props.evento){
+            setListaMovimientos(props.evento.movimientos)
         }
-    ];
+    }, [props.evento]);
+
 
     return (
         <div>
@@ -47,7 +53,7 @@ function PanelMovimientos() {
                         return (
                             <tr key={index}>
                                 <th scope="row">{index + 1}</th>
-                                <td>{mov.nombre}</td>
+                                <td>{mov._id}</td>
                                 <td>{mov.tipo}</td>
                                 <td>
                                     <input
