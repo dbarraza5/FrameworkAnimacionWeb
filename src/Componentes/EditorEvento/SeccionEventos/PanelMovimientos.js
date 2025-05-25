@@ -60,6 +60,7 @@ function PanelMovimientos(props) {
                                         className="form-check-input"
                                         type="checkbox"
                                         id={`flexCheckDefault-${index}`}
+                                        checked={mov.activo}
                                         onChange={(e) => console.log("asdsda das")}
                                     />
                                 </td>
