@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import FormularioMRU from "./Movimientos/FormularioMRU";
+import FormularioMRUA from "./Movimientos/FormularioMRUA";
+import FormularioParabolico from "./Movimientos/FormularioParabolico";
+import FormularioCircular from "./Movimientos/FormularioCircular";
 
 function msToTimeParts(ms) {
     const minutos = Math.floor(ms / 60000);
@@ -28,6 +32,8 @@ function ModalMovimiento({ show, onClose, movimiento }) {
     const [bucle, setBucle] = useState(false);
     const [activo, setActivo] = useState(true);
     const [velocidad, setVelocidad] = useState(0);
+
+    const [datos, setDatos] = useState({});
 
     useEffect(() => {
         if (movimiento) {
@@ -97,18 +103,8 @@ function ModalMovimiento({ show, onClose, movimiento }) {
                                 <option value={1}>MRU</option>
                                 <option value={2}>MRUA</option>
                                 <option value={3}>Trayectoria Parabólica</option>
+                                <option value={4}>Movimiento Circular</option>
                             </select>
-                        </div>
-
-                        {/* Velocidad */}
-                        <div className="mb-3">
-                            <label className="form-label">Velocidad</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                value={velocidad}
-                                onChange={(e) => setVelocidad(parseFloat(e.target.value))}
-                            />
                         </div>
 
                         {/* Tiempo de inicio */}
@@ -145,6 +141,13 @@ function ModalMovimiento({ show, onClose, movimiento }) {
                             <input className="form-check-input" type="checkbox" id="activoCheck" checked={activo} onChange={() => setActivo(!activo)} />
                             <label className="form-check-label" htmlFor="activoCheck">Activo</label>
                         </div>
+
+                        <hr/>
+                        {/* Formulario dinámico según tipo */}
+                        {tipo === 1 && <FormularioMRU datos={datos} setDatos={setDatos} />}
+                        {tipo === 2 && <FormularioMRUA datos={datos} setDatos={setDatos} />}
+                        {tipo === 3 && <FormularioParabolico datos={datos} setDatos={setDatos} />}
+                        {tipo === 4 && <FormularioCircular datos={datos} setDatos={setDatos} />}
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Cerrar</button>
