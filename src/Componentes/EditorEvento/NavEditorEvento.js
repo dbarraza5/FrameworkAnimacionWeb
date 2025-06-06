@@ -3,8 +3,13 @@ import NavFiguras from "../EditorAnimacion/SeccionFiguras/NavFiguras";
 import {deshacer, rehacer} from "../../Store/Animacion/animacionSlice";
 import Lienzo from "../EditorAnimacion/Lienzo";
 import NavEventos from "./SeccionEventos/NavEventos";
+import {useEffect, useRef, useState} from "react";
+import TimelineCanvas from "../../Clases/EditorEvento/TimelineCanvas";
 
 function NavEditorEvento(props){
+
+    const canvasRef = useRef(null);
+    const [timelineInstance, setTimelineInstance] = useState(null);
 
     const graph = {
         nodes: [
@@ -44,6 +49,42 @@ function NavEditorEvento(props){
         //props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
     }
 
+    useEffect(() => {
+        let instance;
+
+        if (canvasRef.current) {
+            // Si ya tiene una instancia previa de fabric, eliminarla
+            if (canvasRef.current.fabric) {
+                canvasRef.current.fabric.dispose();
+                canvasRef.current.fabric = null;
+            }
+
+            // Crear nueva instancia
+            instance = new TimelineCanvas(canvasRef.current, {
+                escala: 0.5,
+                totalMs: 10000,
+                interval: 500
+            });
+
+            setTimelineInstance(instance);
+        }
+
+        // Limpieza cuando se desmonta el componente
+        return () => {
+            if (instance) {
+                instance.dispose();
+            }
+        };
+    }, []);
+
+    const agregarEvento = () => {
+        const inicio = parseInt(prompt("Tiempo de inicio (ms):"), 10);
+        const fin = parseInt(prompt("Tiempo de fin (ms):"), 10);
+        if (timelineInstance) {
+            timelineInstance.agregarEvento(inicio, fin);
+        }
+    };
+
     console.log("NAV EDITOR");
     console.log(props.eventoAnimacion.edicion.lista_raw_evento)
     return (<div>
@@ -66,32 +107,33 @@ function NavEditorEvento(props){
                     <br/>
                     <div className="row">
                         <div className="col">
-                            <NavEventos {...props}/>
+                            <NavEventos {...props} />
+                            <button onClick={agregarEvento} className="btn btn-success mt-2">
+                                Agregar Evento
+                            </button>
+                            <div style={{ height: '33vh', overflowX: 'auto', background: '#1e1e2f' }}>
+                                <canvas ref={canvasRef} id="timeline-canvas" />
+                            </div>
                         </div>
                         <div className="col">
                             <div className="card text-bg-light mb-3">
                                 <div className="card-header d-flex justify-content-between align-items-center">
                                     <h6 className="card-title mb-0 text-start">evento <strong>;D</strong></h6>
-
-                                    <div className="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" className="btn btn-primary"
-
-                                                >
-                                            <i className="bi bi-arrow-left"></i>
-                                        </button>
-                                        <button type="button" className="btn btn-primary"
-                                                >
-                                            <i className="bi bi-arrow-right"></i>
-                                        </button>
+                                    <div className="btn-group">
+                                        <button className="btn btn-primary"><i className="bi bi-arrow-left"></i></button>
+                                        <button className="btn btn-primary"><i className="bi bi-arrow-right"></i></button>
                                     </div>
                                 </div>
                                 <div className="card-body">
-                                    <Lienzo lienzo = {props.eventoLienzoFigura} id="lienzo-animacion" editar_animacion={editar_animacion}
-                                            setEventLienzoFigura={props.setEventLienzoFigura}/>
+                                    <Lienzo
+                                        lienzo={props.eventoLienzoFigura}
+                                        id="lienzo-animacion"
+                                        editar_animacion={() => {}}
+                                        setEventLienzoFigura={props.setEventLienzoFigura}
+                                    />
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -107,6 +149,7 @@ function NavEditorEvento(props){
                 composicion
             </div>
         </div>
+
     </div>)
 }
 

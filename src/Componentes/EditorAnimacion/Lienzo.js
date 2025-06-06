@@ -98,7 +98,6 @@ function Lienzo(props){
                    onMouseOver={(e)=>eventoMouseEntrada(e)}
                    onMouseOut={(e)=>eventoMouseSalida(e)}
                    tabindex='0'
-
                    onWheel={manejarRueda}
                    width="600" height="600" style={style}></canvas>)
 }
