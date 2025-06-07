@@ -10,8 +10,9 @@ export default class TimelineCanvas {
         this.interval = config.interval || 500;
         this.canvasWidth = this.totalMs * this.escala;
 
+
         this.fabricCanvas = new Canvas(this.canvasElem, {
-            backgroundColor: '#1e1e2f',
+            backgroundColor: "white",//'#1e1e2f',
             selection: false
         });
 
@@ -26,18 +27,34 @@ export default class TimelineCanvas {
 
     ajustarCanvas() {
         const contHeight = this.container.clientHeight;
-        this.canvasElem.width = this.canvasWidth;
-        this.canvasElem.height = contHeight;
-        this.fabricCanvas.setWidth(this.canvasWidth);
-        this.fabricCanvas.setHeight(contHeight);
+        this.canvasElem.width = 600;//this.canvasWidth;
+        this.canvasElem.height = 600;//contHeight;
+        this.fabricCanvas.setWidth(600);
+        this.fabricCanvas.setHeight(600);
         this.dibujarMarcas();
     }
 
     dibujarMarcas() {
+        const altura_timeline = 200;//this.fabricCanvas.getHeight()
+        const y_timeline = 400;
+
+        const fondoTimeline = new Rect({
+            left: 0,
+            top: y_timeline,
+            width: 600,
+            height: altura_timeline,
+            fill: '#1e1e2f',
+            selectable: false,
+            evented: false,
+            objectCaching: false,
+            type: 'timelineBackground'
+        });
+        this.fabricCanvas.add(fondoTimeline);
+
         this.fabricCanvas.getObjects().filter(obj => obj.type === 'timeMarker').forEach(obj => this.fabricCanvas.remove(obj));
         for (let ms = 0; ms <= this.totalMs; ms += this.interval) {
             const x = ms * this.escala;
-            const linea = new Line([x, 0, x, this.fabricCanvas.getHeight()], {
+            const linea = new Line([x, y_timeline, x, y_timeline+altura_timeline], {
                 stroke: '#ccc',
                 selectable: false,
                 evented: false,
@@ -47,7 +64,7 @@ export default class TimelineCanvas {
             });
             const etiqueta = new Text(`${ms}ms`, {
                 left: x,
-                top: 5,
+                top: 5+y_timeline,
                 fill: 'white',
                 fontSize: 12,
                 selectable: false,
@@ -59,9 +76,12 @@ export default class TimelineCanvas {
             });
             this.fabricCanvas.add(linea, etiqueta);
         }
-        const timeMarkers = this.fabricCanvas.getObjects().filter(obj => obj.type === 'timeMarker');
-        timeMarkers.forEach(obj => this.fabricCanvas.sendToBack(obj));
-        this.fabricCanvas.renderAll();
+        // const timeMarkers = this.fabricCanvas.getObjects().filter(obj => obj.type === 'timeMarker');
+        // timeMarkers.forEach(obj => this.fabricCanvas.sendToBack(obj));
+        // this.fabricCanvas.renderAll();
+
+
+        //this.fabricCanvas.sendToBack(fondoTimeline);
     }
 
     agregarEvento(inicio, fin) {

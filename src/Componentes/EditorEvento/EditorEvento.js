@@ -77,7 +77,7 @@ function EditorEvento(props){
         //eventoLienzoFigura.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
         //console.log("Aqui proceso principal del lienzo");
         eventoAnimacion.edicion.procesandoEventos();
-        eventoAnimacion.edicion.imprimirEventos();
+        //eventoAnimacion.edicion.imprimirEventos();
     }, startLoopLienzo ? 200 : null);
 
 
