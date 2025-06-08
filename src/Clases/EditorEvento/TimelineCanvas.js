@@ -4,7 +4,7 @@ export default class TimelineCanvas {
         this.ctx = this.canvasElem.getContext('2d');
 
         // Configuración
-        this.escala = config.escala || 0.5;
+        this.escala = .1;//config.escala || 0.5;
         this.interval = config.interval || 500;
         this.ancho_canvas = 600;
         this.alto_canvas =  600;
@@ -22,7 +22,7 @@ export default class TimelineCanvas {
         this.canvasElem.height = this.alto_canvas;
 
         this.lista_eventos = [
-            { inicio: 200, fin: 600 },
+            { inicio: 0, fin: 500 },
             { inicio: 800, fin: 1600 }
         ];
 
