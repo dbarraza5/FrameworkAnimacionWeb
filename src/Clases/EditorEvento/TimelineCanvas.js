@@ -3,13 +3,22 @@ import { Canvas, Rect, Text, Line } from 'fabric';
 
 export default class TimelineCanvas {
     constructor(canvasElem, config = {}) {
+        this.lista_eventos = [];
+
         this.canvasElem = canvasElem;
         this.container = this.canvasElem.parentElement;
         this.escala = config.escala || 0.5;
         this.totalMs = config.totalMs || 10000;
         this.interval = config.interval || 500;
         this.canvasWidth = this.totalMs * this.escala;
+        this.ancho_canvas = 600;
+        this.alto_canvas = 600;
+        this.segmento_px = 100;//px
+        this.num_segmentos=null;
+        this.segundo_seg=1;
 
+        this.altura_timeline = 200;
+        this.y_timeline = this.alto_canvas-this.altura_timeline;
 
         this.fabricCanvas = new Canvas(this.canvasElem, {
             backgroundColor: "white",//'#1e1e2f',
@@ -18,31 +27,34 @@ export default class TimelineCanvas {
 
         this.ajustarCanvas();
         this.dibujarMarcas();
+        this.agregarEvento(200, 600);
+        this.agregarEvento(800, 1600);
 
         window.addEventListener('resize', () => this.ajustarCanvas());
         this.fabricCanvas.on('object:moving', (e) => this.actualizarEtiqueta(e));
         this.fabricCanvas.on('object:scaling', (e) => this.actualizarEtiqueta(e));
         this.fabricCanvas.on('object:modified', (e) => this.actualizarEtiqueta(e));
+
+
     }
 
+
     ajustarCanvas() {
+        this.num_segmentos = (this.segundo_seg*this.ancho_canvas)/this.segmento_px;
         const contHeight = this.container.clientHeight;
-        this.canvasElem.width = 600;//this.canvasWidth;
+        this.canvasElem.width = this.ancho_canvas;//this.canvasWidth;
         this.canvasElem.height = 600;//contHeight;
-        this.fabricCanvas.setWidth(600);
+        this.fabricCanvas.setWidth(this.ancho_canvas);
         this.fabricCanvas.setHeight(600);
         this.dibujarMarcas();
     }
 
     dibujarMarcas() {
-        const altura_timeline = 200;//this.fabricCanvas.getHeight()
-        const y_timeline = 400;
-
         const fondoTimeline = new Rect({
             left: 0,
-            top: y_timeline,
-            width: 600,
-            height: altura_timeline,
+            top: this.y_timeline,
+            width: this.ancho_canvas,
+            height: this.altura_timeline,
             fill: '#1e1e2f',
             selectable: false,
             evented: false,
@@ -52,9 +64,9 @@ export default class TimelineCanvas {
         this.fabricCanvas.add(fondoTimeline);
 
         this.fabricCanvas.getObjects().filter(obj => obj.type === 'timeMarker').forEach(obj => this.fabricCanvas.remove(obj));
-        for (let ms = 0; ms <= this.totalMs; ms += this.interval) {
-            const x = ms * this.escala;
-            const linea = new Line([x, y_timeline, x, y_timeline+altura_timeline], {
+        for (let indice = 0; indice <= this.num_segmentos; indice += 1) {
+            const x = indice * this.segmento_px;
+            const linea = new Line([x, this.y_timeline, x, this.y_timeline+this.altura_timeline], {
                 stroke: '#ccc',
                 selectable: false,
                 evented: false,
@@ -62,9 +74,9 @@ export default class TimelineCanvas {
                 objectCaching: false,
                 type: 'timeMarker'
             });
-            const etiqueta = new Text(`${ms}ms`, {
+            const etiqueta = new Text(`${indice}seg`, {
                 left: x,
-                top: 5+y_timeline,
+                top: 5+this.y_timeline,
                 fill: 'white',
                 fontSize: 12,
                 selectable: false,
@@ -85,6 +97,10 @@ export default class TimelineCanvas {
     }
 
     agregarEvento(inicio, fin) {
+        this.lista_eventos.push({
+            inicio: inicio,
+            fin: fin
+        });
         if (isNaN(inicio) || isNaN(fin) || fin <= inicio) {
             alert("Valores inválidos.");
             return;
@@ -92,7 +108,7 @@ export default class TimelineCanvas {
         const x = inicio * this.escala;
         const width = (fin - inicio) * this.escala;
         const height = 30;
-        const y = (this.fabricCanvas.getHeight() / 2) - (height / 2);
+        const y = this.y_timeline+this.altura_timeline/2- (height / 2);//+ (this.y_timeline / 2) - (height / 2);
 
         const rect = new Rect({
             left: x,
@@ -125,7 +141,7 @@ export default class TimelineCanvas {
 
         rect.on('selected', () => {
             rect.set({ hasControls: true, borderColor: '#006fb3', cornerColor: '#fff', cornerSize: 10 });
-            this.fabricCanvas.bringToFront(rect.etiqueta);
+            //this.fabricCanvas.bringToFront(rect.etiqueta);
         });
 
         rect.on('deselected', () => {
@@ -135,7 +151,7 @@ export default class TimelineCanvas {
         rect.set({ hasControls: false });
 
         this.fabricCanvas.add(rect, etiqueta);
-        this.fabricCanvas.bringToFront(etiqueta);
+        //this.fabricCanvas.bringToFront(etiqueta);
         this.fabricCanvas.renderAll();
     }
 
@@ -159,7 +175,7 @@ export default class TimelineCanvas {
                 text: `${nuevoInicio}–${nuevoFin}ms`
             });
 
-            this.fabricCanvas.bringToFront(obj.etiqueta);
+            //this.fabricCanvas.bringToFront(obj.etiqueta);
             this.fabricCanvas.renderAll();
         }
     }
