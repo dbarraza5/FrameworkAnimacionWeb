@@ -1,4 +1,4 @@
-import { Canvas, Rect, Text, Line } from 'fabric';
+import { Canvas, Rect, Text, Line, Group } from 'fabric';
 
 export default class TimelineCanvas {
     constructor(canvasElem, config = {}) {
@@ -35,11 +35,10 @@ export default class TimelineCanvas {
         // Eventos de prueba (mantener en constructor)
         this.lista_eventos.push({ inicio: 200, fin: 600 });
         this.lista_eventos.push({ inicio: 800, fin: 1600 });
+        //this.lista_eventos.push({ inicio: 300, fin: 500 });
         this._redibujarEventos();
 
-        // Listeners de interacción
-        window.addEventListener('resize', () => this.ajustarCanvas());
-        this.fabricCanvas.on('object:moving',  e => this.actualizarEtiqueta(e));
+        // Listener de interacción para escalar y modificar
         this.fabricCanvas.on('object:scaling', e => this.actualizarEtiqueta(e));
         this.fabricCanvas.on('object:modified', e => this.actualizarEtiqueta(e));
     }
@@ -55,7 +54,6 @@ export default class TimelineCanvas {
 
     // Dibuja la línea de tiempo y sus marcas
     dibujarMarcas() {
-        // Limpiar fondo viejo
         this.fabricCanvas.getObjects()
             .filter(o => o.type === 'timelineBackground')
             .forEach(o => this.fabricCanvas.remove(o));
@@ -71,7 +69,6 @@ export default class TimelineCanvas {
         });
         this.fabricCanvas.add(fondo);
 
-        // Marcas cada intervalo
         this.fabricCanvas.getObjects()
             .filter(o => o.type === 'timeMarker')
             .forEach(o => this.fabricCanvas.remove(o));
@@ -79,29 +76,27 @@ export default class TimelineCanvas {
         const pasos = Math.ceil(this.ancho_canvas / (this.interval * this.escala));
         for (let i = 0; i <= pasos; i++) {
             const x = i * this.interval * this.escala;
-            const linea = new Line([x, this.y_timeline, x, this.y_timeline + this.altura_timeline], {
-                stroke: '#ccc', selectable: false,
-                evented: false, strokeWidth: 1,
-                objectCaching: false, type: 'timeMarker'
-            });
-            const etiqueta = new Text(`${i} seg`, {
-                left: x, top: this.y_timeline + 5,
-                fill: 'white', fontSize: 12,
-                selectable: false, evented: false,
-                objectCaching: false,
-                originX: 'left', originY: 'top',
-                type: 'timeMarker'
-            });
-            this.fabricCanvas.add(linea, etiqueta);
+            this.fabricCanvas.add(
+                new Line([x, this.y_timeline, x, this.y_timeline + this.altura_timeline], {
+                    stroke: '#ccc', selectable: false, evented: false,
+                    strokeWidth: 1, objectCaching: false, type: 'timeMarker'
+                }),
+                new Text(`${i} seg`, {
+                    left: x, top: this.y_timeline + 5,
+                    fill: 'white', fontSize: 12,
+                    selectable: false, evented: false,
+                    objectCaching: false,
+                    originX: 'left', originY: 'top',
+                    type: 'timeMarker'
+                })
+            );
         }
 
         //this.fabricCanvas.sendToBack(fondo);
         this.fabricCanvas.renderAll();
     }
 
-    /**
-     * Añade un evento y lo muestra en una pista nueva
-     */
+    /** Añade un evento y lo muestra en una pista nueva */
     agregarEvento(inicio, fin) {
         if (isNaN(inicio) || isNaN(fin) || fin <= inicio) {
             alert('Valores inválidos.');
@@ -111,90 +106,77 @@ export default class TimelineCanvas {
         this._redibujarEventos();
     }
 
-    /**
-     * Redibuja todos los eventos asignándoles cada uno una pista distinta
-     */
+    /** Redibuja todos los eventos asignándoles cada uno una pista distinta */
     _redibujarEventos() {
-        // Eliminar eventos previos
+        // Eliminar previos
         this.fabricCanvas.getObjects()
-            .filter(o => o.type === 'eventoRect' || o.type === 'eventoText')
+            .filter(o => o.type === 'eventoGroup')
             .forEach(o => this.fabricCanvas.remove(o));
 
         // Dibujar según índice en lista_eventos
         this.lista_eventos.forEach((ev, idx) => {
-            this._dibujarRectYEtiqueta(ev.inicio, ev.fin, idx);
+            this._dibujarEventoGroup(ev.inicio, ev.fin, idx);
         });
 
         this.fabricCanvas.renderAll();
     }
 
-    /**
-     * Dibuja un rectángulo + texto para el evento en la pista idx
-     */
-    _dibujarRectYEtiqueta(inicio, fin, pistaIndex) {
+    /** Dibuja un grupo (rect + texto) para el evento en pista idx */
+    _dibujarEventoGroup(inicio, fin, pistaIndex) {
         const x      = inicio * this.escala;
         const width  = (fin - inicio) * this.escala;
         const h      = this.eventHeight;
         const salto  = h + this.verticalSpacing;
-
-        // Centro vertical de la pista
         const centerY = this.y_timeline + this.altura_timeline/2 - h/2;
         const offsetY = this._getLaneOffset(pistaIndex, salto);
         const y       = centerY + offsetY;
 
-        const rect = new Rect({
-            left: x, top: y,
-            width, height: h,
-            fill: '#FFA11B', type: 'eventoRect',
-            hasRotatingPoint: false, lockScalingY: true,
-            lockRotation: true, lockMovementY: true,
-            objectCaching: false
-        });
-        const texto = new Text(`${inicio}–${fin}ms`, {
-            left: x + width/2, top: y + h/2,
+        const rect = new Rect({ left: 0, top: 0, width, height: h, fill: '#FFA11B' });
+        const text = new Text(`${inicio}–${fin}ms`, {
+            left: width/2, top: h/2,
             originX: 'center', originY: 'center',
-            fontSize: 14, selectable: false,
-            evented: false, objectCaching: false,
-            type: 'eventoText'
+            fontSize: 14
         });
 
-        // Interacción
-        rect.on('selected', () => rect.set({ hasControls: true, borderColor: '#006fb3', cornerColor: '#fff', cornerSize: 10 }));
-        rect.on('deselected',() => rect.set({ hasControls: false }));
-        rect.set({ hasControls: false });
+        const group = new Group([rect, text], {
+            left: x, top: y,
+            hasRotatingPoint: false,
+            lockScalingY: true,
+            lockRotation: true,
+            lockMovementY: true,
+            objectCaching: false,
+            type: 'eventoGroup'
+        });
 
-        this.fabricCanvas.add(rect, texto);
+        // permitir solo mover en X y escalar en X
+        group.on('scaling', () => {
+            // al escalar, actualizar ancho de rect y reposicionar el texto
+            const scaleX = group.scaleX;
+            rect.set({ width: width * scaleX });
+            text.set({ left: (width * scaleX) / 2 });
+            group.set({ scaleX: 1 });
+        });
+
+        this.fabricCanvas.add(group);
     }
 
-    /**
-     * Offset vertical alternado para cada pista, empezando arriba
-     */
+    /** Offset vertical alternado para cada pista */
     _getLaneOffset(idx, salto) {
-        // idx 0 -> -1*salto, idx1 -> +1*salto, idx2 -> -2*salto, idx3 -> +2*salto...
         const factor = Math.floor(idx / 2) + 1;
         const dir    = idx % 2 === 0 ? -1 : +1;
         return dir * factor * salto;
     }
 
-    /**
-     * Actualiza posición y etiqueta tras mover/escalar
-     */
+    /** Ajusta etiqueta tras escalar el grupo */
     actualizarEtiqueta(e) {
         const obj = e.target;
-        if (obj && obj.type === 'rect' && obj.etiqueta) {
-            const nuevoInicio = Math.round(obj.left / this.escala);
-            const nuevoFin    = Math.round((obj.left + obj.width * obj.scaleX) / this.escala);
-            obj.inicio = nuevoInicio; obj.fin = nuevoFin;
-
-            obj.set({ width: obj.width * obj.scaleX, scaleX: 1, left: nuevoInicio * this.escala });
-            obj.etiqueta.set({ left: obj.left + obj.width/2, top: obj.top + obj.height/2, text: `${nuevoInicio}–${nuevoFin}ms` });
+        if (obj && obj.type === 'eventoGroup') {
+            // el handler en 'scaling' del grupo ya actualiza rect y texto
             this.fabricCanvas.renderAll();
         }
     }
 
-    /**
-     * Limpia canvas
-     */
+    /** Limpia canvas */
     dispose() {
         if (this.fabricCanvas) {
             this.fabricCanvas.dispose();
