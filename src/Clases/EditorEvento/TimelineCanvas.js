@@ -1,186 +1,168 @@
-import { Canvas, Rect, Text, Line, Group } from 'fabric';
-
 export default class TimelineCanvas {
     constructor(canvasElem, config = {}) {
         this.canvasElem = canvasElem;
-        this.container  = this.canvasElem.parentElement;
+        this.ctx = this.canvasElem.getContext('2d');
 
-        // Configuración de escala y tiempo
-        this.escala    = config.escala    || 0.5;
-        this.interval  = config.interval  || 500;
-
-        // Dimensiones del canvas
-        this.ancho_canvas = config.width  || 600;
-        this.alto_canvas  = config.height || 600;
-
-        // Datos de eventos
-        this.lista_eventos   = [];
-        this.eventHeight     = config.eventHeight     || 30;
-        this.verticalSpacing = config.verticalSpacing|| 10;
-
-        // Línea del timeline
+        // Configuración
+        this.escala = config.escala || 0.5;
+        this.interval = config.interval || 500;
+        this.ancho_canvas = 600;
+        this.alto_canvas =  600;
+        this.eventHeight = config.eventHeight || 30;
+        this.verticalSpacing = config.verticalSpacing || 10;
         this.altura_timeline = config.timelineHeight || 200;
-        this.y_timeline      = this.alto_canvas - this.altura_timeline;
+        this.y_timeline = this.alto_canvas - this.altura_timeline;
 
-        // Inicializar Fabric.js
-        this.fabricCanvas = new Canvas(this.canvasElem, {
-            backgroundColor: config.backgroundColor || 'white',
-            selection: false
-        });
+        this.segmento_px = 100;//px
+        this.segundo_seg=1;
+        this.num_segmentos = (this.segundo_seg*this.ancho_canvas)/this.segmento_px;
 
-        // Ajustes y marcas
-        this.ajustarCanvas();
-        this.dibujarMarcas();
 
-        // Eventos de prueba (mantener en constructor)
-        this.lista_eventos.push({ inicio: 200, fin: 600 });
-        this.lista_eventos.push({ inicio: 800, fin: 1600 });
-        //this.lista_eventos.push({ inicio: 300, fin: 500 });
-        this._redibujarEventos();
-
-        // Listener de interacción para escalar y modificar
-        this.fabricCanvas.on('object:scaling', e => this.actualizarEtiqueta(e));
-        this.fabricCanvas.on('object:modified', e => this.actualizarEtiqueta(e));
-    }
-
-    // Ajusta tamaño y redesigna marcas
-    ajustarCanvas() {
-        this.canvasElem.width  = this.ancho_canvas;
+        this.canvasElem.width = this.ancho_canvas;
         this.canvasElem.height = this.alto_canvas;
-        this.fabricCanvas.setWidth(this.ancho_canvas);
-        this.fabricCanvas.setHeight(this.alto_canvas);
-        this.dibujarMarcas();
+
+        this.lista_eventos = [
+            { inicio: 200, fin: 600 },
+            { inicio: 800, fin: 1600 }
+        ];
+
+        // Interacción
+        this.selected = null;
+        this.offsetX = 0;
+        this.isResizing = false;
+        this.resizeSide = null;
+
+        this._bindEvents();
+        this.redibujarTodo();
     }
 
-    // Dibuja la línea de tiempo y sus marcas
-    dibujarMarcas() {
-        this.fabricCanvas.getObjects()
-            .filter(o => o.type === 'timelineBackground')
-            .forEach(o => this.fabricCanvas.remove(o));
+    _bindEvents() {
+        this.canvasElem.addEventListener('mousedown', this._onMouseDown.bind(this));
+        this.canvasElem.addEventListener('mousemove', this._onMouseMove.bind(this));
+        this.canvasElem.addEventListener('mouseup', this._onMouseUp.bind(this));
+    }
 
-        const fondo = new Rect({
-            left: 0, top: this.y_timeline,
-            width: this.ancho_canvas,
-            height: this.altura_timeline,
-            fill: '#1e1e2f',
-            selectable: false, evented: false,
-            objectCaching: false,
-            type: 'timelineBackground'
-        });
-        this.fabricCanvas.add(fondo);
+    redibujarTodo() {
+        const ctx = this.ctx;
+        ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
 
-        this.fabricCanvas.getObjects()
-            .filter(o => o.type === 'timeMarker')
-            .forEach(o => this.fabricCanvas.remove(o));
+        // Línea de tiempo
+        ctx.fillStyle = '#1e1e2f';
+        ctx.fillRect(0, this.y_timeline, this.ancho_canvas, this.altura_timeline);
 
-        const pasos = Math.ceil(this.ancho_canvas / (this.interval * this.escala));
+        ctx.fillStyle = 'white';
+        const pasos =this.num_segmentos; //Math.ceil(this.ancho_canvas / (this.interval * this.escala));
         for (let i = 0; i <= pasos; i++) {
-            const x = i * this.interval * this.escala;
-            this.fabricCanvas.add(
-                new Line([x, this.y_timeline, x, this.y_timeline + this.altura_timeline], {
-                    stroke: '#ccc', selectable: false, evented: false,
-                    strokeWidth: 1, objectCaching: false, type: 'timeMarker'
-                }),
-                new Text(`${i} seg`, {
-                    left: x, top: this.y_timeline + 5,
-                    fill: 'white', fontSize: 12,
-                    selectable: false, evented: false,
-                    objectCaching: false,
-                    originX: 'left', originY: 'top',
-                    type: 'timeMarker'
-                })
-            );
+            //const x = i * this.interval * this.escala;
+            const x = i * this.segmento_px;
+            ctx.beginPath();
+            ctx.moveTo(x, this.y_timeline);
+            ctx.lineTo(x, this.alto_canvas);
+            ctx.strokeStyle = '#ccc';
+            ctx.stroke();
+            ctx.fillText(`${i} seg`, x + 2, this.y_timeline + 12);
         }
 
-        //this.fabricCanvas.sendToBack(fondo);
-        this.fabricCanvas.renderAll();
+        // Eventos
+        this.lista_eventos.forEach((ev, idx) => {
+            this._dibujarEvento(ev, idx);
+        });
     }
 
-    /** Añade un evento y lo muestra en una pista nueva */
+    _dibujarEvento(ev, idx) {
+        const ctx = this.ctx;
+        const x = ev.inicio * this.escala;
+        const width = (ev.fin - ev.inicio) * this.escala;
+        const salto = this.eventHeight + this.verticalSpacing;
+        const centerY = this.y_timeline + this.altura_timeline / 2 - this.eventHeight / 2;
+        const offsetY = this._getLaneOffset(idx, salto);
+        const y = centerY + offsetY;
+
+        ev._renderX = x;
+        ev._renderY = y;
+        ev._renderW = width;
+        ev._renderH = this.eventHeight;
+
+        ctx.fillStyle = '#FFA11B';
+        ctx.fillRect(x, y, width, this.eventHeight);
+        ctx.fillStyle = 'black';
+        ctx.fillText(`${ev.inicio}–${ev.fin}`, x + width / 2 - 20, y + this.eventHeight / 2 + 5);
+    }
+
+    _getLaneOffset(idx, salto) {
+        const factor = Math.floor(idx / 2) + 1;
+        const dir = idx % 2 === 0 ? -1 : +1;
+        return dir * factor * salto;
+    }
+
+    _onMouseDown(e) {
+        const mx = e.offsetX;
+        const my = e.offsetY;
+
+        for (let ev of this.lista_eventos) {
+            const { _renderX: x, _renderY: y, _renderW: w, _renderH: h } = ev;
+
+            if (mx >= x && mx <= x + w && my >= y && my <= y + h) {
+                this.selected = ev;
+
+                if (mx <= x + 5) {
+                    this.isResizing = true;
+                    this.resizeSide = 'left';
+                } else if (mx >= x + w - 5) {
+                    this.isResizing = true;
+                    this.resizeSide = 'right';
+                } else {
+                    this.offsetX = mx - x;
+                }
+                break;
+            }
+        }
+    }
+
+    _onMouseMove(e) {
+        if (!this.selected) return;
+
+        const mx = e.offsetX;
+
+        if (this.isResizing) {
+            const x = this.selected.inicio * this.escala;
+            const w = (this.selected.fin - this.selected.inicio) * this.escala;
+
+            if (this.resizeSide === 'left') {
+                const newInicio = Math.min(this.selected.fin - 10, mx / this.escala);
+                this.selected.inicio = Math.max(0, Math.floor(newInicio));
+            } else if (this.resizeSide === 'right') {
+                const newFin = Math.max(this.selected.inicio + 10, mx / this.escala);
+                this.selected.fin = Math.floor(newFin);
+            }
+        } else {
+            const newInicio = (mx - this.offsetX) / this.escala;
+            const duracion = this.selected.fin - this.selected.inicio;
+            this.selected.inicio = Math.max(0, Math.floor(newInicio));
+            this.selected.fin = this.selected.inicio + duracion;
+        }
+
+        this.redibujarTodo();
+    }
+
+    _onMouseUp() {
+        this.selected = null;
+        this.isResizing = false;
+        this.resizeSide = null;
+    }
+
     agregarEvento(inicio, fin) {
         if (isNaN(inicio) || isNaN(fin) || fin <= inicio) {
             alert('Valores inválidos.');
             return;
         }
         this.lista_eventos.push({ inicio, fin });
-        this._redibujarEventos();
+        this.redibujarTodo();
     }
 
-    /** Redibuja todos los eventos asignándoles cada uno una pista distinta */
-    _redibujarEventos() {
-        // Eliminar previos
-        this.fabricCanvas.getObjects()
-            .filter(o => o.type === 'eventoGroup')
-            .forEach(o => this.fabricCanvas.remove(o));
-
-        // Dibujar según índice en lista_eventos
-        this.lista_eventos.forEach((ev, idx) => {
-            this._dibujarEventoGroup(ev.inicio, ev.fin, idx);
-        });
-
-        this.fabricCanvas.renderAll();
-    }
-
-    /** Dibuja un grupo (rect + texto) para el evento en pista idx */
-    _dibujarEventoGroup(inicio, fin, pistaIndex) {
-        const x      = inicio * this.escala;
-        const width  = (fin - inicio) * this.escala;
-        const h      = this.eventHeight;
-        const salto  = h + this.verticalSpacing;
-        const centerY = this.y_timeline + this.altura_timeline/2 - h/2;
-        const offsetY = this._getLaneOffset(pistaIndex, salto);
-        const y       = centerY + offsetY;
-
-        const rect = new Rect({ left: 0, top: 0, width, height: h, fill: '#FFA11B' });
-        const text = new Text(`${inicio}–${fin}ms`, {
-            left: width/2, top: h/2,
-            originX: 'center', originY: 'center',
-            fontSize: 14
-        });
-
-        const group = new Group([rect, text], {
-            left: x, top: y,
-            hasRotatingPoint: false,
-            lockScalingY: true,
-            lockRotation: true,
-            lockMovementY: true,
-            objectCaching: false,
-            type: 'eventoGroup'
-        });
-
-        // permitir solo mover en X y escalar en X
-        group.on('scaling', () => {
-            // al escalar, actualizar ancho de rect y reposicionar el texto
-            const scaleX = group.scaleX;
-            rect.set({ width: width * scaleX });
-            text.set({ left: (width * scaleX) / 2 });
-            group.set({ scaleX: 1 });
-        });
-
-        this.fabricCanvas.add(group);
-    }
-
-    /** Offset vertical alternado para cada pista */
-    _getLaneOffset(idx, salto) {
-        const factor = Math.floor(idx / 2) + 1;
-        const dir    = idx % 2 === 0 ? -1 : +1;
-        return dir * factor * salto;
-    }
-
-    /** Ajusta etiqueta tras escalar el grupo */
-    actualizarEtiqueta(e) {
-        const obj = e.target;
-        if (obj && obj.type === 'eventoGroup') {
-            // el handler en 'scaling' del grupo ya actualiza rect y texto
-            this.fabricCanvas.renderAll();
-        }
-    }
-
-    /** Limpia canvas */
     dispose() {
-        if (this.fabricCanvas) {
-            this.fabricCanvas.dispose();
-            this.fabricCanvas = null;
-        }
+        this.canvasElem.removeEventListener('mousedown', this._onMouseDown);
+        this.canvasElem.removeEventListener('mousemove', this._onMouseMove);
+        this.canvasElem.removeEventListener('mouseup', this._onMouseUp);
     }
 }
