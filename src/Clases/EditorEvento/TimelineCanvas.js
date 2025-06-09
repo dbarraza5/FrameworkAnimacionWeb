@@ -1,3 +1,5 @@
+import index from "@mui/material/darkScrollbar";
+
 export default class TimelineCanvas {
     constructor(canvasElem, config = {}) {
         this.canvasElem = canvasElem;
@@ -8,8 +10,8 @@ export default class TimelineCanvas {
         this.interval = config.interval || 500;
         this.ancho_canvas = 600;
         this.alto_canvas =  600;
-        this.eventHeight = config.eventHeight || 30;
-        this.verticalSpacing = config.verticalSpacing || 10;
+        this.alto_evento = 30;
+        this.sep_entre_even =  5;
         this.altura_timeline = config.timelineHeight || 200;
         this.y_timeline = this.alto_canvas - this.altura_timeline;
 
@@ -23,7 +25,9 @@ export default class TimelineCanvas {
 
         this.lista_eventos = [
             { inicio: 0, fin: 500 },
-            { inicio: 800, fin: 1600 }
+            { inicio: 800, fin: 1600 },
+            { inicio: 1000, fin: 2600 },
+            { inicio: 400, fin: 1500 },
         ];
 
         // Interacción
@@ -63,7 +67,7 @@ export default class TimelineCanvas {
             ctx.fillText(`${i} seg`, x + 2, this.y_timeline + 12);
         }
 
-        // Eventos
+
         this.lista_eventos.forEach((ev, idx) => {
             this._dibujarEvento(ev, idx);
         });
@@ -73,26 +77,31 @@ export default class TimelineCanvas {
         const ctx = this.ctx;
         const x = ev.inicio * this.escala;
         const width = (ev.fin - ev.inicio) * this.escala;
-        const salto = this.eventHeight + this.verticalSpacing;
-        const centerY = this.y_timeline + this.altura_timeline / 2 - this.eventHeight / 2;
-        const offsetY = this._getLaneOffset(idx, salto);
-        const y = centerY + offsetY;
+        const salto = this.alto_evento + this.sep_entre_even;
+        const centerY = this.y_timeline + this.altura_timeline / 2 - this.alto_evento / 2;
+        const offsetY =this.y_timeline + this._getLaneOffset(idx, salto);
+        const y =  offsetY;
 
         ev._renderX = x;
         ev._renderY = y;
         ev._renderW = width;
-        ev._renderH = this.eventHeight;
+        ev._renderH = this.alto_evento;
 
         ctx.fillStyle = '#FFA11B';
-        ctx.fillRect(x, y, width, this.eventHeight);
+        ctx.fillRect(x, y, width, this.alto_evento);
         ctx.fillStyle = 'black';
-        ctx.fillText(`${ev.inicio}–${ev.fin}`, x + width / 2 - 20, y + this.eventHeight / 2 + 5);
+        ctx.fillText(`${ev.inicio}–${ev.fin}`, x + width / 2 - 20, y + this.alto_evento / 2 + 5);
     }
 
     _getLaneOffset(idx, salto) {
-        const factor = Math.floor(idx / 2) + 1;
-        const dir = idx % 2 === 0 ? -1 : +1;
-        return dir * factor * salto;
+        const num_elementos = this.lista_eventos.length;
+        const alto_rectangulo  = num_elementos*this.alto_evento+(num_elementos-1)*this.sep_entre_even;
+        const segmento = alto_rectangulo/num_elementos;
+        return segmento*idx + (this.altura_timeline-alto_rectangulo)/2;
+
+        // const factor = Math.floor(idx / 2) + 1;
+        // const dir = idx % 2 === 0 ? -1 : +1;
+        // return dir * factor * salto;
     }
 
     _onMouseDown(e) {
