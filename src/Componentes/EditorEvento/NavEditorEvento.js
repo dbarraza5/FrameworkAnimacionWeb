@@ -59,11 +59,7 @@ function NavEditorEvento(props){
                 canvas.fabric = null;
             }
 
-            instance = new TimelineCanvas(canvas, {
-                escala: 0.5,
-                totalMs: 10000,
-                interval: 500
-            });
+            instance = new TimelineCanvas(canvas, props.eventoLienzoFigura);
 
             setTimelineInstance(instance);
         }

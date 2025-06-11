@@ -1,18 +1,18 @@
 import index from "@mui/material/darkScrollbar";
 
 export default class TimelineCanvas {
-    constructor(canvasElem, config = {}) {
+    constructor(canvasElem, eventoLienzo) {
         this.canvasElem = canvasElem;
         this.ctx = this.canvasElem.getContext('2d');
-
+        this.eventoLienzo = eventoLienzo;
         // Configuración
         this.escala = .1;//config.escala || 0.5;
-        this.interval = config.interval || 500;
+        this.interval = 500;
         this.ancho_canvas = 600;
         this.alto_canvas =  600;
         this.alto_evento = 30;
         this.sep_entre_even =  5;
-        this.altura_timeline = config.timelineHeight || 200;
+        this.altura_timeline =  200;
         this.y_timeline = this.alto_canvas - this.altura_timeline;
 
         this.segmento_px = 100;//px
@@ -22,6 +22,11 @@ export default class TimelineCanvas {
 
         this.canvasElem.width = this.ancho_canvas;
         this.canvasElem.height = this.alto_canvas;
+
+        this.desplazamiento_x=0;
+        this.isDraggingTimeline = false;
+        this.dragStartX = 0;
+        this.shiftPresionado = false;
 
         this.lista_eventos = [
             { inicio: 0, fin: 500 },
@@ -58,7 +63,7 @@ export default class TimelineCanvas {
         const pasos =this.num_segmentos; //Math.ceil(this.ancho_canvas / (this.interval * this.escala));
         for (let i = 0; i <= pasos; i++) {
             //const x = i * this.interval * this.escala;
-            const x = i * this.segmento_px;
+            const x = i * this.segmento_px - this.desplazamiento_x;
             ctx.beginPath();
             ctx.moveTo(x, this.y_timeline);
             ctx.lineTo(x, this.alto_canvas);
@@ -75,7 +80,7 @@ export default class TimelineCanvas {
 
     _dibujarEvento(ev, idx) {
         const ctx = this.ctx;
-        const x = ev.inicio * this.escala;
+        const x = ev.inicio * this.escala - this.desplazamiento_x;
         const width = (ev.fin - ev.inicio) * this.escala;
         const salto = this.alto_evento + this.sep_entre_even;
         const centerY = this.y_timeline + this.altura_timeline / 2 - this.alto_evento / 2;
@@ -108,6 +113,16 @@ export default class TimelineCanvas {
         const mx = e.offsetX;
         const my = e.offsetY;
 
+        // Drag del timeline
+        if (my >= this.y_timeline && my <= this.alto_canvas &&
+            this.eventoLienzo.stack_event_teclado.includes("ShiftLeft")) {
+            this.isDraggingTimeline = true;
+            this.dragStartX = mx;
+            //return;
+        }
+        //console.log(this.eventoLienzo.stack_event_teclado);
+
+
         for (let ev of this.lista_eventos) {
             const { _renderX: x, _renderY: y, _renderW: w, _renderH: h } = ev;
 
@@ -129,32 +144,45 @@ export default class TimelineCanvas {
     }
 
     _onMouseMove(e) {
-        if (!this.selected) return;
+        //if (!this.selected) return;
 
         const mx = e.offsetX;
 
-        if (this.isResizing) {
-            const x = this.selected.inicio * this.escala;
-            const w = (this.selected.fin - this.selected.inicio) * this.escala;
+        if (this.isDraggingTimeline) {
+            const delta = mx - this.dragStartX;
+            this.dragStartX = mx;
+            this.desplazamiento_x -= delta;
+            if (this.desplazamiento_x < 0) this.desplazamiento_x = 0;
+            this.redibujarTodo();
+            //return;
+        }
+        console.log("desplzamieto x: "+this.desplazamiento_x);
 
-            if (this.resizeSide === 'left') {
-                const newInicio = Math.min(this.selected.fin - 10, mx / this.escala);
+        if (this.selected){
+            if (this.isResizing) {
+                const x = this.selected.inicio * this.escala;
+                const w = (this.selected.fin - this.selected.inicio) * this.escala;
+
+                if (this.resizeSide === 'left') {
+                    const newInicio = Math.min(this.selected.fin - 10, mx / this.escala);
+                    this.selected.inicio = Math.max(0, Math.floor(newInicio));
+                } else if (this.resizeSide === 'right') {
+                    const newFin = Math.max(this.selected.inicio + 10, mx / this.escala);
+                    this.selected.fin = Math.floor(newFin);
+                }
+            } else {
+                const newInicio = (mx - this.offsetX) / this.escala;
+                const duracion = this.selected.fin - this.selected.inicio;
                 this.selected.inicio = Math.max(0, Math.floor(newInicio));
-            } else if (this.resizeSide === 'right') {
-                const newFin = Math.max(this.selected.inicio + 10, mx / this.escala);
-                this.selected.fin = Math.floor(newFin);
+                this.selected.fin = this.selected.inicio + duracion;
             }
-        } else {
-            const newInicio = (mx - this.offsetX) / this.escala;
-            const duracion = this.selected.fin - this.selected.inicio;
-            this.selected.inicio = Math.max(0, Math.floor(newInicio));
-            this.selected.fin = this.selected.inicio + duracion;
         }
 
         this.redibujarTodo();
     }
 
     _onMouseUp() {
+        this.isDraggingTimeline = false;
         this.selected = null;
         this.isResizing = false;
         this.resizeSide = null;
