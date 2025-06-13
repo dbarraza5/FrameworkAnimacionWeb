@@ -60,8 +60,10 @@ export default class TimelineCanvas {
         ctx.fillRect(0, this.y_timeline, this.ancho_canvas, this.altura_timeline);
 
         ctx.fillStyle = 'white';
-        const pasos =this.num_segmentos; //Math.ceil(this.ancho_canvas / (this.interval * this.escala));
-        for (let i = 0; i <= pasos; i++) {
+        const i_paso_ = Math.floor(this.desplazamiento_x / this.segmento_px);
+        const pasos =this.num_segmentos+i_paso_; //Math.ceil(this.ancho_canvas / (this.interval * this.escala));
+
+        for (let i = i_paso_; i <= pasos; i++) {
             //const x = i * this.interval * this.escala;
             const x = i * this.segmento_px - this.desplazamiento_x;
             ctx.beginPath();
