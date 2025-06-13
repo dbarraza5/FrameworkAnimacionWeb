@@ -147,7 +147,7 @@ export default class TimelineCanvas {
         //if (!this.selected) return;
 
         const mx = e.offsetX;
-
+        const mx_delta = mx- - this.desplazamiento_x;
         if (this.isDraggingTimeline) {
             const delta = mx - this.dragStartX;
             this.dragStartX = mx;
@@ -164,14 +164,14 @@ export default class TimelineCanvas {
                 const w = (this.selected.fin - this.selected.inicio) * this.escala;
 
                 if (this.resizeSide === 'left') {
-                    const newInicio = Math.min(this.selected.fin - 10, mx / this.escala);
+                    const newInicio = Math.min(this.selected.fin - 10, mx_delta / this.escala);
                     this.selected.inicio = Math.max(0, Math.floor(newInicio));
                 } else if (this.resizeSide === 'right') {
-                    const newFin = Math.max(this.selected.inicio + 10, mx / this.escala);
+                    const newFin = Math.max(this.selected.inicio + 10, mx_delta / this.escala);
                     this.selected.fin = Math.floor(newFin);
                 }
             } else {
-                const newInicio = (mx - this.offsetX) / this.escala;
+                const newInicio = (mx_delta - this.offsetX) / this.escala;
                 const duracion = this.selected.fin - this.selected.inicio;
                 this.selected.inicio = Math.max(0, Math.floor(newInicio));
                 this.selected.fin = this.selected.inicio + duracion;
