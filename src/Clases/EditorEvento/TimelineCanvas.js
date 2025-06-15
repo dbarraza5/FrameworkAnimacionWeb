@@ -1,5 +1,7 @@
 import index from "@mui/material/darkScrollbar";
 
+const ALTO_EVENTO_=30;
+
 export default class TimelineCanvas {
     constructor(canvasElem, eventoLienzo) {
         this.canvasElem = canvasElem;
@@ -10,7 +12,7 @@ export default class TimelineCanvas {
         this.interval = 500;
         this.ancho_canvas = 600;
         this.alto_canvas =  600;
-        this.alto_evento = 30;
+        this.alto_evento = ALTO_EVENTO_;
         this.sep_entre_even =  5;
         this.altura_timeline =  200;
         this.y_timeline = this.alto_canvas - this.altura_timeline;
@@ -24,8 +26,11 @@ export default class TimelineCanvas {
         this.canvasElem.height = this.alto_canvas;
 
         this.desplazamiento_x=0;
-        this.isDraggingTimeline = false;
+        this.desplazamiento_y=0;
+        this.isDraggingTimelineX = false;
+        this.isDraggingTimelineY = false;
         this.dragStartX = 0;
+        this.dragStartY = 0;
         this.shiftPresionado = false;
 
         this.lista_eventos = [
@@ -33,6 +38,8 @@ export default class TimelineCanvas {
             { inicio: 800, fin: 1600 },
             { inicio: 1000, fin: 2600 },
             { inicio: 400, fin: 1500 },
+            { inicio: 1600, fin: 2000 },
+            { inicio: 2100, fin: 2600 },
         ];
 
         // Interacción
@@ -87,7 +94,9 @@ export default class TimelineCanvas {
         const salto = this.alto_evento + this.sep_entre_even;
         const centerY = this.y_timeline + this.altura_timeline / 2 - this.alto_evento / 2;
         const offsetY =this.y_timeline + this._getLaneOffset(idx, salto);
-        const y =  offsetY;
+        const y =  offsetY-this.desplazamiento_y;
+
+        if(y<this.y_timeline) return;
 
         ev._renderX = x;
         ev._renderY = y;
@@ -101,28 +110,39 @@ export default class TimelineCanvas {
     }
 
     _getLaneOffset(idx, salto) {
-        const num_elementos = this.lista_eventos.length;
-        const alto_rectangulo  = num_elementos*this.alto_evento+(num_elementos-1)*this.sep_entre_even;
-        const segmento = alto_rectangulo/num_elementos;
-        return segmento*idx + (this.altura_timeline-alto_rectangulo)/2;
-
-        // const factor = Math.floor(idx / 2) + 1;
-        // const dir = idx % 2 === 0 ? -1 : +1;
-        // return dir * factor * salto;
+        let num_elementos = this.lista_eventos.length>4?4:this.lista_eventos.length;
+        if(idx<=3){
+            const alto_rectangulo  = num_elementos*this.alto_evento+(num_elementos-1)*this.sep_entre_even;
+            const segmento = alto_rectangulo/num_elementos;
+            return segmento*idx + (this.altura_timeline-alto_rectangulo)/2;
+        }else{
+            num_elementos=4;
+            const alto_rectangulo  = num_elementos*this.alto_evento+(num_elementos-1)*this.sep_entre_even;
+            const segmento = alto_rectangulo/num_elementos;
+            const y_evento = segmento*3 + (this.altura_timeline-alto_rectangulo)/2;
+            return y_evento+(this.alto_evento+this.sep_entre_even)*(idx-3);//+this.alto_evento;
+        }
     }
 
     _onMouseDown(e) {
         const mx = e.offsetX;
         const my = e.offsetY;
 
+        const dentro_area = my >= this.y_timeline && my <= this.alto_canvas;
         // Drag del timeline
-        if (my >= this.y_timeline && my <= this.alto_canvas &&
-            this.eventoLienzo.stack_event_teclado.includes("ShiftLeft")) {
-            this.isDraggingTimeline = true;
+        if (dentro_area && this.eventoLienzo.stack_event_teclado.includes("KeyX")) {
+            this.isDraggingTimelineX = true;
             this.dragStartX = mx;
             //return;
         }
-        //console.log(this.eventoLienzo.stack_event_teclado);
+
+        // Drag del timeline
+        if (dentro_area && this.eventoLienzo.stack_event_teclado.includes("KeyY")) {
+            this.isDraggingTimelineY = true;
+            this.dragStartY = my;
+            //return;
+        }
+        console.log(this.eventoLienzo.stack_event_teclado);
 
 
         for (let ev of this.lista_eventos) {
@@ -150,15 +170,24 @@ export default class TimelineCanvas {
 
         const mx = e.offsetX;
         const mx_delta = mx- - this.desplazamiento_x;
-        if (this.isDraggingTimeline) {
+        if (this.isDraggingTimelineX) {
             const delta = mx - this.dragStartX;
             this.dragStartX = mx;
             this.desplazamiento_x -= delta;
             if (this.desplazamiento_x < 0) this.desplazamiento_x = 0;
-            this.redibujarTodo();
+            //this.redibujarTodo();
             //return;
         }
-        console.log("desplzamieto x: "+this.desplazamiento_x);
+
+        const my = e.offsetY;
+        const my_delta = my- - this.desplazamiento_y;
+        if (this.isDraggingTimelineY) {
+            const delta = my - this.dragStartY;
+            this.dragStartY = my;
+            this.desplazamiento_y -= delta;
+            if (this.desplazamiento_y < 0) this.desplazamiento_y = 0;
+        }
+        console.log("desplzamieto y: "+this.desplazamiento_y);
 
         if (this.selected){
             if (this.isResizing) {
@@ -184,7 +213,8 @@ export default class TimelineCanvas {
     }
 
     _onMouseUp() {
-        this.isDraggingTimeline = false;
+        this.isDraggingTimelineX = false;
+        this.isDraggingTimelineY = false;
         this.selected = null;
         this.isResizing = false;
         this.resizeSide = null;
