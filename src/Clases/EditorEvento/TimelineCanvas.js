@@ -184,8 +184,12 @@ export default class TimelineCanvas {
         if (this.isDraggingTimelineY) {
             const delta = my - this.dragStartY;
             this.dragStartY = my;
-            this.desplazamiento_y -= delta;
-            if (this.desplazamiento_y < 0) this.desplazamiento_y = 0;
+            const espacio_eventos = (this.alto_evento+this.sep_entre_even)*(this.lista_eventos.length-4);
+            const esta_limite = Math.abs(this.desplazamiento_y - delta)<espacio_eventos;
+            if (esta_limite){
+                this.desplazamiento_y -= delta;
+                if (this.desplazamiento_y < 0) this.desplazamiento_y = 0;
+            }
         }
         console.log("desplzamieto y: "+this.desplazamiento_y);
 
