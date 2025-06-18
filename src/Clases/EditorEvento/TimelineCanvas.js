@@ -65,6 +65,8 @@ export default class TimelineCanvas {
         this.shiftPresionado = false;
 
         this.x_linea_tiempo = 120;
+        this.isDraggingLineaTiempo = false;
+        this.offsetDragLineaTiempo = 0;
 
         this.lista_eventos = [
             { inicio: 0, fin: 500 },
@@ -92,8 +94,9 @@ export default class TimelineCanvas {
     }
 
     dibujarLineaTiempo(){
-        dibujarTrianguloEquilatero(this.ctx, 10, this.x_linea_tiempo,this.y_timeline);
-        dibujarLinea(this.ctx, this.x_linea_tiempo, this.y_timeline, this.x_linea_tiempo, this.y_timeline+this.altura_timeline);
+        const x_line_punto =this.x_linea_tiempo - this.desplazamiento_x;
+        dibujarTrianguloEquilatero(this.ctx, 10, x_line_punto,this.y_timeline);
+        dibujarLinea(this.ctx, x_line_punto, this.y_timeline, x_line_punto, this.y_timeline+this.altura_timeline);
     }
 
     redibujarTodo() {
@@ -201,6 +204,17 @@ export default class TimelineCanvas {
                 break;
             }
         }
+
+        //--------------------------------------------------------------------
+        const sizeColision = 15; // tamaño del cuadrado
+        const x_col = this.x_linea_tiempo- this.desplazamiento_x - sizeColision / 2;
+        const y_col = this.y_timeline - sizeColision ;/// 2;
+
+        if (mx >= x_col && mx <= x_col + sizeColision && my >= y_col && my <= y_col + sizeColision) {
+            this.isDraggingLineaTiempo = true;
+            this.offsetDragLineaTiempo = mx - this.x_linea_tiempo;
+            return; // prioridad a mover el triángulo
+        }
     }
 
     _onMouseMove(e) {
@@ -251,6 +265,13 @@ export default class TimelineCanvas {
             }
         }
 
+        if (this.isDraggingLineaTiempo) {
+            this.x_linea_tiempo = mx - this.offsetDragLineaTiempo;
+            // Límite dentro del canvas
+            if (this.x_linea_tiempo < 0) this.x_linea_tiempo = 0;
+            //if (this.x_linea_tiempo > this.ancho_canvas) this.x_linea_tiempo = this.ancho_canvas;
+        }
+
         this.redibujarTodo();
     }
 
@@ -260,6 +281,7 @@ export default class TimelineCanvas {
         this.selected = null;
         this.isResizing = false;
         this.resizeSide = null;
+        this.isDraggingLineaTiempo = false;
     }
 
     agregarEvento(inicio, fin) {
