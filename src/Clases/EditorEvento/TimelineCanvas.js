@@ -2,6 +2,37 @@ import index from "@mui/material/darkScrollbar";
 
 const ALTO_EVENTO_=30;
 
+function dibujarTrianguloEquilatero(ctx, p, ejeX, ejeY) {
+    const height = p * Math.sqrt(3) / 2; // altura del triángulo equilátero
+
+    // Los puntos se definen relativo al vértice inferior (ejeX, ejeY)
+    const x1 = ejeX - p / 2, y1 = ejeY - height; // izquierda de la base
+    const x2 = ejeX + p / 2, y2 = ejeY - height; // derecha de la base
+    const x3 = ejeX,          y3 = ejeY;         // vértice inferior
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.closePath();
+
+    ctx.fillStyle = 'red';
+    ctx.fill();
+    ctx.strokeStyle = '#000';
+    ctx.stroke();
+}
+
+
+function dibujarLinea(ctx, p1x, p1y, p2x, p2y) {
+    ctx.beginPath();
+    ctx.moveTo(p1x, p1y);
+    ctx.lineTo(p2x, p2y);
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 2; // opcional, grosor de la línea
+    ctx.stroke();
+    ctx.closePath(); // opcional
+}
+
 export default class TimelineCanvas {
     constructor(canvasElem, eventoLienzo) {
         this.canvasElem = canvasElem;
@@ -33,6 +64,8 @@ export default class TimelineCanvas {
         this.dragStartY = 0;
         this.shiftPresionado = false;
 
+        this.x_linea_tiempo = 120;
+
         this.lista_eventos = [
             { inicio: 0, fin: 500 },
             { inicio: 800, fin: 1600 },
@@ -58,6 +91,11 @@ export default class TimelineCanvas {
         this.canvasElem.addEventListener('mouseup', this._onMouseUp.bind(this));
     }
 
+    dibujarLineaTiempo(){
+        dibujarTrianguloEquilatero(this.ctx, 10, this.x_linea_tiempo,this.y_timeline);
+        dibujarLinea(this.ctx, this.x_linea_tiempo, this.y_timeline, this.x_linea_tiempo, this.y_timeline+this.altura_timeline);
+    }
+
     redibujarTodo() {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
@@ -71,7 +109,6 @@ export default class TimelineCanvas {
         const pasos =this.num_segmentos+i_paso_; //Math.ceil(this.ancho_canvas / (this.interval * this.escala));
 
         for (let i = i_paso_; i <= pasos; i++) {
-            //const x = i * this.interval * this.escala;
             const x = i * this.segmento_px - this.desplazamiento_x;
             ctx.beginPath();
             ctx.moveTo(x, this.y_timeline);
@@ -81,10 +118,11 @@ export default class TimelineCanvas {
             ctx.fillText(`${i} seg`, x + 2, this.y_timeline + 12);
         }
 
-
         this.lista_eventos.forEach((ev, idx) => {
             this._dibujarEvento(ev, idx);
         });
+
+        this.dibujarLineaTiempo();
     }
 
     _dibujarEvento(ev, idx) {
