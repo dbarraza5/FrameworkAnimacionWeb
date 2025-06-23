@@ -11,64 +11,32 @@ function NavEditorEvento(props){
     const canvasRef = useRef(null);
     const [timelineInstance, setTimelineInstance] = useState(null);
 
-    const graph = {
-        nodes: [
-            { id: 1, label: "Node 1", title: "node 1 tootip text" },
-            { id: 2, label: "Node 2", title: "node 2 tootip text" },
-            { id: 3, label: "Node 3", title: "node 3 tootip text" },
-            { id: 4, label: "Node 4", title: "node 4 tootip text" },
-            { id: 5, label: "Node 5", title: "node 5 tootip text" }
-        ],
-        edges: [
-            { from: 1, to: 2 },
-            { from: 1, to: 3 },
-            { from: 2, to: 4 },
-            { from: 2, to: 5 }
-        ]
-    };
-
-    const options = {
-        layout: {
-            hierarchical: true
-        },
-        edges: {
-            color: "#000000"
-        },
-        height: "500px"
-    };
-
-    const events = {
-        select: function(event) {
-            var { nodes, edges } = event;
-            console.log(nodes)
-        }
-    };
 
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
-        //props.gestionLienzo.procesarEventoLienzo(eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
+        //props.gestionLienzo.procesarEventoLienzo(props.eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
     }
 
     useEffect(() => {
-        let instance;
-        const canvas = document.getElementById('lienzo-animacion');
-
-        if (canvas) {
-            if (canvas.fabric) {
-                canvas.fabric.dispose();
-                canvas.fabric = null;
-            }
-
-            instance = new TimelineCanvas(canvas, props.eventoLienzoFigura);
-
-            setTimelineInstance(instance);
-        }
-
-        return () => {
-            if (instance) {
-                instance.dispose();
-            }
-        };
+        // let instance;
+        // const canvas = document.getElementById('lienzo-animacion');
+        //
+        // if (canvas) {
+        //     if (canvas.fabric) {
+        //         canvas.fabric.dispose();
+        //         canvas.fabric = null;
+        //     }
+        //
+        //     instance = new TimelineCanvas(canvas, props.eventoLienzoFigura);
+        //
+        //     setTimelineInstance(instance);
+        // }
+        //
+        // return () => {
+        //     if (instance) {
+        //         instance.dispose();
+        //     }
+        // };
     }, []);
 
 

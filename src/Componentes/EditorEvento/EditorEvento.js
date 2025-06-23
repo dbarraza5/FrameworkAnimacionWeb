@@ -11,6 +11,7 @@ import {Cookies} from 'react-cookie';
 import {GestionEvento} from "../../Clases/EditorEvento/GestionEvento";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
 import {useInterval} from "react-use";
+import TimelineCanvas from "../../Clases/EditorEvento/TimelineCanvas";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -24,8 +25,8 @@ const useCustomEvento=(valor_inicial=null)=>{
 
 function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
-
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
+    const [timelineInstance, setTimelineInstance] = useState(null);
 
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
@@ -70,6 +71,9 @@ function EditorEvento(props){
     useEffect(() => {
         console.log("[==============================Evento===========================]")
         obtenerEvento();
+
+        const instance = new TimelineCanvas(eventoLienzoFigura);
+        setTimelineInstance(instance);
     }, []);
 
     useInterval(() => {
@@ -77,8 +81,9 @@ function EditorEvento(props){
         //eventoLienzoFigura.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
         //console.log("Aqui proceso principal del lienzo");
         eventoAnimacion.edicion.procesandoEventos();
-        //eventoAnimacion.edicion.imprimirEventos();
-    }, startLoopLienzo ? 200 : null);
+        eventoAnimacion.edicion.imprimirEventos();
+        timelineInstance.redibujarTodo();
+    }, startLoopLienzo ? 100 : null);
 
 
     return(<div>

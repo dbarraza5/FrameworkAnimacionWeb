@@ -34,8 +34,9 @@ function dibujarLinea(ctx, p1x, p1y, p2x, p2y) {
 }
 
 export default class TimelineCanvas {
-    constructor(canvasElem, eventoLienzo) {
-        this.canvasElem = canvasElem;
+    constructor(eventoLienzo) {
+        //this.canvasElem = canvasElem;
+        this.canvasElem = document.getElementById('lienzo-animacion');
         this.ctx = this.canvasElem.getContext('2d');
         this.eventoLienzo = eventoLienzo;
         // Configuración
@@ -84,7 +85,7 @@ export default class TimelineCanvas {
         this.resizeSide = null;
 
         this._bindEvents();
-        this.redibujarTodo();
+        //this.redibujarTodo();
     }
 
     _bindEvents() {
@@ -101,7 +102,7 @@ export default class TimelineCanvas {
 
     redibujarTodo() {
         const ctx = this.ctx;
-        ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
+        //ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
 
         // Línea de tiempo
         ctx.fillStyle = '#1e1e2f';
@@ -272,7 +273,7 @@ export default class TimelineCanvas {
             //if (this.x_linea_tiempo > this.ancho_canvas) this.x_linea_tiempo = this.ancho_canvas;
         }
 
-        this.redibujarTodo();
+        //this.redibujarTodo();
     }
 
     _onMouseUp() {
@@ -290,7 +291,7 @@ export default class TimelineCanvas {
             return;
         }
         this.lista_eventos.push({ inicio, fin });
-        this.redibujarTodo();
+        //this.redibujarTodo();
     }
 
     dispose() {
