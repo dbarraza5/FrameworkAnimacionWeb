@@ -29,6 +29,7 @@ class GestionEvento{
     imprimir_animacion = null;
     configuracion_lienzo = null;
     id_canvas = null;
+    tiempo_animacion = 0;
     constructor() {
         this.id_canvas = "lienzo-animacion"
         this.gestion_eventos= new GestionMovimientos();
@@ -72,7 +73,7 @@ class GestionEvento{
     procesandoEventos(){
         tiempo_universal=performance.now();
         const tiempo = this.tiempo.cronometroC(tiempo_universal);
-
+        this.tiempo_animacion = tiempo;
         // for(let i=0; i<this.eventos.length; i++){
         //     for(let j=0; j<this.eventos[i].evento.objetos.length; j++){
         //         this.eventos[i].evento.objetos[j].x_mov =0;
@@ -132,7 +133,7 @@ class GestionEvento{
             this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
             //console.log(`[CXY] MOV ${x}, ${y}`);
         }
-        //console.log("tiempo1: "+tiempo);
+        console.log("tiempo1: "+tiempo);
     }
 
     movimientos(tiempo, lista_mov, objetos){

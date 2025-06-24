@@ -82,7 +82,8 @@ function EditorEvento(props){
         //console.log("Aqui proceso principal del lienzo");
         eventoAnimacion.edicion.procesandoEventos();
         eventoAnimacion.edicion.imprimirEventos();
-        timelineInstance.redibujarTodo();
+        timelineInstance.procesar(eventoAnimacion.edicion);
+        //timelineInstance.redibujarTodo();
     }, startLoopLienzo ? 100 : null);
 
 
