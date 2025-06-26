@@ -76,10 +76,16 @@ function EditorEvento(props){
         setTimelineInstance(instance);
     }, []);
 
+    useEffect(() => {
+        console.log(eventoAnimacion.edicion.seleccion_evento);
+        if(eventoAnimacion.edicion.seleccion_evento!==null){
+            const evento_ = eventoAnimacion.edicion.eventos[eventoAnimacion.edicion.seleccion_evento];
+            console.log("[cambio de evento]: ");
+            console.log(evento_);
+        }
+    }, [eventoAnimacion]);
+
     useInterval(() => {
-        //console.log('This will run every second!: '+gestionLienzo.ID+ " id_h: "+id_hilo_lienzo);
-        //eventoLienzoFigura.procesarEventoLienzo(eventoLienzoFigura, setAnimacion, cambiarListaTrabajo)
-        //console.log("Aqui proceso principal del lienzo");
         eventoAnimacion.edicion.procesandoEventos();
         eventoAnimacion.edicion.imprimirEventos();
         timelineInstance.procesar(eventoAnimacion.edicion);

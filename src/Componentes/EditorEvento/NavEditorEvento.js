@@ -8,44 +8,19 @@ import TimelineCanvas from "../../Clases/EditorEvento/TimelineCanvas";
 
 function NavEditorEvento(props){
 
-    const canvasRef = useRef(null);
-    const [timelineInstance, setTimelineInstance] = useState(null);
-
-
     const editar_animacion=()=>{
         //console.log(props.gestionLienzo)
         //props.gestionLienzo.procesarEventoLienzo(props.eventoLienzoFigura, props.setAnimacion, props.cambiarListaTrabajo)
     }
 
     useEffect(() => {
-        // let instance;
-        // const canvas = document.getElementById('lienzo-animacion');
-        //
-        // if (canvas) {
-        //     if (canvas.fabric) {
-        //         canvas.fabric.dispose();
-        //         canvas.fabric = null;
-        //     }
-        //
-        //     instance = new TimelineCanvas(canvas, props.eventoLienzoFigura);
-        //
-        //     setTimelineInstance(instance);
-        // }
-        //
-        // return () => {
-        //     if (instance) {
-        //         instance.dispose();
-        //     }
-        // };
+
     }, []);
 
 
     const agregarEvento = () => {
         const inicio = parseInt(prompt("Tiempo de inicio (ms):"), 10);
         const fin = parseInt(prompt("Tiempo de fin (ms):"), 10);
-        if (timelineInstance) {
-            timelineInstance.agregarEvento(inicio, fin);
-        }
     };
 
     console.log("NAV EDITOR");

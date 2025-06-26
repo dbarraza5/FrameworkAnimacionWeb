@@ -4,6 +4,7 @@ import {useState} from "react";
 import PanelMovimientos from "./PanelMovimientos";
 import PanelScripts from "./PanelScripts";
 import PanelAnimacion from "./PanelAnimacion";
+import {GestionEvento} from "../../../Clases/EditorEvento/GestionEvento";
 
 
 function NavEventos(props){
@@ -13,6 +14,8 @@ function NavEventos(props){
 
     const seleccionEvento=(index)=>{
         setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
+        props.eventoAnimacion.edicion.seleccion_evento = index;
+        props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     }
 
     return (<div>

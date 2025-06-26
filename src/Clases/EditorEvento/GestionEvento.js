@@ -30,6 +30,8 @@ class GestionEvento{
     configuracion_lienzo = null;
     id_canvas = null;
     tiempo_animacion = 0;
+
+    seleccion_evento = null;
     constructor() {
         this.id_canvas = "lienzo-animacion"
         this.gestion_eventos= new GestionMovimientos();
@@ -133,7 +135,7 @@ class GestionEvento{
             this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
             //console.log(`[CXY] MOV ${x}, ${y}`);
         }
-        console.log("tiempo1: "+tiempo);
+        //console.log("tiempo1: "+tiempo);
     }
 
     movimientos(tiempo, lista_mov, objetos){
