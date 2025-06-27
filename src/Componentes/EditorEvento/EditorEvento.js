@@ -81,7 +81,16 @@ function EditorEvento(props){
         if(eventoAnimacion.edicion.seleccion_evento!==null){
             const evento_ = eventoAnimacion.edicion.eventos[eventoAnimacion.edicion.seleccion_evento];
             console.log("[cambio de evento]: ");
-            console.log(evento_);
+            console.log(evento_.evento);
+            const list_evento = evento_.evento.movimientos.map((mov)=>{
+                return {
+                    inicio: mov.tiempo_inicio,
+                    fin: mov.tiempo_final
+                }
+            });
+            console.log(list_evento);
+            timelineInstance.cambiarEventos(list_evento);
+            //integrar el evento con el timeline
         }
     }, [eventoAnimacion]);
 

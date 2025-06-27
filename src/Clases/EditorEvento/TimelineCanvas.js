@@ -100,6 +100,10 @@ export default class TimelineCanvas {
         dibujarLinea(this.ctx, x_line_punto, this.y_timeline, x_line_punto, this.y_timeline+this.altura_timeline);
     }
 
+    cambiarEventos(lista_eventos_){
+        this.lista_eventos = lista_eventos_;
+    }
+
     procesar(eventoAnimacion){
         this.x_linea_tiempo = eventoAnimacion.tiempo_animacion*100;
         this.redibujarTodo();
