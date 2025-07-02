@@ -15,7 +15,12 @@ function PanelMovimientos(props) {
 
     const [lista_movimiento, setListaMovimientos] = useState([]);
     const [movimientoSeleccionado, setMovimientoSeleccionado] = useState(null);
+    const [movIndexSeleccionado, setmovIndexSeleccionado] = useState(null);
 
+    const seleccionarMov=(index)=>{
+        setMovimientoSeleccionado(props.evento.movimientos[index]);
+        setmovIndexSeleccionado(index);
+    };
 
     useEffect(() => {
         console.log("[EVENTO][MOV]");
@@ -25,6 +30,12 @@ function PanelMovimientos(props) {
             setListaMovimientos(props.evento.movimientos)
         }
     }, [props.evento]);
+
+
+    useEffect(() => {
+        console.log("[***Cambio de MOVIMIENTO***]");
+        console.log(movimientoSeleccionado);
+    }, [movimientoSeleccionado]);
 
 
     return (
@@ -72,7 +83,7 @@ function PanelMovimientos(props) {
                                             type="button"
                                             className="btn btn-outline-primary"
                                             onClick={() => {
-                                                setMovimientoSeleccionado(mov);
+                                                seleccionarMov(index);
                                                 setShowModal(true);
                                             }}
                                         >
@@ -101,6 +112,7 @@ function PanelMovimientos(props) {
                 show={showModal}
                 onClose={() => setShowModal(false)}
                 movimiento={movimientoSeleccionado}
+                setMovimientoSeleccionado = {setMovimientoSeleccionado}
             />
         </div>
     );

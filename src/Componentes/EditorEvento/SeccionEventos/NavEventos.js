@@ -1,6 +1,6 @@
 import ButtonNav from "../../EditorMapa/ButtonNav";
 import PanelEventos from "./PanelEventos";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PanelMovimientos from "./PanelMovimientos";
 import PanelScripts from "./PanelScripts";
 import PanelAnimacion from "./PanelAnimacion";
@@ -10,13 +10,20 @@ import {GestionEvento} from "../../../Clases/EditorEvento/GestionEvento";
 function NavEventos(props){
     const [showModal, setShowModal] = useState(false);
     const [evento, setEvento] = useState(null);
+    const [indexIvento, setIndexEvento] = useState(null);
 
 
     const seleccionEvento=(index)=>{
         setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
+        setIndexEvento(index);
         props.eventoAnimacion.edicion.seleccion_evento = index;
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     }
+
+    useEffect(() => {
+        console.log("[***Cambio de Evento***]");
+        console.log(evento);
+    }, [evento]);
 
     return (<div>
         {evento ? (

@@ -19,7 +19,7 @@ function timePartsToMs(min, seg, ms) {
     return parseInt(min || 0) * 60000 + parseInt(seg || 0) * 1000 + parseInt(ms || 0);
 }
 
-function ModalMovimiento({ show, onClose, movimiento }) {
+function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado }) {
     const [tipo, setTipo] = useState(1);
     const [inicioMin, setInicioMin] = useState("00");
     const [inicioSeg, setInicioSeg] = useState("00");
@@ -54,6 +54,25 @@ function ModalMovimiento({ show, onClose, movimiento }) {
             setVelocidad(movimiento.datos?.velocidad || 0);
         }
     }, [movimiento]);
+
+    useEffect(() => {
+        const tiempo_inicio = timePartsToMs(inicioMin, inicioSeg, inicioMs);
+        const tiempo_final = timePartsToMs(finMin, finSeg, finMs);
+        if(movimiento){
+            movimiento.tipo = tipo;
+            movimiento.tiempo_inicio = tiempo_inicio;
+            movimiento.tiempo_final = tiempo_final;
+            movimiento.bucle = bucle;
+            movimiento.activo = activo;
+            movimiento.datos = datos;
+            setMovimientoSeleccionado({
+                ...movimiento
+            });
+        }
+
+    }, [tipo, inicioMin, inicioSeg, inicioMs,
+        finMin, finSeg, finMs, bucle,
+        activo, velocidad, datos]);
 
     if (!show) return null;
 
