@@ -20,40 +20,24 @@ function timePartsToMs(min, seg, ms) {
 }
 
 function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado }) {
-    const [tipo, setTipo] = useState(1);
-    const [inicioMin, setInicioMin] = useState("00");
-    const [inicioSeg, setInicioSeg] = useState("00");
-    const [inicioMs, setInicioMs] = useState("000");
 
-    const [finMin, setFinMin] = useState("00");
-    const [finSeg, setFinSeg] = useState("00");
-    const [finMs, setFinMs] = useState("000");
+    const inicio = msToTimeParts(movimiento?.tiempo_inicio || 0);
+    const fin = msToTimeParts(movimiento?.tiempo_final || 0);
 
-    const [bucle, setBucle] = useState(false);
-    const [activo, setActivo] = useState(true);
-    const [velocidad, setVelocidad] = useState(0);
+    const [tipo, setTipo] = useState(movimiento?.tipo || 1);
+    const [inicioMin, setInicioMin] = useState(inicio?.min||'00');
+    const [inicioSeg, setInicioSeg] = useState(inicio?.seg||'00');
+    const [inicioMs, setInicioMs] = useState(inicio?.ms||'00');
 
-    const [datos, setDatos] = useState({});
+    const [finMin, setFinMin] = useState(fin?.min||'00');
+    const [finSeg, setFinSeg] = useState(fin?.seg||'00');
+    const [finMs, setFinMs] = useState(fin?.ms||'00');
 
-    useEffect(() => {
-        if (movimiento) {
-            setTipo(movimiento.tipo || 1);
+    const [bucle, setBucle] = useState(movimiento?.bucle || false);
+    const [activo, setActivo] = useState(movimiento?.activo || false);
 
-            const inicio = msToTimeParts(movimiento.tiempo_inicio || 0);
-            setInicioMin(inicio.min);
-            setInicioSeg(inicio.seg);
-            setInicioMs(inicio.ms);
 
-            const fin = msToTimeParts(movimiento.tiempo_final || 0);
-            setFinMin(fin.min);
-            setFinSeg(fin.seg);
-            setFinMs(fin.ms);
-
-            setBucle(movimiento.bucle || false);
-            setActivo(movimiento.activo || false);
-            setVelocidad(movimiento.datos?.velocidad || 0);
-        }
-    }, [movimiento]);
+    const [datos, setDatos] = useState(movimiento?.datos || {});
 
     useEffect(() => {
         const tiempo_inicio = timePartsToMs(inicioMin, inicioSeg, inicioMs);
@@ -65,14 +49,14 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
             movimiento.bucle = bucle;
             movimiento.activo = activo;
             movimiento.datos = datos;
-            setMovimientoSeleccionado({
-                ...movimiento
-            });
+            // setMovimientoSeleccionado({
+            //     ...movimiento
+            // });
         }
 
     }, [tipo, inicioMin, inicioSeg, inicioMs,
         finMin, finSeg, finMs, bucle,
-        activo, velocidad, datos]);
+        activo, datos]);
 
     if (!show) return null;
 
@@ -89,7 +73,6 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
             activo,
             datos: {
                 ...movimiento.datos,
-                velocidad: velocidad
             }
         };
 

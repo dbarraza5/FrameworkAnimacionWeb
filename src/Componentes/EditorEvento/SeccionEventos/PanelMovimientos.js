@@ -108,12 +108,15 @@ function PanelMovimientos(props) {
                     </tbody>
                 </table>
             </div>
-            <ModalMovimiento
-                show={showModal}
-                onClose={() => setShowModal(false)}
-                movimiento={movimientoSeleccionado}
-                setMovimientoSeleccionado = {setMovimientoSeleccionado}
-            />
+            {movimientoSeleccionado && (
+                <ModalMovimiento
+                    key={`modal-movimiento-${movIndexSeleccionado}`}
+                    show={showModal}
+                    onClose={() => setShowModal(false)}
+                    movimiento={movimientoSeleccionado}
+                    setMovimientoSeleccionado={setMovimientoSeleccionado}
+                />
+            )}
         </div>
     );
 }
