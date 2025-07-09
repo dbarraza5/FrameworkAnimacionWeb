@@ -40,19 +40,19 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
     const [datos, setDatos] = useState(movimiento?.datos || {});
 
     useEffect(() => {
-        const tiempo_inicio = timePartsToMs(inicioMin, inicioSeg, inicioMs);
-        const tiempo_final = timePartsToMs(finMin, finSeg, finMs);
-        if(movimiento){
-            movimiento.tipo = tipo;
-            movimiento.tiempo_inicio = tiempo_inicio;
-            movimiento.tiempo_final = tiempo_final;
-            movimiento.bucle = bucle;
-            movimiento.activo = activo;
-            movimiento.datos = datos;
-            // setMovimientoSeleccionado({
-            //     ...movimiento
-            // });
-        }
+        // const tiempo_inicio = timePartsToMs(inicioMin, inicioSeg, inicioMs);
+        // const tiempo_final = timePartsToMs(finMin, finSeg, finMs);
+        // if(movimiento){
+        //     movimiento.tipo = tipo;
+        //     movimiento.tiempo_inicio = tiempo_inicio;
+        //     movimiento.tiempo_final = tiempo_final;
+        //     movimiento.bucle = bucle;
+        //     movimiento.activo = activo;
+        //     movimiento.datos = datos;
+        //     // setMovimientoSeleccionado({
+        //     //     ...movimiento
+        //     // });
+        // }
 
     }, [tipo, inicioMin, inicioSeg, inicioMs,
         finMin, finSeg, finMs, bucle,
@@ -76,7 +76,19 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
             }
         };
 
-        console.log("Movimiento actualizado:", actualizado);
+        if(movimiento){
+            movimiento.tipo = tipo;
+            movimiento.tiempo_inicio = tiempo_inicio;
+            movimiento.tiempo_final = tiempo_final;
+            movimiento.bucle = bucle;
+            movimiento.activo = activo;
+            movimiento.datos = datos;
+            setMovimientoSeleccionado({
+                ...movimiento
+            });
+        }
+
+        //console.log("Movimiento actualizado:", actualizado);
         onClose(); // podrías pasar `actualizado` al padre si quieres emitirlo
     };
 

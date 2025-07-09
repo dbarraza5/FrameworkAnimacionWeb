@@ -33,8 +33,12 @@ function PanelMovimientos(props) {
 
 
     useEffect(() => {
-        console.log("[***Cambio de MOVIMIENTO***]");
-        console.log(movimientoSeleccionado);
+        console.log("[***Cambio de MOVIMIENTO***]="+movIndexSeleccionado);
+        if(movimientoSeleccionado !== null){
+            console.log(movimientoSeleccionado);
+            props.evento.movimientos[movIndexSeleccionado]  = movimientoSeleccionado;
+            props.editandoMovEvento(props.evento.movimientos)
+        }
     }, [movimientoSeleccionado]);
 
 
