@@ -100,7 +100,7 @@ class ConfiguracionLienzo{
     procesarGeneral(eventoLienzoFigura, categoria_trabajo, tipo_movimiento){
 
         if(tipo_movimiento === MOVER_NADA){
-            if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft")){
+    if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft")){
                 //FIGURA
                 if(eventoLienzoFigura.stack_event_teclado.includes(EVENTO_KEY_NONE)){
                     categoria_trabajo = TRABAJO_NONE;

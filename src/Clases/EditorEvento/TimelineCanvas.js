@@ -34,11 +34,13 @@ function dibujarLinea(ctx, p1x, p1y, p2x, p2y) {
 }
 
 export default class TimelineCanvas {
-    constructor(eventoLienzo) {
+    constructor(eventoLienzo, eventoAnimacion, setEventoAnimacion) {
         //this.canvasElem = canvasElem;
         this.canvasElem = document.getElementById('lienzo-animacion');
         this.ctx = this.canvasElem.getContext('2d');
         this.eventoLienzo = eventoLienzo;
+        this.eventoAnimacion = eventoAnimacion.edicion;
+        this.setEventoAnimacion = setEventoAnimacion;
         // Configuración
         this.escala = .1;//config.escala || 0.5;
         this.interval = 500;
@@ -104,8 +106,8 @@ export default class TimelineCanvas {
         this.lista_eventos = lista_eventos_;
     }
 
-    procesar(eventoAnimacion){
-        this.x_linea_tiempo = eventoAnimacion.tiempo_animacion*100;
+    procesar(){
+        this.x_linea_tiempo = this.eventoAnimacion.tiempo_animacion*100;
         this.redibujarTodo();
     }
 
@@ -292,6 +294,26 @@ export default class TimelineCanvas {
         this.isResizing = false;
         this.resizeSide = null;
         this.isDraggingLineaTiempo = false;
+        if(this.eventoAnimacion.seleccion_evento>=0){
+            const evento_ = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento];
+            // evento_.evento.movimientos.map((mov)=>{
+            //     return {
+            //         inicio: mov.tiempo_inicio,
+            //         fin: mov.tiempo_final
+            //     }
+            // });
+            if(evento_){
+                console.log("timeline evento");
+                console.log(evento_);
+                for(let i=0; i<evento_.evento.movimientos.length; i++){
+                    evento_.evento.movimientos[i].tiempo_inicio = this.lista_eventos[i].inicio;
+                    evento_.evento.movimientos[i].tiempo_final = this.lista_eventos[i].fin;
+                }
+                this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento] = evento_;
+                this.setEventoAnimacion({edicion:this.eventoAnimacion});
+            }
+        }
+
     }
 
     agregarEvento(inicio, fin) {

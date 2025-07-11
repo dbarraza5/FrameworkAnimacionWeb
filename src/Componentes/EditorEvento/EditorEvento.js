@@ -72,7 +72,7 @@ function EditorEvento(props){
         console.log("[==============================Evento===========================]")
         obtenerEvento();
 
-        const instance = new TimelineCanvas(eventoLienzoFigura);
+        const instance = new TimelineCanvas(eventoLienzoFigura, eventoAnimacion, setEventoAnimacion);
         setTimelineInstance(instance);
     }, []);
 
@@ -97,7 +97,7 @@ function EditorEvento(props){
     useInterval(() => {
         eventoAnimacion.edicion.procesandoEventos();
         eventoAnimacion.edicion.imprimirEventos();
-        timelineInstance.procesar(eventoAnimacion.edicion);
+        timelineInstance.procesar();//(eventoAnimacion.edicion);
         //timelineInstance.redibujarTodo();
     }, startLoopLienzo ? 100 : null);
 

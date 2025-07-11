@@ -31,7 +31,7 @@ function PanelEventos(props) {
     const MIN = 0;
 
     useEffect(() => {
-        console.log("[EVENTO]");
+        console.log("[EVENTO]1");
         console.log(props.evento)
 
         setNombre(props.evento?.nombre || "");
@@ -91,6 +91,9 @@ function PanelEventos(props) {
     const handleStop = () => {
         console.log("Detenido");
     };
+
+    console.log("[ANIMCACION++]");
+    console.log(props.eventoAnimacion);
 
     return (
         <div>
