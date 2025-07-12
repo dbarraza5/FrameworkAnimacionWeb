@@ -35,6 +35,7 @@ function dibujarLinea(ctx, p1x, p1y, p2x, p2y) {
 
 export default class TimelineCanvas {
     constructor(eventoLienzo, eventoAnimacion, setEventoAnimacion) {
+        console.log("INICIALIZACION DEL TIMELINE");
         //this.canvasElem = canvasElem;
         this.canvasElem = document.getElementById('lienzo-animacion');
         this.ctx = this.canvasElem.getContext('2d');
@@ -72,12 +73,12 @@ export default class TimelineCanvas {
         this.offsetDragLineaTiempo = 0;
 
         this.lista_eventos = [
-            { inicio: 0, fin: 500 },
-            { inicio: 800, fin: 1600 },
-            { inicio: 1000, fin: 2600 },
-            { inicio: 400, fin: 1500 },
-            { inicio: 1600, fin: 2000 },
-            { inicio: 2100, fin: 2600 },
+            // { inicio: 0, fin: 500 },
+            // { inicio: 800, fin: 1600 },
+            // { inicio: 1000, fin: 2600 },
+            // { inicio: 400, fin: 1500 },
+            // { inicio: 1600, fin: 2000 },
+            // { inicio: 2100, fin: 2600 },
         ];
 
         // Interacción
@@ -103,6 +104,7 @@ export default class TimelineCanvas {
     }
 
     cambiarEventos(lista_eventos_){
+        console.log("[TAM]="+lista_eventos_.length)
         this.lista_eventos = lista_eventos_;
     }
 
@@ -302,7 +304,7 @@ export default class TimelineCanvas {
             //         fin: mov.tiempo_final
             //     }
             // });
-            if(evento_){
+            if(evento_ && this.lista_eventos.length === evento_.evento.movimientos.length){
                 console.log("timeline evento");
                 console.log(evento_);
                 for(let i=0; i<evento_.evento.movimientos.length; i++){
