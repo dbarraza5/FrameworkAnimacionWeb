@@ -29,8 +29,13 @@ function NavEventos(props){
     }
 
     useEffect(() => {
-        console.log("[***Cambio de Evento***]");
-        console.log(evento);
+        console.log("[PREVIEW CAMBIO EVENTO]");
+        if(indexIvento!==null){
+            console.log("[***Cambio de Evento***]");
+            console.log(evento);
+            const evento_new = props.eventoAnimacion.edicion.eventos[indexIvento].evento;
+            //setEvento({...evento_new});
+        }
     }, [evento]);
 
     return (<div>

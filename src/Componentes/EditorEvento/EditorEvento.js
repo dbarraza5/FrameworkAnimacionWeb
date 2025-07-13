@@ -22,7 +22,6 @@ const useCustomEvento=(valor_inicial=null)=>{
     return [evento_, setCustomEvento]
 }
 
-
 function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
@@ -80,7 +79,7 @@ function EditorEvento(props){
         console.log(eventoAnimacion.edicion.seleccion_evento);
         if(eventoAnimacion.edicion.seleccion_evento!==null){
             const evento_ = eventoAnimacion.edicion.eventos[eventoAnimacion.edicion.seleccion_evento];
-            console.log("[cambio de evento]: ");
+            console.log("[cambio de evento]: "+eventoAnimacion.edicion.version);
             console.log(evento_.evento);
             const list_evento = evento_.evento.movimientos.map((mov)=>{
                 return {

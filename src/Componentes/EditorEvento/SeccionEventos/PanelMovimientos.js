@@ -16,6 +16,7 @@ function PanelMovimientos(props) {
     const [lista_movimiento, setListaMovimientos] = useState([]);
     const [movimientoSeleccionado, setMovimientoSeleccionado] = useState(null);
     const [movIndexSeleccionado, setmovIndexSeleccionado] = useState(null);
+    const [versionKey, setVerionKey] = useState(0);
 
     const seleccionarMov=(index)=>{
         setMovimientoSeleccionado(props.evento.movimientos[index]);
@@ -30,6 +31,13 @@ function PanelMovimientos(props) {
             setListaMovimientos(props.evento.movimientos)
         }
     }, [props.evento]);
+
+
+    useEffect(() => {
+        console.log("[CAMBIO][VERSION]="+props.eventoAnimacion.edicion.version);
+        setVerionKey(props.eventoAnimacion.edicion.version);
+
+    }, [props.eventoAnimacion.edicion.version]);
 
 
     useEffect(() => {
@@ -114,7 +122,7 @@ function PanelMovimientos(props) {
             </div>
             {movimientoSeleccionado && (
                 <ModalMovimiento
-                    key={`modal-movimiento-${movIndexSeleccionado}`}
+                    key={`modal-movimiento-${movIndexSeleccionado}-${versionKey}`}
                     show={showModal}
                     onClose={() => setShowModal(false)}
                     movimiento={movimientoSeleccionado}

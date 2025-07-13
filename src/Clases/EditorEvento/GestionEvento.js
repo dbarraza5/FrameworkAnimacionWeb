@@ -30,6 +30,7 @@ class GestionEvento{
     configuracion_lienzo = null;
     id_canvas = null;
     tiempo_animacion = 0;
+    version=1;
 
     seleccion_evento = null;
     constructor() {
