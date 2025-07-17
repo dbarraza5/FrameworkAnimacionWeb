@@ -25,7 +25,7 @@ function PanelEventos(props) {
     const [coordX, setCoordX] = useState("");
     const [coordY, setCoordY] = useState("");
     const [tiempoRelativo, setTiempoRelativo] = useState("");
-
+    const [tiempoBucle, setTiempoBucle] = useState(0);
     const STEP = 100;
     const MAX = 60000;
     const MIN = 0;
@@ -64,6 +64,7 @@ function PanelEventos(props) {
             setReposicionar(props.evento.reposicionar);
             setTiempoRelativo(props.evento.tiempo_relativo);
             setSelectedEvent(props.evento.nodo_padre);
+            setTiempoBucle(props.evento.tiempo_bucle);
         }
 
 
@@ -211,6 +212,16 @@ function PanelEventos(props) {
                         onChange={(e) => setFinMs(e.target.value)}
                     />
                 </div>
+            </div>
+            <div className="mb-2">
+                <label className="form-label">Tiempo bucle(ms)</label>
+                <input
+                    type="number"
+                    className="form-control"
+                    value={tiempoBucle}
+                    onChange={(e) => setTiempoBucle(e.target.value)}
+                    placeholder="Ej: +500ms o -1s"
+                />
             </div>
 
             <div className="mb-2 d-flex gap-2">
