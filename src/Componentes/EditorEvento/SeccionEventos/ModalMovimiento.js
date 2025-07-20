@@ -32,7 +32,7 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
     const [finMin, setFinMin] = useState(fin?.min||'00');
     const [finSeg, setFinSeg] = useState(fin?.seg||'00');
     const [finMs, setFinMs] = useState(fin?.ms||'00');
-
+    const [tiempoBucle, setTiempoBucle] = useState(movimiento?.tiempo_bucle || 0);
     const [bucle, setBucle] = useState(movimiento?.bucle || false);
     const [activo, setActivo] = useState(movimiento?.activo || false);
 
@@ -80,6 +80,7 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
             movimiento.tipo = tipo;
             movimiento.tiempo_inicio = tiempo_inicio;
             movimiento.tiempo_final = tiempo_final;
+            movimiento.tiempo_bucle = tiempoBucle;
             movimiento.bucle = bucle;
             movimiento.activo = activo;
             movimiento.datos = datos;
@@ -145,14 +146,27 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
                             </div>
                         </div>
 
+                        <div className="mb-2">
+                            <label className="form-label">Tiempo bucle(ms)</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                value={tiempoBucle}
+                                onChange={(e) => setTiempoBucle(e.target.value)}
+                                placeholder="Ej: +500ms o -1s"
+                            />
+                        </div>
+
                         {/* Checkboxes */}
                         <div className="form-check mb-2">
-                            <input className="form-check-input" type="checkbox" id="bucleCheck" checked={bucle} onChange={() => setBucle(!bucle)} />
-                            <label className="form-check-label" htmlFor="bucleCheck">Bucle</label>
+                            <input className="form-check-input" type="checkbox" id="bucleCheck2" name="bucleCheck2"
+                                   checked={bucle} onChange={() => setBucle(!bucle)} />
+                            <label className="form-check-label" htmlFor="bucleCheck2">Bucle</label>
                         </div>
 
                         <div className="form-check mb-2">
-                            <input className="form-check-input" type="checkbox" id="activoCheck" checked={activo} onChange={() => setActivo(!activo)} />
+                            <input className="form-check-input" type="checkbox" id="activoCheck" name="activoCheck"
+                                   checked={activo} onChange={() => setActivo(!activo)} />
                             <label className="form-check-label" htmlFor="activoCheck">Activo</label>
                         </div>
 
