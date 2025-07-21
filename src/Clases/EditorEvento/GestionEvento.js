@@ -31,6 +31,7 @@ class GestionEvento{
     id_canvas = null;
     tiempo_animacion = 0;
     version=1;
+    _id=null;
 
     seleccion_evento = null;
     constructor() {
@@ -49,8 +50,9 @@ class GestionEvento{
         }
     }
 
-    inicializar(lista_evento, grupos){
+    inicializar(lista_evento, grupos, id){
         //this.grupos = grupos;
+        this._id =id;
         this.gestion_grupos.grupos_figuras=grupos;
         this.gestion_grupos_originales.grupos_figuras = JSON.parse(JSON.stringify(grupos))
         this.lista_raw_evento = lista_evento;

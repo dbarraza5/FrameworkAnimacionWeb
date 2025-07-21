@@ -52,7 +52,7 @@ function EditorEvento(props){
                     console.log("funcionaaa DESCARGAAAAA")
                     console.log(response.data);
                     eventoAnimacion.edicion.inicializar(response.data.eventos,
-                        response.data.grupos_figuras);
+                        response.data.grupos_figuras, response.data._id);
                     setEventoAnimacion(eventoAnimacion)
                     setStartLoopLienzo(true);
 
@@ -101,9 +101,50 @@ function EditorEvento(props){
     }, startLoopLienzo ? 100 : null);
 
 
+    const subirAnimacion1=async()=>{
+        console.log("SUBBBBBBEEEEEEEE eventooooo!!!!")
+        try{
+            const eventos_ = eventoAnimacion.edicion.eventos.map((evento)=>{
+                return evento.evento;
+            });
+            const datos = {
+                "eventos": eventos_
+            };
+
+            const url = "/api/evento/id/" + eventoAnimacion.edicion._id;
+            const token = datos_usuario.token;
+            const config = {
+                method: 'put',
+                url: url,
+                headers: {
+                    "Content-Type": "application/json",
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                withCredentials: true,
+                data : datos
+            };
+
+            let res = await axios(config)
+                .then(function (response) {
+                    console.log("SUBIENDO evento")
+                    console.log(response.data);
+                })
+                .catch(function (response) {
+                    console.log("error subir evento")
+                    console.log(response.response.data);
+                    props.manejadorErrores(response.response.data)
+                });
+        }catch (err){
+            console.log(err)
+        }
+    };
+
+
     return(<div>
         <div className="row">
-            <MenuEvento />
+            <MenuEvento  subirAnimacion={subirAnimacion1}
+            />
             <hr/>
             <NavEditorEvento eventoAnimacion={eventoAnimacion}
                              setEventoAnimacion = {setEventoAnimacion}
