@@ -19,7 +19,7 @@ function timePartsToMs(min, seg, ms) {
     return parseInt(min || 0) * 60000 + parseInt(seg || 0) * 1000 + parseInt(ms || 0);
 }
 
-function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado }) {
+function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado }) {
 
     const inicio = msToTimeParts(movimiento?.tiempo_inicio || 0);
     const fin = msToTimeParts(movimiento?.tiempo_final || 0);
@@ -187,4 +187,4 @@ function ModalMovimiento({ show, onClose, movimiento, setMovimientoSeleccionado 
     );
 }
 
-export default ModalMovimiento;
+export default ModalEditarMovimiento;

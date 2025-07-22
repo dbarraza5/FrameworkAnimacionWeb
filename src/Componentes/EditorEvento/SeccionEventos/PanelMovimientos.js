@@ -1,8 +1,10 @@
 import {useEffect, useState} from "react";
-import ModalMovimiento from "./ModalMovimiento";
+import ModalEditarMovimiento from "./ModalEditarMovimiento";
+import ModalAgregarMovimiento from "./ModalAgregarMovimiento";
 
 function PanelMovimientos(props) {
-    const [showModal, setShowModal] = useState(false);
+    const [showModalEditar, setShowEditarModal] = useState(false);
+    const [showModalAgregar, setShowAgregarModal] = useState(false);
     const [tipoAccion, setTipoAccion] = useState("MRU");
 
     const [inicioMin, setInicioMin] = useState("00");
@@ -22,6 +24,13 @@ function PanelMovimientos(props) {
         setMovimientoSeleccionado(props.evento.movimientos[index]);
         setmovIndexSeleccionado(index);
     };
+
+    const agregarMovimiento=(evento)=>{
+        console.log(evento);
+        //props.evento.movimientos[movIndexSeleccionado]  = movimientoSeleccionado;
+        props.evento.movimientos.push(evento);
+        props.editandoMovEvento(props.evento.movimientos)
+    }
 
     useEffect(() => {
         console.log("[EVENTO][MOV]");
@@ -54,10 +63,10 @@ function PanelMovimientos(props) {
         <div>
             {/* Botones */}
             <div className="mb-2 d-flex gap-2">
-                <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
+                <button className="btn btn-outline-primary" onClick={() => setShowEditarModal(true)}>
                     Lista movimientos
                 </button>
-                <button className="btn btn-outline-success">
+                <button className="btn btn-outline-success" onClick={() => setShowAgregarModal(true)}>
                     <i className="bi bi-plus"></i>
                 </button>
             </div>
@@ -96,7 +105,7 @@ function PanelMovimientos(props) {
                                             className="btn btn-outline-primary"
                                             onClick={() => {
                                                 seleccionarMov(index);
-                                                setShowModal(true);
+                                                setShowEditarModal(true);
                                             }}
                                         >
                                             <i className="bi bi-pencil"></i>
@@ -121,14 +130,22 @@ function PanelMovimientos(props) {
                 </table>
             </div>
             {movimientoSeleccionado && (
-                <ModalMovimiento
+                <ModalEditarMovimiento
                     key={`modal-movimiento-${movIndexSeleccionado}-${versionKey}`}
-                    show={showModal}
-                    onClose={() => setShowModal(false)}
+                    show={showModalEditar}
+                    onClose={() => setShowEditarModal(false)}
                     movimiento={movimientoSeleccionado}
                     setMovimientoSeleccionado={setMovimientoSeleccionado}
                 />
             )}
+
+            <ModalAgregarMovimiento
+                key={`modal-agregar-movimiento`}
+                show={showModalAgregar}
+                onClose={() => setShowAgregarModal(false)}
+                // movimiento={movimientoSeleccionado}
+                agregarMovimiento={agregarMovimiento}
+            />
         </div>
     );
 }
