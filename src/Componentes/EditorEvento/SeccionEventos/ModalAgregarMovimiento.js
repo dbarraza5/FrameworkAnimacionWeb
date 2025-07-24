@@ -3,6 +3,7 @@ import FormularioMRU from "./Movimientos/FormularioMRU";
 import FormularioMRUA from "./Movimientos/FormularioMRUA";
 import FormularioParabolico from "./Movimientos/FormularioParabolico";
 import FormularioCircular from "./Movimientos/FormularioCircular";
+import {nanoid} from "nanoid";
 
 function msToTimeParts(ms) {
     const minutos = Math.floor(ms / 60000);
@@ -41,13 +42,15 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
         const tiempo_final = timePartsToMs(finMin, finSeg, finMs);
 
         const nuevoMovimiento = {
-            tipo,
-            tiempo_inicio,
-            tiempo_final,
+            _id: nanoid(8),
+            tipo:tipo,
+            tiempo_inicio:tiempo_inicio,
+            tiempo_final:tiempo_final,
             tiempo_bucle: tiempoBucle,
-            bucle,
-            activo,
-            datos
+            bucle:bucle,
+            activo:activo,
+            datos:datos,
+            ids_grupos:[]
         };
 
         agregarMovimiento(nuevoMovimiento);
