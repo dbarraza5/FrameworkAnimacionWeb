@@ -28,15 +28,25 @@ function NavEventos(props){
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     }
 
+    // useEffect(() => {
+    //     console.log("[PREVIEW CAMBIO EVENTO]");
+    //     if(indexIvento!==null){
+    //         console.log("[***Cambio de Evento***]");
+    //         console.log(evento);
+    //         const evento_new = props.eventoAnimacion.edicion.eventos[indexIvento].evento;
+    //         setEvento({...evento_new});
+    //     }
+    // }, [evento]);
+
     useEffect(() => {
-        console.log("[PREVIEW CAMBIO EVENTO]");
+        console.log("[PREVIEW CAMBIO indexIvento]");
         if(indexIvento!==null){
-            console.log("[***Cambio de Evento***]");
+            console.log("[***Cambio de indexIvento***]");
             console.log(evento);
             const evento_new = props.eventoAnimacion.edicion.eventos[indexIvento].evento;
-            //setEvento({...evento_new});
+            setEvento({...evento_new});
         }
-    }, [evento]);
+    }, [indexIvento]);
 
     return (<div>
         {evento ? (
