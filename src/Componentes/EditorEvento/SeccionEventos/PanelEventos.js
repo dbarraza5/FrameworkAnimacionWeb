@@ -7,68 +7,83 @@ function formatTime(ms) {
     return `${minutes}:${seconds}:${milliseconds}`;
 }
 
-function PanelEventos(props) {
-    const [selectedEvent, setSelectedEvent] = useState("");
-    const [nombre, setNombre] = useState("");
-    const [milisegundos, setMilisegundos] = useState(0);
-    const [bucle, setBucle] = useState(false);
-    const [reposicionar, setReposicionar] = useState(false);
-    const [inicioMin, setInicioMin] = useState("00");
-    const [inicioSeg, setInicioSeg] = useState("00");
-    const [inicioMs, setInicioMs] = useState("000");
 
-    const [finMin, setFinMin] = useState("00");
-    const [finSeg, setFinSeg] = useState("00");
-    const [finMs, setFinMs] = useState("000");
+function msToTimeParts(ms) {
+    const minutos = Math.floor(ms / 60000);
+    const segundos = Math.floor((ms % 60000) / 1000);
+    const miliseg = ms % 1000;
+    return {
+        min: minutos.toString().padStart(2, '0'),
+        seg: segundos.toString().padStart(2, '0'),
+        ms: miliseg.toString().padStart(3, '0'),
+    };
+}
+
+function PanelEventos(props) {
+    const inicio = msToTimeParts(props.evento?.tiempo_inicio || 0);
+    const fin = msToTimeParts(props.evento?.tiempo_final || 0);
+
+
+    const [selectedEvent, setSelectedEvent] = useState(props.evento?.nodo_padre|| "");
+    const [nombre, setNombre] = useState(props.evento?.nombre || "");
+    const [bucle, setBucle] = useState(props.evento?.bucle || false);
+    const [reposicionar, setReposicionar] = useState(false);
+    const [inicioMin, setInicioMin] = useState(inicio?.min||'00');
+    const [inicioSeg, setInicioSeg] = useState(inicio?.seg||'00');
+    const [inicioMs, setInicioMs] = useState(inicio?.ms||'00');
+
+    const [finMin, setFinMin] = useState(fin?.min||'00');
+    const [finSeg, setFinSeg] = useState(fin?.seg||'00');
+    const [finMs, setFinMs] = useState(fin?.ms||'00');
     const intervalRef = useRef(null);
 
-    const [coordX, setCoordX] = useState("");
-    const [coordY, setCoordY] = useState("");
-    const [tiempoRelativo, setTiempoRelativo] = useState("");
-    const [tiempoBucle, setTiempoBucle] = useState(0);
+    const [coordX, setCoordX] = useState(props.evento?.x||'');
+    const [coordY, setCoordY] = useState(props.evento?.y||'');
+    const [tiempoRelativo, setTiempoRelativo] = useState(props.evento?.tiempo_relativo||0);
+    const [tiempoBucle, setTiempoBucle] = useState(props.evento?.tiempo_bucle||0);
     const STEP = 100;
     const MAX = 60000;
     const MIN = 0;
 
-    useEffect(() => {
-        console.log("[EVENTO]1");
-        console.log(props.evento)
-
-        setNombre(props.evento?.nombre || "");
-
-        if(props.evento){
-            // Calcular valores desde tiempo_inicio
-            const inicio = props.evento.tiempo_inicio ?? 0;
-            const inicioMin = Math.floor(inicio / 60000);
-            const inicioSeg = Math.floor((inicio % 60000) / 1000);
-            const inicioMs = inicio % 1000;
-
-            setInicioMin(String(inicioMin).padStart(2, "0"));
-            setInicioSeg(String(inicioSeg).padStart(2, "0"));
-            setInicioMs(String(inicioMs).padStart(3, "0"));
-
-            // Calcular valores desde tiempo_final
-            const fin = props.evento.tiempo_final ?? 0;
-            const finMin = Math.floor(fin / 60000);
-            const finSeg = Math.floor((fin % 60000) / 1000);
-            const finMs = fin % 1000;
-
-            setFinMin(String(finMin).padStart(2, "0"));
-            setFinSeg(String(finSeg).padStart(2, "0"));
-            setFinMs(String(finMs).padStart(3, "0"));
-
-            setCoordX(props.evento.x);
-            setCoordY(props.evento.y);
-
-            setBucle(props.evento.bucle);
-            setReposicionar(props.evento.reposicionar);
-            setTiempoRelativo(props.evento.tiempo_relativo);
-            setSelectedEvent(props.evento.nodo_padre);
-            setTiempoBucle(props.evento.tiempo_bucle);
-        }
-
-
-    }, [props.evento]);
+    // useEffect(() => {
+    //     console.log("[EVENTO]1");
+    //     console.log(props.evento)
+    //
+    //     setNombre(props.evento?.nombre || "");
+    //
+    //     if(props.evento){
+    //         // Calcular valores desde tiempo_inicio
+    //         const inicio = props.evento.tiempo_inicio ?? 0;
+    //         const inicioMin = Math.floor(inicio / 60000);
+    //         const inicioSeg = Math.floor((inicio % 60000) / 1000);
+    //         const inicioMs = inicio % 1000;
+    //
+    //         setInicioMin(String(inicioMin).padStart(2, "0"));
+    //         setInicioSeg(String(inicioSeg).padStart(2, "0"));
+    //         setInicioMs(String(inicioMs).padStart(3, "0"));
+    //
+    //         // Calcular valores desde tiempo_final
+    //         const fin = props.evento.tiempo_final ?? 0;
+    //         const finMin = Math.floor(fin / 60000);
+    //         const finSeg = Math.floor((fin % 60000) / 1000);
+    //         const finMs = fin % 1000;
+    //
+    //         setFinMin(String(finMin).padStart(2, "0"));
+    //         setFinSeg(String(finSeg).padStart(2, "0"));
+    //         setFinMs(String(finMs).padStart(3, "0"));
+    //
+    //         setCoordX(props.evento.x);
+    //         setCoordY(props.evento.y);
+    //
+    //         setBucle(props.evento.bucle);
+    //         setReposicionar(props.evento.reposicionar);
+    //         setTiempoRelativo(props.evento.tiempo_relativo);
+    //         setSelectedEvent(props.evento.nodo_padre);
+    //         setTiempoBucle(props.evento.tiempo_bucle);
+    //     }
+    //
+    //
+    // }, [props.evento]);
 
     const startChangingTime = (type) => {
         stopChangingTime();
