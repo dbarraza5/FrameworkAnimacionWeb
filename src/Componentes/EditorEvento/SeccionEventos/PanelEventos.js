@@ -85,17 +85,6 @@ function PanelEventos(props) {
 
     }, [props.evento]);
 
-    // const startChangingTime = (type) => {
-    //     stopChangingTime();
-    //     intervalRef.current = setInterval(() => {
-    //         setMilisegundos(prev => {
-    //             if (type === "aumentar") return Math.min(prev + STEP, MAX);
-    //             if (type === "disminuir") return Math.max(prev - STEP, MIN);
-    //             return prev;
-    //         });
-    //     }, 100);
-    // };
-
     const stopChangingTime = () => {
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
@@ -104,15 +93,13 @@ function PanelEventos(props) {
     };
 
 
-    const handleStop = () => {
-        console.log("Detenido");
+    const guardar = () => {
+        console.log("guardar");
     };
 
-    console.log("[ANIMCACION++]");
-    console.log(props.eventoAnimacion);
-
     return (
-        <div>
+        <div className="container-fluid">
+            {/* Fila completa: Evento padre */}
             <div className="mb-2">
                 <label className="form-label">Evento padre</label>
                 <select
@@ -125,13 +112,14 @@ function PanelEventos(props) {
                     {props.eventoAnimacion.edicion.eventos
                         .filter(ev => ev.evento._id !== props.evento?._id)
                         .map((ev) => (
-                        <option key={ev.evento._id} value={ev.evento.nombre}>
-                            {ev.evento.nombre}
-                        </option>
-                    ))}
+                            <option key={ev.evento._id} value={ev.evento.nombre}>
+                                {ev.evento.nombre}
+                            </option>
+                        ))}
                 </select>
             </div>
 
+            {/* Fila completa: Nombre */}
             <div className="mb-2">
                 <label className="form-label">Nombre</label>
                 <input
@@ -143,7 +131,80 @@ function PanelEventos(props) {
                 />
             </div>
 
-            <div className="d-flex gap-4 mb-2">
+            {/* Fila: Tiempo de inicio y fin */}
+            <div className="row mb-2">
+                <div className="col-md-6">
+                    <label className="form-label">Tiempo de inicio</label>
+                    <div className="d-flex gap-2">
+                        <input type="text" className="form-control" placeholder="mm" value={inicioMin} onChange={(e) => setInicioMin(e.target.value)} />
+                        <span>:</span>
+                        <input type="text" className="form-control" placeholder="ss" value={inicioSeg} onChange={(e) => setInicioSeg(e.target.value)} />
+                        <span>:</span>
+                        <input type="text" className="form-control" placeholder="ms" value={inicioMs} onChange={(e) => setInicioMs(e.target.value)} />
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <label className="form-label">Tiempo de fin</label>
+                    <div className="d-flex gap-2">
+                        <input type="text" className="form-control" placeholder="mm" value={finMin} onChange={(e) => setFinMin(e.target.value)} />
+                        <span>:</span>
+                        <input type="text" className="form-control" placeholder="ss" value={finSeg} onChange={(e) => setFinSeg(e.target.value)} />
+                        <span>:</span>
+                        <input type="text" className="form-control" placeholder="ms" value={finMs} onChange={(e) => setFinMs(e.target.value)} />
+                    </div>
+                </div>
+            </div>
+
+            {/* Fila: Tiempo bucle y tiempo relativo */}
+            <div className="row mb-2">
+                <div className="col-md-6">
+                    <label className="form-label">Tiempo bucle (ms)</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        value={tiempoBucle}
+                        onChange={(e) => setTiempoBucle(e.target.value)}
+                        placeholder="Ej: +500ms o -1s"
+                    />
+                </div>
+                <div className="col-md-6">
+                    <label className="form-label">Tiempo relativo</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        value={tiempoRelativo}
+                        onChange={(e) => setTiempoRelativo(e.target.value)}
+                        placeholder="Ej: +500ms o -1s"
+                    />
+                </div>
+            </div>
+
+            {/* Fila: Coordenadas */}
+            <div className="row mb-2">
+                <div className="col-md-6">
+                    <label className="form-label">Coordenada X</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        value={coordX}
+                        onChange={(e) => setCoordX(e.target.value)}
+                        placeholder="Ej: 100"
+                    />
+                </div>
+                <div className="col-md-6">
+                    <label className="form-label">Coordenada Y</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        value={coordY}
+                        onChange={(e) => setCoordY(e.target.value)}
+                        placeholder="Ej: 200"
+                    />
+                </div>
+            </div>
+
+            {/* Fila: Checkboxes en una línea */}
+            <div className="mb-2 d-flex gap-4">
                 <div className="form-check">
                     <input
                         className="form-check-input"
@@ -170,110 +231,12 @@ function PanelEventos(props) {
                     </label>
                 </div>
             </div>
-
-            <div className="mb-2">
-                <label className="form-label">Tiempo de inicio</label>
-                <div className="d-flex gap-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="mm"
-                        value={inicioMin}
-                        onChange={(e) => setInicioMin(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ss"
-                        value={inicioSeg}
-                        onChange={(e) => setInicioSeg(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ms"
-                        value={inicioMs}
-                        onChange={(e) => setInicioMs(e.target.value)}
-                    />
-                </div>
+            {/* Botón Aplicar */}
+            <div className="mt-3 d-flex justify-content-start">
+                <button className="btn btn-primary" onClick={guardar}>
+                    Aplicar
+                </button>
             </div>
-
-            <div className="mb-2">
-                <label className="form-label">Tiempo de fin</label>
-                <div className="d-flex gap-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="mm"
-                        value={finMin}
-                        onChange={(e) => setFinMin(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ss"
-                        value={finSeg}
-                        onChange={(e) => setFinSeg(e.target.value)}
-                    />
-                    <span>:</span>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="ms"
-                        value={finMs}
-                        onChange={(e) => setFinMs(e.target.value)}
-                    />
-                </div>
-            </div>
-            <div className="mb-2">
-                <label className="form-label">Tiempo bucle(ms)</label>
-                <input
-                    type="number"
-                    className="form-control"
-                    value={tiempoBucle}
-                    onChange={(e) => setTiempoBucle(e.target.value)}
-                    placeholder="Ej: +500ms o -1s"
-                />
-            </div>
-
-            <div className="mb-2 d-flex gap-2">
-                <div className="w-100">
-                    <label className="form-label">Coordenada X</label>
-                    <input
-                        type="number"
-                        className="form-control"
-                        value={coordX}
-                        onChange={(e) => setCoordX(e.target.value)}
-                        placeholder="Ej: 100"
-                    />
-                </div>
-                <div className="w-100">
-                    <label className="form-label">Coordenada Y</label>
-                    <input
-                        type="number"
-                        className="form-control"
-                        value={coordY}
-                        onChange={(e) => setCoordY(e.target.value)}
-                        placeholder="Ej: 200"
-                    />
-                </div>
-            </div>
-
-            <div className="mb-2">
-                <label className="form-label">Tiempo relativo</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    value={tiempoRelativo}
-                    onChange={(e) => setTiempoRelativo(e.target.value)}
-                    placeholder="Ej: +500ms o -1s"
-                />
-            </div>
-
-
         </div>
     );
 }
