@@ -28,6 +28,13 @@ function NavEventos(props){
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     }
 
+    const editandoEvento=(evento_)=>{
+        console.log("[editandoEvento]");
+        console.log(evento_);
+        props.eventoAnimacion.edicion.eventos[indexIvento].evento =evento_;
+        props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+    }
+
     // useEffect(() => {
     //     console.log("[PREVIEW CAMBIO EVENTO]");
     //     if(indexIvento!==null){
@@ -93,7 +100,7 @@ function NavEventos(props){
                  aria-labelledby="profile-tab1"
                  tabIndex="1">
                 <br/>
-                <PanelEventos {...props} evento={evento}/>
+                <PanelEventos {...props} evento={evento} editandoEvento={editandoEvento}/>
             </div>
             <div className="tab-pane fade" id="nav-movimientos" role="tabpanel"
                  aria-labelledby="contact-tab1"

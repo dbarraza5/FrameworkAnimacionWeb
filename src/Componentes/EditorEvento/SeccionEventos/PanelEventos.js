@@ -94,7 +94,26 @@ function PanelEventos(props) {
 
 
     const guardar = () => {
-        console.log("guardar");
+        const tiempo_inicio = parseInt(inicioMin) * 60000 + parseInt(inicioSeg) * 1000 + parseInt(inicioMs);
+        const tiempo_final = parseInt(finMin) * 60000 + parseInt(finSeg) * 1000 + parseInt(finMs);
+
+        const evento = {
+            nombre: nombre.trim(),
+            nodo_padre: selectedEvent || null,
+            tiempo_inicio,
+            tiempo_final,
+            tiempo_bucle: parseInt(tiempoBucle) || 0,
+            tiempo_relativo: parseInt(tiempoRelativo) || 0,
+            x: parseFloat(coordX) || 0,
+            y: parseFloat(coordY) || 0,
+            bucle: !!bucle,
+            reposicionar: !!reposicionar,
+        };
+        //const nuevo_evento = [evento, ...props.evento]
+        props.editandoEvento({
+            ...props.evento,
+            ...evento
+        });
     };
 
     return (
