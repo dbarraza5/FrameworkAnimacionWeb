@@ -109,11 +109,7 @@ function PanelEventos(props) {
             bucle: !!bucle,
             reposicionar: !!reposicionar,
         };
-        //const nuevo_evento = [evento, ...props.evento]
-        props.editandoEvento({
-            ...props.evento,
-            ...evento
-        });
+        props.guardandoEvento(evento);
     };
 
     return (
