@@ -87,7 +87,7 @@ function PanelMovimientos(props) {
                         return (
                             <tr key={index}>
                                 <th scope="row">{index + 1}</th>
-                                <td>{mov._id}</td>
+                                <td>{index + 1}</td>
                                 <td>{mov.tipo}</td>
                                 <td>
                                     <input

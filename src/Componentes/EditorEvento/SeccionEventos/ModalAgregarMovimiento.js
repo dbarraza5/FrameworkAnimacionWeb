@@ -42,7 +42,7 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
         const tiempo_final = timePartsToMs(finMin, finSeg, finMs);
 
         const nuevoMovimiento = {
-            _id: nanoid(8),
+            //_id: nanoid(8),
             tipo:tipo,
             tiempo_inicio:tiempo_inicio,
             tiempo_final:tiempo_final,
