@@ -5,13 +5,14 @@ import PanelMovimientos from "./PanelMovimientos";
 import PanelScripts from "./PanelScripts";
 import PanelAnimacion from "./PanelAnimacion";
 import {GestionEvento} from "../../../Clases/EditorEvento/GestionEvento";
+import ModalAgregarEvento from "./ModalAgregarEvento";
 
 
 function NavEventos(props){
     const [showModal, setShowModal] = useState(false);
     const [evento, setEvento] = useState(null);
     const [indexIvento, setIndexEvento] = useState(null);
-
+    const [modalAddEvento, setModalAddEvento] = useState(false);
 
     const seleccionEvento=(index)=>{
         setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
@@ -33,6 +34,12 @@ function NavEventos(props){
         console.log(evento_);
         props.eventoAnimacion.edicion.eventos[indexIvento].evento =evento_;
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+    }
+
+    const agregandoEvento=(evento_)=>{
+        console.log("[agregandoEvento]");
+        console.log(evento_);
+
     }
 
     // useEffect(() => {
@@ -65,7 +72,7 @@ function NavEventos(props){
             <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
                 Lista eventos
             </button>
-            <button className="btn btn-outline-success">
+            <button className="btn btn-outline-success" onClick={() => setModalAddEvento(true)}>
                 <i className="bi bi-plus"></i>
             </button>
         </div>
@@ -197,6 +204,13 @@ function NavEventos(props){
                 </div>
             </div>
         )}
+
+        <ModalAgregarEvento
+            show={modalAddEvento}
+            onClose={() => setModalAddEvento(false)}
+            onGuardar={agregandoEvento}
+            eventoAnimacion={props.eventoAnimacion}
+        />
     </div>)
 }
 
