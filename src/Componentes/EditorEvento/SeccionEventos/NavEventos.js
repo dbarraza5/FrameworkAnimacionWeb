@@ -5,6 +5,7 @@ import PanelMovimientos from "./PanelMovimientos";
 import PanelScripts from "./PanelScripts";
 import PanelAnimacion from "./PanelAnimacion";
 import ModalAgregarEvento from "./ModalAgregarEvento";
+import {nanoid} from "nanoid";
 
 
 function NavEventos(props){
@@ -38,6 +39,13 @@ function NavEventos(props){
     const agregandoEvento=(evento_)=>{
         console.log("[agregandoEvento]");
         console.log(evento_);
+        evento_ = {
+            //"_id":  nanoid(8),
+            "movimientos": [],
+            ...evento_
+        }
+        props.eventoAnimacion.edicion.agregarEvento(evento_);
+        //props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
 
     }
 

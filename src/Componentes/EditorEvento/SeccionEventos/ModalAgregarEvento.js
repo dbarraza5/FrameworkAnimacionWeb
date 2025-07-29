@@ -5,7 +5,7 @@ function ModalAgregarEvento({ show, onClose, onGuardar, eventoAnimacion }) {
     const [evento, setEvento] = useState(null);
 
     const handleGuardar = (nuevoEvento) => {
-        //onGuardar(nuevoEvento);  // Devuelve el evento al padre
+        onGuardar(nuevoEvento);  // Devuelve el evento al padre
         onClose();                // Cierra el modal
     };
 
@@ -22,7 +22,7 @@ function ModalAgregarEvento({ show, onClose, onGuardar, eventoAnimacion }) {
                         <PanelEventos
                             evento={{}} // Evento vacío para agregar
                             eventoAnimacion={eventoAnimacion}
-                            onGuardar={handleGuardar}
+                            guardandoEvento={handleGuardar}
                         />
                     </div>
                 </div>

@@ -108,6 +108,7 @@ function PanelEventos(props) {
             y: parseFloat(coordY) || 0,
             bucle: !!bucle,
             reposicionar: !!reposicionar,
+            visible: true
         };
         props.guardandoEvento(evento);
     };
@@ -249,7 +250,7 @@ function PanelEventos(props) {
             {/* Botón Aplicar */}
             <div className="mt-3 d-flex justify-content-start">
                 <button className="btn btn-primary" onClick={guardar}>
-                    Aplicar
+                    Guardar
                 </button>
             </div>
         </div>

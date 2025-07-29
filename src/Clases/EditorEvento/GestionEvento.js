@@ -75,6 +75,10 @@ class GestionEvento{
         this.tiempo.modPasivo();
     }
 
+    agregarEvento(evento_){
+        this.eventos.push(new Evento(evento_));
+    }
+
     procesandoEventos(){
         tiempo_universal=performance.now();
         const tiempo = this.tiempo.cronometroC(tiempo_universal);
