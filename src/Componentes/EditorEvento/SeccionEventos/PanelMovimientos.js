@@ -32,6 +32,14 @@ function PanelMovimientos(props) {
         props.editandoMovEvento(props.evento.movimientos)
     }
 
+    const eliminarMovimiento=(indice)=>{
+        props.evento.movimientos = props.evento.movimientos.filter((mov, index)=>{
+           return index !== indice;
+        });
+        props.editandoMovEvento(props.evento.movimientos)
+        setListaMovimientos(props.evento.movimientos)
+    }
+
     useEffect(() => {
         console.log("[EVENTO][MOV]");
         console.log(props.evento)
@@ -117,7 +125,7 @@ function PanelMovimientos(props) {
                                         <button
                                             type="button"
                                             className="btn btn-outline-primary"
-                                            onClick={() => null}
+                                            onClick={() => eliminarMovimiento(index)}
                                         >
                                             <i className="bi bi-eraser"></i>
                                         </button>
