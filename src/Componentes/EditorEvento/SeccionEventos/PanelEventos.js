@@ -27,6 +27,7 @@ function PanelEventos(props) {
     const [selectedEvent, setSelectedEvent] = useState(props.evento?.nodo_padre|| "");
     const [nombre, setNombre] = useState(props.evento?.nombre || "");
     const [bucle, setBucle] = useState(props.evento?.bucle || false);
+    const [visible, setVisible] = useState(props.evento?.visible || false);
     const [reposicionar, setReposicionar] = useState(false);
     const [inicioMin, setInicioMin] = useState(inicio?.min||'00');
     const [inicioSeg, setInicioSeg] = useState(inicio?.seg||'00');
@@ -83,6 +84,7 @@ function PanelEventos(props) {
 
             setBucle(props.evento.bucle);
             setReposicionar(props.evento.reposicionar);
+            setVisible(props.evento.visible);
             setTiempoRelativo(props.evento.tiempo_relativo);
             setSelectedEvent(props.evento.nodo_padre);
             setTiempoBucle(props.evento.tiempo_bucle);
@@ -118,7 +120,7 @@ function PanelEventos(props) {
                 y: parseFloat(coordY) || 0,
                 bucle: !!bucle,
                 reposicionar: !!reposicionar,
-                visible: true
+                visible: !!visible
             };
 
             props.guardandoEvento(evento);
@@ -265,6 +267,19 @@ function PanelEventos(props) {
                     />
                     <label className="form-check-label" htmlFor="reposicionarCheck">
                         Reposicionar
+                    </label>
+                </div>
+
+                <div className="form-check">
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="visibleCheck"
+                        checked={visible}
+                        onChange={() => setVisible(!visible)}
+                    />
+                    <label className="form-check-label" htmlFor="visibleCheck">
+                        Visible
                     </label>
                 </div>
             </div>
