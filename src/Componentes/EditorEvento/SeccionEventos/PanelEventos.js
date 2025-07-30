@@ -1,5 +1,5 @@
 import {useState, useRef, useEffect} from "react";
-
+import * as yup from 'yup';
 function formatTime(ms) {
     const minutes = Math.floor(ms / 60000).toString().padStart(2, '0');
     const seconds = Math.floor((ms % 60000) / 1000).toString().padStart(2, '0');
@@ -44,6 +44,12 @@ function PanelEventos(props) {
     const STEP = 100;
     const MAX = 60000;
     const MIN = 0;
+
+
+    const schema = yup.object().shape({
+        nombre: yup.string().required("El nombre es obligatorio"),
+        nodo_padre: yup.string().required("Debes seleccionar un evento padre"),
+    });
 
     useEffect(() => {
         console.log("[EVENTO]1");
@@ -93,24 +99,38 @@ function PanelEventos(props) {
     };
 
 
-    const guardar = () => {
-        const tiempo_inicio = parseInt(inicioMin) * 60000 + parseInt(inicioSeg) * 1000 + parseInt(inicioMs);
-        const tiempo_final = parseInt(finMin) * 60000 + parseInt(finSeg) * 1000 + parseInt(finMs);
+    const guardar = async () => {
+        try {
+            // Validar nombre y evento padre
+            await schema.validate({ nombre, nodo_padre: selectedEvent }, { abortEarly: false });
 
-        const evento = {
-            nombre: nombre.trim(),
-            nodo_padre: selectedEvent || null,
-            tiempo_inicio,
-            tiempo_final,
-            tiempo_bucle: parseInt(tiempoBucle) || 0,
-            tiempo_relativo: parseInt(tiempoRelativo) || 0,
-            x: parseFloat(coordX) || 0,
-            y: parseFloat(coordY) || 0,
-            bucle: !!bucle,
-            reposicionar: !!reposicionar,
-            visible: true
-        };
-        props.guardandoEvento(evento);
+            const tiempo_inicio = parseInt(inicioMin) * 60000 + parseInt(inicioSeg) * 1000 + parseInt(inicioMs);
+            const tiempo_final = parseInt(finMin) * 60000 + parseInt(finSeg) * 1000 + parseInt(finMs);
+
+            const evento = {
+                nombre: nombre.trim(),
+                nodo_padre: selectedEvent || null,
+                tiempo_inicio,
+                tiempo_final,
+                tiempo_bucle: parseInt(tiempoBucle) || 0,
+                tiempo_relativo: parseInt(tiempoRelativo) || 0,
+                x: parseFloat(coordX) || 0,
+                y: parseFloat(coordY) || 0,
+                bucle: !!bucle,
+                reposicionar: !!reposicionar,
+                visible: true
+            };
+
+            props.guardandoEvento(evento);
+
+        } catch (error) {
+            if (error.inner) {
+                const mensajes = error.inner.map(e => `• ${e.message}`).join('\n');
+                alert("Errores en el formulario:\n\n" + mensajes);
+            } else {
+                alert("Error inesperado en la validación.");
+            }
+        }
     };
 
     return (
@@ -122,7 +142,7 @@ function PanelEventos(props) {
                     className="form-select"
                     value={selectedEvent}
                     onChange={(e) => setSelectedEvent(e.target.value)}
-                >
+                required={true}>
                     <option value="">Seleccionar evento padre </option>
                     <option value="Nodo_Default">Nodo Default</option>
                     {props.eventoAnimacion.edicion.eventos
@@ -144,6 +164,7 @@ function PanelEventos(props) {
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                     placeholder="Nombre del evento"
+                    required={true}
                 />
             </div>
 
