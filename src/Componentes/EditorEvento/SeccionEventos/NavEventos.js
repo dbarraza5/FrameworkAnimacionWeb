@@ -45,19 +45,15 @@ function NavEventos(props){
             ...evento_
         }
         props.eventoAnimacion.edicion.agregarEvento(evento_);
-        //props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
-
     }
 
-    // useEffect(() => {
-    //     console.log("[PREVIEW CAMBIO EVENTO]");
-    //     if(indexIvento!==null){
-    //         console.log("[***Cambio de Evento***]");
-    //         console.log(evento);
-    //         const evento_new = props.eventoAnimacion.edicion.eventos[indexIvento].evento;
-    //         setEvento({...evento_new});
-    //     }
-    // }, [evento]);
+    const eliminarEvento=(indice)=>{
+        props.eventoAnimacion.edicion.eventos = props.eventoAnimacion.edicion.eventos.filter((evento_, index)=>{
+            return index !==indice;
+        });
+        props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+    }
+
 
     useEffect(() => {
         console.log("[PREVIEW CAMBIO indexIvento]");
@@ -188,13 +184,19 @@ function NavEventos(props){
                                                         <button type="button" className="btn btn-outline-primary">
                                                             <i className="bi bi-files"></i>
                                                         </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-outline-primary"
-                                                            onClick={() => null}
-                                                        >
-                                                            <i className="bi bi-eraser"></i>
-                                                        </button>
+                                                        {
+                                                            item.evento.nombre !== "EventoGeneral"&&
+                                                                (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-outline-primary"
+                                                                        onClick={() => eliminarEvento(index)}
+                                                                    >
+                                                                        <i className="bi bi-eraser"></i>
+                                                                    </button>
+                                                                )
+                                                        }
+
                                                     </div>
                                                 </td>
                                             </tr>
