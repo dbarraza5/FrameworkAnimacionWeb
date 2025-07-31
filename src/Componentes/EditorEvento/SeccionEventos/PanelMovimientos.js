@@ -25,6 +25,13 @@ function PanelMovimientos(props) {
         setmovIndexSeleccionado(index);
     };
 
+    const tipos_movimientos = {
+        1: "MRU",
+        2: "MRUA",
+        3: "Parabolico",
+        4: "Circular"
+    };
+
     const agregarMovimiento=(evento)=>{
         console.log(evento);
         //props.evento.movimientos[movIndexSeleccionado]  = movimientoSeleccionado;
@@ -71,9 +78,9 @@ function PanelMovimientos(props) {
         <div>
             {/* Botones */}
             <div className="mb-2 d-flex gap-2">
-                <button className="btn btn-outline-primary" onClick={() => setShowEditarModal(true)}>
-                    Lista movimientos
-                </button>
+                {/*<button className="btn btn-outline-primary" onClick={() => setShowEditarModal(true)}>*/}
+                {/*    Lista movimientos*/}
+                {/*</button>*/}
                 <button className="btn btn-outline-success" onClick={() => setShowAgregarModal(true)}>
                     <i className="bi bi-plus"></i>
                 </button>
@@ -84,7 +91,6 @@ function PanelMovimientos(props) {
                     <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">nombre</th>
                         <th scope="col">tipo</th>
                         <th scope="col">activo</th>
                         <th scope="col">operaciones</th>
@@ -95,8 +101,7 @@ function PanelMovimientos(props) {
                         return (
                             <tr key={index}>
                                 <th scope="row">{index + 1}</th>
-                                <td>{index + 1}</td>
-                                <td>{mov.tipo}</td>
+                                <td>{tipos_movimientos[mov.tipo]}</td>
                                 <td>
                                     <input
                                         className="form-check-input"
