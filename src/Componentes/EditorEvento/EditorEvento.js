@@ -12,6 +12,8 @@ import {GestionEvento} from "../../Clases/EditorEvento/GestionEvento";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
 import {useInterval} from "react-use";
 import TimelineCanvas from "../../Clases/EditorEvento/TimelineCanvas";
+import {setTipoModalidadTrabajo} from "../../Store/Evento/eventoSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -26,11 +28,15 @@ function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
     const [timelineInstance, setTimelineInstance] = useState(null);
+    const [tipoModalidad, setTipoModalidad] = useState(0);
+    const tipo_modalidad_trabajo = useSelector(state => state.evento.tipo_modalidad_trabajo);
+    const id_evento_seleccionado = useSelector(state => state.evento.id_evento_seleccionado);
 
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
 
     const [startLoopLienzo, setStartLoopLienzo] = useState(false);
+    const dispatch = useDispatch();
 
     const obtenerEvento=async ()=>{
         const token = datos_usuario.token
@@ -55,7 +61,7 @@ function EditorEvento(props){
                         response.data.grupos_figuras, response.data._id);
                     setEventoAnimacion(eventoAnimacion)
                     setStartLoopLienzo(true);
-
+                    dispatch(setTipoModalidadTrabajo({modalidad: 0, id_evento: "EventoGeneral"}));
                 })
                 .catch(function (response) {
                     console.log("error obtener proyectos")
@@ -92,6 +98,15 @@ function EditorEvento(props){
             //integrar el evento con el timeline
         }
     }, [eventoAnimacion]);
+
+    useEffect(() => {
+        console.log("[CAMBIO DE MODALIDAD]");
+        console.log("modalidad: "+tipo_modalidad_trabajo);
+        console.log("evento   : "+id_evento_seleccionado);
+        if(timelineInstance){
+            timelineInstance.cambioModalidad(tipo_modalidad_trabajo, id_evento_seleccionado);
+        }
+    }, [tipo_modalidad_trabajo, id_evento_seleccionado]);
 
     useInterval(() => {
         eventoAnimacion.edicion.procesandoEventos();
@@ -149,7 +164,10 @@ function EditorEvento(props){
             <NavEditorEvento eventoAnimacion={eventoAnimacion}
                              setEventoAnimacion = {setEventoAnimacion}
                              eventoLienzoFigura={eventoLienzoFigura}
-                             setEventLienzoFigura={setEventLienzoFigura}>
+                             setEventLienzoFigura={setEventLienzoFigura}
+                             tipoModalidad={tipoModalidad}
+                             setTipoModalidad={setTipoModalidad}
+            >
             </NavEditorEvento>
 
         </div>

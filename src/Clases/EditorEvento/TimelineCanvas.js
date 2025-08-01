@@ -72,13 +72,7 @@ export default class TimelineCanvas {
         this.isDraggingLineaTiempo = false;
         this.offsetDragLineaTiempo = 0;
 
-        this.lista_eventos = [
-            // { inicio: 0, fin: 500 },
-            // { inicio: 800, fin: 1600 },
-            // { inicio: 1000, fin: 2600 },
-            // { inicio: 400, fin: 1500 },
-            // { inicio: 1600, fin: 2000 },
-            // { inicio: 2100, fin: 2600 },
+        this.lista_objetos = [
         ];
 
         // Interacción
@@ -89,6 +83,17 @@ export default class TimelineCanvas {
 
         this._bindEvents();
         //this.redibujarTodo();
+        
+        // 0: nada
+        // 1: eventos
+        // 2: movimientos
+        this.tipo_modalidad_trabajo= null;
+        this.id_evento_seleccionado= null;
+    }
+
+    cambioModalidad(modalidad, id_evento){
+        this.tipo_modalidad_trabajo = modalidad;
+        this.id_evento_seleccionado = id_evento;
     }
 
     _bindEvents() {
@@ -105,7 +110,15 @@ export default class TimelineCanvas {
 
     cambiarEventos(lista_eventos_){
         console.log("[TAM]="+lista_eventos_.length)
-        this.lista_eventos = lista_eventos_;
+        this.lista_objetos = lista_eventos_;
+    }
+    
+    modalidadEventos(){
+        this.tipo_edicion = 1;
+    }
+    
+    modalidadMovimientos(){
+        this.tipo_edicion = 2;
     }
 
     procesar(){
@@ -135,7 +148,7 @@ export default class TimelineCanvas {
             ctx.fillText(`${i} seg`, x + 2, this.y_timeline + 12);
         }
 
-        this.lista_eventos.forEach((ev, idx) => {
+        this.lista_objetos.forEach((ev, idx) => {
             this._dibujarEvento(ev, idx);
         });
 
@@ -165,7 +178,7 @@ export default class TimelineCanvas {
     }
 
     _getLaneOffset(idx, salto) {
-        let num_elementos = this.lista_eventos.length>4?4:this.lista_eventos.length;
+        let num_elementos = this.lista_objetos.length>4?4:this.lista_objetos.length;
         if(idx<=3){
             const alto_rectangulo  = num_elementos*this.alto_evento+(num_elementos-1)*this.sep_entre_even;
             const segmento = alto_rectangulo/num_elementos;
@@ -200,7 +213,7 @@ export default class TimelineCanvas {
         console.log(this.eventoLienzo.stack_event_teclado);
 
 
-        for (let ev of this.lista_eventos) {
+        for (let ev of this.lista_objetos) {
             const { _renderX: x, _renderY: y, _renderW: w, _renderH: h } = ev;
 
             if (mx >= x && mx <= x + w && my >= y && my <= y + h) {
@@ -250,7 +263,7 @@ export default class TimelineCanvas {
         if (this.isDraggingTimelineY) {
             const delta = my - this.dragStartY;
             this.dragStartY = my;
-            const espacio_eventos = (this.alto_evento+this.sep_entre_even)*(this.lista_eventos.length-4);
+            const espacio_eventos = (this.alto_evento+this.sep_entre_even)*(this.lista_objetos.length-4);
             const esta_limite = Math.abs(this.desplazamiento_y - delta)<espacio_eventos;
             if (esta_limite){
                 this.desplazamiento_y -= delta;
@@ -298,18 +311,12 @@ export default class TimelineCanvas {
         this.isDraggingLineaTiempo = false;
         if(this.eventoAnimacion.seleccion_evento>=0){
             const evento_ = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento];
-            // evento_.evento.movimientos.map((mov)=>{
-            //     return {
-            //         inicio: mov.tiempo_inicio,
-            //         fin: mov.tiempo_final
-            //     }
-            // });
-            if(evento_ && this.lista_eventos.length === evento_.evento.movimientos.length){
+            if(evento_ && this.lista_objetos.length === evento_.evento.movimientos.length){
                 console.log("timeline evento");
                 console.log(evento_);
                 for(let i=0; i<evento_.evento.movimientos.length; i++){
-                    evento_.evento.movimientos[i].tiempo_inicio = this.lista_eventos[i].inicio;
-                    evento_.evento.movimientos[i].tiempo_final = this.lista_eventos[i].fin;
+                    evento_.evento.movimientos[i].tiempo_inicio = this.lista_objetos[i].inicio;
+                    evento_.evento.movimientos[i].tiempo_final = this.lista_objetos[i].fin;
                 }
                 this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento] = evento_;
                 this.setEventoAnimacion({edicion:this.eventoAnimacion});
@@ -323,7 +330,7 @@ export default class TimelineCanvas {
             alert('Valores inválidos.');
             return;
         }
-        this.lista_eventos.push({ inicio, fin });
+        this.lista_objetos.push({ inicio, fin });
         //this.redibujarTodo();
     }
 

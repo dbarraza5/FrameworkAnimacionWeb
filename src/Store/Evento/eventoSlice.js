@@ -1,0 +1,110 @@
+import {createSlice} from "@reduxjs/toolkit";
+
+const inicializarState= {
+    tipo_modalidad_trabajo: null,
+    id_evento_seleccionado: null,
+    evento: {
+        id_proyecto: "",
+        id_evento: "",
+        nombre_evento: "",
+        grupos_trabajando:[],
+        // para poder retroceder crtl+z
+        estado_anterior:[],
+        id_hilo_lienzo: null
+    },
+    backup:{
+        deshacer: [],
+        rehacer: [],
+        actual: null,
+        max_distancia: 5,
+        tiempo_ultimo_cambio: null,
+        //tiempo de espera para poder guardar los cambios | en milisegundos
+        tiempo_espera: 100,
+        //0: se mantiene o se acutaliza | 1: se rehace el estado | -1: se dehace
+        estado: 0
+    }
+    ,
+    status: 'idle',
+    error: null
+}
+
+
+const eventoSlice = createSlice({
+    name:"animacion",
+    initialState: inicializarState,//new GestionAnimacion(),
+
+    reducers:{
+        setTipoModalidadTrabajo: (state, action) => {
+            state.tipo_modalidad_trabajo = action.payload.modalidad;
+            state.id_evento_seleccionado = action.payload.id_evento;
+        },
+
+        setNombreAnimacion: (state, action) => {
+            state.animacion.nombre_animacion = action.payload
+        }
+        ,
+        deshacer: (state)=>{
+            if(state.backup.deshacer.length > 0){
+                const auxiliar = state.backup.actual;
+                state.backup.actual = state.backup.deshacer.pop();
+                state.backup.rehacer.unshift(auxiliar);
+                state.backup.estado+= -1;
+            }
+        },
+        rehacer: (state)=>{
+            if(state.backup.rehacer.length > 0){
+                const auxiliar = state.backup.actual;
+                state.backup.actual = state.backup.rehacer.shift();
+                state.backup.deshacer.push(auxiliar);
+                state.backup.estado+= 1;
+            }
+        },
+        actualizarBackup: (state, action)=>{
+            const tiempoActual = new Date().getTime();
+            if ((state.backup.tiempo_ultimo_cambio === null ||
+                tiempoActual - state.backup.tiempo_ultimo_cambio >= state.backup.tiempo_espera) &&
+                state.backup.actual !== action.payload ) {
+                console.log("Mensaje cada 5 segundos");
+                if(state.backup.actual !== null){
+                    state.backup.deshacer.push(state.backup.actual)
+                    if(state.backup.deshacer.length > state.backup.max_distancia){
+                        state.backup.deshacer.shift()
+                    }
+                }
+                state.backup.rehacer=[]
+                state.backup.actual = action.payload;
+                state.backup.tiempo_ultimo_cambio = tiempoActual;
+                state.backup.estado = 0;
+            }
+        },
+        restaurarState: ()=>inicializarState
+    },
+    // extraReducers:
+    //     (builder) => {
+    //         builder
+    //             .addCase(fetchAnimacion.pending, (state) => {
+    //                 state.status = 'loading';
+    //             })
+    //             .addCase(fetchAnimacion.fulfilled, (state, action) => {
+    //                 state.status = 'succeeded';
+    //                 console.log("SUCCEEDED")
+    //                 console.log(action.payload)
+    //                 console.log(action.error)
+    //                 state.animacion.id_animacion = action.payload._id;
+    //                 state.animacion.nombre_animacion = action.payload.nombre_animacion;
+    //                 state.animacion.meta_figuras = action.payload.meta_figuras
+    //                 state.animacion.meta_movimientos = action.payload.meta_movimientos;
+    //                 state.animacion.grupos_figuras = action.payload.grupos_figuras
+    //             })
+    //             .addCase(fetchAnimacion.rejected, (state, action) => {
+    //                 state.status = 'failed';
+    //                 state.error = action.error.message;
+    //                 console.log("FAILEDDDD")
+    //             });
+    //     }
+});
+
+export const {
+    deshacer, rehacer, actualizarBackup, restaurarState,
+    setIdHiloLienzo, setTipoModalidadTrabajo} = eventoSlice.actions;
+export default eventoSlice.reducer;
