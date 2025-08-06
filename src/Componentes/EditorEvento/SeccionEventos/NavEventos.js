@@ -6,10 +6,12 @@ import PanelScripts from "./PanelScripts";
 import PanelAnimacion from "./PanelAnimacion";
 import ModalAgregarEvento from "./ModalAgregarEvento";
 import {nanoid} from "nanoid";
+import ModalListaEventos from "./ModalListaEventos";
 
 
 function NavEventos(props){
     const [showModal, setShowModal] = useState(false);
+    const [showModalListaEvento, setShowModalListaEvento] = useState(false);
     const [evento, setEvento] = useState(null);
     const [indexIvento, setIndexEvento] = useState(null);
     const [modalAddEvento, setModalAddEvento] = useState(false);
@@ -74,6 +76,9 @@ function NavEventos(props){
         <div className="mb-2 d-flex gap-2">
             <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
                 Lista eventos
+            </button>
+            <button className="btn btn-outline-primary" onClick={() => setShowModalListaEvento(true)}>
+                Arbol eventos
             </button>
             <button className="btn btn-outline-success" onClick={() => setModalAddEvento(true)}>
                 <i className="bi bi-plus"></i>
@@ -219,6 +224,13 @@ function NavEventos(props){
             onClose={() => setModalAddEvento(false)}
             onGuardar={agregandoEvento}
             eventoAnimacion={props.eventoAnimacion}
+        />
+
+        <ModalListaEventos
+            show={showModalListaEvento}
+            onClose={() => setShowModalListaEvento(false)}
+            onGuardar={agregandoEvento}
+            lista_eventos={props.eventoAnimacion.edicion.eventos}
         />
     </div>)
 }
