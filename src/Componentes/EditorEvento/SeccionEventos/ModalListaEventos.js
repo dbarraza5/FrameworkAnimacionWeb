@@ -3,6 +3,7 @@ import {useMemo, useState} from "react";
 function ModalListaEventos({ show, onClose, onGuardar, lista_eventos }) {
     const [selectedNode, setSelectedNode] = useState(null);
     const [openNodes, setOpenNodes] = useState(new Set());
+    const [selectedPath, setSelectedPath] = useState(null);
 
     // 🧠 Construir árbol jerárquico desde lista_eventos
     const arbol_animacion = useMemo(() => {
@@ -35,22 +36,23 @@ function ModalListaEventos({ show, onClose, onGuardar, lista_eventos }) {
         setOpenNodes(newOpenNodes);
     };
 
-    const handleSelect = (path) => {
-        setSelectedNode(path);
+    const handleSelect = (path, name) => {
+        setSelectedPath(path);      // para resaltado visual
+        setSelectedNode(name);      // para usar en onGuardar
     };
 
     const renderTree = (nodo, path = '') => {
         const currentPath = path ? `${path}/${nodo.nombre}` : nodo.nombre;
         const hasChildren = nodo.hijos && nodo.hijos.length > 0;
         const isOpen = openNodes.has(currentPath);
-        const isSelected = selectedNode === currentPath;
+        const isSelected = selectedPath === currentPath;
 
         return (
             <li key={currentPath}>
                 <div
                     onClick={() => {
                         if (hasChildren) toggleNode(currentPath);
-                        handleSelect(currentPath);
+                        handleSelect(currentPath, nodo.nombre); // ← ahora enviamos ambos
                     }}
                     style={{
                         cursor: "pointer",
@@ -63,8 +65,8 @@ function ModalListaEventos({ show, onClose, onGuardar, lista_eventos }) {
                     🔘 {nodo.nombre}
                     {hasChildren && (
                         <span style={{ marginLeft: "4px", fontSize: "12px", color: "#555" }}>
-                            {isOpen ? '▼' : '▶'}
-                        </span>
+                        {isOpen ? '▼' : '▶'}
+                    </span>
                     )}
                 </div>
                 {hasChildren && isOpen && (
@@ -95,7 +97,7 @@ function ModalListaEventos({ show, onClose, onGuardar, lista_eventos }) {
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
                         <button type="button" className="btn btn-primary" onClick={() => onGuardar(selectedNode)}>
-                            Guardar
+                            Seleccionar
                         </button>
                     </div>
                 </div>

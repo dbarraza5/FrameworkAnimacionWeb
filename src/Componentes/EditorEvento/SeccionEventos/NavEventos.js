@@ -47,6 +47,7 @@ function NavEventos(props){
             ...evento_
         }
         props.eventoAnimacion.edicion.agregarEvento(evento_);
+        props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     }
 
     const eliminarEvento=(indice)=>{
@@ -54,6 +55,23 @@ function NavEventos(props){
             return index !==indice;
         });
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+    }
+
+    const seleccionarEvento=(nombre)=>{
+        //props.eventoAnimacion.edicion.seleccion_evento = nombre;
+        let indice_seleccionado = null;
+        for(let i=0; props.eventoAnimacion.edicion.eventos; i++){
+            const evento_ = props.eventoAnimacion.edicion.eventos[i];
+            if(evento_["evento"]["nombre"] === nombre){
+                console.log("[index]: "+i);
+                indice_seleccionado = i;
+                break;
+            }
+        }
+        if(indice_seleccionado){
+            seleccionEvento(indice_seleccionado);
+        }
+        console.log("[nombre evento]: "+nombre);
     }
 
 
@@ -227,11 +245,15 @@ function NavEventos(props){
         />
 
         <ModalListaEventos
+            id={'modal-seleccion'}
+            key={`modal-seleccion-${props.eventoAnimacion.edicion.version}`}
             show={showModalListaEvento}
             onClose={() => setShowModalListaEvento(false)}
-            onGuardar={agregandoEvento}
+            onGuardar={seleccionarEvento}
             lista_eventos={props.eventoAnimacion.edicion.eventos}
         />
+
+        <p>hola como estas {props.eventoAnimacion.edicion.version}</p>
     </div>)
 }
 
