@@ -89,6 +89,39 @@ export default class TimelineCanvas {
         // 2: movimientos
         this.tipo_modalidad_trabajo= null;
         this.id_evento_seleccionado= null;
+
+        this.botones = [
+            { nombre: 'restablecer', x: 10,  y: this.y_timeline - 40, w: 32, h: 32 },
+            { nombre: 'play',        x: 50,  y: this.y_timeline - 40, w: 32, h: 32 },
+            { nombre: 'stop',        x: 90,  y: this.y_timeline - 40, w: 32, h: 32 },
+            { nombre: 'velocidad',   x: 130, y: this.y_timeline - 40, w: 32, h: 32 }
+        ];
+        // en constructor, después de setear this.y_timeline:
+        this._nombresBotones = ["restablecer", "play", "stop", "velocidad"];
+        this._botonW = 28;       // más compacto
+        this._botonH = 28;
+        this._separacion = 8;    // más juntos
+        this._altoUI = 44;       // franja de UI sobre el timeline
+        this.playing = false;
+        this._speeds = [0.25, 0.5, 1, 1.5, 2, 4];
+        this._speedIndex = 2;    // arranca en 1x
+
+        this._layoutBotones();   // calcula posiciones centradas
+    }
+
+    _layoutBotones() {
+        const total = this._nombresBotones.length * this._botonW +
+            (this._nombresBotones.length - 1) * this._separacion;
+        const inicioX = (this.ancho_canvas - total) / 2;
+        const posY = this.y_timeline - this._altoUI + (this._altoUI - this._botonH) / 2;
+
+        this.botones = this._nombresBotones.map((nombre, i) => ({
+            nombre,
+            x: Math.round(inicioX + i * (this._botonW + this._separacion)),
+            y: Math.round(posY),
+            w: this._botonW,
+            h: this._botonH
+        }));
     }
 
     cambioModalidad(modalidad, id_evento){
@@ -129,6 +162,10 @@ export default class TimelineCanvas {
     redibujarTodo() {
         const ctx = this.ctx;
         //ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
+
+
+        // Dibuja botones primero
+        this.dibujarBotones();
 
         // Línea de tiempo
         ctx.fillStyle = '#1e1e2f';
@@ -242,6 +279,18 @@ export default class TimelineCanvas {
             this.offsetDragLineaTiempo = mx - this.x_linea_tiempo;
             return; // prioridad a mover el triángulo
         }
+
+
+        // --- detección de click en botones (primero) ---
+        for (let b of this.botones) {
+            if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+                if (b.nombre === "restablecer") this.reiniciarAnimacion();
+                if (b.nombre === "play")        this.reproducirAnimacion();
+                if (b.nombre === "stop")        this.detenerAnimacion();
+                if (b.nombre === "velocidad")   this.cambiarVelocidad();
+                return; // no seguir con selección/drag del timeline
+            }
+        }
     }
 
     _onMouseMove(e) {
@@ -334,9 +383,92 @@ export default class TimelineCanvas {
         //this.redibujarTodo();
     }
 
+
+    dibujarBotones() {
+        const ctx = this.ctx;
+        ctx.save();
+
+        // Limpia la franja de UI
+        ctx.clearRect(0, this.y_timeline - this._altoUI, this.ancho_canvas, this._altoUI);
+
+        // (opcional) una banda de fondo tenue
+        // ctx.fillStyle = "#0f0f18";
+        // ctx.fillRect(0, this.y_timeline - this._altoUI, this.ancho_canvas, this._altoUI);
+
+        this.botones.forEach(b => {
+            ctx.save();
+
+            // botón
+            ctx.fillStyle = "#2b2b3d";
+            const r = 6; // esquinas redondeadas
+            this._roundRect(ctx, b.x, b.y, b.w, b.h, r);
+            ctx.fill();
+
+            // borde sutil
+            ctx.strokeStyle = "#ffffff88";
+            ctx.lineWidth = 1;
+            this._roundRect(ctx, b.x, b.y, b.w, b.h, r);
+            ctx.stroke();
+
+            // icono
+            ctx.fillStyle = "#fff";
+            ctx.font = "14px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            const cx = b.x + b.w/2, cy = b.y + b.h/2;
+
+            if (b.nombre === "play")        ctx.fillText(this.playing ? "⏸" : "▶", cx, cy);
+            if (b.nombre === "stop")        ctx.fillText("■", cx, cy);
+            if (b.nombre === "restablecer") ctx.fillText("↺", cx, cy);
+            if (b.nombre === "velocidad")   ctx.fillText("⏩", cx, cy);
+
+            // (opcional) mostrar 1x, 2x pequeño debajo del icono de velocidad
+            if (b.nombre === "velocidad") {
+                ctx.font = "10px sans-serif";
+                ctx.fillText(this._speeds[this._speedIndex] + "x", cx, cy + b.h/2 + 8);
+            }
+
+            ctx.restore();
+        });
+
+        ctx.restore();
+    }
+
+    // helper para rectángulos redondeados
+    _roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+
+
     dispose() {
         this.canvasElem.removeEventListener('mousedown', this._onMouseDown);
         this.canvasElem.removeEventListener('mousemove', this._onMouseMove);
         this.canvasElem.removeEventListener('mouseup', this._onMouseUp);
+    }
+
+    reiniciarAnimacion() {
+        alert("reiniciarAnimacion");
+    }
+
+    reproducirAnimacion() {
+        alert("reproducirAnimacion");
+    }
+
+    detenerAnimacion() {
+        alert("detenerAnimacion");
+    }
+
+    cambiarVelocidad() {
+        alert("detenerAnimacion");
     }
 }
