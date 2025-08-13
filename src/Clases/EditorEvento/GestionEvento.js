@@ -3,6 +3,7 @@ import {GestionMovimientos} from "./GestionMovimientos";
 import {GestionAnimacion} from "../EditorAnimacion/GestionAnimacion";
 import {ImprimirAnimacion} from "../EditorAnimacion/ImprimirAnimacion";
 import ConfiguracionLienzo from "../EditorAnimacion/ConfiguracionLienzo";
+
 let tiempo_universal=performance.now();
 
 class Evento{
@@ -77,6 +78,13 @@ class GestionEvento{
 
     agregarEvento(evento_){
         this.eventos.push(new Evento(evento_));
+    }
+
+    obtenerHijos(id_padre){
+        console.log(id_padre);
+        return this.eventos.filter((e) => {
+            return e.evento["nodo_padre"] === id_padre;
+        });
     }
 
     procesandoEventos(){

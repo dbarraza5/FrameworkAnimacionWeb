@@ -461,7 +461,11 @@ export default class TimelineCanvas {
     }
 
     reproducirAnimacion() {
-        alert("reproducirAnimacion");
+        //alert("reproducirAnimacion");
+        const nombre_event = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento].evento["nombre"];
+        const l=this.eventoAnimacion.obtenerHijos(nombre_event);
+        console.log("[lista de hijos]");
+        console.log(l);
     }
 
     detenerAnimacion() {

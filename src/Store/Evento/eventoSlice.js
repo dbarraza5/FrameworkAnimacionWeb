@@ -1,6 +1,24 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+
+
+// Constantes exportadas
+export const MODALIDAD_ANIMACION = 1;
+export const MODALIDAD_GRUPOS = 2;
+export const MODALIDAD_COMPOSICION = 3;
+
+export const TRABAJO_ANIMACION_EVENTOS = 1;
+export const TRABAJO_ANIMACION_MOVIMIENTOS = 2;
+
+export const TRABAJO_GRUPOS_POSICION = 1;
+export const TRABAJO_GRUPOS_ROTACION = 2;
+export const TRABAJO_GRUPOS_TAMANO = 3;
+export const TRABAJO_GRUPOS_ESPEJO = 4;
+
+
+
 const inicializarState= {
+    tipo_modalidad: null,
     tipo_modalidad_trabajo: null,
     id_evento_seleccionado: null,
     evento: {
@@ -34,7 +52,8 @@ const eventoSlice = createSlice({
     initialState: inicializarState,//new GestionAnimacion(),
 
     reducers:{
-        setTipoModalidadTrabajo: (state, action) => {
+        modalidadTrabajoAnimacion: (state, action) => {
+            state.tipo_modalidad = MODALIDAD_ANIMACION;
             state.tipo_modalidad_trabajo = action.payload.modalidad;
             state.id_evento_seleccionado = action.payload.id_evento;
         },
@@ -79,32 +98,9 @@ const eventoSlice = createSlice({
         },
         restaurarState: ()=>inicializarState
     },
-    // extraReducers:
-    //     (builder) => {
-    //         builder
-    //             .addCase(fetchAnimacion.pending, (state) => {
-    //                 state.status = 'loading';
-    //             })
-    //             .addCase(fetchAnimacion.fulfilled, (state, action) => {
-    //                 state.status = 'succeeded';
-    //                 console.log("SUCCEEDED")
-    //                 console.log(action.payload)
-    //                 console.log(action.error)
-    //                 state.animacion.id_animacion = action.payload._id;
-    //                 state.animacion.nombre_animacion = action.payload.nombre_animacion;
-    //                 state.animacion.meta_figuras = action.payload.meta_figuras
-    //                 state.animacion.meta_movimientos = action.payload.meta_movimientos;
-    //                 state.animacion.grupos_figuras = action.payload.grupos_figuras
-    //             })
-    //             .addCase(fetchAnimacion.rejected, (state, action) => {
-    //                 state.status = 'failed';
-    //                 state.error = action.error.message;
-    //                 console.log("FAILEDDDD")
-    //             });
-    //     }
 });
 
 export const {
     deshacer, rehacer, actualizarBackup, restaurarState,
-    setIdHiloLienzo, setTipoModalidadTrabajo} = eventoSlice.actions;
+    setIdHiloLienzo, modalidadTrabajoAnimacion} = eventoSlice.actions;
 export default eventoSlice.reducer;

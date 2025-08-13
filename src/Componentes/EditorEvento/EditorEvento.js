@@ -12,7 +12,7 @@ import {GestionEvento} from "../../Clases/EditorEvento/GestionEvento";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
 import {useInterval} from "react-use";
 import TimelineCanvas from "../../Clases/EditorEvento/TimelineCanvas";
-import {setTipoModalidadTrabajo} from "../../Store/Evento/eventoSlice";
+import {modalidadTrabajoAnimacion, TRABAJO_ANIMACION_EVENTOS} from "../../Store/Evento/eventoSlice";
 import {useDispatch, useSelector} from "react-redux";
 
 const useCustomEvento=(valor_inicial=null)=>{
@@ -61,7 +61,7 @@ function EditorEvento(props){
                         response.data.grupos_figuras, response.data._id);
                     setEventoAnimacion(eventoAnimacion)
                     setStartLoopLienzo(true);
-                    dispatch(setTipoModalidadTrabajo({modalidad: 0, id_evento: "EventoGeneral"}));
+                    dispatch(modalidadTrabajoAnimacion({modalidad: TRABAJO_ANIMACION_EVENTOS, id_evento: "EventoGeneral"}));
                 })
                 .catch(function (response) {
                     console.log("error obtener proyectos")
