@@ -59,7 +59,7 @@ function NavEventos(props){
 
     const seleccionarEvento=(nombre)=>{
         //props.eventoAnimacion.edicion.seleccion_evento = nombre;
-        let indice_seleccionado = null;
+        let indice_seleccionado = -1;
         for(let i=0; props.eventoAnimacion.edicion.eventos; i++){
             const evento_ = props.eventoAnimacion.edicion.eventos[i];
             if(evento_["evento"]["nombre"] === nombre){
@@ -68,7 +68,7 @@ function NavEventos(props){
                 break;
             }
         }
-        if(indice_seleccionado){
+        if(indice_seleccionado>-1){
             seleccionEvento(indice_seleccionado);
         }
         console.log("[nombre evento]: "+nombre);

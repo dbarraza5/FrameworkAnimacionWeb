@@ -19,7 +19,7 @@ function ModalListaEventos({ show, onClose, onGuardar, lista_eventos }) {
         // Luego asignar hijos a sus padres
         lista_eventos.forEach((item) => {
             const { nombre, nodo_padre } = item.evento;
-            if (nodo_padre && mapa.has(nodo_padre)) {
+            if (nodo_padre && nodo_padre !== "Nodo_Default" && mapa.has(nodo_padre)) {
                 mapa.get(nodo_padre).hijos.push(mapa.get(nombre));
             } else {
                 // Si no tiene padre válido, lo tratamos como raíz
@@ -37,6 +37,8 @@ function ModalListaEventos({ show, onClose, onGuardar, lista_eventos }) {
     };
 
     const handleSelect = (path, name) => {
+        console.log(path);
+        console.log(name);
         setSelectedPath(path);      // para resaltado visual
         setSelectedNode(name);      // para usar en onGuardar
     };
@@ -96,7 +98,10 @@ function ModalListaEventos({ show, onClose, onGuardar, lista_eventos }) {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
-                        <button type="button" className="btn btn-primary" onClick={() => onGuardar(selectedNode)}>
+                        <button type="button" className="btn btn-primary" onClick={() => {
+                            onGuardar(selectedNode);
+                            onClose();
+                        }}>
                             Seleccionar
                         </button>
                     </div>
