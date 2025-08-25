@@ -1,4 +1,5 @@
 import index from "@mui/material/darkScrollbar";
+import {TRABAJO_ANIMACION_EVENTOS, TRABAJO_ANIMACION_MOVIMIENTOS} from "../../Store/Evento/eventoSlice";
 
 const ALTO_EVENTO_=30;
 
@@ -359,16 +360,37 @@ export default class TimelineCanvas {
         this.resizeSide = null;
         this.isDraggingLineaTiempo = false;
         if(this.eventoAnimacion.seleccion_evento>=0){
-            const evento_ = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento];
-            if(evento_ && this.lista_objetos.length === evento_.evento.movimientos.length){
-                console.log("timeline evento");
-                console.log(evento_);
-                for(let i=0; i<evento_.evento.movimientos.length; i++){
-                    evento_.evento.movimientos[i].tiempo_inicio = this.lista_objetos[i].inicio;
-                    evento_.evento.movimientos[i].tiempo_final = this.lista_objetos[i].fin;
+            if(this.tipo_modalidad_trabajo===TRABAJO_ANIMACION_MOVIMIENTOS){
+                const evento_ = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento];
+                if(evento_ && this.lista_objetos.length === evento_.evento.movimientos.length){
+                    console.log("timeline evento");
+                    console.log(evento_);
+                    for(let i=0; i<evento_.evento.movimientos.length; i++){
+                        evento_.evento.movimientos[i].tiempo_inicio = this.lista_objetos[i].inicio;
+                        evento_.evento.movimientos[i].tiempo_final = this.lista_objetos[i].fin;
+                    }
+                    this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento] = evento_;
+                    this.setEventoAnimacion({edicion:this.eventoAnimacion});
                 }
-                this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento] = evento_;
-                this.setEventoAnimacion({edicion:this.eventoAnimacion});
+            }
+            if(this.tipo_modalidad_trabajo===TRABAJO_ANIMACION_EVENTOS){
+                let cambio = false;
+                for(let i=0; i<this.lista_objetos.length; i++){
+                    const obj = this.lista_objetos[i];
+                    for(let j=0; j<this.eventoAnimacion.eventos.length; j++){
+                        if(this.eventoAnimacion.eventos[j].evento["nombre"] === obj["id"]){
+                            this.eventoAnimacion.eventos[j].evento["tiempo_inicio"] = obj.inicio;
+                            this.eventoAnimacion.eventos[j].evento["tiempo_final"] = obj.fin;
+                            cambio = true;
+                            break;
+                        }
+                    }
+                }
+                if (cambio){
+                    console.log("cambio en el tiempo de los eventos sssssssssssss=============1")
+                    console.log(this.eventoAnimacion.eventos);
+                    this.setEventoAnimacion({edicion:this.eventoAnimacion});
+                }
             }
         }
 

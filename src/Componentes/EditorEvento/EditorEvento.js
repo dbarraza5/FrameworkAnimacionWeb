@@ -12,7 +12,11 @@ import {GestionEvento} from "../../Clases/EditorEvento/GestionEvento";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
 import {useInterval} from "react-use";
 import TimelineCanvas from "../../Clases/EditorEvento/TimelineCanvas";
-import {modalidadTrabajoAnimacion, TRABAJO_ANIMACION_EVENTOS} from "../../Store/Evento/eventoSlice";
+import {
+    modalidadTrabajoAnimacion,
+    TRABAJO_ANIMACION_EVENTOS,
+    TRABAJO_ANIMACION_MOVIMIENTOS
+} from "../../Store/Evento/eventoSlice";
 import {useDispatch, useSelector} from "react-redux";
 
 const useCustomEvento=(valor_inicial=null)=>{
@@ -28,7 +32,7 @@ function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
     const [timelineInstance, setTimelineInstance] = useState(null);
-    const [tipoModalidad, setTipoModalidad] = useState(0);
+
     const tipo_modalidad_trabajo = useSelector(state => state.evento.tipo_modalidad_trabajo);
     const id_evento_seleccionado = useSelector(state => state.evento.id_evento_seleccionado);
 
@@ -37,6 +41,12 @@ function EditorEvento(props){
 
     const [startLoopLienzo, setStartLoopLienzo] = useState(false);
     const dispatch = useDispatch();
+
+    const [tipoModalidadTrabajo, setTipoModalidadTrabajo] = useState(tipo_modalidad_trabajo);
+
+    useEffect(() => {
+        setTipoModalidadTrabajo(tipo_modalidad_trabajo);
+    }, [tipo_modalidad_trabajo]);
 
     const obtenerEvento=async ()=>{
         const token = datos_usuario.token
@@ -76,7 +86,6 @@ function EditorEvento(props){
     useEffect(() => {
         console.log("[==============================Evento===========================]")
         obtenerEvento();
-
         const instance = new TimelineCanvas(eventoLienzoFigura, eventoAnimacion, setEventoAnimacion);
         setTimelineInstance(instance);
     }, []);
@@ -87,14 +96,36 @@ function EditorEvento(props){
             const evento_ = eventoAnimacion.edicion.eventos[eventoAnimacion.edicion.seleccion_evento];
             console.log("[cambio de evento]: "+eventoAnimacion.edicion.version);
             console.log(evento_.evento);
-            const list_evento = evento_.evento.movimientos.map((mov)=>{
-                return {
-                    inicio: mov.tiempo_inicio,
-                    fin: mov.tiempo_final
-                }
-            });
-            console.log(list_evento);
-            timelineInstance.cambiarEventos(list_evento);
+
+            if(tipoModalidadTrabajo===TRABAJO_ANIMACION_EVENTOS){
+                const nombre_event = evento_.evento["nombre"];
+                const lista_hijos=eventoAnimacion.edicion.obtenerHijos(nombre_event);
+
+                const list_evento = lista_hijos.map((event_)=>{
+                    return {
+                        id: event_.evento.nombre,
+                        inicio: event_.evento.tiempo_inicio,
+                        fin: event_.evento.tiempo_final
+                    }
+                });
+                console.log("[*lista de hijos*]");
+                console.log(lista_hijos);
+                console.log(list_evento);
+                timelineInstance.cambiarEventos(list_evento);
+            }
+            if(tipoModalidadTrabajo===TRABAJO_ANIMACION_MOVIMIENTOS){
+                const list_evento = evento_.evento.movimientos.map((mov, index)=>{
+                    return {
+                        id: index,
+                        inicio: mov.tiempo_inicio,
+                        fin: mov.tiempo_final
+                    }
+                });
+                console.log(list_evento);
+                timelineInstance.cambiarEventos(list_evento);
+            }
+
+
             //integrar el evento con el timeline
         }
     }, [eventoAnimacion]);
@@ -165,8 +196,8 @@ function EditorEvento(props){
                              setEventoAnimacion = {setEventoAnimacion}
                              eventoLienzoFigura={eventoLienzoFigura}
                              setEventLienzoFigura={setEventLienzoFigura}
-                             tipoModalidad={tipoModalidad}
-                             setTipoModalidad={setTipoModalidad}
+                             tipoModalidad={tipoModalidadTrabajo}
+                             setTipoModalidad={setTipoModalidadTrabajo}
             >
             </NavEditorEvento>
 
