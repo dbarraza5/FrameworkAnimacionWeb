@@ -7,6 +7,7 @@ import PanelAnimacion from "./PanelAnimacion";
 import ModalAgregarEvento from "./ModalAgregarEvento";
 import {nanoid} from "nanoid";
 import ModalListaEventos from "./ModalListaEventos";
+import PanelGrupos from "./PanelGrupos";
 
 
 function NavEventos(props){
@@ -144,7 +145,7 @@ function NavEventos(props){
             <div className="tab-pane fade" id="nav-grupos" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                grupos
+                <PanelGrupos {...props}/>
             </div>
 
             <div className="tab-pane fade" id="nav-scrips" role="tabpanel"
