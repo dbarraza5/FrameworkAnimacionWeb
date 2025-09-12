@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState, useId } from "react";
+import {Cookies} from 'react-cookie';
+import axios from "axios";
 
 export default function ModalImportarGrupos({
                                                 id = "dualListModal",
@@ -37,6 +39,53 @@ export default function ModalImportarGrupos({
             })),
         },
     ];
+
+    const cookie = new Cookies();
+    const datos_usuario = cookie.get("usuario")
+
+
+    // const removerCookieUser_=props.removeCookieUser;
+    //
+    const obtenerListaProyectos=async()=>{
+        // try {
+        //     const url = "api/proyecto/user/"+datos_usuario.id;
+        //     //console.log("url: "+url)
+        //     if(true){
+        //         //console.log(cookie)
+        //         const token = datos_usuario.token
+        //         const config = {
+        //             method: 'get',
+        //             url: url,
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 'Accept': 'application/json',
+        //                 'Authorization': 'Bearer '+token,
+        //                 //'Cookie': 'app.sid=s%3AvQpGktI'
+        //             },
+        //             withCredentials: true
+        //         };
+        //
+        //         let res = await axios(config)
+        //             .then(function (response) {
+        //                 //console.log("funciono")
+        //                 //console.log(response.data);
+        //                 setProyectos(response.data)
+        //             })
+        //             .catch(function (response) {
+        //                 console.log("error obtener proyectos")
+        //                 console.log(response.response.data);
+        //                 props.manejadorErrores(response.response.data)
+        //             });
+        //     }
+        //
+        // } catch (err) {
+        //     //console.log(err);
+        // }
+    }
+
+    useEffect(()=>{
+
+    },[])
 
     // Índices útiles
     const allItems = useMemo(
