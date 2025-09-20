@@ -79,6 +79,33 @@ function Animacion(props) {
         }
     }
 
+    const eliminarAnimacion=async (id_animacion)=>{
+        const url = "/api/animacion/id/"+id_animacion;
+
+        const token = props.user.usuario.token;
+        const config_request = {
+            method: 'delete',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+token,
+            }
+        }
+
+        let res = await axios(config_request)
+            .then(function (response) {
+                const lista = animaciones.filter((anima_)=>{
+                    return anima_._id !== id_animacion;
+                });
+                setAnimaciones(lista);
+            })
+            .catch(function (respuesta) {
+                console.log(respuesta)
+                const msj = respuesta.response.data.error[0]
+                alert(msj);
+            });
+    }
+
     useEffect(()=>{
         obtenerListaAnimaciones();
         obtenerListaEventos();
@@ -196,7 +223,7 @@ function Animacion(props) {
                                                         <i className="bi bi-eye"></i>
                                                     </button>
                                                     <button type="button" className="btn btn-outline-primary"
-                                                            onClick={() => console.log("eliminar")}>
+                                                            onClick={() => eliminarAnimacion(animacion._id)}>
                                                         <i className="bi bi-eraser"></i>
                                                     </button>
                                                 </div>
