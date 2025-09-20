@@ -1,57 +1,51 @@
 import config from "../../config";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {useParams} from "react-router";
 
 function ModalAddAnimacionEvento(props){
-
-    const ingresarValorCampo = (e) => {
-        /*let {name, value} = e.target;
-        let nuevoDatos = {...proyecto, [name]: value};
-        setProyecto(nuevoDatos)*/
-    }
-
     const [mensaje_error, setMensajeError] = useState(null);
     const [nombre, setNombre] = useState("");
     const [descripcion, setDescripcion] = useState("");
 
+    const [id_animacion, setIdAnimacion] = useState(props.id_animacion);
+
+    useEffect(() => {
+        setIdAnimacion(props.id_animacion);
+    }, [props.id_animacion]);
+
     const { id_proyecto } = useParams();
 
     const actualizarAnimacion=async ()=>{
-        // const url = "api/proyecto/id/"+
-        //     document.getElementById("enviar-proyecto").value;
-        //
-        // const token = props.user.usuario.token;
-        // const config_request = {
-        //     method: 'put',
-        //     url: url,
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer '+token,
-        //     },
-        //     data : datos
-        // }
-        //
-        // let res = await axios(config_request)
-        //     .then(function (response) {
-        //         console.log("funciono1")
-        //         console.log(response.data);
-        //         //window.location = "/"
-        //         const nuevo_proyecto = response.data;
-        //         const proyectos_act = props.proyectos.map((p)=>{
-        //             if(p._id === nuevo_proyecto._id){
-        //                 return nuevo_proyecto
-        //             }
-        //             return p;
-        //         })
-        //         props.setProyectos(proyectos_act);
-        //         const btn_cerrar = document.getElementById("btn-cerrar-modal-"+props.accion)
-        //         btn_cerrar.click();
-        //     })
-        //     .catch(function (respuesta) {
-        //         const msj = respuesta.response.data.error[0]
-        //         setMensajeError(msj)
-        //     });
+        const url = "/api/animacion/id/"+id_animacion;
+
+        const token = props.user.usuario.token;
+        const config_request = {
+            method: 'put',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+token,
+            },
+            data : {
+                nombre_animacion: nombre,
+                descripcion: descripcion,
+            }
+        }
+
+        let res = await axios(config_request)
+            .then(function (response) {
+                console.log("actualizar animacion")
+                console.log(response.data);
+                props.actualizarAnimacion(response.data);
+                const btn_cerrar = document.getElementById("btn-cerrar-modal-"+props.accion)
+                btn_cerrar.click();
+            })
+            .catch(function (respuesta) {
+                console.log(respuesta)
+                const msj = respuesta.response.data.error[0]
+                setMensajeError(msj)
+            });
     }
 
     const crearAnimacion=async()=>{
@@ -76,10 +70,6 @@ function ModalAddAnimacionEvento(props){
             .then(function (response) {
                 console.log("Crear animacion")
                 console.log(response.data);
-                //window.location = "/"
-                //const nuevo_proyecto = response.data;
-                // props.proyectos.push(nuevo_proyecto)
-                // console.log(props.proyectos)
                 props.agregarAnimacion(response.data);
                 const btn_cerrar = document.getElementById("btn-cerrar-modal-"+props.accion)
                 btn_cerrar.click();
@@ -120,7 +110,7 @@ function ModalAddAnimacionEvento(props){
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">{props.accion === "put"? "Actualizar": "Crear"} Animacion</h5>
-                        <h6 class="modal-title"> {id_proyecto}</h6>
+                        <h6 class="modal-title"> {id_animacion}</h6>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

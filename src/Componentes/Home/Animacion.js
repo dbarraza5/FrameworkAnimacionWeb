@@ -11,7 +11,7 @@ function Animacion(props) {
 
     const [animaciones, setAnimaciones] = useState([]);
     const [eventos, setEventos] = useState([]);
-    //const [nombre_pro, setAnimaciones] = useState([]);
+    const [animacionSelect, setAnimacionSelect] = useState( null);
 
     const navigate = useNavigate();
 
@@ -84,6 +84,13 @@ function Animacion(props) {
         obtenerListaEventos();
     }, [])
 
+    const editarDatosBasicos=(id_animacion)=>{
+        //alert(id_animacion);
+        setAnimacionSelect(id_animacion);
+        const btn_modal = document.getElementById("btn-modal-actualizar")
+        btn_modal.click();
+    }
+
     const irEdicionAnimacion=(id_animacion)=>{
         navigate("/animacion/"+id_animacion)
     }
@@ -95,6 +102,16 @@ function Animacion(props) {
     const agregarAnimacion = (animacion_)=>{
         animaciones.push(animacion_);
         setAnimaciones([...animaciones]);
+    }
+
+    const actualizarAnimacion = (animacion_)=>{
+        const lista = animaciones.map((anima_)=>{
+            if(anima_._id === animacion_._id){
+                return animacion_;
+            }
+            return anima_;
+        });
+        setAnimaciones(lista);
     }
 
     return (
@@ -124,6 +141,17 @@ function Animacion(props) {
                 <ModalAddAnimacionEvento id_modal="modal-agregar-animacion" accion="post"
                                          user={props.user} proyectos={null} setProyectos={null}
                                          agregarAnimacion={agregarAnimacion}
+                />
+
+                <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
+                        id="btn-modal-actualizar"
+                        data-bs-target="#modal-actualizar-animacion"><i className="bi bi-plus-circle"></i>
+                    <span>editar</span>
+                </button>
+                <ModalAddAnimacionEvento id_modal="modal-actualizar-animacion" accion="put"
+                                         user={props.user}
+                                         id_animacion={animacionSelect}
+                                         actualizarAnimacion={actualizarAnimacion}
                 />
                 <div className="tab-pane fade show active" id="nav-home" role="tabpanel"
                      aria-labelledby="nav-home-tab">
@@ -159,9 +187,10 @@ function Animacion(props) {
                                             <td>
                                                 <div className="btn-group btn-group-sm" role="group"
                                                      aria-label="Basic outlined example">
-                                                    <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
-                                                            data-bs-target={"#modal-actualizar-proyecto"}
-                                                            onClick={(e) => console.log("editar")}>
+                                                    <button type="button" className="btn btn-outline-primary"
+                                                            // data-bs-toggle="modal"
+                                                            // data-bs-target={"#modal-actualizar-proyecto"}
+                                                            onClick={()=>editarDatosBasicos(animacion._id)}>
                                                         <i className="bi bi-pencil"></i></button>
                                                     <button type="button" className="btn btn-outline-primary" onClick={()=>irEdicionAnimacion(animacion._id)}>
                                                         <i className="bi bi-eye"></i>
