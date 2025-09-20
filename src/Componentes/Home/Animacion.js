@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {Cookies} from 'react-cookie';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import ModalAddAnimacionEvento from "./ModalAddAnimacionEvento";
 
 function Animacion(props) {
     const cookie = new Cookies();
@@ -91,6 +92,11 @@ function Animacion(props) {
         navigate("/evento/"+id_evento)
     }
 
+    const agregarAnimacion = (animacion_)=>{
+        animaciones.push(animacion_);
+        setAnimaciones([...animaciones]);
+    }
+
     return (
         <div>
             <h2>Proyecto <b>{props.nombre_proyecto}</b></h2>
@@ -110,6 +116,15 @@ function Animacion(props) {
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
+                <hr/>
+                <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
+                    data-bs-target="#modal-agregar-animacion"><i className="bi bi-plus-circle"></i>
+                    <span>Agregar</span>
+                </button>
+                <ModalAddAnimacionEvento id_modal="modal-agregar-animacion" accion="post"
+                                         user={props.user} proyectos={null} setProyectos={null}
+                                         agregarAnimacion={agregarAnimacion}
+                />
                 <div className="tab-pane fade show active" id="nav-home" role="tabpanel"
                      aria-labelledby="nav-home-tab">
                     <br/>
