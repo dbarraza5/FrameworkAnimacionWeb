@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState, useId } from "react";
 import {Cookies} from 'react-cookie';
 import axios from "axios";
+//import {useCookies} from "react-cookie/index";
 
 export default function ModalImportarGrupos({
                                                 id = "dualListModal",
                                                 title = "Importando Grupos",
                                             }) {
     // 🔹 Datos dummy: proyectos y sus animaciones
-    const projects = [
+    const projects1 = [
         {
             id: "p1",
             nombre: "Proyecto Alfa",
@@ -39,52 +40,61 @@ export default function ModalImportarGrupos({
             })),
         },
     ];
-
+    //const [user, setUser, removeCookie] = useCookies();
     const cookie = new Cookies();
-    const datos_usuario = cookie.get("usuario")
+    const datos_usuario = cookie.get("usuario");
+    const [projects, setProjects] = useState([]);
 
 
     // const removerCookieUser_=props.removeCookieUser;
     //
     const obtenerListaProyectos=async()=>{
-        // try {
-        //     const url = "api/proyecto/user/"+datos_usuario.id;
-        //     //console.log("url: "+url)
-        //     if(true){
-        //         //console.log(cookie)
-        //         const token = datos_usuario.token
-        //         const config = {
-        //             method: 'get',
-        //             url: url,
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //                 'Accept': 'application/json',
-        //                 'Authorization': 'Bearer '+token,
-        //                 //'Cookie': 'app.sid=s%3AvQpGktI'
-        //             },
-        //             withCredentials: true
-        //         };
+        const url = "/api/proyecto-animacion/"+datos_usuario.id;
+
+        const token = datos_usuario.token;
+        const config_request = {
+            method: 'get',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+token,
+            }
+        }
         //
-        //         let res = await axios(config)
-        //             .then(function (response) {
-        //                 //console.log("funciono")
-        //                 //console.log(response.data);
-        //                 setProyectos(response.data)
-        //             })
-        //             .catch(function (response) {
-        //                 console.log("error obtener proyectos")
-        //                 console.log(response.response.data);
-        //                 props.manejadorErrores(response.response.data)
-        //             });
-        //     }
-        //
-        // } catch (err) {
-        //     //console.log(err);
-        // }
+        let res = await axios(config_request)
+            .then(function (response) {
+                //props.actualizarAnimacion(response.data);
+                console.log(response.data)
+                for(let i=0; i<response.data.length; i++){
+                    const obj = response.data[i];
+                    const animaciones_ = [];
+                    for(let j=0; j<obj.animaciones.length; j++){
+                        animaciones_.push({
+                            id: obj.animaciones[j].id_animacion,
+                            label: obj.animaciones[j].nombre_animacion,
+                            fecha_creacion: obj.animaciones[j].fecha_creacion,
+                            fecha_actualizacion: obj.animaciones[j].fecha_actualizacion,
+                            projectId: obj.id_proyecto,
+                            projectName: obj.nombre_proyecto
+                        });
+                    }
+                    projects.push({
+                        id: obj.id_proyecto,
+                        nombre: obj.nombre_proyecto,
+                        animaciones: animaciones_
+                    })
+                }
+                setProjects(projects);
+            })
+            .catch(function (respuesta) {
+                console.log(respuesta)
+            });
     }
 
     useEffect(()=>{
-
+        console.log("+++++++++++++++++++++++++++++++++++++++++++")
+        console.log(datos_usuario);
+        //obtenerListaProyectos();
     },[])
 
     // Índices útiles
