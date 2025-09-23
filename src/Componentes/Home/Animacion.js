@@ -161,27 +161,30 @@ function Animacion(props) {
             </nav>
             <div className="tab-content" id="nav-tabContent">
                 <hr/>
-                <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
-                    data-bs-target="#modal-agregar-animacion"><i className="bi bi-plus-circle"></i>
-                    <span>Agregar</span>
-                </button>
-                <ModalAddAnimacionEvento id_modal="modal-agregar-animacion" accion="post"
-                                         user={props.user} proyectos={null} setProyectos={null}
-                                         agregarAnimacion={agregarAnimacion}
-                />
-
-                <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
-                        id="btn-modal-actualizar"
-                        data-bs-target="#modal-actualizar-animacion"><i className="bi bi-plus-circle"></i>
-                    <span>editar</span>
-                </button>
-                <ModalAddAnimacionEvento id_modal="modal-actualizar-animacion" accion="put"
-                                         user={props.user}
-                                         id_animacion={animacionSelect}
-                                         actualizarAnimacion={actualizarAnimacion}
-                />
                 <div className="tab-pane fade show active" id="nav-home" role="tabpanel"
                      aria-labelledby="nav-home-tab">
+
+                    <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#modal-agregar-animacion"><i className="bi bi-plus-circle"></i>
+                        <span>Agregar</span>
+                    </button>
+                    <ModalAddAnimacionEvento id_modal="modal-agregar-animacion" accion="post"
+                                             user={props.user} proyectos={null} setProyectos={null}
+                                             agregarAnimacion={agregarAnimacion}
+                    />
+
+                    <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
+                            id="btn-modal-actualizar"
+                            data-bs-target="#modal-actualizar-animacion" hidden={true}>
+                        <i className="bi bi-plus-circle"></i>
+                        <span>editar</span>
+                    </button>
+                    <ModalAddAnimacionEvento id_modal="modal-actualizar-animacion" accion="put"
+                                             user={props.user}
+                                             id_animacion={animacionSelect}
+                                             actualizarAnimacion={actualizarAnimacion}
+                    />
+
                     <br/>
                     <div className="table-responsive">
                         <div className="table-wrapper">
