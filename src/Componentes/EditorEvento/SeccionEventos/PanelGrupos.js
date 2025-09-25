@@ -4,6 +4,11 @@ import ModalImportarGrupos from "./ModalImportarGrupos";
 
 function PanelGrupos(props) {
 
+    const importarGruposFiguras = (grupos) =>{
+
+        console.log(grupos);
+    }
+
 
     return (
         <div className="container-fluid">
@@ -19,6 +24,7 @@ function PanelGrupos(props) {
             <ModalImportarGrupos
                 id="dualListModal"
                 title="Mover elementos a la izquierda"
+                importarGruposFiguras={importarGruposFiguras}
                 // Puedes iniciar con algunos ya pasados a la izquierda:
                 // initialSelected={[2, 5, 7]}
             />

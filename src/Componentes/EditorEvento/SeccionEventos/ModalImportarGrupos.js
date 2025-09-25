@@ -5,6 +5,7 @@ import axios from "axios";
 export default function ModalImportarGrupos({
                                                 id = "dualListModal",
                                                 title = "Importando Grupos",
+                                                importarGruposFiguras
                                             }) {
     const headingId = useId();
     const modalRef = useRef(null);
@@ -421,7 +422,7 @@ export default function ModalImportarGrupos({
 
                     <div className="modal-footer">
                         {/* Ejemplo de lectura para enviar al backend */}
-                        {/* <button className="btn btn-primary" onClick={() => console.log('Seleccionados:', Array.from(leftSet))}>Importar</button> */}
+                         <button className="btn btn-primary" onClick={() => importarGruposFiguras(Array.from(leftSet))}>Importar</button>
                         <button
                             type="button"
                             className="btn btn-secondary"
