@@ -1,3 +1,4 @@
+import OperacionesGrupo from "./OperacionesGrupo";
 
 class GestionAnimacion{
     meta_figuras = [
@@ -437,6 +438,74 @@ class GestionAnimacion{
             return img._id !== id_imagen;
         })
     }
+
+    moverGruposEfectoEspejo(copia_lista_grupos, espejo_sentido_reflejo, reflejo_original_vert, reflejo_original_horz){
+        const mover_centros=OperacionesGrupo.calcularCentroGruposSeleccionados(copia_lista_grupos.map(
+            (g)=>this.getGrupo(g.nombre)
+        ));
+        for (let i=0; i<copia_lista_grupos.length; i++){
+            const grupo_copia = copia_lista_grupos[i]
+            const grupo_ =this.getGrupo(grupo_copia.nombre);
+            let centrox = mover_centros.centro_x;
+            let centroy = mover_centros.centro_y;
+            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                const figura = grupo_.lista_figuras[j];
+                const f_copia = grupo_copia.lista_figuras[j];
+                OperacionesGrupo.espejo_figura(figura, f_copia, grupo_copia,centrox, centroy, espejo_sentido_reflejo,
+                    reflejo_original_vert, reflejo_original_horz)
+            }
+        }
+    }
+
+    moverGruposInflar(copia_lista_grupos, porcentaje, centro_x, centro_y ){
+        for (let i=0; i<copia_lista_grupos.length; i++){
+            const grupo_copia = copia_lista_grupos[i]
+            const grupo_ =this.getGrupo(grupo_copia.nombre);
+
+            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                let figura = grupo_.lista_figuras[j];
+                if (true){//(this.lista_id_figuras.includes(figura.nombre)){
+                    let f_copia = grupo_copia.lista_figuras[j];
+
+                    OperacionesGrupo.inflar_figura(figura, f_copia, grupo_, centro_x,
+                        centro_y, porcentaje)
+                }
+            }
+        }
+    }
+
+    moverGruposCentroLienzo(copia_lista_grupos,orig_x, orig_y, des_x,  des_y){
+        for (let i=0; i<copia_lista_grupos.length; i++){
+            const grupo_copia = copia_lista_grupos[i]
+            const grupo_ =this.getGrupo(grupo_copia.nombre);
+            OperacionesGrupo.moverGrupo(grupo_, grupo_copia, orig_x, orig_y, des_x,  des_y)
+        }
+    }
+
+    moverGruposRotacionLienzo(copia_lista_grupos, angulo_rotacion){
+        const mover_centros=OperacionesGrupo.calcularCentroGruposSeleccionados(copia_lista_grupos)
+        this.rotacionLienzoPivote(copia_lista_grupos, angulo_rotacion, mover_centros.centro_x, mover_centros.centro_y)
+    }
+
+    moverGruposRotacionLienzoPivote(copia_lista_grupos, angulo_rotacion, pivote_rotacion_x, pivote_rotacion_y){
+        this.rotacionLienzoPivote(copia_lista_grupos, angulo_rotacion, pivote_rotacion_x, pivote_rotacion_y)
+    }
+
+    rotacionLienzoPivote(copia_lista_grupos, angulo_rotacion, pivote_rotacion_x, pivote_rotacion_y){
+        for (let i=0; i<copia_lista_grupos.length; i++){
+            const grupo_copia = copia_lista_grupos[i]
+            const grupo_ =this.getGrupo(grupo_copia.nombre);
+
+            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                let figura = grupo_.lista_figuras[j];
+
+                let f_copia = grupo_copia.lista_figuras[j];
+                let f_nuevo=OperacionesGrupo.rotar_figura(figura, f_copia, grupo_,angulo_rotacion,
+                    pivote_rotacion_x, pivote_rotacion_y)
+            }
+        }
+    }
+
 }
 
 function normalizar_recta(recta1){
