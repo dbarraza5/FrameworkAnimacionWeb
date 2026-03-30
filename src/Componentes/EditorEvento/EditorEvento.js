@@ -34,10 +34,10 @@ function EditorEvento(props){
     const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
     const [timelineInstance, setTimelineInstance] = useState(null);
 
-    const tipo_modalidad = useSelector(state => state.tipo_modalidad);
-    const tipo_modalidad_trabajo = useSelector(state => state.tipo_modalidad_trabajo);
-    const id_evento_seleccionado = useSelector(state => state.id_evento_seleccionado);
-    const evento_redux = useSelector(state => state.evento);
+    const tipo_modalidad = useSelector(state => state.evento.tipo_modalidad);
+    const tipo_modalidad_trabajo = useSelector(state => state.evento.tipo_modalidad_trabajo);
+    const id_evento_seleccionado = useSelector(state => state.evento.id_evento_seleccionado);
+    const evento_redux = useSelector(state => state.evento.evento);
 
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
@@ -47,9 +47,11 @@ function EditorEvento(props){
 
     const [tipoModalidadTrabajo, setTipoModalidadTrabajo] = useState(tipo_modalidad_trabajo);
 
+
+    console.log("========================> modalida: ", tipo_modalidad);
     useEffect(() => {
         console.log("****CAMBIAR MODALIDAD TRABAJO: ", tipo_modalidad_trabajo);
-        setTipoModalidadTrabajo(tipo_modalidad_trabajo);
+        //setTipoModalidadTrabajo(tipo_modalidad_trabajo);
     }, [tipo_modalidad_trabajo]);
 
     useEffect(() => {

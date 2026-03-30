@@ -48,7 +48,7 @@ const inicializarState= {
 
 
 const eventoSlice = createSlice({
-    name:"animacion",
+    name:"evento",
     initialState: inicializarState,//new GestionAnimacion(),
 
     reducers:{
