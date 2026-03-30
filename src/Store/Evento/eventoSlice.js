@@ -52,10 +52,16 @@ const eventoSlice = createSlice({
     initialState: inicializarState,//new GestionAnimacion(),
 
     reducers:{
-        modalidadTrabajoAnimacion: (state, action) => {
-            state.tipo_modalidad = MODALIDAD_ANIMACION;
-            state.tipo_modalidad_trabajo = action.payload.modalidad;
-            state.id_evento_seleccionado = action.payload.id_evento;
+        modalidadTrabajo: (state, action) => {
+            state.tipo_modalidad =  action.payload.tipo_modalidad//MODALIDAD_ANIMACION;
+            state.tipo_modalidad_trabajo = action.payload.tipo_modalidad_trabajo;
+            state.id_evento_seleccionado = action.payload.id_evento_seleccionado;
+        },
+
+        setEventoActual: (state, action) =>{
+            console.log("[GUARDANDO STORE]");
+            console.log(action.payload);
+            state.evento = action.payload;
         },
 
         setNombreAnimacion: (state, action) => {
@@ -102,5 +108,5 @@ const eventoSlice = createSlice({
 
 export const {
     deshacer, rehacer, actualizarBackup, restaurarState,
-    setIdHiloLienzo, modalidadTrabajoAnimacion} = eventoSlice.actions;
+    setIdHiloLienzo, modalidadTrabajo, setEventoActual} = eventoSlice.actions;
 export default eventoSlice.reducer;

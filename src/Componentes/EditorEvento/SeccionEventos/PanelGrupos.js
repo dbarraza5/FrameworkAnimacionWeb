@@ -1,12 +1,16 @@
 import {useState, useRef, useEffect} from "react";
 import ModalImportarGrupos from "./ModalImportarGrupos";
 
-
+import {useDispatch, useSelector} from "react-redux";
+import {setEventoActual} from "../../../Store/Evento/eventoSlice";
 function PanelGrupos(props) {
 
+    const evento_redux = useSelector(state => state.evento);
     const importarGruposFiguras = (grupos) =>{
 
         console.log(grupos);
+        console.log(evento_redux)
+        //dispatch(setEventoActual({edicion: eventoAnimacion.edicion}))
     }
 
 
