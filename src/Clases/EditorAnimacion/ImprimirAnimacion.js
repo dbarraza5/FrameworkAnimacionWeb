@@ -6,16 +6,17 @@ class ImprimirAnimacion{
   configuracion_lienzo=null;
   ctx=null;
   seccion_pintar = false;
+  id_canvas = null;
   constructor(animacion_, config_lienzo, id_canvas) {
       this.animacion_ = animacion_;
       this.configuracion_lienzo = config_lienzo;
-
+      this.id_canvas = id_canvas;
   }
 
   imprimirListaGrupoPintado(lista_grupo_root){
       this.seccion_pintar = false;
       if(this.ctx === null){
-          const canvas = document.getElementById("lienzo-animacion");
+          const canvas = document.getElementById(this.id_canvas);
           this.ctx = canvas.getContext('2d');
       }
 
@@ -39,7 +40,7 @@ class ImprimirAnimacion{
                                  p_centro, p1_recta, p2_recta, p_circulo, pintado){
       this.seccion_pintar = false;
       if(this.ctx === null){
-          const canvas = document.getElementById("lienzo-animacion");
+          const canvas = document.getElementById(this.id_canvas);
           this.ctx = canvas.getContext('2d');
       }
 
