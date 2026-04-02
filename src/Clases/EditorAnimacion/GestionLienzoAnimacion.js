@@ -188,6 +188,7 @@ class GestionLienzoAnimacion {
     }
 
     setFuncionEditarLienzo(funcion){
+        console.log()
         this.funcion_editar_lienzo = funcion
         this.gestion_pintado.funcion_editar_lienzo = funcion
     }

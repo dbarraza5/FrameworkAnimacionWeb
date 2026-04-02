@@ -252,8 +252,14 @@ function EditorEvento(props){
     const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion.edicion));
     const [eventoLienzoFigura1, setEventLienzoFigura1] = useState(new ControlEventoLienzoFigura());
 
+    const editar_lienzo=()=>{
+        //dispatch(actualizarBackup(raw_animacion))
+        //console.log("MOVER_FIGURA: "+gestionLienzo.mover_figura)
+        const raw_animacion = JSON.stringify(animacion.edicion.grupos_figuras);
+        dispatch(actualizarBackup(raw_animacion))
+    }
 
-
+    gestionLienzo.setFuncionEditarLienzo(editar_lienzo);
 
     const paquete_datos = { animacion: animacion.edicion, setAnimacion: editar_animacion,
         eventoLienzoFigura :eventoLienzoFigura1, setEventLienzoFigura:setEventLienzoFigura1,

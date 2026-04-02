@@ -1,7 +1,7 @@
 import SeleccionFigura from "./SeleccionFigura";
 import SeleccionGrupo from "./SeleccionGrupo";
 import NavGestionFiguras from "./NavGestionFiguras";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PropiedadFigura from "./PropiedadFigura";
 import TablaFiguras from "./TablaFiguras";
 
@@ -11,16 +11,33 @@ function GestionFiguras(props){
 
     const primer_elemento = props.animacion.meta_figuras.length>0? props.animacion.meta_figuras[0].nombre :null;
 
+
     const [tipo_figura, setTipoFigura] = useState(primer_elemento);
-    const [nombre_grupo, setNombreGrupo] = useState("default");
+    const [nombre_grupo, setNombreGrupo] = useState(lista_grupos[0]);
     const [nombre_figura, setNombreFigura] = useState(null);
     const [figura, setFigura] = useState(null)
 
+    console.log("_________[setNombreGrupo]: ", nombre_grupo)
+    console.log(lista_grupos)
     // control de error al cambiar el nombre del grupo
-    const lista_nom_grupos = props.animacion.get_lista_nombres_grupos()
-    if(!lista_nom_grupos.includes(nombre_grupo)){
-        //setNombreGrupo("default")
-    }
+
+    // if(!lista_nom_grupos.includes(nombre_grupo)){
+    //     setNombreGrupo("cubo")
+    // }
+
+    useEffect(() => {
+        // const lista_nom_grupos = props.animacion.get_lista_nombres_grupos()
+        // if(lista_nom_grupos.length>0){
+        //     //setNombreGrupo('cubo')//(lista_nom_grupos[0])
+        // }
+    }, []);
+
+    useEffect(() => {
+        if (lista_grupos.length > 0 && !nombre_grupo) {
+            setNombreGrupo(lista_grupos[0]);
+        }
+        console.log("[=====23=============cambio algo useeffects]")
+    }, [lista_grupos]);
 
     const agregar_figura=()=>{
         const f = props.animacion.crear_figura(nombre_grupo, tipo_figura)
