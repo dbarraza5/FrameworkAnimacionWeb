@@ -6,7 +6,7 @@ const style ={
 
 
 function TablaGrupos(props){
-    const lista_grupos = props.animacion.grupos_figuras;
+    const lista_grupos = props.animacion.grupos_figuras??[];
     const dispatch = useDispatch();
 
     const editarGrupo=(nombre_grupo)=>{

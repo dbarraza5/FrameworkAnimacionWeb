@@ -38,7 +38,7 @@ export default class TimelineCanvas {
     constructor(eventoLienzo, eventoAnimacion, setEventoAnimacion) {
         console.log("INICIALIZACION DEL TIMELINE");
         //this.canvasElem = canvasElem;
-        this.canvasElem = document.getElementById('lienzo-animacion');
+        this.canvasElem = document.getElementById('lienzo-evento');
         this.ctx = this.canvasElem.getContext('2d');
         this.eventoLienzo = eventoLienzo;
         this.eventoAnimacion = eventoAnimacion.edicion;

@@ -57,7 +57,7 @@ function NavFiguras(props){
             <div className="tab-pane fade" id="contact-tab-pane1" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
-                <GestionFiguras {...props}/>
+                <GestionFiguras key={'gestion-figuras-12'} {...props}/>
             </div>
             <div className="tab-pane fade" id="puntero-tab-panel" role="tabpanel"
                  aria-labelledby="contact-tab1"

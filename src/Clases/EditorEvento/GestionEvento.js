@@ -36,7 +36,7 @@ class GestionEvento{
 
     seleccion_evento = null;
     constructor() {
-        this.id_canvas = "lienzo-animacion"
+        this.id_canvas = "lienzo-evento"
         this.gestion_eventos= new GestionMovimientos();
         this.gestion_grupos = new GestionAnimacion();
         this.gestion_grupos_originales = new GestionAnimacion();

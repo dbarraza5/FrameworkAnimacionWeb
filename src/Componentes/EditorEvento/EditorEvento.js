@@ -19,6 +19,8 @@ import {
     TRABAJO_ANIMACION_MOVIMIENTOS
 } from "../../Store/Evento/eventoSlice";
 import {useDispatch, useSelector} from "react-redux";
+import EdicionFiguras from "../EditorAnimacion/SeccionFiguras/EdicionFiguras";
+import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -28,6 +30,17 @@ const useCustomEvento=(valor_inicial=null)=>{
     }
     return [evento_, setCustomEvento]
 }
+
+const useCustomAnimacion=(valor_inicial=null)=>{
+    const [animacion_, setAnimacion_] = useState(valor_inicial);
+    function setCustomAnimacion(animacion_aux){
+        //console.log("set animacion custom")
+        animacion_aux.edicion.version+=1
+        setAnimacion_(animacion_aux)
+    }
+    return [animacion_, setCustomAnimacion]
+}
+
 
 function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
@@ -46,6 +59,7 @@ function EditorEvento(props){
     const dispatch = useDispatch();
 
     const [tipoModalidadTrabajo, setTipoModalidadTrabajo] = useState(tipo_modalidad_trabajo);
+
 
 
     console.log("========================> modalida: ", tipo_modalidad);
@@ -86,12 +100,32 @@ function EditorEvento(props){
                         response.data.grupos_figuras, response.data._id);
                     setEventoAnimacion(eventoAnimacion)
                     setStartLoopLienzo(true);
+
+                    animacion.edicion.meta_figuras = response.data.meta_figuras
+                    animacion.edicion.meta_movimientos = []//response.data.meta_movimientos;
+                    animacion.edicion.grupos_figuras = response.data.grupos_figuras;//response.data.grupos_figuras;
+                    animacion.edicion.lista_imagenes = []//response.data.lista_imagenes;
+                    gestionLienzo.grupos_figuras_concurrent = null;
+                    //animacion.edicion.setGrupoFigurasCurrent(response.data.grupos_figuras)
+                    animacion.edicion.id_animacion = 'n5843n3458n5438'//response.data._id;
+                    animacion.edicion.nombre_animacion = 'gffgdfghhgf343f'//response.data.nombre_animacion;
+
+
                     dispatch(modalidadTrabajo({
                         tipo_modalidad: MODALIDAD_ANIMACION,
                         tipo_modalidad_trabajo: TRABAJO_ANIMACION_EVENTOS,
                         id_evento_seleccionado: "EventoGeneral"}));
                     const evento_flat = JSON.parse(JSON.stringify(eventoAnimacion.edicion));
                     dispatch(setEventoActual({edicion: evento_flat}))
+
+                    dispatch(restaurarState())
+                    const raw_animacion = JSON.stringify(response.data.grupos_figuras);
+                    dispatch(actualizarBackup(raw_animacion))
+                    dispatch(setNombreAnimacion(response.data.nombre_animacion))
+
+
+                    editar_animacion({"edicion": animacion.edicion})
+
                 })
                 .catch(function (response) {
                     console.log("error obtener proyectos")
@@ -210,6 +244,23 @@ function EditorEvento(props){
         }
     };
 
+    const editar_animacion=(animacion_)=>{
+        setAnimacion({edicion: animacion_.edicion})
+    }
+
+    const [animacion, setAnimacion]= useCustomAnimacion({edicion: new GestionAnimacion()});
+    const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion.edicion));
+    const [eventoLienzoFigura1, setEventLienzoFigura1] = useState(new ControlEventoLienzoFigura());
+
+
+
+
+    const paquete_datos = { animacion: animacion.edicion, setAnimacion: editar_animacion,
+        eventoLienzoFigura :eventoLienzoFigura1, setEventLienzoFigura:setEventLienzoFigura1,
+        gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo,
+        cambiarListaTrabajo:()=>{}};
+
+    const edicion_figuras = <EdicionFiguras key={'edicion-figuras'} {...paquete_datos}/>
 
     return(<div>
         <div className="row">
@@ -222,6 +273,7 @@ function EditorEvento(props){
                              setEventLienzoFigura={setEventLienzoFigura}
                              tipoModalidad={tipo_modalidad}
                              setTipoModalidad={setTipoModalidadTrabajo}
+                             edicion_figuras = {edicion_figuras}
             >
             </NavEditorEvento>
 

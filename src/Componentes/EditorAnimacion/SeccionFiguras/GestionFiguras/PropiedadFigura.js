@@ -8,7 +8,7 @@ function PropiedadFigura(props) {
 
     let lista_input = []
 
-    const lista_atributos = des_figura.atributos;
+    const lista_atributos = des_figura?.atributos??[];
     const resto = lista_atributos.length%2;
     const num_filas = (lista_atributos.length - resto)
     //console.log("figura: ", figura)

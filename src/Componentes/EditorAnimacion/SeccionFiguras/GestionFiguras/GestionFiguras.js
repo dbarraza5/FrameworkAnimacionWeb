@@ -19,8 +19,7 @@ function GestionFiguras(props){
     // control de error al cambiar el nombre del grupo
     const lista_nom_grupos = props.animacion.get_lista_nombres_grupos()
     if(!lista_nom_grupos.includes(nombre_grupo)){
-        setNombreGrupo("default")
-
+        //setNombreGrupo("default")
     }
 
     const agregar_figura=()=>{

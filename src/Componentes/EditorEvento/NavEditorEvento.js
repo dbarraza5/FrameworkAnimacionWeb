@@ -65,7 +65,7 @@ function NavEditorEvento(props){
                                     </div>
                                 </div>
                                 <div className="card-body">
-                                    <Lienzo lienzo = {props.eventoLienzoFigura} id="lienzo-animacion" editar_animacion={editar_animacion}
+                                    <Lienzo lienzo = {props.eventoLienzoFigura} id="lienzo-evento" editar_animacion={editar_animacion}
                                             setEventLienzoFigura={props.setEventLienzoFigura}/>
                                 </div>
                             </div>
@@ -83,7 +83,7 @@ function NavEditorEvento(props){
             <div className="tab-pane fade" id="contact-tab-pane" role="tabpanel"
                  aria-labelledby="contact-tab"
                  tabIndex="2">
-                composicion
+                {props.edicion_figuras}
             </div>
         </div>
 
