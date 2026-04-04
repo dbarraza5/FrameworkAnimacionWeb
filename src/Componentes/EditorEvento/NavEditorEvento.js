@@ -78,12 +78,12 @@ function NavEditorEvento(props){
             <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel"
                  aria-labelledby="profile-tab"
                  tabIndex="1">
-
+                {props.edicion_figuras}
             </div>
             <div className="tab-pane fade" id="contact-tab-pane" role="tabpanel"
                  aria-labelledby="contact-tab"
                  tabIndex="2">
-                {props.edicion_figuras}
+
             </div>
         </div>
 

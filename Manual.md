@@ -10,7 +10,7 @@
 5. **shift_left + num_4**: pintado
 6. **shift_left + num_5**: atributos lienzo
 7. **shift_left + num_6**: imágenes lienzo
-
+7. **f**: seleccion de figuras con un area usando el boton izquierdo del mouse
 
 ## TRABAJO_LISTA_FIGURAS
 *Solo las figuras que fueron seleccionadas con el mouse dentro del rectángulo.*
