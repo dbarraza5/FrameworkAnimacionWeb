@@ -7,14 +7,14 @@ const inicializarState= {
     y_lienzo: 0,
     mostrar_info: false,
     pintar_animacion: false,
-    mostrar_imagenes: true,
+    // mostrar_imagenes: true,
     status: 'idle',
     error: null
 }
 
 
-const configAnimacionSlice = createSlice({
-    name:"configuracion_general",
+const configEventoSlice = createSlice({
+    name:"configuracion_general_evento",
     initialState: inicializarState,
 
     reducers:{
@@ -33,7 +33,7 @@ const configAnimacionSlice = createSlice({
             state.y_lienzo = action.payload.y;
             state.mostrar_info = action.payload.mostrar_info;
             state.pintar_animacion = action.payload.pintar_animacion;
-            state.mostrar_imagenes = action.payload.mostrar_imagenes;
+            // state.mostrar_imagenes = action.payload.mostrar_imagenes;
         },
         mostrarInfoLienzo: (state, action) => {
             state.mostrar_info = action.payload;
@@ -52,6 +52,6 @@ const configAnimacionSlice = createSlice({
 export const {
     setEjex, setEjey, mostrarInfoLienzo, pintarLienzo, resetLienzo,
     setCoordenadas, setConfiguracion
-}=configAnimacionSlice.actions;
+}=configEventoSlice.actions;
 
-export default configAnimacionSlice.reducer;
+export default configEventoSlice.reducer;

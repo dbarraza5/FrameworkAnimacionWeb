@@ -8,6 +8,7 @@ import ModalAgregarEvento from "./ModalAgregarEvento";
 import {nanoid} from "nanoid";
 import ModalListaEventos from "./ModalListaEventos";
 import PanelGrupos from "./PanelGrupos";
+import ConfigLienzoEvento from "./ConfigLienzo/ConfigLienzoEvento";
 
 
 function NavEventos(props){
@@ -128,6 +129,11 @@ function NavEventos(props){
                 <ButtonNav id="btnnav-animacion" data-bs-target="#nav-animacion"
                            onClick={()=>console.log("animacion")}>Animacion</ButtonNav>
             </li>
+
+            <li className="nav-item" role="presentation">
+                <ButtonNav id="btnnav-config-lienzo" data-bs-target="#nav-config-lienzo"
+                           onClick={()=>console.log("animacion")}>Config</ButtonNav>
+            </li>
         </ul>
         <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade" id="nav-eventos" role="tabpanel"
@@ -159,6 +165,12 @@ function NavEventos(props){
                  tabIndex="2">
                 <br/>
                 <PanelAnimacion {...props}/>
+            </div>
+
+            <div className="tab-pane fade" id="nav-config-lienzo" role="tabpanel"
+                 aria-labelledby="contact-tab1"
+                 tabIndex="2">
+                <ConfigLienzoEvento {...props}/>
             </div>
 
         </div>

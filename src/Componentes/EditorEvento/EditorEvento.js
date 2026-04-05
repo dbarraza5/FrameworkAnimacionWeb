@@ -99,7 +99,6 @@ function EditorEvento(props){
                     eventoAnimacion.edicion.inicializar(response.data.eventos,
                         response.data.grupos_figuras, response.data._id);
                     setEventoAnimacion(eventoAnimacion)
-                    setStartLoopLienzo(true);
 
                     animacion.edicion.meta_figuras = response.data.meta_figuras
                     animacion.edicion.meta_movimientos = []//response.data.meta_movimientos;
@@ -122,10 +121,10 @@ function EditorEvento(props){
                     const raw_animacion = JSON.stringify(response.data.grupos_figuras);
                     dispatch(actualizarBackup(raw_animacion))
                     dispatch(setNombreAnimacion(response.data.nombre_animacion))
-
-
                     editar_animacion({"edicion": animacion.edicion})
 
+
+                    setStartLoopLienzo(true);
                 })
                 .catch(function (response) {
                     console.log("error obtener proyectos")
@@ -134,6 +133,18 @@ function EditorEvento(props){
                 });
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    useInterval(() => {
+        procesoAnimacion();
+    }, startLoopLienzo ? 100 : null);
+
+    const procesoAnimacion=()=>{
+        if(tipo_modalidad === MODALIDAD_ANIMACION){
+            eventoAnimacion.edicion.procesandoEventos();
+            eventoAnimacion.edicion.imprimirEventos();
+            timelineInstance.procesar();
         }
     }
 
@@ -193,16 +204,7 @@ function EditorEvento(props){
         }
     }, [tipo_modalidad_trabajo, id_evento_seleccionado]);
 
-    useInterval(() => {
 
-        if(tipo_modalidad === MODALIDAD_ANIMACION){
-            eventoAnimacion.edicion.procesandoEventos();
-            eventoAnimacion.edicion.imprimirEventos();
-            timelineInstance.procesar();
-        }
-
-        //timelineInstance.redibujarTodo();
-    }, startLoopLienzo ? 100 : null);
 
 
     const subirAnimacion1=async()=>{
