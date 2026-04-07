@@ -21,6 +21,7 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import EdicionFiguras from "../EditorAnimacion/SeccionFiguras/EdicionFiguras";
 import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
+import GestionLienzoEvento from "../../Clases/EditorEvento/GestionLienzoEvento";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -44,7 +45,9 @@ const useCustomAnimacion=(valor_inicial=null)=>{
 
 function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
-    const [eventoLienzoFigura, setEventLienzoFigura] = useState(new ControlEventoLienzoFigura());
+    const [eventoLienzoEvento, setEventLienzoEvento] = useState(new ControlEventoLienzoFigura());
+    const [gestionEventoLienzo, setGestionEventoLienzo] = useState(new GestionLienzoEvento(eventoAnimacion.edicion));
+
     const [timelineInstance, setTimelineInstance] = useState(null);
 
     const tipo_modalidad = useSelector(state => state.evento.tipo_modalidad);
@@ -137,7 +140,8 @@ function EditorEvento(props){
     }
 
     useInterval(() => {
-        procesoAnimacion();
+        // procesoAnimacion();
+        gestionEventoLienzo.procesarEventoLienzo(eventoLienzoEvento, setEventoAnimacion, null)
     }, startLoopLienzo ? 100 : null);
 
     const procesoAnimacion=()=>{
@@ -151,7 +155,7 @@ function EditorEvento(props){
     useEffect(() => {
         console.log("[==============================Evento===========================]")
         obtenerEvento();
-        const instance = new TimelineCanvas(eventoLienzoFigura, eventoAnimacion, setEventoAnimacion);
+        const instance = new TimelineCanvas(eventoLienzoEvento, eventoAnimacion, setEventoAnimacion);
         setTimelineInstance(instance);
     }, []);
 
@@ -252,7 +256,7 @@ function EditorEvento(props){
 
     const [animacion, setAnimacion]= useCustomAnimacion({edicion: new GestionAnimacion()});
     const [gestionLienzo, setGestionLienzo] = useState(new GestionLienzoAnimacion(animacion.edicion));
-    const [eventoLienzoFigura1, setEventLienzoFigura1] = useState(new ControlEventoLienzoFigura());
+    const [eventoLienzoFiguraAnimacion, setEventLienzoFiguraAnimacion] = useState(new ControlEventoLienzoFigura());
 
     const editar_lienzo=()=>{
         //dispatch(actualizarBackup(raw_animacion))
@@ -264,7 +268,7 @@ function EditorEvento(props){
     gestionLienzo.setFuncionEditarLienzo(editar_lienzo);
 
     const paquete_datos = { animacion: animacion.edicion, setAnimacion: editar_animacion,
-        eventoLienzoFigura :eventoLienzoFigura1, setEventLienzoFigura:setEventLienzoFigura1,
+        eventoLienzoFigura :eventoLienzoFiguraAnimacion, setEventLienzoFigura:setEventLienzoFiguraAnimacion,
         gestionLienzo :gestionLienzo, setGestionLienzo:setGestionLienzo,
         cambiarListaTrabajo:()=>{}};
 
@@ -277,8 +281,8 @@ function EditorEvento(props){
             <hr/>
             <NavEditorEvento eventoAnimacion={eventoAnimacion}
                              setEventoAnimacion = {setEventoAnimacion}
-                             eventoLienzoFigura={eventoLienzoFigura}
-                             setEventLienzoFigura={setEventLienzoFigura}
+                             eventoLienzoFigura={eventoLienzoEvento}
+                             setEventLienzoFigura={setEventLienzoEvento}
                              tipoModalidad={tipo_modalidad}
                              setTipoModalidad={setTipoModalidadTrabajo}
                              edicion_figuras = {edicion_figuras}

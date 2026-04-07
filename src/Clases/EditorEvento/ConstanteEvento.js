@@ -46,14 +46,14 @@ export const ARRAY_EVENTO_TIPO_MODALIDAD = {
     [EVENTO_KEY_CONFIG]: EVENTO_KEY_CONFIG,
 };
 
-
-export const TRABAJO_MOVER_LIENZO = 1
+export const TRABAJO_NADA_LIENZO = 0;
+export const TRABAJO_MOVER_LIENZO = 1;
 export const TRABAJO_AUMENTO_LIENZO = 2;
 export const TRABAJO_REDUCCION_LIENZO = 3;
 export const TRABAJO_POSICIONAR_MACRO = 4;
 
-export const ARRAY_TITULO_MOVIMIENTO = {
-    [MOVER_NADA]: "nada",
+export const ARRAY_TITULO_TRABAJO = {
+    [TRABAJO_NADA_LIENZO]: "nada",
     [TRABAJO_MOVER_LIENZO]: "mover lienzo",
     [TRABAJO_AUMENTO_LIENZO]: "aumento lienzo",
     [TRABAJO_REDUCCION_LIENZO]: "reduc lienzo",

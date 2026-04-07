@@ -1,12 +1,6 @@
-import {
-    dibujar_circulo, dibujar_linea,
-    dibujar_linea_segmentada, dibujar_punto,
-    dibujar_rectangulo,
-    ImprimirAnimacion
-} from "../EditorAnimacion/ImprimirAnimacion";
+import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
-import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
-import {getCoorPunto, getCoorRecta} from "../EditorAnimacion/GestionAnimacion";
+
 
 class GestionLienzoEvento{
     puntero_virtual = {
@@ -38,6 +32,11 @@ class GestionLienzoEvento{
 
     eventos_ = null;
 
+    configuracion_lienzo = new ConfiguracionLienzoEvento();
+
+    tipo_modalidad = null;
+    tipo_trabajo = null;
+
     constructor(eventos_) {
         this.id_canvas = "lienzo-evento"
         this.x = 0;
@@ -58,8 +57,8 @@ class GestionLienzoEvento{
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
-        this.animacion_.procesarPosicionFinalFiguras()
-        this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
+        // this.animacion_.procesarPosicionFinalFiguras()
+        // this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
 
         this.configuracion_lienzo.inicioZoomLienzo(ctx);
@@ -82,4 +81,40 @@ class GestionLienzoEvento{
 
         this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
     }
+
+    procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
+
+        this.puntero_real.x= eventoLienzoFigura.mouse_x;
+        this.puntero_real.y= eventoLienzoFigura.mouse_y;
+
+        const deltax =this.puntero_real.x-(300- (300-this.puntero_real.x)/this.configuracion_lienzo.escala);
+        const deltay =this.puntero_real.y-(300- (300-this.puntero_real.y)/this.configuracion_lienzo.escala);
+
+        eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x -this.configuracion_lienzo.x_delta_original-deltax;
+        eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y -this.configuracion_lienzo.y_delta_original-deltay;
+        this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
+        this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
+
+        this.tipo_modalidad = this.configuracion_lienzo.procesarGeneral(eventoLienzoFigura, this.tipo_modalidad,
+            this.tipo_trabajo)
+        //console.log(eventoLienzoFigura.stack_event_teclado)
+        if(true){
+            // if (this.categoria_trabajo === TRABAJO_FIGURA) {
+            //     this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
+            // }
+
+
+            // this.aplicarCambiosConcurrente();
+            this.actualizarLienzo()
+
+            if(this.editar_lienzo){
+                console.log("[EDITAR EL LIENZO]")
+                this.funcion_editar_lienzo();
+                this.editar_lienzo = false;
+            }
+            eventoLienzoFigura.reset()
+        }
+    }
 }
+
+export default GestionLienzoEvento
