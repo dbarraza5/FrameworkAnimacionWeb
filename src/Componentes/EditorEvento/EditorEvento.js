@@ -50,9 +50,9 @@ function EditorEvento(props){
 
     const [timelineInstance, setTimelineInstance] = useState(null);
 
-    const tipo_modalidad = useSelector(state => state.evento.tipo_modalidad);
-    const tipo_modalidad_trabajo = useSelector(state => state.evento.tipo_modalidad_trabajo);
-    const id_evento_seleccionado = useSelector(state => state.evento.id_evento_seleccionado);
+    const tipo_modalidad = useSelector(state => state.config_evento.tipo_modalidad);
+    const tipo_modalidad_trabajo = useSelector(state => state.config_evento.tipo_modalidad_trabajo);
+    const id_evento_seleccionado = useSelector(state => state.config_evento.id_evento_seleccionado);
     const evento_redux = useSelector(state => state.evento.evento);
 
     const cookie = new Cookies();
@@ -74,6 +74,7 @@ function EditorEvento(props){
     useEffect(() => {
         console.log("****CAMBIAR MODALIDAD: ", tipo_modalidad);
         //setTipoModalidadTrabajo(tipo_modalidad_trabajo);
+        gestionEventoLienzo.tipo_modalidad = tipo_modalidad
     }, [tipo_modalidad]);
 
     useEffect(() => {

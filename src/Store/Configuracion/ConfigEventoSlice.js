@@ -9,7 +9,10 @@ const inicializarState= {
     pintar_animacion: false,
     // mostrar_imagenes: true,
     status: 'idle',
-    error: null
+    error: null,
+
+    tipo_modalidad: null,
+    tipo_modalidad_trabajo: null,
 }
 
 
@@ -45,13 +48,24 @@ const configEventoSlice = createSlice({
             state.x_lienzo = 0;
             state.y_lienzo = 0;
         },
+        setTipoModalidad: (state, action)=>{
+            // console.log("[setTipoModalidad]")
+            // console.log(action.payload)
+            state.tipo_modalidad =  action.payload;
+        },
+        setTipoTrabajo: (state, action)=>{
+            state.tipo_modalidad_trabajo = action.payload;
+        },
+        setIdEventoSeleccionado: (state, action)=>{
+            state.id_evento_seleccionado = action.payload;
+        },
         restaurarState: ()=>inicializarState
     }
 });
 
 export const {
     setEjex, setEjey, mostrarInfoLienzo, pintarLienzo, resetLienzo,
-    setCoordenadas, setConfiguracion
+    setCoordenadas, setConfiguracion, setTipoModalidad, setTipoTrabajo,setIdEventoSeleccionado
 }=configEventoSlice.actions;
 
 export default configEventoSlice.reducer;

@@ -9,6 +9,15 @@ import {nanoid} from "nanoid";
 import ModalListaEventos from "./ModalListaEventos";
 import PanelGrupos from "./PanelGrupos";
 import ConfigLienzoEvento from "./ConfigLienzo/ConfigLienzoEvento";
+import {
+    MODALIDAD_CONFIG,
+    MODALIDAD_EVENTOS, MODALIDAD_GRUPOS,
+    MODALIDAD_MACRO,
+    MODALIDAD_MOVIMIENTOS,
+    MODALIDAD_SCRIPT
+} from "../../../Clases/EditorEvento/ConstanteEvento";
+import {setTipoModalidad} from "../../../Store/Configuracion/ConfigEventoSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 
 function NavEventos(props){
@@ -17,6 +26,7 @@ function NavEventos(props){
     const [evento, setEvento] = useState(null);
     const [indexIvento, setIndexEvento] = useState(null);
     const [modalAddEvento, setModalAddEvento] = useState(false);
+    const dispatch = useDispatch();
 
     const seleccionEvento=(index)=>{
         setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
@@ -76,6 +86,11 @@ function NavEventos(props){
         console.log("[nombre evento]: "+nombre);
     }
 
+    const seleccionarModalidad=(tipo_modalidad)=>{
+        //console.log(tipo_modalidad);
+        dispatch(setTipoModalidad(tipo_modalidad));
+    }
+
 
     useEffect(() => {
         console.log("[PREVIEW CAMBIO indexIvento]");
@@ -108,31 +123,31 @@ function NavEventos(props){
 
             <li className="nav-item" role="presentation">
                 <ButtonNav id="btn-nav-eventos" data-bs-target="#nav-eventos"
-                           onClick={()=>console.log("animacion")}>Eventos</ButtonNav>
+                           onClick={()=>seleccionarModalidad(MODALIDAD_EVENTOS)}>Eventos</ButtonNav>
             </li>
             <li className="nav-item" role="presentation">
                 <ButtonNav id="btn-nav-movimientos" data-bs-target="#nav-movimientos"
-                           onClick={()=>console.log("edicion")}>Movimientos</ButtonNav>
+                           onClick={()=>seleccionarModalidad(MODALIDAD_MOVIMIENTOS)}>Movimientos</ButtonNav>
             </li>
 
             <li className="nav-item" role="presentation">
                 <ButtonNav id="btnnav-grupos" data-bs-target="#nav-grupos"
-                           onClick={()=>console.log("edicion")}>Grupos</ButtonNav>
+                           onClick={()=>seleccionarModalidad(MODALIDAD_GRUPOS)}>Grupos</ButtonNav>
             </li>
 
             <li className="nav-item" role="presentation">
                 <ButtonNav id="btnnav-scrips" data-bs-target="#nav-scrips"
-                           onClick={()=>console.log("edicion")}>Scripts</ButtonNav>
+                           onClick={()=>seleccionarModalidad(MODALIDAD_SCRIPT)}>Scripts</ButtonNav>
             </li>
 
             <li className="nav-item" role="presentation">
-                <ButtonNav id="btnnav-animacion" data-bs-target="#nav-animacion"
-                           onClick={()=>console.log("animacion")}>Animacion</ButtonNav>
+                <ButtonNav id="btnnav-macro" data-bs-target="#nav-macro"
+                           onClick={()=>seleccionarModalidad(MODALIDAD_MACRO)}>Macro</ButtonNav>
             </li>
 
             <li className="nav-item" role="presentation">
                 <ButtonNav id="btnnav-config-lienzo" data-bs-target="#nav-config-lienzo"
-                           onClick={()=>console.log("animacion")}>Config</ButtonNav>
+                           onClick={()=>seleccionarModalidad(MODALIDAD_CONFIG)}>Config</ButtonNav>
             </li>
         </ul>
         <div className="tab-content" id="myTabContent">
@@ -160,11 +175,11 @@ function NavEventos(props){
                 <br/>
                 <PanelScripts {...props}/>
             </div>
-            <div className="tab-pane fade" id="nav-animacion" role="tabpanel"
+            <div className="tab-pane fade" id="nav-macro" role="tabpanel"
                  aria-labelledby="contact-tab1"
                  tabIndex="2">
                 <br/>
-                <PanelAnimacion {...props}/>
+                {/*<PanelAnimacion {...props}/>*/}
             </div>
 
             <div className="tab-pane fade" id="nav-config-lienzo" role="tabpanel"
