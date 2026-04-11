@@ -106,7 +106,7 @@ function EditorEvento(props){
 
                     animacion.edicion.meta_figuras = response.data.meta_figuras
                     animacion.edicion.meta_movimientos = []//response.data.meta_movimientos;
-                    animacion.edicion.grupos_figuras = response.data.grupos_figuras;//response.data.grupos_figuras;
+                    animacion.edicion.grupos_figuras = JSON.parse(JSON.stringify(response.data.grupos_figuras));//response.data.grupos_figuras;
                     animacion.edicion.lista_imagenes = []//response.data.lista_imagenes;
                     gestionLienzo.grupos_figuras_concurrent = null;
                     //animacion.edicion.setGrupoFigurasCurrent(response.data.grupos_figuras)

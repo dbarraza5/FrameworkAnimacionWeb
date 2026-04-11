@@ -54,7 +54,7 @@ class GestionEvento{
     inicializar(lista_evento, grupos, id){
         //this.grupos = grupos;
         this._id =id;
-        this.gestion_grupos.grupos_figuras=grupos;
+        this.gestion_grupos.grupos_figuras=JSON.parse(JSON.stringify(grupos));
         this.gestion_grupos_originales.grupos_figuras = JSON.parse(JSON.stringify(grupos))
         this.lista_raw_evento = lista_evento;
         console.log("LSITA EVENTOS: ");
@@ -89,6 +89,7 @@ class GestionEvento{
 
     procesandoEventos(){
         tiempo_universal=performance.now();
+        //console.log('tiempo universal: ', tiempo_universal);
         const tiempo = this.tiempo.cronometroC(tiempo_universal);
         this.tiempo_animacion = tiempo;
         // for(let i=0; i<this.eventos.length; i++){
@@ -108,28 +109,34 @@ class GestionEvento{
                 //     this.eventos[i].tiempo.modPasivo();
                 // }
                 const tiempo_evento = this.eventos[i].tiempo.cronometroC(tiempo_universal);
+                for(let obj_i=0; obj_i<evento_.objetos.length; obj_i++){
+                    const objeto = evento_.objetos[obj_i];
+                    for(let j=0; j<objeto.movimientos.length; j++){
+                        const movimiento = objeto.movimientos[j];
+                        const tipo = movimiento.tipo;
+                        const datos = movimiento.datos;
+                        const resultado = GestionMovimientos.movimientoGrupo(tiempo_evento, tipo, datos);
+                        const x = resultado.x;
+                        const y = resultado.y;
 
-                for(let j=0; j<evento_.movimientos.length; j++){
-                    const movimiento = evento_.movimientos[j];
-                    const tipo = movimiento.tipo;
-                    const datos = movimiento.datos;
-                    const resultado = GestionMovimientos.movimientoGrupo(tiempo_evento, tipo, datos);
-                    const x = resultado.x;
-                    const y = resultado.y;
-                    //console.log(`[1] MOV ${x}, ${y}`);
-                    for(let k=0; k<movimiento.ids_grupos.length; k++){
-                        const id_grupo = movimiento.ids_grupos[k];
-                        const indice = evento_.objetos.findIndex((objeto)=>objeto.id_objeto===id_grupo);
-                        //console.log("indice: ".indice);
-                        if(indice >= 0){
-                            // this.eventos[i].objetos[indice].x_mov+=x;
-                            // this.eventos[i].objetos[indice].y_mov+=y;
-                            //console.log(`[2] MOV ${x}, ${y}`);
-                            this.movimientos_grupos[id_grupo].x+=x;
-                            this.movimientos_grupos[id_grupo].y+=y;
-                        }
+                        this.movimientos_grupos[objeto.id_objeto].x+=x;
+                        this.movimientos_grupos[objeto.id_objeto].y+=y;
+                        //el jueconsole.log(`[1] MOV ${x}, ${y}`);
+                        // for(let k=0; k<movimiento.ids_grupos.length; k++){
+                        //     const id_grupo = movimiento.ids_grupos[k];
+                        //     const indice = evento_.objetos.findIndex((objeto)=>objeto.id_objeto===id_grupo);
+                        //     //console.log("indice: ".indice);
+                        //     if(indice >= 0){
+                        //         // this.eventos[i].objetos[indice].x_mov+=x;
+                        //         // this.eventos[i].objetos[indice].y_mov+=y;
+                        //         //console.log(`[2] MOV ${x}, ${y}`);
+                        //         this.movimientos_grupos[id_grupo].x+=x;
+                        //         this.movimientos_grupos[id_grupo].y+=y;
+                        //     }
+                        // }
                     }
                 }
+
             }
         }
         // for(let i=0; i<this.eventos.length; i++){
@@ -142,6 +149,8 @@ class GestionEvento{
         //         // this.eventos[i].evento.objetos[j].y_mov =0;
         //     }
         // }
+        //console.log(this.movimientos_grupos)
+
         for(let i=0; i<this.gestion_grupos.grupos_figuras.length; i++){
             const grupo_ = this.gestion_grupos_originales.grupos_figuras[i];
             const x = grupo_.cx+this.movimientos_grupos[grupo_.nombre].x;
@@ -164,7 +173,7 @@ class GestionEvento{
         if(canvas === null)
             return null;
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
         this.gestion_grupos.procesarPosicionFinalFiguras()

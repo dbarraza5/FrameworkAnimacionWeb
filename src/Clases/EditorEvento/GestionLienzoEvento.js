@@ -102,11 +102,12 @@ class GestionLienzoEvento{
             // if (this.categoria_trabajo === TRABAJO_FIGURA) {
             //     this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
             // }
+            this.actualizarLienzo();
             this.eventos_.procesandoEventos();
             this.eventos_.imprimirEventos();
 
             // this.aplicarCambiosConcurrente();
-            //this.actualizarLienzo()
+
 
             if(this.editar_lienzo){
                 console.log("[EDITAR EL LIENZO]")
