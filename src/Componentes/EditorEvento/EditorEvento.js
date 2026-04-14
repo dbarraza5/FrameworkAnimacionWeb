@@ -46,7 +46,12 @@ const useCustomAnimacion=(valor_inicial=null)=>{
 function EditorEvento(props){
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
     const [eventoLienzoEvento, setEventLienzoEvento] = useState(new ControlEventoLienzoFigura());
-    const [gestionEventoLienzo, setGestionEventoLienzo] = useState(new GestionLienzoEvento(eventoAnimacion.edicion));
+    const [gestionEventoLienzo, setGestionEventoLienzo] = useState(
+        new GestionLienzoEvento(
+            eventoAnimacion.edicion,
+            eventoLienzoEvento,
+            setEventoAnimacion
+        ));
 
     const [timelineInstance, setTimelineInstance] = useState(null);
 
@@ -127,7 +132,7 @@ function EditorEvento(props){
                     dispatch(setNombreAnimacion(response.data.nombre_animacion))
                     editar_animacion({"edicion": animacion.edicion})
 
-
+                    gestionEventoLienzo.inicializar()
                     setStartLoopLienzo(true);
                 })
                 .catch(function (response) {
@@ -142,7 +147,7 @@ function EditorEvento(props){
 
     useInterval(() => {
         // procesoAnimacion();
-        gestionEventoLienzo.procesarEventoLienzo(eventoLienzoEvento, setEventoAnimacion, null)
+        gestionEventoLienzo.procesarEventoLienzo(setEventoAnimacion, null)
     }, startLoopLienzo ? 100 : null);
 
     const procesoAnimacion=()=>{

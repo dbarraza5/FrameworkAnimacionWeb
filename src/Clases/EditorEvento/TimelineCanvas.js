@@ -38,8 +38,7 @@ export default class TimelineCanvas {
     constructor(eventoLienzo, eventoAnimacion, setEventoAnimacion) {
         console.log("INICIALIZACION DEL TIMELINE");
         //this.canvasElem = canvasElem;
-        this.canvasElem = document.getElementById('lienzo-evento');
-        this.ctx = this.canvasElem.getContext('2d');
+
         this.eventoLienzo = eventoLienzo;
         this.eventoAnimacion = eventoAnimacion.edicion;
         this.setEventoAnimacion = setEventoAnimacion;
@@ -56,10 +55,6 @@ export default class TimelineCanvas {
         this.segmento_px = 100;//px
         this.segundo_seg=1;
         this.num_segmentos = (this.segundo_seg*this.ancho_canvas)/this.segmento_px;
-
-
-        this.canvasElem.width = this.ancho_canvas;
-        this.canvasElem.height = this.alto_canvas;
 
         this.desplazamiento_x=0;
         this.desplazamiento_y=0;
@@ -82,7 +77,7 @@ export default class TimelineCanvas {
         this.isResizing = false;
         this.resizeSide = null;
 
-        this._bindEvents();
+
         //this.redibujarTodo();
         
         // 0: nada
@@ -107,6 +102,15 @@ export default class TimelineCanvas {
         this._speeds = [0.25, 0.5, 1, 1.5, 2, 4];
         this._speedIndex = 2;    // arranca en 1x
 
+
+    }
+
+    inicializar(){
+        this.canvasElem = document.getElementById('lienzo-evento');
+        this.ctx = this.canvasElem.getContext('2d');
+        this.canvasElem.width = this.ancho_canvas;
+        this.canvasElem.height = this.alto_canvas;
+        this._bindEvents();
         this._layoutBotones();   // calcula posiciones centradas
     }
 
@@ -156,7 +160,7 @@ export default class TimelineCanvas {
     }
 
     procesar(){
-        this.x_linea_tiempo = this.eventoAnimacion.tiempo_animacion*100;
+        this.x_linea_tiempo = this.eventoLienzo.tiempo_animacion*100;
         this.redibujarTodo();
     }
 

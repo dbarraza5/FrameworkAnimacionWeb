@@ -1,5 +1,6 @@
 import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
+import TimelineCanvas from "./TimelineCanvas";
 
 
 class GestionLienzoEvento{
@@ -37,13 +38,21 @@ class GestionLienzoEvento{
     tipo_modalidad = null;
     tipo_trabajo = null;
 
-    constructor(eventos_) {
+    timelineInstance = null;
+    eventoLienzoEvento =null;
+    constructor(eventos_, eventoLienzoEvento, setEventoAnimacion) {
         this.id_canvas = "lienzo-evento"
         this.x = 0;
         this.y = 0;
         this.eventos_ = eventos_;
         this.id_grupo_selec = "default";
         // this.imprimir_animacion = new ImprimirAnimacion(animacion_,this.configuracion_lienzo, this.id_canvas);
+        this.eventoLienzoEvento = eventoLienzoEvento;
+        this.timelineInstance = new TimelineCanvas(eventoLienzoEvento, eventos_, setEventoAnimacion);
+    }
+
+    inicializar(){
+        this.timelineInstance.inicializar()
     }
 
 
@@ -82,25 +91,25 @@ class GestionLienzoEvento{
         this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
     }
 
-    procesarEventoLienzo(eventoLienzoFigura, setAnimacion, actListaTrabajo) {
+    procesarEventoLienzo(setAnimacion, actListaTrabajo) {
 
-        this.puntero_real.x= eventoLienzoFigura.mouse_x;
-        this.puntero_real.y= eventoLienzoFigura.mouse_y;
+        this.puntero_real.x= this.eventoLienzoEvento.mouse_x;
+        this.puntero_real.y= this.eventoLienzoEvento.mouse_y;
 
         const deltax =this.puntero_real.x-(300- (300-this.puntero_real.x)/this.configuracion_lienzo.escala);
         const deltay =this.puntero_real.y-(300- (300-this.puntero_real.y)/this.configuracion_lienzo.escala);
 
-        eventoLienzoFigura.mouse_virtual_x = eventoLienzoFigura.mouse_x -this.configuracion_lienzo.x_delta_original-deltax;
-        eventoLienzoFigura.mouse_virtual_y = eventoLienzoFigura.mouse_y -this.configuracion_lienzo.y_delta_original-deltay;
-        this.x_mouse = eventoLienzoFigura.mouse_virtual_x;
-        this.y_mouse = eventoLienzoFigura.mouse_virtual_y;
+        this.eventoLienzoEvento.mouse_virtual_x = this.eventoLienzoEvento.mouse_x -this.configuracion_lienzo.x_delta_original-deltax;
+        this.eventoLienzoEvento.mouse_virtual_y = this.eventoLienzoEvento.mouse_y -this.configuracion_lienzo.y_delta_original-deltay;
+        this.x_mouse = this.eventoLienzoEvento.mouse_virtual_x;
+        this.y_mouse = this.eventoLienzoEvento.mouse_virtual_y;
 
-        this.tipo_modalidad = this.configuracion_lienzo.procesarGeneral(eventoLienzoFigura, this.tipo_modalidad,
+        this.tipo_modalidad = this.configuracion_lienzo.procesarGeneral(this.eventoLienzoEvento, this.tipo_modalidad,
             this.tipo_trabajo)
-        //console.log(eventoLienzoFigura.stack_event_teclado)
+        //console.log(this.eventoLienzoEvento.stack_event_teclado)
         if(true){
             // if (this.categoria_trabajo === TRABAJO_FIGURA) {
-            //     this.procesarTrabajoFigura(eventoLienzoFigura, setAnimacion)
+            //     this.procesarTrabajoFigura(this.eventoLienzoEvento, setAnimacion)
             // }
             this.actualizarLienzo();
             this.eventos_.procesandoEventos();
@@ -114,8 +123,10 @@ class GestionLienzoEvento{
                 this.funcion_editar_lienzo();
                 this.editar_lienzo = false;
             }
-            eventoLienzoFigura.reset()
+
         }
+        this.timelineInstance.procesar()
+        this.eventoLienzoEvento.reset()
     }
 }
 

@@ -3,6 +3,7 @@ import {GestionMovimientos} from "./GestionMovimientos";
 import {GestionAnimacion} from "../EditorAnimacion/GestionAnimacion";
 import {ImprimirAnimacion} from "../EditorAnimacion/ImprimirAnimacion";
 import ConfiguracionLienzo from "../EditorAnimacion/ConfiguracionLienzo";
+import TimelineCanvas from "./TimelineCanvas";
 
 let tiempo_universal=performance.now();
 
@@ -34,7 +35,14 @@ class GestionEvento{
     version=1;
     _id=null;
 
+    reproducir = false;
+    detener = false;
+    reiniciar = false;
+
     seleccion_evento = null;
+
+
+
     constructor() {
         this.id_canvas = "lienzo-evento"
         this.gestion_eventos= new GestionMovimientos();
@@ -42,6 +50,8 @@ class GestionEvento{
         this.gestion_grupos_originales = new GestionAnimacion();
         this.configuracion_lienzo = new ConfiguracionLienzo();
         this.imprimir_animacion = new ImprimirAnimacion(this.imprimir_animacion,this.configuracion_lienzo, this.id_canvas);
+
+
     }
 
     reseteoMovGrupos(){
