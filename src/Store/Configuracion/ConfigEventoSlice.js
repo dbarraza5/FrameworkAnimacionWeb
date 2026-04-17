@@ -13,6 +13,7 @@ const inicializarState= {
 
     tipo_modalidad: null,
     tipo_modalidad_trabajo: null,
+    id_grupo_seleccionado: "sin grupo seleccionado",
 }
 
 

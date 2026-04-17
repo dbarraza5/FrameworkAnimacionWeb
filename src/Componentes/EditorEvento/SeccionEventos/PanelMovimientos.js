@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import ModalEditarMovimiento from "./ModalEditarMovimiento";
 import ModalAgregarMovimiento from "./ModalAgregarMovimiento";
 
@@ -19,6 +20,8 @@ function PanelMovimientos(props) {
     const [movimientoSeleccionado, setMovimientoSeleccionado] = useState(null);
     const [movIndexSeleccionado, setmovIndexSeleccionado] = useState(null);
     const [versionKey, setVerionKey] = useState(0);
+
+    const id_grupo_seleccionado = useSelector(state => state.config_evento.id_grupo_seleccionado);
 
     const seleccionarMov=(index)=>{
         setMovimientoSeleccionado(props.evento.movimientos[index]);
@@ -77,10 +80,8 @@ function PanelMovimientos(props) {
     return (
         <div>
             {/* Botones */}
-            <div className="mb-2 d-flex gap-2">
-                {/*<button className="btn btn-outline-primary" onClick={() => setShowEditarModal(true)}>*/}
-                {/*    Lista movimientos*/}
-                {/*</button>*/}
+            <div className="mb-2 d-flex gap-2 align-items-center">
+                <span>{id_grupo_seleccionado}</span>
                 <button className="btn btn-outline-success" onClick={() => setShowAgregarModal(true)}>
                     <i className="bi bi-plus"></i>
                 </button>

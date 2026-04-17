@@ -53,7 +53,7 @@ function EditorEvento(props){
             setEventoAnimacion
         ));
 
-    const [timelineInstance, setTimelineInstance] = useState(null);
+    //const [timelineInstance, setTimelineInstance] = useState(null);
 
     const tipo_modalidad = useSelector(state => state.config_evento.tipo_modalidad);
     const tipo_modalidad_trabajo = useSelector(state => state.config_evento.tipo_modalidad_trabajo);
@@ -154,15 +154,20 @@ function EditorEvento(props){
         if(tipo_modalidad === MODALIDAD_ANIMACION){
             eventoAnimacion.edicion.procesandoEventos();
             eventoAnimacion.edicion.imprimirEventos();
-            timelineInstance.procesar();
+            //timelineInstance.procesar();
         }
     }
 
     useEffect(() => {
         console.log("[==============================Evento===========================]")
         obtenerEvento();
-        const instance = new TimelineCanvas(eventoLienzoEvento, eventoAnimacion, setEventoAnimacion);
-        setTimelineInstance(instance);
+        // const instance = new TimelineCanvas(eventoLienzoEvento, eventoAnimacion, setEventoAnimacion);
+        // setTimelineInstance(instance);
+        return () => {
+            console.log("Limpiando Canvas anterior...");
+            // Aquí deberías llamar a un método que destruya el canvas o limpie los eventos
+            gestionEventoLienzo.limpiar()
+        };
     }, []);
 
     useEffect(() => {
@@ -186,7 +191,7 @@ function EditorEvento(props){
                 console.log("[*lista de hijos*]");
                 console.log(lista_hijos);
                 console.log(list_evento);
-                timelineInstance.cambiarEventos(list_evento);
+                //timelineInstance.cambiarEventos(list_evento);
             }
             if(tipo_modalidad===TRABAJO_ANIMACION_MOVIMIENTOS){
                 const list_evento = evento_.evento.movimientos.map((mov, index)=>{
@@ -197,7 +202,7 @@ function EditorEvento(props){
                     }
                 });
                 console.log(list_evento);
-                timelineInstance.cambiarEventos(list_evento);
+                //timelineInstance.cambiarEventos(list_evento);
             }
 
 
@@ -209,9 +214,9 @@ function EditorEvento(props){
         console.log("[CAMBIO DE MODALIDAD]");
         console.log("modalidad: "+tipo_modalidad_trabajo);
         console.log("evento   : "+id_evento_seleccionado);
-        if(timelineInstance){
-            timelineInstance.cambioModalidad(tipo_modalidad_trabajo, id_evento_seleccionado);
-        }
+        // if(timelineInstance){
+        //     timelineInstance.cambioModalidad(tipo_modalidad_trabajo, id_evento_seleccionado);
+        // }
     }, [tipo_modalidad_trabajo, id_evento_seleccionado]);
 
 

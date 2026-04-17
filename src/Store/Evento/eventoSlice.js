@@ -21,6 +21,7 @@ const inicializarState= {
     tipo_modalidad: null,
     tipo_modalidad_trabajo: null,
     id_evento_seleccionado: null,
+    lista_grupos_seleccionados: [],
     evento: {
         id_proyecto: "",
         id_evento: "",

@@ -37,10 +37,11 @@ function dibujarLinea(ctx, p1x, p1y, p2x, p2y) {
 export default class TimelineCanvas {
     constructor(eventoLienzo, eventoAnimacion, setEventoAnimacion) {
         console.log("INICIALIZACION DEL TIMELINE");
+        console.log(eventoAnimacion);
         //this.canvasElem = canvasElem;
 
         this.eventoLienzo = eventoLienzo;
-        this.eventoAnimacion = eventoAnimacion.edicion;
+        this.eventoAnimacion = eventoAnimacion;
         this.setEventoAnimacion = setEventoAnimacion;
         // Configuración
         this.escala = .1;//config.escala || 0.5;
@@ -85,15 +86,21 @@ export default class TimelineCanvas {
         // 2: movimientos
         this.tipo_modalidad_trabajo= null;
         this.id_evento_seleccionado= null;
+        this.play = false;
+        this.reset = false;
+        this.reiniciar();
 
         this.botones = [
             { nombre: 'restablecer', x: 10,  y: this.y_timeline - 40, w: 32, h: 32 },
             { nombre: 'play',        x: 50,  y: this.y_timeline - 40, w: 32, h: 32 },
-            { nombre: 'stop',        x: 90,  y: this.y_timeline - 40, w: 32, h: 32 },
+            // { nombre: 'stop',        x: 90,  y: this.y_timeline - 40, w: 32, h: 32 },
             { nombre: 'velocidad',   x: 130, y: this.y_timeline - 40, w: 32, h: 32 }
         ];
         // en constructor, después de setear this.y_timeline:
-        this._nombresBotones = ["restablecer", "play", "stop", "velocidad"];
+        this._nombresBotones = ["restablecer",
+            "play",
+            // "stop",
+            "velocidad"];
         this._botonW = 28;       // más compacto
         this._botonH = 28;
         this._separacion = 8;    // más juntos
@@ -102,7 +109,13 @@ export default class TimelineCanvas {
         this._speeds = [0.25, 0.5, 1, 1.5, 2, 4];
         this._speedIndex = 2;    // arranca en 1x
 
+        this.eventos_elanzados = false;
+    }
 
+    reiniciar(){
+        this.click_reproducir = false;
+        this.click_detener = false;
+        this.click_reiniciar = false;
     }
 
     inicializar(){
@@ -110,8 +123,12 @@ export default class TimelineCanvas {
         this.ctx = this.canvasElem.getContext('2d');
         this.canvasElem.width = this.ancho_canvas;
         this.canvasElem.height = this.alto_canvas;
-        this._bindEvents();
-        this._layoutBotones();   // calcula posiciones centradas
+        if(!this.eventos_elanzados){
+            this._bindEvents();
+            this._layoutBotones();   // calcula posiciones centradas
+            this.eventos_elanzados = true;
+        }
+
     }
 
     _layoutBotones() {
@@ -138,6 +155,7 @@ export default class TimelineCanvas {
         this.canvasElem.addEventListener('mousedown', this._onMouseDown.bind(this));
         this.canvasElem.addEventListener('mousemove', this._onMouseMove.bind(this));
         this.canvasElem.addEventListener('mouseup', this._onMouseUp.bind(this));
+        console.log("[_bindEvents]=>2222222222222222222222222222222222222222222222222222222222222222222222222222")
     }
 
     dibujarLineaTiempo(){
@@ -160,14 +178,16 @@ export default class TimelineCanvas {
     }
 
     procesar(){
-        this.x_linea_tiempo = this.eventoLienzo.tiempo_animacion*100;
+        //this.reiniciar();
+        this.x_linea_tiempo = this.eventoAnimacion.tiempo_animacion*100;
+        //console.log(this.eventoLienzo )
         this.redibujarTodo();
     }
 
     redibujarTodo() {
         const ctx = this.ctx;
         //ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
-
+        if(!ctx) return
 
         // Dibuja botones primero
         this.dibujarBotones();
@@ -291,7 +311,7 @@ export default class TimelineCanvas {
             if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
                 if (b.nombre === "restablecer") this.reiniciarAnimacion();
                 if (b.nombre === "play")        this.reproducirAnimacion();
-                if (b.nombre === "stop")        this.detenerAnimacion();
+                // if (b.nombre === "stop")        this.detenerAnimacion();
                 if (b.nombre === "velocidad")   this.cambiarVelocidad();
                 return; // no seguir con selección/drag del timeline
             }
@@ -412,6 +432,7 @@ export default class TimelineCanvas {
 
     dibujarBotones() {
         const ctx = this.ctx;
+        if(!ctx) return
         ctx.save();
 
         // Limpia la franja de UI
@@ -443,8 +464,15 @@ export default class TimelineCanvas {
             ctx.textBaseline = "middle";
             const cx = b.x + b.w/2, cy = b.y + b.h/2;
 
-            if (b.nombre === "play")        ctx.fillText(this.playing ? "⏸" : "▶", cx, cy);
-            if (b.nombre === "stop")        ctx.fillText("■", cx, cy);
+            if (b.nombre === "play"){
+                if (this.play){
+                    ctx.fillText("■", cx, cy);
+                }else{
+                    ctx.fillText(this.playing ? "⏸" : "▶", cx, cy);
+                }
+
+            }
+            // if (b.nombre === "stop")        ctx.fillText("■", cx, cy);
             if (b.nombre === "restablecer") ctx.fillText("↺", cx, cy);
             if (b.nombre === "velocidad")   ctx.fillText("⏩", cx, cy);
 
@@ -477,6 +505,7 @@ export default class TimelineCanvas {
 
 
     dispose() {
+        if(!this.canvasElem) return
         this.canvasElem.removeEventListener('mousedown', this._onMouseDown);
         this.canvasElem.removeEventListener('mousemove', this._onMouseMove);
         this.canvasElem.removeEventListener('mouseup', this._onMouseUp);
@@ -488,10 +517,13 @@ export default class TimelineCanvas {
 
     reproducirAnimacion() {
         //alert("reproducirAnimacion");
-        const nombre_event = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento].evento["nombre"];
-        const l=this.eventoAnimacion.obtenerHijos(nombre_event);
-        console.log("[lista de hijos]");
-        console.log(l);
+        // const nombre_event = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento].evento["nombre"];
+        // const l=this.eventoAnimacion.obtenerHijos(nombre_event);
+        // console.log("[lista de hijos]");
+        // console.log(l);
+        this.play = !this.play;
+        this.click_reproducir = true;
+        //console.log(this.play);
     }
 
     detenerAnimacion() {

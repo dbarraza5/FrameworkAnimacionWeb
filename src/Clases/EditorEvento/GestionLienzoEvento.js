@@ -55,6 +55,10 @@ class GestionLienzoEvento{
         this.timelineInstance.inicializar()
     }
 
+    limpiar(){
+        this.timelineInstance.dispose();
+    }
+
 
     actualizarLienzo() {
 
@@ -112,20 +116,28 @@ class GestionLienzoEvento{
             //     this.procesarTrabajoFigura(this.eventoLienzoEvento, setAnimacion)
             // }
             this.actualizarLienzo();
+            this.timelineInstance.procesar();
+
+
+            if(this.timelineInstance.click_reproducir){
+                console.log("click_reproducir: ", this.timelineInstance.click_reproducir);
+                this.eventos_.reproducirProceso();
+            }
+
             this.eventos_.procesandoEventos();
             this.eventos_.imprimirEventos();
 
             // this.aplicarCambiosConcurrente();
-
 
             if(this.editar_lienzo){
                 console.log("[EDITAR EL LIENZO]")
                 this.funcion_editar_lienzo();
                 this.editar_lienzo = false;
             }
+            this.timelineInstance.reiniciar();
 
         }
-        this.timelineInstance.procesar()
+
         this.eventoLienzoEvento.reset()
     }
 }
