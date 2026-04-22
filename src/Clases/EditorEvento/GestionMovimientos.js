@@ -3,7 +3,7 @@ const MOV_RECTILINEO_UNIFORME = 1;
 
 
 function movRectilineoUniforme(tiempo, velocidad){
-    return tiempo*20;
+    return tiempo*velocidad;
 }
 
 class GestionMovimientos{

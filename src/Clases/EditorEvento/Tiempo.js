@@ -24,7 +24,7 @@ class Tiempo {
     }
 
     modPasivo() {
-        this.segmentacion = this.tiempoGuardar = this.tiempoActual = performance.now();
+        this.segmentacion = this.tiempoGuardar = this.tiempoActual = this.tiempo_universal//performance.now();
         this.contador = 0;
         this.estado = false;
         this.tiempodePausa = 0;

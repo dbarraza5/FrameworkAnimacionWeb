@@ -174,35 +174,38 @@ function EditorEvento(props){
         console.log(eventoAnimacion.edicion.seleccion_evento);
         if(eventoAnimacion.edicion.seleccion_evento!==null){
             const evento_ = eventoAnimacion.edicion.eventos[eventoAnimacion.edicion.seleccion_evento];
-            console.log("[cambio de evento]: "+eventoAnimacion.edicion.version);
-            console.log(evento_.evento);
+            if(evento_){
+                console.log("[cambio de evento]: "+eventoAnimacion.edicion.version);
+                console.log(evento_.evento);
 
-            if(tipo_modalidad===TRABAJO_ANIMACION_EVENTOS){
-                const nombre_event = evento_.evento["nombre"];
-                const lista_hijos=eventoAnimacion.edicion.obtenerHijos(nombre_event);
+                if(tipo_modalidad===TRABAJO_ANIMACION_EVENTOS){
+                    const nombre_event = evento_.evento["nombre"];
+                    const lista_hijos=eventoAnimacion.edicion.obtenerHijos(nombre_event);
 
-                const list_evento = lista_hijos.map((event_)=>{
-                    return {
-                        id: event_.evento.nombre,
-                        inicio: event_.evento.tiempo_inicio,
-                        fin: event_.evento.tiempo_final
-                    }
-                });
-                console.log("[*lista de hijos*]");
-                console.log(lista_hijos);
-                console.log(list_evento);
-                //timelineInstance.cambiarEventos(list_evento);
-            }
-            if(tipo_modalidad===TRABAJO_ANIMACION_MOVIMIENTOS){
-                const list_evento = evento_.evento.movimientos.map((mov, index)=>{
-                    return {
-                        id: index,
-                        inicio: mov.tiempo_inicio,
-                        fin: mov.tiempo_final
-                    }
-                });
-                console.log(list_evento);
-                //timelineInstance.cambiarEventos(list_evento);
+                    const list_evento = lista_hijos.map((event_)=>{
+                        return {
+                            id: event_.evento.nombre,
+                            inicio: event_.evento.tiempo_inicio,
+                            fin: event_.evento.tiempo_final
+                        }
+                    });
+                    console.log("[*lista de hijos*]");
+                    console.log(lista_hijos);
+                    console.log(list_evento);
+                    //timelineInstance.cambiarEventos(list_evento);
+                }
+                if(tipo_modalidad===TRABAJO_ANIMACION_MOVIMIENTOS){
+                    const list_evento = evento_.evento.movimientos.map((mov, index)=>{
+                        return {
+                            id: index,
+                            inicio: mov.tiempo_inicio,
+                            fin: mov.tiempo_final
+                        }
+                    });
+                    console.log(list_evento);
+                    //timelineInstance.cambiarEventos(list_evento);
+                }
+
             }
 
 
