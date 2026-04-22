@@ -1,9 +1,73 @@
 
+// ===============================
+// TIPOS DE MOVIMIENTO
+// ===============================
 const MOV_RECTILINEO_UNIFORME = 1;
+const MOV_RECTILINEO_ACELERADO = 2;
+const MOV_RECTILINEO_2D = 3;
+const MOV_CIRCULAR = 4;
+const MOV_OSCILATORIO = 5;
+const MOV_LERP = 6;
+const MOV_GRAVEDAD = 7;
+const MOV_PARABOLICO_ANGULO = 8;
 
 
-function movRectilineoUniforme(tiempo, velocidad){
-    return tiempo*velocidad;
+// ===============================
+// FUNCIONES DE MOVIMIENTO
+// ===============================
+
+// MRU
+function movRectilineoUniforme(t, v){
+    return v * t;
+}
+
+// MRUA
+function movRectilineoAcelerado(t, v0, a){
+    return v0 * t + 0.5 * a * t * t;
+}
+
+// Movimiento 2D simple
+function movRectilineo2D(t, vx, vy){
+    return {
+        x: vx * t,
+        y: vy * t
+    };
+}
+
+// Movimiento circular
+function movCircular(t, radio, velAngular){
+    return {
+        x: radio * Math.cos(velAngular * t),
+        y: radio * Math.sin(velAngular * t)
+    };
+}
+
+// Oscilación (seno)
+function movOscilatorio(t, amplitud, frecuencia){
+    return amplitud * Math.sin(frecuencia * t);
+}
+
+// Interpolación lineal
+function lerp(inicio, fin, t){
+    return inicio + (fin - inicio) * t;
+}
+
+// Gravedad (solo eje Y)
+function movGravedad(t, v0y, g = 9.8){
+    return v0y * t - 0.5 * g * t * t;
+}
+
+// Parabólico con ángulo
+function movParabolicoAngulo(t, velocidadInicial, angulo, g = 9.8){
+    const rad = angulo * Math.PI / 180;
+
+    const v0x = velocidadInicial * Math.cos(rad);
+    const v0y = velocidadInicial * Math.sin(rad);
+
+    return {
+        x: v0x * t,
+        y: v0y * t - 0.5 * g * t * t
+    };
 }
 
 class GestionMovimientos{
@@ -14,9 +78,59 @@ class GestionMovimientos{
     static movimientoGrupo(tiempo, tipo, datos){
         let x=0;
         let y=0;
-        if(tipo === MOV_RECTILINEO_UNIFORME){
-            x=movRectilineoUniforme(tiempo, datos.velocidad);
-            //console.log("[velx: "+x+"] [tiempo: "+tiempo);
+        switch(tipo){
+
+            case MOV_RECTILINEO_UNIFORME:
+                x = movRectilineoUniforme(tiempo, datos.velocidad);
+                break;
+
+            case MOV_RECTILINEO_ACELERADO:
+                x = movRectilineoAcelerado(tiempo, datos.v0, datos.a);
+                break;
+
+            case MOV_RECTILINEO_2D:
+                const pos2D = movRectilineo2D(tiempo, datos.vx, datos.vy);
+                x = pos2D.x;
+                y = pos2D.y;
+                break;
+
+            case MOV_CIRCULAR:
+                const circ = movCircular(tiempo, datos.radio, datos.velAngular);
+                x = circ.x;
+                y = circ.y;
+                break;
+
+            case MOV_OSCILATORIO:
+                y = movOscilatorio(tiempo, datos.amplitud, datos.frecuencia);
+                break;
+
+            case MOV_GRAVEDAD:
+                y = movGravedad(tiempo, datos.v0y, datos.g);
+                break;
+
+            case MOV_LERP:
+                x = lerp(datos.inicio, datos.fin, tiempo);
+                break;
+
+            case MOV_PARABOLICO_ANGULO:
+                const par = movParabolicoAngulo(
+                    tiempo,
+                    datos.velocidadInicial,
+                    datos.angulo,
+                    datos.g
+                );
+                x = par.x;
+                y = par.y;
+                break;
+        }
+
+        // Opcional: aplicar origen
+        if(datos.origenX !== undefined){
+            x += datos.origenX;
+        }
+
+        if(datos.origenY !== undefined){
+            y += datos.origenY;
         }
         return {
             x: x,

@@ -54,9 +54,9 @@ function PanelMovimientos(props) {
         console.log("[EVENTO][MOV]");
         console.log(props.evento)
 
-        if(props.evento){
-            setListaMovimientos(props.evento.movimientos)
-        }
+        // if(props.evento){
+        //     setListaMovimientos(props.evento.movimientos)
+        // }
     }, [props.evento]);
 
 
