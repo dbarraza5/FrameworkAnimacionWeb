@@ -14,6 +14,7 @@ const inicializarState= {
     tipo_modalidad: null,
     tipo_modalidad_trabajo: null,
     id_grupo_seleccionado: "sin grupo seleccionado",
+    grupos_a_sincronizar:null
 }
 
 
@@ -60,13 +61,16 @@ const configEventoSlice = createSlice({
         setIdEventoSeleccionado: (state, action)=>{
             state.id_evento_seleccionado = action.payload;
         },
+        setGruposAsincronizar: (state, action)=>{
+            state.grupos_a_sincronizar = action.payload;
+        },
         restaurarState: ()=>inicializarState
     }
 });
 
 export const {
     setEjex, setEjey, mostrarInfoLienzo, pintarLienzo, resetLienzo,
-    setCoordenadas, setConfiguracion, setTipoModalidad, setTipoTrabajo,setIdEventoSeleccionado
+    setCoordenadas, setConfiguracion, setTipoModalidad, setTipoTrabajo, setIdEventoSeleccionado, setGruposAsincronizar
 }=configEventoSlice.actions;
 
 export default configEventoSlice.reducer;

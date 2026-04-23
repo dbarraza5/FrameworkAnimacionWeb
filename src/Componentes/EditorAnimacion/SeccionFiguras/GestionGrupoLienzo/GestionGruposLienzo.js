@@ -5,6 +5,7 @@ import TablaGrupos from "../GestionGrupos/TablaGrupos";
 
 import { useSelector, useDispatch } from 'react-redux';
 import {setListaGrupoTrabajo} from "../../../../Store/Animacion/animacionSlice"
+import {setGruposAsincronizar} from "../../../../Store/Configuracion/ConfigEventoSlice";
 
 function GestionGruposLienzo(props){
     const backup_actual = useSelector((state) => state.animacion.backup.actual);
@@ -71,6 +72,13 @@ function GestionGruposLienzo(props){
         if(operacion_ === "borrar"){
             props.gestionLienzo.seleccionGrupoBorrar(lista_seleccionados)
         }
+
+        if(operacion_ === "sincronizar"){
+            console.log("sincronizar grupos");
+            console.log(props.animacion.grupos_figuras)
+            const grupos_string = JSON.stringify(props.animacion.grupos_figuras)
+            dispatch(setGruposAsincronizar(grupos_string));
+        }
     }
 
     const seleccionSentidoReflejo=(sentido)=>{
@@ -101,41 +109,73 @@ function GestionGruposLienzo(props){
                 </div>
             </div>
             <div className="col-6">
-                <form>
-                    <legend>Opciones</legend>
+                <form style={{ maxWidth: '200px' }}>
+                    <legend className="fs-6 fw-bold mb-3">Herramientas</legend>
 
-                    <div className="btn-group-vertical" role="group" aria-label="Basic checkbox toggle button group">
-                        <input type="button" className="btn-check" id="radio_grupo_mover" name="radio_grupo" autoComplete="off"
-                               value="mover" onClick={cambioOperacion}/>
-                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_mover">Mover</label>
+                    <div className="btn-group-vertical w-100" role="group" aria-label="Herramientas de edición">
+                        {/* Grupo 1: Transformaciones */}
+                        <input type="radio" className="btn-check" id="radio_grupo_mover" name="radio_grupo"
+                               value="mover" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-primary text-start" htmlFor="radio_grupo_mover">
+                            <i className="bi bi-arrows-move me-2"></i> Mover
+                        </label>
 
-                        <input type="button" className="btn-check" id="radio_grupo_rotar" name="radio_grupo" autoComplete="off"
-                               value="rotar" onClick={cambioOperacion}/>
-                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_rotar">Rotar</label>
+                        <input type="radio" className="btn-check" id="radio_grupo_rotar" name="radio_grupo"
+                               value="rotar" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-primary text-start" htmlFor="radio_grupo_rotar">
+                            <i className="bi bi-arrow-repeat me-2"></i> Rotar
+                        </label>
 
-                        <input type="button" className="btn-check" id="radio_grupo_tamano" name="radio_grupo" autoComplete="off"
-                               value="tamano" onClick={cambioOperacion}/>
-                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_tamano">Tamaño</label>
+                        <input type="radio" className="btn-check" id="radio_grupo_tamano" name="radio_grupo"
+                               value="tamano" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-primary text-start" htmlFor="radio_grupo_tamano">
+                            <i className="bi bi-aspect-ratio me-2"></i> Tamaño
+                        </label>
 
-                    </div>
-                    <div className="btn-group-vertical" role="group" aria-label="Basic checkbox toggle button group">
-                        <input type="button" className="btn-check" id="radio_grupo_duplicar" name="radio_grupo" autoComplete="off"
-                               value="duplicar" onClick={cambioOperacion}/>
-                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_duplicar">Duplicar</label>
+                        {/* Separador visual opcional */}
+                        <div className="py-1"></div>
 
-                        <input type="button" className="btn-check" id="radio_grupo_espejo" name="radio_grupo" autoComplete="off"
-                               value="espejo" onClick={cambioOperacion}/>
-                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_espejo">Espejo</label>
+                        {/* Grupo 2: Acciones de objeto */}
+                        <input type="radio" className="btn-check" id="radio_grupo_duplicar" name="radio_grupo"
+                               value="duplicar" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-primary text-start" htmlFor="radio_grupo_duplicar">
+                            <i className="bi bi-layers me-2"></i> Duplicar
+                        </label>
 
-                        <input type="button" className="btn-check" id="radio_grupo_borrar" name="radio_grupo" autoComplete="off"
-                               value="borrar" onClick={cambioOperacion}/>
-                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_borrar">Borrar</label>
-                    </div>
+                        <input type="radio" className="btn-check" id="radio_grupo_espejo" name="radio_grupo"
+                               value="espejo" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-primary text-start" htmlFor="radio_grupo_espejo">
+                            <i className="bi bi-unindent me-2"></i> Espejo
+                        </label>
 
-                    <div className="btn-group-vertical" role="group" aria-label="Basic checkbox toggle button group">
-                        <input type="button" className="btn-check" id="radio_grupo_centrar" name="radio_grupo" autoComplete="off"
-                               value="centrar" onClick={cambioOperacion}/>
-                        <label className="btn btn-outline-primary" htmlFor="radio_grupo_centrar">Centrar</label>
+                        <input type="radio" className="btn-check" id="radio_grupo_borrar" name="radio_grupo"
+                               value="borrar" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-danger text-start" htmlFor="radio_grupo_borrar">
+                            <i className="bi bi-trash me-2"></i> Borrar
+                        </label>
+
+                        <div className="py-1"></div>
+
+                        {/* Grupo 3: Utilidades */}
+                        <input type="radio" className="btn-check" id="radio_grupo_centrar" name="radio_grupo"
+                               value="centrar" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-secondary text-start" htmlFor="radio_grupo_centrar">
+                            <i className="bi bi-geo me-2"></i> Centrar
+                        </label>
+
+                        {/* Nueva operación: Fusionar */}
+                        <input type="radio" className="btn-check" id="radio_grupo_fusionar" name="radio_grupo"
+                               value="fusionar" onClick={cambioOperacion} />
+                        <label className="btn btn-outline-secondary text-start py-2" htmlFor="radio_grupo_fusionar">
+                            <i className="bi bi-intersect me-2"></i> Fusionar
+                        </label>
+
+                        {/* Cambiado: Exportar -> Sincronizar */}
+                        <input type="radio" className="btn-check" id="radio_grupo_sincronizar" name="radio_grupo"
+                               value="sincronizar" onClick={cambioOperacion} />
+                        <label className="btn btn-primary text-start py-2" htmlFor="radio_grupo_sincronizar">
+                            <i className="bi bi-arrow-clockwise me-2"></i> Sincronizar
+                        </label>
                     </div>
                 </form>
                 <br/>

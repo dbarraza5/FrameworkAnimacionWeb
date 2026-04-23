@@ -59,6 +59,8 @@ function EditorEvento(props){
     const tipo_modalidad_trabajo = useSelector(state => state.config_evento.tipo_modalidad_trabajo);
     const id_evento_seleccionado = useSelector(state => state.config_evento.id_evento_seleccionado);
     const evento_redux = useSelector(state => state.evento.evento);
+    const grupos_a_sincronizar = useSelector(state => state.config_evento.grupos_a_sincronizar);
+
 
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
@@ -85,6 +87,14 @@ function EditorEvento(props){
     useEffect(() => {
         console.log("Se actualizo El evento por redux")
     }, [evento_redux]);
+
+    useEffect(() => {
+        console.log("Se actualizo El grupos_a_sincronizar");
+        console.log(grupos_a_sincronizar);
+        eventoAnimacion.edicion.gestion_grupos.grupos_figuras = JSON.parse(grupos_a_sincronizar);
+        eventoAnimacion.edicion.gestion_grupos_originales.grupos_figuras = JSON.parse(grupos_a_sincronizar);
+        //animacion.edicion.grupos_figuras = JSON.parse(grupos_a_sincronizar);
+    }, [grupos_a_sincronizar]);
 
     const obtenerEvento=async ()=>{
         const token = datos_usuario.token
