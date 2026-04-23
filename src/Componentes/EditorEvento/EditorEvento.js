@@ -242,7 +242,8 @@ function EditorEvento(props){
                 return evento.evento;
             });
             const datos = {
-                "eventos": eventos_
+                "eventos": eventos_,
+                "grupos_figuras": eventoAnimacion.edicion.gestion_grupos_originales.grupos_figuras
             };
 
             const url = "/api/evento/id/" + eventoAnimacion.edicion._id;

@@ -1,6 +1,9 @@
 import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
 import TimelineCanvas from "./TimelineCanvas";
+import {MODALIDAD_MOVIMIENTOS} from "./ConstanteEvento";
+import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
+import {dibujar_rec_transparencia, dibujar_rectangulo} from "../EditorAnimacion/ImprimirAnimacion";
 
 
 class GestionLienzoEvento{
@@ -40,6 +43,10 @@ class GestionLienzoEvento{
 
     timelineInstance = null;
     eventoLienzoEvento =null;
+
+    grupos_disponibles_generales = [];
+    grupo_seleccionado = null;
+
     constructor(eventos_, eventoLienzoEvento, setEventoAnimacion) {
         this.id_canvas = "lienzo-evento"
         this.x = 0;
@@ -79,20 +86,34 @@ class GestionLienzoEvento{
 
         this.configuracion_lienzo.finZoomLienzo(ctx);
 
+        this.eventos_.imprimirEventos();
 
+        if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
+            for (let i=0; i < this.grupos_disponibles_generales.length; i++){
+                const grupos_ = [this.grupos_disponibles_generales[i]]
+                const rect_seleccion =
+                    OperacionesGrupo.calcularCentroGruposSeleccionados(
+                        this.eventos_.gestion_grupos.get_lista_grupos_by_IDs(grupos_)
+                    )
 
-        /*if(imprimir_lienzo_completo || this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_IMAGENES ||
-            this.categoria_trabajo === TRABAJO_CONFIG_LIENZO_ATRIBUTOS){
-            this.imprimir_animacion.imprimirListaGrupos(lista_grupo_root, this.id_grupo_selec, this.id_figura_selec, this.lista_id_figuras,
-                this.p_centro, this.p1_recta, this.p2_recta, this.p_circulo)
-        }*/
+                const x_select_g = rect_seleccion.inf_hor+this.configuracion_lienzo.x_delta_original;
+                const y_select_g = rect_seleccion.inf_ver+this.configuracion_lienzo.y_delta_original;
+                dibujar_rectangulo(ctx, "#76ff14", x_select_g, y_select_g,
+                    rect_seleccion.ancho, rect_seleccion.alto)
 
-        // if(this.categoria_trabajo === TRABAJO_PINTADO_GRUPO){
-        //     this.imprimir_animacion.imprimirGrupoPintado(this.gestion_pintado)
-        //
-        // }
+                // console.log(this.grupos_disponibles_generales[i])
+                // console.log(this.grupo_seleccionado)
+                // console.log("=============================")
+                if(this.grupo_seleccionado===this.grupos_disponibles_generales[i]){
+                    dibujar_rec_transparencia(ctx, "#76ff14","#c73cee", x_select_g, y_select_g,
+                        rect_seleccion.ancho, rect_seleccion.alto)
+                }
+            }
+
+        }
 
         this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
+        this.timelineInstance.imprimir();
     }
 
     procesarEventoLienzo(setAnimacion, actListaTrabajo) {
@@ -112,12 +133,7 @@ class GestionLienzoEvento{
             this.tipo_trabajo)
         //console.log(this.eventoLienzoEvento.stack_event_teclado)
         if(true){
-            // if (this.categoria_trabajo === TRABAJO_FIGURA) {
-            //     this.procesarTrabajoFigura(this.eventoLienzoEvento, setAnimacion)
-            // }
-            this.actualizarLienzo();
             this.timelineInstance.procesar();
-
 
             if(this.timelineInstance.click_reproducir){
                 console.log("click_reproducir: ", this.timelineInstance.click_reproducir);
@@ -125,21 +141,46 @@ class GestionLienzoEvento{
             }
 
             this.eventos_.procesandoEventos();
-            this.eventos_.imprimirEventos();
 
-            // this.aplicarCambiosConcurrente();
+            if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
+                this.grupos_disponibles_generales = this.eventos_.gestion_grupos.get_nombres_grupos_hijos("root");
+                //console.log(this.grupos_disponibles_generales);
 
-            if(this.editar_lienzo){
-                console.log("[EDITAR EL LIENZO]")
-                this.funcion_editar_lienzo();
-                this.editar_lienzo = false;
+                for (let i=0; i < this.grupos_disponibles_generales.length; i++){
+                    const grupos_ = [this.grupos_disponibles_generales[i]]
+                    const rect_seleccion =
+                        OperacionesGrupo.calcularCentroGruposSeleccionados(
+                            this.eventos_.gestion_grupos.get_lista_grupos_by_IDs(grupos_)
+                        )
+
+                    const x_select_g = rect_seleccion.inf_hor+this.configuracion_lienzo.x_delta_original;
+                    const y_select_g = rect_seleccion.inf_ver+this.configuracion_lienzo.y_delta_original;
+
+                    const ancho = rect_seleccion.ancho;
+                    const alto = rect_seleccion.alto;
+
+                    // 2. Validar si el mouse está dentro de este rectángulo
+                    const isHover = this.x_mouse >= x_select_g &&
+                        this.x_mouse <= x_select_g + ancho &&
+                        this.y_mouse >= y_select_g &&
+                        this.y_mouse <= y_select_g + alto;
+
+                    if(isHover && this.eventoLienzoEvento.mouse_only_click){
+                        console.log("Deteccion de grupo: ", grupos_);
+                        this.grupo_seleccionado = this.grupos_disponibles_generales[i];
+                    }
+                }
             }
+
+            this.actualizarLienzo();
             this.timelineInstance.reiniciar();
 
         }
 
         this.eventoLienzoEvento.reset()
     }
+
+
 }
 
 export default GestionLienzoEvento

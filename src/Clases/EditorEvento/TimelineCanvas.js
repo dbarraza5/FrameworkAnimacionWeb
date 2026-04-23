@@ -181,10 +181,10 @@ export default class TimelineCanvas {
         //this.reiniciar();
         this.x_linea_tiempo = this.eventoAnimacion.tiempo_animacion*100;
         //console.log(this.eventoLienzo )
-        this.redibujarTodo();
+        //this.imprimir();
     }
 
-    redibujarTodo() {
+    imprimir() {
         const ctx = this.ctx;
         //ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
         if(!ctx) return

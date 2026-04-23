@@ -539,5 +539,24 @@ function dibujar_rectangulo(ctx, color, x, y, w, h, relleno=false) {
 }
 
 
+function dibujar_rec_transparencia(ctx, colorBorde, colorRelleno, x, y, w, h, alpha = 0.4) {
+    ctx.beginPath();
+
+    // 1. Dibujar el borde primero
+    ctx.strokeStyle = colorBorde;
+    ctx.lineWidth = 2; // Opcional: grosor del borde
+    ctx.rect(x, y, w, h);
+    ctx.stroke();
+
+    // 2. Dibujar el relleno con transparencia
+    // Guardamos el estado actual para no afectar otros dibujos posteriores
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = colorRelleno;
+    ctx.fill();
+    ctx.restore(); // Restauramos el estado original (alpha = 1.0)
+}
+
+
 export {pintarGrupo,
-    dibujar_punto, dibujar_circulo, dibujar_linea, dibujar_rectangulo, dibujar_linea_segmentada, ImprimirAnimacion};
+    dibujar_punto, dibujar_circulo, dibujar_linea, dibujar_rectangulo, dibujar_linea_segmentada,dibujar_rec_transparencia, ImprimirAnimacion};
