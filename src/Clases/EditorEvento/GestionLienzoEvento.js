@@ -47,7 +47,7 @@ class GestionLienzoEvento{
     grupos_disponibles_generales = [];
     grupo_seleccionado = null;
 
-    constructor(eventos_, eventoLienzoEvento, setEventoAnimacion) {
+    constructor(eventos_, eventoLienzoEvento, setEventoAnimacion, seleccionarGrupo) {
         this.id_canvas = "lienzo-evento"
         this.x = 0;
         this.y = 0;
@@ -56,6 +56,7 @@ class GestionLienzoEvento{
         // this.imprimir_animacion = new ImprimirAnimacion(animacion_,this.configuracion_lienzo, this.id_canvas);
         this.eventoLienzoEvento = eventoLienzoEvento;
         this.timelineInstance = new TimelineCanvas(eventoLienzoEvento, eventos_, setEventoAnimacion);
+        this.seleccionarGrupo = seleccionarGrupo;
     }
 
     inicializar(){
@@ -168,6 +169,7 @@ class GestionLienzoEvento{
                     if(isHover && this.eventoLienzoEvento.mouse_only_click){
                         console.log("Deteccion de grupo: ", grupos_);
                         this.grupo_seleccionado = this.grupos_disponibles_generales[i];
+                        this.seleccionarGrupo(this.grupo_seleccionado);
                     }
                 }
             }

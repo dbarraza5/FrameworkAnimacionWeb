@@ -103,21 +103,47 @@ function NavEventos(props){
     }, [indexIvento]);
 
     return (<div>
-        {evento ? (
-            <p>Hay un evento seleccionado {evento.nombre}</p>
-        ) : (
-            <p>No hay evento seleccionado</p>
-        )}
-        <div className="mb-2 d-flex gap-2">
-            <button className="btn btn-outline-primary" onClick={() => setShowModal(true)}>
-                Lista eventos
-            </button>
-            <button className="btn btn-outline-primary" onClick={() => setShowModalListaEvento(true)}>
-                Arbol eventos
-            </button>
-            <button className="btn btn-outline-success" onClick={() => setModalAddEvento(true)}>
-                <i className="bi bi-plus"></i>
-            </button>
+        <div className="container-fluid py-3 bg-light border-bottom mb-3">
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                {/* Información del Evento Actual */}
+                <div className="d-flex align-items-center">
+                    <div className={`p-2 rounded-circle me-3 ${evento ? 'bg-primary' : 'bg-secondary'} bg-opacity-10`}>
+                        <i className={`bi ${evento ? 'bi-calendar-check text-primary' : 'bi-calendar-x text-secondary'} fs-4`}></i>
+                    </div>
+                    <div>
+                        <h6 className="mb-0 text-muted small uppercase fw-bold">Evento Seleccionado</h6>
+                        <p className="mb-0 fw-semibold text-dark">
+                            {evento ? evento.nombre : <span className="text-muted italic">Ninguno</span>}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Acciones de Selección y Creación */}
+                <div className="d-flex gap-2">
+                    <div className="btn-group shadow-sm">
+                        <button
+                            className="btn btn-white border btn-sm d-flex align-items-center gap-2"
+                            onClick={() => setShowModal(true)}
+                        >
+                            <i className="bi bi-list-ul"></i> Lista
+                        </button>
+                        <button
+                            className="btn btn-white border btn-sm d-flex align-items-center gap-2"
+                            onClick={() => setShowModalListaEvento(true)}
+                        >
+                            <i className="bi bi-diagram-3"></i> Árbol
+                        </button>
+                    </div>
+
+                    <button
+                        className="btn btn-success btn-sm d-flex align-items-center gap-2 shadow-sm"
+                        onClick={() => setModalAddEvento(true)}
+                    >
+                        <i className="bi bi-plus-lg"></i>
+                        <span>Nuevo Evento</span>
+                    </button>
+                </div>
+            </div>
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
 

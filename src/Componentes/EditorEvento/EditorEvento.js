@@ -22,6 +22,7 @@ import {useDispatch, useSelector} from "react-redux";
 import EdicionFiguras from "../EditorAnimacion/SeccionFiguras/EdicionFiguras";
 import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
 import GestionLienzoEvento from "../../Clases/EditorEvento/GestionLienzoEvento";
+import {setIdEventoSeleccionado, setIdGrupoSeleccionado} from "../../Store/Configuracion/ConfigEventoSlice";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -44,13 +45,20 @@ const useCustomAnimacion=(valor_inicial=null)=>{
 
 
 function EditorEvento(props){
+
+    const seleccionarGrupo=(id_grupo)=>{
+        console.log("[seleccionarGrupo]: ", id_grupo);
+        dispatch(setIdGrupoSeleccionado(id_grupo));
+    }
+
     const [eventoAnimacion, setEventoAnimacion]= useCustomEvento({edicion: new GestionEvento()});
     const [eventoLienzoEvento, setEventLienzoEvento] = useState(new ControlEventoLienzoFigura());
     const [gestionEventoLienzo, setGestionEventoLienzo] = useState(
         new GestionLienzoEvento(
             eventoAnimacion.edicion,
             eventoLienzoEvento,
-            setEventoAnimacion
+            setEventoAnimacion,
+            seleccionarGrupo
         ));
 
     //const [timelineInstance, setTimelineInstance] = useState(null);
