@@ -10,61 +10,87 @@ function MenuEvento(props) {
     };
 
     return (
-        <nav className={`navbar navbar-expand-lg `}>
-            <div className="container-fluid">
-                <div className="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul className="navbar-nav">
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                Archivo
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li><a className="dropdown-item" onClick={() => props.subirAnimacion()}>Subir</a></li>
-                                <li><a className="dropdown-item" href="#">Refrescar</a></li>
-                                <li><a className="dropdown-item" href="#">Guardar Como</a></li>
-                                <li><a className="dropdown-item" onClick={() => props.exportarAnimacion()}>Exportar</a></li>
-                                <li><a className="dropdown-item" data-bs-target="#modal-importal-json" data-bs-toggle="modal"
-                                       onClick={() => console.log("importar")}>Importar</a></li>
-                                <li><a className="dropdown-item" href="#">Salir</a></li>
-                            </ul>
-                        </li>
+        <>
+            {/* BOTÓN DISPARADOR: Flotante para no ocupar espacio en el layout */}
+            <button
+                className="btn btn-dark position-fixed top-0 start-0 m-3 shadow-sm"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#menuLateralEvento"
+                aria-controls="menuLateralEvento"
+                style={{ zIndex: 1000, borderRadius: '50%', width: '50px', height: '50px' }}
+            >
+                <i className="bi bi-list"></i> {/* Puedes usar un icono de Bootstrap Icons aquí */}
+            </button>
 
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                Editar
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li><a className="dropdown-item" href="#">Deshacer</a></li>
-                                <li><a className="dropdown-item" href="#">Rehacer</a></li>
-                            </ul>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Features</a>
-                        </li>
-                        <li className="nav-item ms-auto">
-                            <a className="nav-link" href="#">Pricing</a>
-                        </li>
-                    </ul>
-                    <ul className="navbar-nav ms-auto">
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" id="modo-dark" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                Modo
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby="modo-dark">
-                                <li><a className="dropdown-item" href="#" onClick={() => toggleDarkMode('light')}>Light</a></li>
-                                <li><a className="dropdown-item" href="#" onClick={() => toggleDarkMode('dark')}>Dark</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+            {/* ESTRUCTURA DEL OFFCANVAS */}
+            <div className="offcanvas offcanvas-start" tabIndex="-1" id="menuLateralEvento" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header border-bottom">
+                    <h5 className="offcanvas-title" id="offcanvasLabel">Panel de Control</h5>
+                    <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+
+                <div className="offcanvas-body p-0">
+                    <div className="list-group list-group-flush">
+
+                        {/* SECCIÓN ARCHIVO */}
+                        <div className="p-3 bg-light fw-bold small text-uppercase">Archivo</div>
+                        <button className="list-group-item list-group-item-action border-0 ps-4" onClick={() => props.subirAnimacion()}>
+                            <i className="bi bi-upload me-2"></i> Subir
+                        </button>
+                        <button className="list-group-item list-group-item-action border-0 ps-4">
+                            <i className="bi bi-arrow-clockwise me-2"></i> Refrescar
+                        </button>
+                        <button className="list-group-item list-group-item-action border-0 ps-4">
+                            <i className="bi bi-save me-2"></i> Guardar Como
+                        </button>
+                        <button className="list-group-item list-group-item-action border-0 ps-4" onClick={() => props.exportarAnimacion()}>
+                            <i className="bi bi-download me-2"></i> Exportar
+                        </button>
+                        <button className="list-group-item list-group-item-action border-0 ps-4" data-bs-toggle="modal" data-bs-target="#modal-importal-json">
+                            <i className="bi bi-filetype-json me-2"></i> Importar
+                        </button>
+
+                        {/* SECCIÓN EDITAR */}
+                        <div className="p-3 bg-light fw-bold small text-uppercase mt-2">Editar</div>
+                        <button className="list-group-item list-group-item-action border-0 ps-4">
+                            <i className="bi bi-arrow-90deg-left me-2"></i> Deshacer
+                        </button>
+                        <button className="list-group-item list-group-item-action border-0 ps-4">
+                            <i className="bi bi-arrow-90deg-right me-2"></i> Rehacer
+                        </button>
+
+                        {/* SECCIÓN NAVEGACIÓN */}
+                        <div className="p-3 bg-light fw-bold small text-uppercase mt-2">Navegación</div>
+                        <a href="#" className="list-group-item list-group-item-action border-0 ps-4">Home</a>
+                        <a href="#" className="list-group-item list-group-item-action border-0 ps-4">Features</a>
+                        <a href="#" className="list-group-item list-group-item-action border-0 ps-4">Pricing</a>
+
+                        {/* CONFIGURACIÓN DE MODO */}
+                        <div className="p-3 bg-light fw-bold small text-uppercase mt-2">Configuración</div>
+                        <div className="d-flex justify-content-around p-3">
+                            <button
+                                className={`btn btn-sm ${darkMode === 'light' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                onClick={() => toggleDarkMode('light')}
+                            >
+                                ☀️ Claro
+                            </button>
+                            <button
+                                className={`btn btn-sm ${darkMode === 'dark' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                onClick={() => toggleDarkMode('dark')}
+                            >
+                                🌙 Oscuro
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div className="offcanvas-footer p-3 border-top text-center">
+                    <small className="text-muted">Evento App v1.0</small>
                 </div>
             </div>
-        </nav>
+        </>
     );
 }
 

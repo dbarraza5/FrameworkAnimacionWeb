@@ -1,6 +1,6 @@
 import ButtonNav from "../../EditorMapa/ButtonNav";
 import PanelEventos from "./PanelEventos";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import PanelMovimientos from "./PanelMovimientos";
 import PanelScripts from "./PanelScripts";
 import PanelAnimacion from "./PanelAnimacion";
@@ -18,23 +18,25 @@ import {
 } from "../../../Clases/EditorEvento/ConstanteEvento";
 import {setTipoModalidad} from "../../../Store/Configuracion/ConfigEventoSlice";
 import {useDispatch, useSelector} from "react-redux";
+import SeleccionEvento from "./SeleccionEvento";
 
 
 function NavEventos(props){
-    const [showModal, setShowModal] = useState(false);
-    const [showModalListaEvento, setShowModalListaEvento] = useState(false);
+    // const [showModal, setShowModal] = useState(false);
+    // const [showModalListaEvento, setShowModalListaEvento] = useState(false);
     const [evento, setEvento] = useState(null);
     const [indexIvento, setIndexEvento] = useState(null);
-    const [modalAddEvento, setModalAddEvento] = useState(false);
+    // const [modalAddEvento, setModalAddEvento] = useState(false);
+    const id_evento_seleccionado = useSelector(state => state.config_evento.id_evento_seleccionado);
     const dispatch = useDispatch();
-
-    const seleccionEvento=(index)=>{
-        setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
-        setIndexEvento(index);
-        props.eventoAnimacion.edicion.seleccion_evento = index;
-        props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
-    }
-
+    //
+    // const seleccionEvento=(index)=>{
+    //     setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
+    //     setIndexEvento(index);
+    //     props.eventoAnimacion.edicion.seleccion_evento = index;
+    //     props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+    // }
+    //
     const editandoMovEvento=(movimientos)=>{
         console.log("[editandoMovEvento]");
         console.log(movimientos);
@@ -49,42 +51,57 @@ function NavEventos(props){
         props.eventoAnimacion.edicion.eventos[indexIvento].evento = {...props.eventoAnimacion.edicion.eventos[indexIvento].evento, ...evento_};
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     }
+    //
+    // const agregandoEvento=(evento_)=>{
+    //     console.log("[agregandoEvento]");
+    //     console.log(evento_);
+    //     evento_ = {
+    //         //"_id":  nanoid(8),
+    //         "movimientos": [],
+    //         ...evento_
+    //     }
+    //     props.eventoAnimacion.edicion.agregarEvento(evento_);
+    //     props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+    // }
+    //
+    // const eliminarEvento=(indice)=>{
+    //     props.eventoAnimacion.edicion.eventos = props.eventoAnimacion.edicion.eventos.filter((evento_, index)=>{
+    //         return index !==indice;
+    //     });
+    //     props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+    // }
+    //
+    // const seleccionarEvento=(nombre)=>{
+    //     //props.eventoAnimacion.edicion.seleccion_evento = nombre;
+    //     let indice_seleccionado = -1;
+    //     for(let i=0; props.eventoAnimacion.edicion.eventos; i++){
+    //         const evento_ = props.eventoAnimacion.edicion.eventos[i];
+    //         if(evento_["evento"]["nombre"] === nombre){
+    //             console.log("[index]: "+i);
+    //             indice_seleccionado = i;
+    //             break;
+    //         }
+    //     }
+    //     if(indice_seleccionado>-1){
+    //         seleccionEvento(indice_seleccionado);
+    //     }
+    //     console.log("[nombre evento]: "+nombre);
+    // }
 
-    const agregandoEvento=(evento_)=>{
-        console.log("[agregandoEvento]");
-        console.log(evento_);
-        evento_ = {
-            //"_id":  nanoid(8),
-            "movimientos": [],
-            ...evento_
-        }
-        props.eventoAnimacion.edicion.agregarEvento(evento_);
-        props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
-    }
+    useEffect(() => {
 
-    const eliminarEvento=(indice)=>{
-        props.eventoAnimacion.edicion.eventos = props.eventoAnimacion.edicion.eventos.filter((evento_, index)=>{
-            return index !==indice;
-        });
-        props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
-    }
+        const evento_ = props.eventoAnimacion.edicion.obtenerEvento(id_evento_seleccionado);
+        if(evento_){
+            const index_ = props.eventoAnimacion.edicion.obtenerIndiceEvento(id_evento_seleccionado);
+            setEvento(evento_);
+            setIndexEvento(index_);
+            props.eventoAnimacion.edicion.seleccion_evento = index_;
+            props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+        }
 
-    const seleccionarEvento=(nombre)=>{
-        //props.eventoAnimacion.edicion.seleccion_evento = nombre;
-        let indice_seleccionado = -1;
-        for(let i=0; props.eventoAnimacion.edicion.eventos; i++){
-            const evento_ = props.eventoAnimacion.edicion.eventos[i];
-            if(evento_["evento"]["nombre"] === nombre){
-                console.log("[index]: "+i);
-                indice_seleccionado = i;
-                break;
-            }
-        }
-        if(indice_seleccionado>-1){
-            seleccionEvento(indice_seleccionado);
-        }
-        console.log("[nombre evento]: "+nombre);
-    }
+        console.log("[id_evento_seleccionado]");
+        console.log(evento_)
+    }, [id_evento_seleccionado]);
 
     const seleccionarModalidad=(tipo_modalidad)=>{
         //console.log(tipo_modalidad);
@@ -92,222 +109,115 @@ function NavEventos(props){
     }
 
 
-    useEffect(() => {
-        console.log("[PREVIEW CAMBIO indexIvento]");
-        if(indexIvento!==null){
-            console.log("[***Cambio de indexIvento***]");
-            console.log(evento);
-            const evento_new = props.eventoAnimacion.edicion.eventos[indexIvento].evento;
-            setEvento({...evento_new});
-        }
-    }, [indexIvento]);
+    // useEffect(() => {
+    //     console.log("[PREVIEW CAMBIO indexIvento]");
+    //     if(indexIvento!==null){
+    //         console.log("[***Cambio de indexIvento***]");
+    //         console.log(evento);
+    //         const evento_new = props.eventoAnimacion.edicion.eventos[indexIvento].evento;
+    //         setEvento({...evento_new});
+    //     }
+    // }, [indexIvento]);
 
     return (<div>
-        <div className="container-fluid py-3 bg-light border-bottom mb-3">
-            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                {/* Información del Evento Actual */}
-                <div className="d-flex align-items-center">
-                    <div className={`p-2 rounded-circle me-3 ${evento ? 'bg-primary' : 'bg-secondary'} bg-opacity-10`}>
-                        <i className={`bi ${evento ? 'bi-calendar-check text-primary' : 'bi-calendar-x text-secondary'} fs-4`}></i>
-                    </div>
-                    <div>
-                        <h6 className="mb-0 text-muted small uppercase fw-bold">Evento Seleccionado</h6>
-                        <p className="mb-0 fw-semibold text-dark">
-                            {evento ? evento.nombre : <span className="text-muted italic">Ninguno</span>}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Acciones de Selección y Creación */}
-                <div className="d-flex gap-2">
-                    <div className="btn-group shadow-sm">
-                        <button
-                            className="btn btn-white border btn-sm d-flex align-items-center gap-2"
-                            onClick={() => setShowModal(true)}
-                        >
-                            <i className="bi bi-list-ul"></i> Lista
-                        </button>
-                        <button
-                            className="btn btn-white border btn-sm d-flex align-items-center gap-2"
-                            onClick={() => setShowModalListaEvento(true)}
-                        >
-                            <i className="bi bi-diagram-3"></i> Árbol
-                        </button>
-                    </div>
-
-                    <button
-                        className="btn btn-success btn-sm d-flex align-items-center gap-2 shadow-sm"
-                        onClick={() => setModalAddEvento(true)}
+        <div className="container-fluid">
+            {/* --- NAVEGACIÓN PRINCIPAL --- */}
+            <ul className="nav nav-tabs" id="myTab" role="tablist">
+                <li className="nav-item" role="presentation">
+                    <ButtonNav
+                        id="btn-nav-eventos"
+                        data-bs-target="#nav-eventos"
+                        onClick={() => seleccionarModalidad(MODALIDAD_EVENTOS)}
                     >
-                        <i className="bi bi-plus-lg"></i>
-                        <span>Nuevo Evento</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <ul className="nav nav-tabs" id="myTab" role="tablist">
+                        Eventos
+                    </ButtonNav>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <ButtonNav
+                        id="btnnav-grupos"
+                        data-bs-target="#nav-grupos"
+                        onClick={() => seleccionarModalidad(MODALIDAD_GRUPOS)}
+                    >
+                        Grupos
+                    </ButtonNav>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <ButtonNav
+                        id="btnnav-config-lienzo"
+                        data-bs-target="#nav-config-lienzo"
+                        onClick={() => seleccionarModalidad(MODALIDAD_CONFIG)}
+                    >
+                        Config
+                    </ButtonNav>
+                </li>
+            </ul>
 
-            <li className="nav-item" role="presentation">
-                <ButtonNav id="btn-nav-eventos" data-bs-target="#nav-eventos"
-                           onClick={()=>seleccionarModalidad(MODALIDAD_EVENTOS)}>Eventos</ButtonNav>
-            </li>
-            <li className="nav-item" role="presentation">
-                <ButtonNav id="btn-nav-movimientos" data-bs-target="#nav-movimientos"
-                           onClick={()=>seleccionarModalidad(MODALIDAD_MOVIMIENTOS)}>Movimientos</ButtonNav>
-            </li>
+            {/* --- CONTENIDO PRINCIPAL --- */}
+            <div className="tab-content" id="myTabContent">
 
-            <li className="nav-item" role="presentation">
-                <ButtonNav id="btnnav-grupos" data-bs-target="#nav-grupos"
-                           onClick={()=>seleccionarModalidad(MODALIDAD_GRUPOS)}>Grupos</ButtonNav>
-            </li>
+                {/* TAB DE EVENTOS (CONTIENE EL SUB-NAV) */}
+                <div className="tab-pane fade show active" id="nav-eventos" role="tabpanel" tabIndex="1">
+                    <div className="p-3">
+                        {/* --- SUB-NAVEGACIÓN --- */}
+                        <ul className="nav nav-pills mb-3" id="subnav-eventos" role="tablist">
+                            <li className="nav-item" role="presentation">
+                                <button className="nav-link active" id="sub-evento-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-evento" type="button" role="tab">
+                                    Evento
+                                </button>
+                            </li>
+                            <li className="nav-item" role="presentation">
+                                <button className="nav-link" id="sub-movimiento-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-movimiento" type="button" role="tab">
+                                    Movimiento
+                                </button>
+                            </li>
+                            <li className="nav-item" role="presentation">
+                                <button className="nav-link" id="sub-script-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-script" type="button" role="tab">
+                                    Script
+                                </button>
+                            </li>
+                            <li className="nav-item" role="presentation">
+                                <button className="nav-link" id="sub-macro-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-macro" type="button" role="tab">
+                                    Macro
+                                </button>
+                            </li>
+                        </ul>
 
-            <li className="nav-item" role="presentation">
-                <ButtonNav id="btnnav-scrips" data-bs-target="#nav-scrips"
-                           onClick={()=>seleccionarModalidad(MODALIDAD_SCRIPT)}>Scripts</ButtonNav>
-            </li>
-
-            <li className="nav-item" role="presentation">
-                <ButtonNav id="btnnav-macro" data-bs-target="#nav-macro"
-                           onClick={()=>seleccionarModalidad(MODALIDAD_MACRO)}>Macro</ButtonNav>
-            </li>
-
-            <li className="nav-item" role="presentation">
-                <ButtonNav id="btnnav-config-lienzo" data-bs-target="#nav-config-lienzo"
-                           onClick={()=>seleccionarModalidad(MODALIDAD_CONFIG)}>Config</ButtonNav>
-            </li>
-        </ul>
-        <div className="tab-content" id="myTabContent">
-            <div className="tab-pane fade" id="nav-eventos" role="tabpanel"
-                 aria-labelledby="profile-tab1"
-                 tabIndex="1">
-                <br/>
-                <PanelEventos {...props} evento={evento} guardandoEvento={editandoEvento}/>
-            </div>
-            <div className="tab-pane fade" id="nav-movimientos" role="tabpanel"
-                 aria-labelledby="contact-tab1"
-                 tabIndex="2">
-                <br/>
-                <PanelMovimientos {...props} evento={evento} editandoMovEvento={editandoMovEvento}/>
-            </div>
-            <div className="tab-pane fade" id="nav-grupos" role="tabpanel"
-                 aria-labelledby="contact-tab1"
-                 tabIndex="2">
-                <PanelGrupos {...props}/>
-            </div>
-
-            <div className="tab-pane fade" id="nav-scrips" role="tabpanel"
-                 aria-labelledby="contact-tab1"
-                 tabIndex="2">
-                <br/>
-                <PanelScripts {...props}/>
-            </div>
-            <div className="tab-pane fade" id="nav-macro" role="tabpanel"
-                 aria-labelledby="contact-tab1"
-                 tabIndex="2">
-                <br/>
-                {/*<PanelAnimacion {...props}/>*/}
-            </div>
-
-            <div className="tab-pane fade" id="nav-config-lienzo" role="tabpanel"
-                 aria-labelledby="contact-tab1"
-                 tabIndex="2">
-                <ConfigLienzoEvento {...props}/>
-            </div>
-
-        </div>
-
-        {showModal && (
-            <div className="modal d-block" tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Lista de eventos</h5>
-                            <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-                        </div>
-                        <div className="modal-body">
-                            <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
-                                <table className="table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">nombre</th>
-                                        <th scope="col">activo</th>
-                                        <th scope="col">operaciones</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {props.eventoAnimacion.edicion.eventos.map((item, index) => {
-                                        return (
-                                            <tr key={index}>
-                                                <th scope="row">{index + 1}</th>
-                                                <td>{item.evento.nombre}</td>
-                                                <td>
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        id={`flexCheckDefault-${index}`}
-                                                        onChange={(e) => console.log("asdsda das")}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <div className="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-outline-primary"
-                                                            onClick={() => seleccionEvento(index)}
-                                                        >
-                                                            <i className="bi bi-pencil"></i>
-                                                        </button>
-                                                        <button type="button" className="btn btn-outline-primary">
-                                                            <i className="bi bi-files"></i>
-                                                        </button>
-                                                        {
-                                                            item.evento.nombre !== "EventoGeneral"&&
-                                                                (
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn-outline-primary"
-                                                                        onClick={() => eliminarEvento(index)}
-                                                                    >
-                                                                        <i className="bi bi-eraser"></i>
-                                                                    </button>
-                                                                )
-                                                        }
-
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                    </tbody>
-                                </table>
+                        {/* --- CONTENIDO DEL SUB-NAV --- */}
+                        <div className="tab-content border p-3 rounded" id="subnav-content">
+                            <div className="tab-pane fade show active" id="sub-pane-evento" role="tabpanel">
+                                <SeleccionEvento {...props}/>
+                                <PanelEventos {...props} evento={evento} guardandoEvento={editandoEvento}/>
+                            </div>
+                            <div className="tab-pane fade" id="sub-pane-movimiento" role="tabpanel">
+                                <PanelMovimientos {...props} evento={evento} editandoMovEvento={editandoMovEvento}/>
+                            </div>
+                            <div className="tab-pane fade" id="sub-pane-script" role="tabpanel">
+                                <PanelScripts {...props}/>
+                            </div>
+                            <div className="tab-pane fade" id="sub-pane-macro" role="tabpanel">
+                                {/* <PanelAnimacion {...props}/> */}
+                                <div className="text-muted">Panel de Macro (En desarrollo)</div>
                             </div>
                         </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cerrar</button>
-                        </div>
                     </div>
                 </div>
+
+                {/* TAB DE GRUPOS */}
+                <div className="tab-pane fade" id="nav-grupos" role="tabpanel" tabIndex="2">
+                    <div className="p-3">
+                        <PanelGrupos {...props}/>
+                    </div>
+                </div>
+
+                {/* TAB DE CONFIGURACIÓN */}
+                <div className="tab-pane fade" id="nav-config-lienzo" role="tabpanel" tabIndex="3">
+                    <div className="p-3">
+                        <ConfigLienzoEvento {...props}/>
+                    </div>
+                </div>
+
             </div>
-        )}
-
-        <ModalAgregarEvento
-            show={modalAddEvento}
-            onClose={() => setModalAddEvento(false)}
-            onGuardar={agregandoEvento}
-            eventoAnimacion={props.eventoAnimacion}
-        />
-
-        <ModalListaEventos
-            id={'modal-seleccion'}
-            key={`modal-seleccion-${props.eventoAnimacion.edicion.version}`}
-            show={showModalListaEvento}
-            onClose={() => setShowModalListaEvento(false)}
-            onGuardar={seleccionarEvento}
-            lista_eventos={props.eventoAnimacion.edicion.eventos}
-        />
-
-        <p>hola como estas {props.eventoAnimacion.edicion.version}</p>
+        </div>
     </div>)
 }
 

@@ -100,6 +100,10 @@ class GestionEvento{
         return this.eventos.find(evento => evento.evento.nombre === nombreEvento) || null;
     }
 
+    obtenerIndiceEvento(nombreEvento) {
+        return this.eventos.findIndex(evento => evento.evento.nombre === nombreEvento);
+    }
+
     procesandoEvento(){
         const evento_ = this.obtenerEvento("EventoGeneral");
         if(evento_){
