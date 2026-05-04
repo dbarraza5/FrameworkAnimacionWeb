@@ -109,21 +109,29 @@ class GestionEvento{
         if(evento_){
             const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
 
-            if(evento_.evento.tiempo_inicio<=tiempo_evento
-                && evento_.evento.tiempo_final>=tiempo_evento){
-                //console.log(tiempo_evento)
-                if(!evento_.activar_tiempo){
-                    evento_.activar_tiempo = true;
-                    evento_.tiempo.modPasivo();
-                    console.log("INICIALIZANDO EL TIEMPO DEL EVENTO")
-                }else{
+            //console.log(tiempo_evento)
+            if(!evento_.activar_tiempo){
+                evento_.activar_tiempo = true;
+                evento_.tiempo.modPasivo();
+                console.log("INICIALIZANDO EL TIEMPO DEL EVENTO")
+            }else{
+                const tiempo_inicio = evento_.evento.tiempo_inicio/1000;
+                const tiempo_fin = evento_.evento.tiempo_final/1000;
+                const tiempo_virtual = tiempo_evento-tiempo_inicio;
+                console.log("tiempo inicio : ", tiempo_inicio)
+                console.log("tiempo real   : ", tiempo_evento)
+                console.log("tiempo virtual: ", tiempo_virtual)
+                console.log("tiempo final  : ", tiempo_fin)
+                console.log()
+                if(tiempo_inicio<=tiempo_evento
+                    && tiempo_fin>=tiempo_evento){
                     for(let obj_i=0; obj_i<evento_.evento.objetos.length; obj_i++){
                         const objeto = evento_.evento.objetos[obj_i];
                         for(let j=0; j<objeto.movimientos.length; j++){
                             const movimiento = objeto.movimientos[j];
                             const tipo = movimiento.tipo;
                             const datos = movimiento.datos;
-                            const resultado = GestionMovimientos.movimientoGrupo(tiempo_evento, tipo, datos);
+                            const resultado = GestionMovimientos.movimientoGrupo(tiempo_virtual, tipo, datos);
                             const x = resultado.x;
                             const y = resultado.y;
 

@@ -93,10 +93,12 @@ function NavEventos(props){
         const evento_ = props.eventoAnimacion.edicion.obtenerEvento(id_evento_seleccionado);
         if(evento_){
             const index_ = props.eventoAnimacion.edicion.obtenerIndiceEvento(id_evento_seleccionado);
-            setEvento(evento_);
+            const evento_selec = {...evento_.evento}
+            setEvento(evento_selec);
             setIndexEvento(index_);
             props.eventoAnimacion.edicion.seleccion_evento = index_;
             props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+            console.log('CAMMMMMMMMMMMMMMMBIOOOOOOOOOOOOOOOOOOOOOOOOOOO')
         }
 
         console.log("[id_evento_seleccionado]");
@@ -186,7 +188,12 @@ function NavEventos(props){
                         <div className="tab-content border p-3 rounded" id="subnav-content">
                             <div className="tab-pane fade show active" id="sub-pane-evento" role="tabpanel">
                                 <SeleccionEvento {...props}/>
-                                <PanelEventos {...props} evento={evento} guardandoEvento={editandoEvento}/>
+                                <PanelEventos
+                                    {...props}
+                                    evento={evento}
+                                    guardandoEvento={editandoEvento}
+                                    key={`panel-${evento?.evento?.nombre || 'sin-nombre'}`}
+                                />
                             </div>
                             <div className="tab-pane fade" id="sub-pane-movimiento" role="tabpanel">
                                 <PanelMovimientos {...props} evento={evento} editandoMovEvento={editandoMovEvento}/>

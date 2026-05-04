@@ -59,6 +59,7 @@ function PanelEventos(props) {
         setNombre(props.evento?.nombre || "");
 
         if(props.evento){
+            console.log("[FIN_EVENTO]1");
             // Calcular valores desde tiempo_inicio
             const inicio = props.evento.tiempo_inicio ?? 0;
             const inicioMin = Math.floor(inicio / 60000);
