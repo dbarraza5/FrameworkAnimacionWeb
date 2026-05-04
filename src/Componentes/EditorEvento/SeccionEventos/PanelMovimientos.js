@@ -37,11 +37,48 @@ function PanelMovimientos(props) {
         4: "Circular"
     };
 
-    const agregarMovimiento=(evento)=>{
-        console.log(evento);
+    const agregarMovimiento=(mov_)=>{
+        console.log("[agregarMovimiento]")
+        console.log(mov_);
         //props.evento.movimientos[movIndexSeleccionado]  = movimientoSeleccionado;
-        props.evento.movimientos.push(evento);
-        props.editandoMovEvento(props.evento.movimientos)
+        //props.evento.movimientos.push(evento);
+
+
+        // 1. Creamos una copia profunda o superficial del array de objetos para no mutar las props
+        const nuevosObjetos = [...props.evento.objetos];
+
+        // 2. Buscamos si ya existe el objeto por su ID
+        const indiceObjeto = nuevosObjetos.findIndex(obj => obj.id_objeto === id_grupo_seleccionado);
+
+        if (indiceObjeto !== -1) {
+            // ESCENARIO A: El objeto existe, añadimos el movimiento a su lista
+            // Clonamos el objeto para mantener inmutabilidad
+            nuevosObjetos[indiceObjeto] = {
+                ...nuevosObjetos[indiceObjeto],
+                movimientos: [...nuevosObjetos[indiceObjeto].movimientos, mov_]
+            };
+        } else {
+            // ESCENARIO B: El objeto NO existe, lo creamos de cero
+            const nuevoObjeto = {
+                tipo: 1, // O el tipo por defecto que corresponda
+                id_objeto: id_grupo_seleccionado,
+                x_inicial: 0, // Valores iniciales por defecto
+                y_inicial: 0,
+                movimientos: [mov_],
+                operaciones: [],
+                // No agregamos _id aquí, usualmente lo genera la base de datos
+            };
+            nuevosObjetos.push(nuevoObjeto);
+        }
+
+        // 3. Actualizamos el evento completo con la nueva lista de objetos
+        const eventoActualizado = {
+            ...props.evento,
+            objetos: nuevosObjetos
+        };
+
+        // 4. Notificamos al componente padre
+        props.editandoMovEvento(eventoActualizado);
     }
 
     const eliminarMovimiento=(indice)=>{
@@ -69,8 +106,10 @@ function PanelMovimientos(props) {
             })
             if(objeto_.length>0){
                 setListaMovimientos(objeto_[0]['movimientos'])
+                return;
             }
         }
+        setListaMovimientos([])
     }, [id_grupo_seleccionado]);
 
 
@@ -83,10 +122,18 @@ function PanelMovimientos(props) {
 
     useEffect(() => {
         console.log("[***Cambio de MOVIMIENTO***]="+movIndexSeleccionado);
-        if(movimientoSeleccionado !== null && false){
+        if(movimientoSeleccionado !== null){
             console.log(movimientoSeleccionado);
-            props.evento.movimientos[movIndexSeleccionado]  = movimientoSeleccionado;
-            props.editandoMovEvento(props.evento.movimientos)
+
+            if(props.evento){
+
+                for(let i=0; i<props.evento.objetos.length; i++){
+                    if(props.evento.objetos[i].id_objeto === id_grupo_seleccionado){
+                        props.evento.objetos[i].movimientos[movIndexSeleccionado] = movimientoSeleccionado;
+                        break;
+                    }
+                }
+                props.editandoMovEvento(props.evento)            }
         }
     }, [movimientoSeleccionado]);
 

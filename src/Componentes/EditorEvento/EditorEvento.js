@@ -213,14 +213,14 @@ function EditorEvento(props){
                     //timelineInstance.cambiarEventos(list_evento);
                 }
                 if(tipo_modalidad===TRABAJO_ANIMACION_MOVIMIENTOS){
-                    const list_evento = evento_.evento.movimientos.map((mov, index)=>{
-                        return {
-                            id: index,
-                            inicio: mov.tiempo_inicio,
-                            fin: mov.tiempo_final
-                        }
-                    });
-                    console.log(list_evento);
+                    // const list_evento = evento_.evento.movimientos.map((mov, index)=>{
+                    //     return {
+                    //         id: index,
+                    //         inicio: mov.tiempo_inicio,
+                    //         fin: mov.tiempo_final
+                    //     }
+                    // });
+                    // console.log(list_evento);
                     //timelineInstance.cambiarEventos(list_evento);
                 }
 

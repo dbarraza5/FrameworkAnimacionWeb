@@ -37,11 +37,11 @@ function NavEventos(props){
     //     props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     // }
     //
-    const editandoMovEvento=(movimientos)=>{
+    const editandoMovEvento=(evento_)=>{
         console.log("[editandoMovEvento]");
-        console.log(movimientos);
-        evento.movimientos = movimientos;
-        props.eventoAnimacion.edicion.eventos[indexIvento].evento =evento;
+        // console.log(movimientos);
+        // evento.movimientos = movimientos;
+        props.eventoAnimacion.edicion.eventos[indexIvento].evento =evento_;
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
     }
 
@@ -160,52 +160,66 @@ function NavEventos(props){
                 {/* TAB DE EVENTOS (CONTIENE EL SUB-NAV) */}
                 <div className="tab-pane fade show active" id="nav-eventos" role="tabpanel" tabIndex="1">
                     <div className="p-3">
+                        <SeleccionEvento {...props}/>
                         {/* --- SUB-NAVEGACIÓN --- */}
-                        <ul className="nav nav-pills mb-3" id="subnav-eventos" role="tablist">
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link active" id="sub-evento-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-evento" type="button" role="tab">
-                                    Evento
-                                </button>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link" id="sub-movimiento-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-movimiento" type="button" role="tab">
-                                    Movimiento
-                                </button>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link" id="sub-script-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-script" type="button" role="tab">
-                                    Script
-                                </button>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link" id="sub-macro-tab" data-bs-toggle="pill" data-bs-target="#sub-pane-macro" type="button" role="tab">
-                                    Macro
-                                </button>
-                            </li>
-                        </ul>
+                        {evento !== null && (
+                            <section>
+                                <ul className="nav nav-pills mb-3" id="subnav-eventos" role="tablist">
+                                    <li className="nav-item" role="presentation">
+                                        <button className="nav-link active" id="sub-evento-tab" data-bs-toggle="pill"
+                                                data-bs-target="#sub-pane-evento" type="button" role="tab"
+                                                onClick={() => seleccionarModalidad(MODALIDAD_EVENTOS)}>
+                                            Evento
+                                        </button>
+                                    </li>
+                                    <li className="nav-item" role="presentation">
+                                        <button className="nav-link" id="sub-movimiento-tab" data-bs-toggle="pill"
+                                                data-bs-target="#sub-pane-movimiento" type="button" role="tab"
+                                                onClick={() => seleccionarModalidad(MODALIDAD_MOVIMIENTOS)}>
+                                            Movimiento
+                                        </button>
+                                    </li>
+                                    <li className="nav-item" role="presentation">
+                                        <button className="nav-link" id="sub-script-tab" data-bs-toggle="pill"
+                                                data-bs-target="#sub-pane-script" type="button" role="tab"
+                                                onClick={() => seleccionarModalidad(MODALIDAD_SCRIPT)}>
+                                            Script
+                                        </button>
+                                    </li>
+                                    <li className="nav-item" role="presentation">
+                                        <button className="nav-link" id="sub-macro-tab" data-bs-toggle="pill"
+                                                data-bs-target="#sub-pane-macro" type="button" role="tab"
+                                                onClick={() => seleccionarModalidad(MODALIDAD_MACRO)}>
+                                            Macro
+                                        </button>
+                                    </li>
+                                </ul>
 
-                        {/* --- CONTENIDO DEL SUB-NAV --- */}
-                        <div className="tab-content border p-3 rounded" id="subnav-content">
-                            <div className="tab-pane fade show active" id="sub-pane-evento" role="tabpanel">
-                                <SeleccionEvento {...props}/>
-                                <PanelEventos
-                                    {...props}
-                                    evento={evento}
-                                    guardandoEvento={editandoEvento}
-                                    key={`panel-${evento?.evento?.nombre || 'sin-nombre'}`}
-                                />
-                            </div>
-                            <div className="tab-pane fade" id="sub-pane-movimiento" role="tabpanel">
-                                <PanelMovimientos {...props} evento={evento} editandoMovEvento={editandoMovEvento}/>
-                            </div>
-                            <div className="tab-pane fade" id="sub-pane-script" role="tabpanel">
-                                <PanelScripts {...props}/>
-                            </div>
-                            <div className="tab-pane fade" id="sub-pane-macro" role="tabpanel">
-                                {/* <PanelAnimacion {...props}/> */}
-                                <div className="text-muted">Panel de Macro (En desarrollo)</div>
-                            </div>
-                        </div>
+                                {/* --- CONTENIDO DEL SUB-NAV --- */}
+                                <div className="tab-content border p-3 rounded" id="subnav-content">
+                                    <div className="tab-pane fade show active" id="sub-pane-evento" role="tabpanel">
+
+                                        <PanelEventos
+                                            {...props}
+                                            evento={evento}
+                                            guardandoEvento={editandoEvento}
+                                            key={`panel-${evento?.evento?.nombre || 'sin-nombre'}`}
+                                        />
+                                    </div>
+                                    <div className="tab-pane fade" id="sub-pane-movimiento" role="tabpanel">
+                                        <PanelMovimientos {...props} evento={evento} editandoMovEvento={editandoMovEvento}/>
+                                    </div>
+                                    <div className="tab-pane fade" id="sub-pane-script" role="tabpanel">
+                                        <PanelScripts {...props}/>
+                                    </div>
+                                    <div className="tab-pane fade" id="sub-pane-macro" role="tabpanel">
+                                        {/* <PanelAnimacion {...props}/> */}
+                                        <div className="text-muted">Panel de Macro (En desarrollo)</div>
+                                    </div>
+                                </div>
+                            </section>
+                        )}
+
                     </div>
                 </div>
 
