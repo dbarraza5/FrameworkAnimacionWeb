@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormularioMRU from "./Movimientos/FormularioMRU";
 import FormularioMRUA from "./Movimientos/FormularioMRUA";
 import FormularioParabolico from "./Movimientos/FormularioParabolico";
 import FormularioCircular from "./Movimientos/FormularioCircular";
+import FormularioMRU2D from "./Movimientos/FormularioMRU2D";
+import FormularioOscilatorio from "./Movimientos/FormularioOscilatorio";
+import FormularioLerp from "./Movimientos/FormularioLerp";
+import FormularioGravedad from "./Movimientos/FormularioGravedad";
 
 function msToTimeParts(ms) {
     const minutos = Math.floor(ms / 60000);
@@ -39,6 +43,17 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
 
     const [datos, setDatos] = useState(movimiento?.datos || {});
 
+    const MOVIMIENTOS = {
+        1: "Movimiento Rectilíneo Uniforme (MRU)",
+        2: "Movimiento Rectilíneo Acelerado (MRUA)",
+        3: "Movimiento Rectilíneo 2D",
+        4: "Movimiento Circular",
+        5: "Movimiento Oscilatorio",
+        6: "Interpolación Lineal (LERP)",
+        7: "Gravedad",
+        8: "Parabólico con Ángulo"
+    };
+
     useEffect(() => {
         // const tiempo_inicio = timePartsToMs(inicioMin, inicioSeg, inicioMs);
         // const tiempo_final = timePartsToMs(finMin, finSeg, finMs);
@@ -57,6 +72,20 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
     }, [tipo, inicioMin, inicioSeg, inicioMs,
         finMin, finSeg, finMs, bucle,
         activo, datos]);
+
+    function RenderFormulario({ tipo, datos, setDatos }) {
+        switch (tipo) {
+            case 1: return <FormularioMRU datos={datos} setDatos={setDatos} />;
+            case 2: return <FormularioMRUA datos={datos} setDatos={setDatos} />;
+            case 3: return <FormularioMRU2D datos={datos} setDatos={setDatos} />;
+            case 4: return <FormularioCircular datos={datos} setDatos={setDatos} />;
+            case 5: return <FormularioOscilatorio datos={datos} setDatos={setDatos} />;
+            case 6: return <FormularioLerp datos={datos} setDatos={setDatos} />;
+            case 7: return <FormularioGravedad datos={datos} setDatos={setDatos} />;
+            case 8: return <FormularioParabolico datos={datos} setDatos={setDatos} />;
+            default: return null;
+        }
+    }
 
     if (!show) return null;
 
@@ -115,10 +144,11 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
                                 value={tipo}
                                 onChange={(e) => setTipo(parseInt(e.target.value))}
                             >
-                                <option value={1}>MRU</option>
-                                <option value={2}>MRUA</option>
-                                <option value={3}>Trayectoria Parabólica</option>
-                                <option value={4}>Movimiento Circular</option>
+                                {Object.entries(MOVIMIENTOS).map(([key, label]) => (
+                                    <option key={key} value={key}>
+                                        {label}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
@@ -172,10 +202,11 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
 
                         <hr/>
                         {/* Formulario dinámico según tipo */}
-                        {tipo === 1 && <FormularioMRU datos={datos} setDatos={setDatos} />}
-                        {tipo === 2 && <FormularioMRUA datos={datos} setDatos={setDatos} />}
-                        {tipo === 3 && <FormularioParabolico datos={datos} setDatos={setDatos} />}
-                        {tipo === 4 && <FormularioCircular datos={datos} setDatos={setDatos} />}
+                        <RenderFormulario
+                            tipo={tipo}
+                            datos={datos}
+                            setDatos={setDatos}
+                        />
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Cerrar</button>

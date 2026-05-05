@@ -33,8 +33,12 @@ function PanelMovimientos(props) {
     const tipos_movimientos = {
         1: "MRU",
         2: "MRUA",
-        3: "Parabolico",
-        4: "Circular"
+        3: "MRU 2D",
+        4: "Circular",
+        5: "Oscil.",
+        6: "LERP",
+        7: "Grav.",
+        8: "Parab."
     };
 
     const agregarMovimiento=(mov_)=>{

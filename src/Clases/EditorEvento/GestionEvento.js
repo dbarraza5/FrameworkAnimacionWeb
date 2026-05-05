@@ -118,11 +118,11 @@ class GestionEvento{
                 const tiempo_inicio = evento_.evento.tiempo_inicio/1000;
                 const tiempo_fin = evento_.evento.tiempo_final/1000;
                 const tiempo_virtual = tiempo_evento-tiempo_inicio;
-                console.log("tiempo inicio : ", tiempo_inicio)
-                console.log("tiempo real   : ", tiempo_evento)
-                console.log("tiempo virtual: ", tiempo_virtual)
-                console.log("tiempo final  : ", tiempo_fin)
-                console.log()
+                // console.log("tiempo inicio : ", tiempo_inicio)
+                // console.log("tiempo real   : ", tiempo_evento)
+                // console.log("tiempo virtual: ", tiempo_virtual)
+                // console.log("tiempo final  : ", tiempo_fin)
+                // console.log()
                 if(tiempo_inicio<=tiempo_evento
                     && tiempo_fin>=tiempo_evento){
                     for(let obj_i=0; obj_i<evento_.evento.objetos.length; obj_i++){

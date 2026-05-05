@@ -120,7 +120,7 @@ class GestionMovimientos{
                     datos.g
                 );
                 x = par.x;
-                y = par.y;
+                y = par.y*-1;
                 break;
         }
 
