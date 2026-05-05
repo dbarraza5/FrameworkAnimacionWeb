@@ -40,15 +40,11 @@ function PanelMovimientos(props) {
     const agregarMovimiento=(mov_)=>{
         console.log("[agregarMovimiento]")
         console.log(mov_);
-        //props.evento.movimientos[movIndexSeleccionado]  = movimientoSeleccionado;
-        //props.evento.movimientos.push(evento);
-
-
         // 1. Creamos una copia profunda o superficial del array de objetos para no mutar las props
         const nuevosObjetos = [...props.evento.objetos];
 
         // 2. Buscamos si ya existe el objeto por su ID
-        const indiceObjeto = nuevosObjetos.findIndex(obj => obj.id_objeto === id_grupo_seleccionado);
+        let indiceObjeto = nuevosObjetos.findIndex(obj => obj.id_objeto === id_grupo_seleccionado);
 
         if (indiceObjeto !== -1) {
             // ESCENARIO A: El objeto existe, añadimos el movimiento a su lista
@@ -69,6 +65,8 @@ function PanelMovimientos(props) {
                 // No agregamos _id aquí, usualmente lo genera la base de datos
             };
             nuevosObjetos.push(nuevoObjeto);
+            indiceObjeto = 0;
+            setmovIndexSeleccionado(0)
         }
 
         // 3. Actualizamos el evento completo con la nueva lista de objetos
@@ -79,14 +77,19 @@ function PanelMovimientos(props) {
 
         // 4. Notificamos al componente padre
         props.editandoMovEvento(eventoActualizado);
+        setListaMovimientos(nuevosObjetos[indiceObjeto].movimientos);
     }
 
     const eliminarMovimiento=(indice)=>{
-        props.evento.movimientos = props.evento.movimientos.filter((mov, index)=>{
-           return index !== indice;
-        });
-        props.editandoMovEvento(props.evento.movimientos)
-        setListaMovimientos(props.evento.movimientos)
+
+        let indiceObjeto = props.evento.objetos.findIndex(obj => obj.id_objeto === id_grupo_seleccionado);
+        if (indiceObjeto !== -1){
+            props.evento.objetos[indiceObjeto].movimientos = props.evento.objetos[indiceObjeto].movimientos.filter((mov, index)=>{
+                return index !== indice;
+            });
+            props.editandoMovEvento(props.evento)
+            setListaMovimientos(props.evento.objetos[indiceObjeto].movimientos)
+        }
     }
 
     useEffect(() => {
@@ -124,9 +127,7 @@ function PanelMovimientos(props) {
         console.log("[***Cambio de MOVIMIENTO***]="+movIndexSeleccionado);
         if(movimientoSeleccionado !== null){
             console.log(movimientoSeleccionado);
-
             if(props.evento){
-
                 for(let i=0; i<props.evento.objetos.length; i++){
                     if(props.evento.objetos[i].id_objeto === id_grupo_seleccionado){
                         props.evento.objetos[i].movimientos[movIndexSeleccionado] = movimientoSeleccionado;

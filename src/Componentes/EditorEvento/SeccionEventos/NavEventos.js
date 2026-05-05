@@ -43,6 +43,8 @@ function NavEventos(props){
         // evento.movimientos = movimientos;
         props.eventoAnimacion.edicion.eventos[indexIvento].evento =evento_;
         props.setEventoAnimacion({edicion: props.eventoAnimacion.edicion})
+        const evento_selec = {...evento_}
+        setEvento(evento_selec);
     }
 
     const editandoEvento=(evento_)=>{
