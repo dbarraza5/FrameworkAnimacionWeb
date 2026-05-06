@@ -35,10 +35,26 @@ function movRectilineo2D(t, vx, vy){
 }
 
 // Movimiento circular
-function movCircular(t, radio, velAngular){
+function movCircular1(t, radio, velAngular){
     return {
         x: radio * Math.cos(velAngular * t),
         y: radio * Math.sin(velAngular * t)
+    };
+}
+
+function movCircular(t, px, py, velAngular, sentido) {
+    // 1. Ajustamos la velocidad según el sentido
+    // Si es Horario, multiplicamos por -1 para que el ángulo disminuya
+    const w = sentido === "Horario" ? -velAngular : velAngular;
+
+    // 2. Calculamos radio y fase inicial desde el (0,0)
+    const radio = Math.sqrt(px * px + py * py);
+    const faseInicial = Math.atan2(-py, -px);
+
+    // 3. Resultado de la posición
+    return {
+        x: px + radio * Math.cos(w * t + faseInicial),
+        y: py + radio * Math.sin(w * t + faseInicial)
     };
 }
 
@@ -95,7 +111,13 @@ class GestionMovimientos{
                 break;
 
             case MOV_CIRCULAR:
-                const circ = movCircular(tiempo, datos.radio, datos.velAngular);
+                const circ = movCircular(
+                    tiempo,
+                    datos.pivote_x,
+                    datos.pivote_y,
+                    datos.velocidad_angular,
+                    datos.sentido
+                );
                 x = circ.x;
                 y = circ.y;
                 break;

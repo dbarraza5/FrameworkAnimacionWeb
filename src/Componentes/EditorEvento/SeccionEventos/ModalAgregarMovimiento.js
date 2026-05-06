@@ -162,17 +162,15 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
                         </div>
 
                         <hr />
-                        {/* Formulario dinámico */}
-                        {/*{tipo === 1 && <FormularioMRU datos={datos} setDatos={setDatos} />}*/}
-                        {/*{tipo === 2 && <FormularioMRUA datos={datos} setDatos={setDatos} />}*/}
-                        {/*{tipo === 3 && <FormularioParabolico datos={datos} setDatos={setDatos} />}*/}
-                        {/*{tipo === 4 && <FormularioCircular datos={datos} setDatos={setDatos} />}*/}
-
-                        <RenderFormulario
-                            tipo={tipo}
-                            datos={datos}
-                            setDatos={setDatos}
-                        />
+                        {/* Formulario dinámico renderizado directamente */}
+                        {tipo === 1 && <FormularioMRU datos={datos} setDatos={setDatos} />}
+                        {tipo === 2 && <FormularioMRUA datos={datos} setDatos={setDatos} />}
+                        {tipo === 3 && <FormularioMRU2D datos={datos} setDatos={setDatos} />}
+                        {tipo === 4 && <FormularioCircular datos={datos} setDatos={setDatos} />}
+                        {tipo === 5 && <FormularioOscilatorio datos={datos} setDatos={setDatos} />}
+                        {tipo === 6 && <FormularioLerp datos={datos} setDatos={setDatos} />}
+                        {tipo === 7 && <FormularioGravedad datos={datos} setDatos={setDatos} />}
+                        {tipo === 8 && <FormularioParabolico datos={datos} setDatos={setDatos} />}
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
