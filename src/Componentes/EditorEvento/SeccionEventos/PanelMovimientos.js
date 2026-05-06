@@ -69,7 +69,7 @@ function PanelMovimientos(props) {
                 // No agregamos _id aquí, usualmente lo genera la base de datos
             };
             nuevosObjetos.push(nuevoObjeto);
-            indiceObjeto = 0;
+            indiceObjeto = nuevosObjetos.length-1;
             setmovIndexSeleccionado(0)
         }
 
@@ -82,6 +82,8 @@ function PanelMovimientos(props) {
         // 4. Notificamos al componente padre
         props.editandoMovEvento(eventoActualizado);
         setListaMovimientos(nuevosObjetos[indiceObjeto].movimientos);
+        console.log("===================================================")
+        console.log(nuevosObjetos[indiceObjeto])
     }
 
     const eliminarMovimiento=(indice)=>{
@@ -149,15 +151,18 @@ function PanelMovimientos(props) {
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h6 className="mb-0 fw-semibold text-secondary">
                     <i className="bi bi-collection me-2"></i>
-                    {id_grupo_seleccionado}
+                    {id_grupo_seleccionado ? id_grupo_seleccionado : "Sin grupo seleccionado"}
                 </h6>
-                <button
-                    className="btn btn-success btn-sm"
-                    onClick={() => setShowAgregarModal(true)}
-                >
-                    <i className="bi bi-plus-lg me-1"></i>
-                    Agregar
-                </button>
+                {(id_grupo_seleccionado)&&(
+                    <button
+                        className="btn btn-success btn-sm"
+                        onClick={() => setShowAgregarModal(true)}
+                    >
+                        <i className="bi bi-plus-lg me-1"></i>
+                        Agregar
+                    </button>
+                )}
+
             </div>
 
             <div style={{ maxHeight: '550px', overflowY: 'auto' }}>

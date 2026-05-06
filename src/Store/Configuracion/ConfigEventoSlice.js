@@ -13,7 +13,7 @@ const inicializarState= {
 
     tipo_modalidad: null,
     tipo_modalidad_trabajo: null,
-    id_grupo_seleccionado: "sin grupo seleccionado",
+    id_grupo_seleccionado: "",
     id_evento_seleccionado: null,
     grupos_a_sincronizar:null
 }
