@@ -8,6 +8,14 @@ import FormularioMRU2D from "./Movimientos/FormularioMRU2D";
 import FormularioOscilatorio from "./Movimientos/FormularioOscilatorio";
 import FormularioLerp from "./Movimientos/FormularioLerp";
 import FormularioGravedad from "./Movimientos/FormularioGravedad";
+import {
+    MOV_CIRCULAR, MOV_GRAVEDAD, MOV_LERP, MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
+    MOV_RECTILINEO_2D,
+    MOV_RECTILINEO_ACELERADO,
+    MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ZOOM, MOVIMIENTOS_FIGURAS, MOVIMIENTOS_OBJETOS
+} from "../../../Clases/EditorEvento/ConstanteEvento";
+import FormularioRotacion from "./Movimientos/FormularioRotacion";
+import FormularioZoom from "./Movimientos/FormularioZoom";
 
 function msToTimeParts(ms) {
     const minutos = Math.floor(ms / 60000);
@@ -26,6 +34,7 @@ function timePartsToMs(min, seg, ms) {
 
 function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
     const [tipo, setTipo] = useState(1);
+    const [tipoEfecto, setTipoEfecto] = useState(1);
     const [inicioMin, setInicioMin] = useState('00');
     const [inicioSeg, setInicioSeg] = useState('00');
     const [inicioMs, setInicioMs] = useState('000');
@@ -39,16 +48,6 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
     const [activo, setActivo] = useState(false);
     const [datos, setDatos] = useState({});
 
-    const MOVIMIENTOS = {
-        1: "Movimiento Rectilíneo Uniforme (MRU)",
-        2: "Movimiento Rectilíneo Acelerado (MRUA)",
-        3: "Movimiento Rectilíneo 2D",
-        4: "Movimiento Circular",
-        5: "Movimiento Oscilatorio",
-        6: "Interpolación Lineal (LERP)",
-        7: "Gravedad",
-        8: "Parabólico con Ángulo"
-    };
 
     if (!show) return null;
 
@@ -59,6 +58,7 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
         const nuevoMovimiento = {
             //_id: nanoid(8),
             tipo:tipo,
+            tipo_efecto:tipoEfecto,
             tiempo_inicio:tiempo_inicio,
             tiempo_final:tiempo_final,
             tiempo_bucle: tiempoBucle,
@@ -100,6 +100,17 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
                         <button type="button" className="btn-close" onClick={onClose}></button>
                     </div>
                     <div className="modal-body">
+                        <div className="mb-3">
+                            <label className="form-label">Tipo Efecto</label>
+                            <select
+                                className="form-select"
+                                value={tipoEfecto}
+                                onChange={(e) => setTipoEfecto(parseInt(e.target.value))}
+                            >
+                                <option value={1}>Objeto</option>
+                                <option value={2}>Figuras</option>
+                            </select>
+                        </div>
                         {/* Tipo */}
                         <div className="mb-3">
                             <label className="form-label">Tipo</label>
@@ -108,13 +119,24 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
                                 value={tipo}
                                 onChange={(e) => setTipo(parseInt(e.target.value))}
                             >
-                                {Object.entries(MOVIMIENTOS).map(([key, label]) => (
-                                    <option key={key} value={key}>
-                                        {label}
-                                    </option>
-                                ))}
+                                {tipoEfecto === 1 && (
+                                    Object.entries(MOVIMIENTOS_OBJETOS).map(([key, label]) => (
+                                            <option key={key} value={key}>
+                                                {label}
+                                            </option>
+                                        ))
+                                )}
+                                {tipoEfecto === 2 && (
+                                    Object.entries(MOVIMIENTOS_FIGURAS).map(([key, label]) => (
+                                        <option key={key} value={key}>
+                                            {label}
+                                        </option>
+                                    ))
+                                )}
                             </select>
                         </div>
+
+
 
                         {/* Tiempo de inicio */}
                         <div className="mb-3">
@@ -163,14 +185,16 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
 
                         <hr />
                         {/* Formulario dinámico renderizado directamente */}
-                        {tipo === 1 && <FormularioMRU datos={datos} setDatos={setDatos} />}
-                        {tipo === 2 && <FormularioMRUA datos={datos} setDatos={setDatos} />}
-                        {tipo === 3 && <FormularioMRU2D datos={datos} setDatos={setDatos} />}
-                        {tipo === 4 && <FormularioCircular datos={datos} setDatos={setDatos} />}
-                        {tipo === 5 && <FormularioOscilatorio datos={datos} setDatos={setDatos} />}
-                        {tipo === 6 && <FormularioLerp datos={datos} setDatos={setDatos} />}
-                        {tipo === 7 && <FormularioGravedad datos={datos} setDatos={setDatos} />}
-                        {tipo === 8 && <FormularioParabolico datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_RECTILINEO_UNIFORME && <FormularioMRU datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_RECTILINEO_ACELERADO && <FormularioMRUA datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_RECTILINEO_2D && <FormularioMRU2D datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_CIRCULAR && <FormularioCircular datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_OSCILATORIO && <FormularioOscilatorio datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_LERP && <FormularioLerp datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_GRAVEDAD && <FormularioGravedad datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_PARABOLICO_ANGULO && <FormularioParabolico datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_ROTACION && <FormularioRotacion datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_ZOOM && <FormularioZoom datos={datos} setDatos={setDatos} />}
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>

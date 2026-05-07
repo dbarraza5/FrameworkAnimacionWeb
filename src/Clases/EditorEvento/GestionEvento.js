@@ -139,6 +139,7 @@ class GestionEvento{
                             this.movimientos_grupos[objeto.id_objeto].y+=y;
                         }
                     }
+                    //console.log(JSON.parse(JSON.stringify(this.movimientos_grupos)))
                 }
             }
         }
@@ -211,7 +212,7 @@ class GestionEvento{
                     this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
                 }
             }
-            //console.log("tiempo1: "+tiempo);
+
 
         }
         if(this.detener){

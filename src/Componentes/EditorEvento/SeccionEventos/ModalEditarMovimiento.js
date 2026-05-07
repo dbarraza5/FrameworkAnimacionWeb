@@ -7,6 +7,16 @@ import FormularioMRU2D from "./Movimientos/FormularioMRU2D";
 import FormularioOscilatorio from "./Movimientos/FormularioOscilatorio";
 import FormularioLerp from "./Movimientos/FormularioLerp";
 import FormularioGravedad from "./Movimientos/FormularioGravedad";
+import {
+    MOV_CIRCULAR, MOV_GRAVEDAD, MOV_LERP, MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
+    MOV_RECTILINEO_2D,
+    MOV_RECTILINEO_ACELERADO,
+    MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ZOOM,
+    MOVIMIENTOS_FIGURAS,
+    MOVIMIENTOS_OBJETOS
+} from "../../../Clases/EditorEvento/ConstanteEvento";
+import FormularioRotacion from "./Movimientos/FormularioRotacion";
+import FormularioZoom from "./Movimientos/FormularioZoom";
 
 function msToTimeParts(ms) {
     const minutos = Math.floor(ms / 60000);
@@ -29,6 +39,7 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
     const fin = msToTimeParts(movimiento?.tiempo_final || 0);
 
     const [tipo, setTipo] = useState(movimiento?.tipo || 1);
+    const [tipoEfecto, setTipoEfecto] = useState(1);
     const [inicioMin, setInicioMin] = useState(inicio?.min||'00');
     const [inicioSeg, setInicioSeg] = useState(inicio?.seg||'00');
     const [inicioMs, setInicioMs] = useState(inicio?.ms||'00');
@@ -43,16 +54,6 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
 
     const [datos, setDatos] = useState(movimiento?.datos || {});
 
-    const MOVIMIENTOS = {
-        1: "Movimiento Rectilíneo Uniforme (MRU)",
-        2: "Movimiento Rectilíneo Acelerado (MRUA)",
-        3: "Movimiento Rectilíneo 2D",
-        4: "Movimiento Circular",
-        5: "Movimiento Oscilatorio",
-        6: "Interpolación Lineal (LERP)",
-        7: "Gravedad",
-        8: "Parabólico con Ángulo"
-    };
 
     useEffect(() => {
         // const tiempo_inicio = timePartsToMs(inicioMin, inicioSeg, inicioMs);
@@ -138,17 +139,38 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
                     <div className="modal-body">
                         {/* Tipo */}
                         <div className="mb-3">
+                            <label className="form-label">Tipo Efecto</label>
+                            <select
+                                className="form-select"
+                                value={tipoEfecto}
+                                onChange={(e) => setTipoEfecto(parseInt(e.target.value))}
+                            >
+                                <option value={1}>Objeto</option>
+                                <option value={2}>Figuras</option>
+                            </select>
+                        </div>
+                        {/* Tipo */}
+                        <div className="mb-3">
                             <label className="form-label">Tipo</label>
                             <select
                                 className="form-select"
                                 value={tipo}
                                 onChange={(e) => setTipo(parseInt(e.target.value))}
                             >
-                                {Object.entries(MOVIMIENTOS).map(([key, label]) => (
-                                    <option key={key} value={key}>
-                                        {label}
-                                    </option>
-                                ))}
+                                {tipoEfecto === 1 && (
+                                    Object.entries(MOVIMIENTOS_OBJETOS).map(([key, label]) => (
+                                        <option key={key} value={key}>
+                                            {label}
+                                        </option>
+                                    ))
+                                )}
+                                {tipoEfecto === 2 && (
+                                    Object.entries(MOVIMIENTOS_FIGURAS).map(([key, label]) => (
+                                        <option key={key} value={key}>
+                                            {label}
+                                        </option>
+                                    ))
+                                )}
                             </select>
                         </div>
 
@@ -201,12 +223,17 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
                         </div>
 
                         <hr/>
-                        {/* Formulario dinámico según tipo */}
-                        <RenderFormulario
-                            tipo={tipo}
-                            datos={datos}
-                            setDatos={setDatos}
-                        />
+                        {/* Formulario dinámico renderizado directamente */}
+                        {tipo === MOV_RECTILINEO_UNIFORME && <FormularioMRU datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_RECTILINEO_ACELERADO && <FormularioMRUA datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_RECTILINEO_2D && <FormularioMRU2D datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_CIRCULAR && <FormularioCircular datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_OSCILATORIO && <FormularioOscilatorio datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_LERP && <FormularioLerp datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_GRAVEDAD && <FormularioGravedad datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_PARABOLICO_ANGULO && <FormularioParabolico datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_ROTACION && <FormularioRotacion datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_ZOOM && <FormularioZoom datos={datos} setDatos={setDatos} />}
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Cerrar</button>

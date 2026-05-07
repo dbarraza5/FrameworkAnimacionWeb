@@ -59,3 +59,36 @@ export const ARRAY_TITULO_TRABAJO = {
     [TRABAJO_REDUCCION_LIENZO]: "reduc lienzo",
     [TRABAJO_POSICIONAR_MACRO]: "pos macro",
 };
+
+
+// ===============================
+// TIPOS DE MOVIMIENTO
+// ===============================
+export const MOV_RECTILINEO_UNIFORME = 1;
+export const MOV_RECTILINEO_ACELERADO = 2;
+export const MOV_RECTILINEO_2D = 3;
+export const MOV_CIRCULAR = 4;
+export const MOV_OSCILATORIO = 5;
+export const MOV_LERP = 6;
+export const MOV_GRAVEDAD = 7;
+export const MOV_PARABOLICO_ANGULO = 8;
+
+export const MOV_ROTACION = 9;
+export const MOV_ZOOM = 10;
+
+
+export const MOVIMIENTOS_OBJETOS = {
+    [MOV_RECTILINEO_UNIFORME]: "Movimiento Rectilíneo Uniforme (MRU)",
+    [MOV_RECTILINEO_ACELERADO]: "Movimiento Rectilíneo Acelerado (MRUA)",
+    [MOV_RECTILINEO_2D]: "Movimiento Rectilíneo 2D",
+    [MOV_CIRCULAR]: "Movimiento Circular",
+    [MOV_OSCILATORIO]: "Movimiento Oscilatorio",
+    [MOV_LERP]: "Interpolación Lineal (LERP)",
+    [MOV_GRAVEDAD]: "Gravedad",
+    [MOV_PARABOLICO_ANGULO]: "Parabólico con Ángulo"
+};
+
+export const MOVIMIENTOS_FIGURAS = {
+    [MOV_ROTACION]: "Movimiento Rotacion",
+    [MOV_ZOOM]: "Movimiento Zoom",
+};

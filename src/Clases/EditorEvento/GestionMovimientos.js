@@ -1,15 +1,5 @@
 
-// ===============================
-// TIPOS DE MOVIMIENTO
-// ===============================
-const MOV_RECTILINEO_UNIFORME = 1;
-const MOV_RECTILINEO_ACELERADO = 2;
-const MOV_RECTILINEO_2D = 3;
-const MOV_CIRCULAR = 4;
-const MOV_OSCILATORIO = 5;
-const MOV_LERP = 6;
-const MOV_GRAVEDAD = 7;
-const MOV_PARABOLICO_ANGULO = 8;
+
 
 
 // ===============================
@@ -17,6 +7,14 @@ const MOV_PARABOLICO_ANGULO = 8;
 // ===============================
 
 // MRU
+import {
+    MOV_CIRCULAR, MOV_GRAVEDAD, MOV_LERP,
+    MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
+    MOV_RECTILINEO_2D,
+    MOV_RECTILINEO_ACELERADO,
+    MOV_RECTILINEO_UNIFORME
+} from "./ConstanteEvento";
+
 function movRectilineoUniforme(t, v){
     return v * t;
 }
@@ -59,8 +57,25 @@ function movCircular(t, px, py, velAngular, sentido) {
 }
 
 // Oscilación (seno)
-function movOscilatorio(t, amplitud, frecuencia){
+function movOscilatorio1(t, amplitud, frecuencia){
     return amplitud * Math.sin(frecuencia * t);
+}
+
+function movOscilatorio(
+    t,
+    amplitudX,
+    frecuenciaX,
+    amplitudY,
+    frecuenciaY
+){
+    const resX = amplitudX * Math.sin(frecuenciaX * t);
+    const resY = amplitudY * Math.sin(frecuenciaY * t);
+    return {
+        // Si el resultado es null o undefined, devuelve 0.
+        // Si es 0, mantiene el 0.
+        x: resX ?? 0,
+        y: resY ?? 0
+    };
 }
 
 // Interpolación lineal
@@ -111,6 +126,7 @@ class GestionMovimientos{
                 break;
 
             case MOV_CIRCULAR:
+                console.log(datos)
                 const circ = movCircular(
                     tiempo,
                     datos.pivote_x,
@@ -123,8 +139,18 @@ class GestionMovimientos{
                 break;
 
             case MOV_OSCILATORIO:
-                y = movOscilatorio(tiempo, datos.amplitud, datos.frecuencia);
-                break;
+
+                const osc = movOscilatorio(
+                    tiempo,
+                    parseFloat(datos.amplitudX) || 0,
+                    parseFloat(datos.frecuenciaX) || 0,
+                    parseFloat(datos.amplitudY) || 0,
+                    parseFloat(datos.frecuenciaY) || 0
+                );
+                console.log(JSON.parse(JSON.stringify(osc)))
+                x = osc.x;
+                y = osc.y;
+                break
 
             case MOV_GRAVEDAD:
                 y = movGravedad(tiempo, datos.v0y, datos.g);
