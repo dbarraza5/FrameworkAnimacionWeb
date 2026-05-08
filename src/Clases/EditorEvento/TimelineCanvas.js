@@ -110,6 +110,9 @@ export default class TimelineCanvas {
         this._speedIndex = 2;    // arranca en 1x
 
         this.eventos_elanzados = false;
+
+        this.click_reproducir = false;
+        this.click_reiniciar = false;
     }
 
     reiniciar(){
@@ -512,7 +515,10 @@ export default class TimelineCanvas {
     }
 
     reiniciarAnimacion() {
-        alert("reiniciarAnimacion");
+        //alert("reiniciarAnimacion");
+        this.play = false;
+        this.click_reproducir = false;
+        this.click_reiniciar = true;
     }
 
     reproducirAnimacion() {

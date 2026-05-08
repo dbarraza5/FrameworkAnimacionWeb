@@ -60,6 +60,13 @@ class GestionEvento{
         }
     }
 
+    reiniciarEventos(){
+        for(let evento_i=0; evento_i<this.eventos.length; evento_i++){
+            this.eventos[evento_i].activar_tiempo = false;
+            this.eventos[evento_i].tiempo.modPasivo();
+        }
+    }
+
     inicializar(lista_evento, grupos, id){
         //this.grupos = grupos;
         this._id =id;
@@ -140,6 +147,11 @@ class GestionEvento{
                         }
                     }
                     //console.log(JSON.parse(JSON.stringify(this.movimientos_grupos)))
+                }else{
+                    if(tiempo_fin<tiempo_evento){
+                        console.log("SE TERMINO EL TIEMPO: ", tiempo_evento)
+                        this.reiniciarProceso();
+                    }
                 }
             }
         }
@@ -148,7 +160,8 @@ class GestionEvento{
     procesandoEventos(){
         tiempo_universal=performance.now();
         const tiempo = this.tiempo.cronometroC(tiempo_universal);
-        if(this.reproducir){
+        if(true)//(this.reproducir)
+        {
             //console.log('tiempo universal: ', tiempo_universal);
             this.tiempo_animacion = tiempo;
             for(let i=0; i<this.eventos.length; i++){
@@ -164,36 +177,12 @@ class GestionEvento{
                 this.movimientos_grupos[nombre_grupo]['x']=0;
                 this.movimientos_grupos[nombre_grupo]['y']=0;
             }
-            // this.reseteoMovGrupos();
-            //
-            // for(let i=0; i<this.eventos.length; i++){
-            //     const evento_ = this.eventos[i].evento;
-            //     if(evento_.tiempo_inicio<=tiempo
-            //         && evento_.tiempo_final>=tiempo){
-            //         // if(this.eventos[i].inicio===false){
-            //         //     this.eventos[i].inicio=true;
-            //         //     this.eventos[i].tiempo.modPasivo();
-            //         // }
-            //         const tiempo_evento = this.eventos[i].tiempo.cronometroC(tiempo_universal);
-            //         for(let obj_i=0; obj_i<evento_.objetos.length; obj_i++){
-            //             const objeto = evento_.objetos[obj_i];
-            //             for(let j=0; j<objeto.movimientos.length; j++){
-            //                 const movimiento = objeto.movimientos[j];
-            //                 const tipo = movimiento.tipo;
-            //                 const datos = movimiento.datos;
-            //                 const resultado = GestionMovimientos.movimientoGrupo(tiempo_evento, tipo, datos);
-            //                 const x = resultado.x;
-            //                 const y = resultado.y;
-            //
-            //                 this.movimientos_grupos[objeto.id_objeto].x+=x;
-            //                 this.movimientos_grupos[objeto.id_objeto].y+=y;
-            //             }
-            //         }
-            //
-            //     }
-            // }
-            //
-            this.procesandoEvento();
+
+            if(this.reproducir){
+                this.procesandoEvento();
+            }
+
+
             // for(let i=0; i<this.gestion_grupos.grupos_figuras.length; i++){
             //     const grupo_ = this.gestion_grupos_originales.grupos_figuras[i];
             //     const x = grupo_.cx+this.movimientos_grupos[grupo_.nombre].x;

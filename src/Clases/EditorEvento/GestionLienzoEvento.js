@@ -138,10 +138,23 @@ class GestionLienzoEvento{
 
             if(this.timelineInstance.click_reproducir){
                 console.log("click_reproducir: ", this.timelineInstance.click_reproducir);
+                this.eventos_.reiniciarEventos();
                 this.eventos_.reproducirProceso();
             }
 
+            if(this.timelineInstance.click_reiniciar){
+                this.eventos_.reiniciarEventos();
+                this.eventos_.reiniciarProceso();
+                console.log("ugvyghgcgvh")
+            }
+
             this.eventos_.procesandoEventos();
+
+
+            if(this.eventos_.reiniciar){
+                console.log("DEBERIA AVISAR QUE TERMINO")
+                this.timelineInstance.reiniciarAnimacion();
+            }
 
             if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
                 this.grupos_disponibles_generales = this.eventos_.gestion_grupos.get_nombres_grupos_hijos("root");

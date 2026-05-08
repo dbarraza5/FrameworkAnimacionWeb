@@ -173,6 +173,7 @@ function EditorEvento(props){
             eventoAnimacion.edicion.procesandoEventos();
             eventoAnimacion.edicion.imprimirEventos();
             //timelineInstance.procesar();
+
         }
     }
 
