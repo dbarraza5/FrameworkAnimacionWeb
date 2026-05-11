@@ -67,6 +67,20 @@ class GestionEvento{
         }
     }
 
+    pausarDesEventos(){
+        for(let evento_i=0; evento_i<this.eventos.length; evento_i++){
+            //this.eventos[evento_i].activar_tiempo = false;
+            this.eventos[evento_i].tiempo.despausar();
+        }
+    }
+
+    pausarEventos(){
+        for(let evento_i=0; evento_i<this.eventos.length; evento_i++){
+            //this.eventos[evento_i].activar_tiempo = false;
+            this.eventos[evento_i].tiempo.pausar();
+        }
+    }
+
     inicializar(lista_evento, grupos, id){
         //this.grupos = grupos;
         this._id =id;
@@ -111,11 +125,9 @@ class GestionEvento{
         return this.eventos.findIndex(evento => evento.evento.nombre === nombreEvento);
     }
 
-    procesandoEvento(){
-        const evento_ = this.obtenerEvento("EventoGeneral");
-        if(evento_){
-            const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
+    procesandoEvento(evento_, tiempo_evento){
 
+        if(evento_){
             //console.log(tiempo_evento)
             if(!evento_.activar_tiempo){
                 evento_.activar_tiempo = true;
@@ -126,7 +138,7 @@ class GestionEvento{
                 const tiempo_fin = evento_.evento.tiempo_final/1000;
                 const tiempo_virtual = tiempo_evento-tiempo_inicio;
                 // console.log("tiempo inicio : ", tiempo_inicio)
-                // console.log("tiempo real   : ", tiempo_evento)
+                 console.log("tiempo real   : ", tiempo_evento)
                 // console.log("tiempo virtual: ", tiempo_virtual)
                 // console.log("tiempo final  : ", tiempo_fin)
                 // console.log()
@@ -136,14 +148,21 @@ class GestionEvento{
                         const objeto = evento_.evento.objetos[obj_i];
                         for(let j=0; j<objeto.movimientos.length; j++){
                             const movimiento = objeto.movimientos[j];
-                            const tipo = movimiento.tipo;
-                            const datos = movimiento.datos;
-                            const resultado = GestionMovimientos.movimientoGrupo(tiempo_virtual, tipo, datos);
-                            const x = resultado.x;
-                            const y = resultado.y;
+                            const tiempo_inicio_mov = movimiento.tiempo_inicio/1000;
+                            const tiempo_fin_mov = movimiento.tiempo_final/1000;
+                            const tiempo_virtual_mov = tiempo_virtual-tiempo_inicio_mov;
 
-                            this.movimientos_grupos[objeto.id_objeto].x+=x;
-                            this.movimientos_grupos[objeto.id_objeto].y+=y;
+                            if(tiempo_inicio_mov<=tiempo_evento
+                                && tiempo_fin_mov>=tiempo_evento){
+                                const tipo = movimiento.tipo;
+                                const datos = movimiento.datos;
+                                const resultado = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos);
+                                const x = resultado.x;
+                                const y = resultado.y;
+
+                                this.movimientos_grupos[objeto.id_objeto].x+=x;
+                                this.movimientos_grupos[objeto.id_objeto].y+=y;
+                            }
                         }
                     }
                     //console.log(JSON.parse(JSON.stringify(this.movimientos_grupos)))
@@ -178,8 +197,10 @@ class GestionEvento{
                 this.movimientos_grupos[nombre_grupo]['y']=0;
             }
 
+            const evento_ = this.obtenerEvento("EventoGeneral");
+            const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
             if(this.reproducir){
-                this.procesandoEvento();
+                this.procesandoEvento(evento_, tiempo_evento);
             }
 
 

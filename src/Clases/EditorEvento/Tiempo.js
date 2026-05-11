@@ -71,21 +71,20 @@ class Tiempo {
                 this.comienzoPausa = false;
             }
             this.tiempodePausa = tiempo_ - this.tiempoComienzoPausa;
-            return this.tiempoActual;
+            return this.tiempoActualAux;
         } else {
             if (this.desPausarTiempo) {
                 this.sumatoriaTiempoPausa += this.tiempodePausa;
+                this.tiempodePausa = 0;
                 this.desPausarTiempo = false;
             }
 
             const tiempo_aux = tiempo_ - this.tiempoGuardar - this.sumatoriaTiempoPausa;
 
             if (this.tiempoRelativo !== 0)
-                this.tiempoActual = tiempo_aux / this.tiempoRelativo;
+                this.tiempoActualAux = (tiempo_aux / this.tiempoRelativo) / 1000;
 
-            this.tiempoActual = this.tiempoActual / 1000;
-            this.tiempoActualAux = this.tiempoActual;
-            return this.tiempoActual;
+            return this.tiempoActualAux;
         }
     }
 
@@ -108,12 +107,16 @@ class Tiempo {
 
     procesoNormalTiempo() {
         const tiempo_ = this.tiempo_universal;
-        this.tiempoActual = tiempo_ - this.tiempoGuardar;
+
+        // RESTAR tiempo pausado acumulado
+        this.tiempoActual = tiempo_ - this.tiempoGuardar - this.sumatoriaTiempoPausa;
+
         if (this.tiempoRelativo !== 0)
             this.tiempoActual = this.tiempoActual / this.tiempoRelativo;
 
         this.tiempoActual = this.tiempoActual / 1000;
         this.tiempoActualAux = this.tiempoActual;
+
         return this.tiempoActual;
     }
 

@@ -138,8 +138,14 @@ class GestionLienzoEvento{
 
             if(this.timelineInstance.click_reproducir){
                 console.log("click_reproducir: ", this.timelineInstance.click_reproducir);
-                this.eventos_.reiniciarEventos();
-                this.eventos_.reproducirProceso();
+                if(this.timelineInstance.play){
+                    this.eventos_.pausarDesEventos();
+                    this.eventos_.reproducirProceso();
+                }else{
+                    this.eventos_.pausarEventos()
+                }
+                //this.eventos_.reiniciarEventos();
+                //this.eventos_.reproducirProceso();
             }
 
             if(this.timelineInstance.click_reiniciar){
