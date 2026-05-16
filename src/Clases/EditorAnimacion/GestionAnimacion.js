@@ -507,7 +507,7 @@ class GestionAnimacion{
                 let figura = grupo_.lista_figuras[j];
 
                 let f_copia = grupo_copia.lista_figuras[j];
-                let f_nuevo=OperacionesGrupo.rotar_figura(figura, f_copia, grupo_,angulo_rotacion,
+                let f_nuevo=OperacionesGrupo.rotar_figura(figura, f_copia, grupo_copia,angulo_rotacion,
                     pivote_rotacion_x, pivote_rotacion_y)
             }
         }

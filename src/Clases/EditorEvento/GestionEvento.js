@@ -62,6 +62,7 @@ class GestionEvento{
     }
 
     reiniciarEventos(){
+        this.gestion_grupos.grupos_figuras=structuredClone(this.gestion_grupos_originales.grupos_figuras)
         for(let evento_i=0; evento_i<this.eventos.length; evento_i++){
             this.eventos[evento_i].activar_tiempo = false;
             this.eventos[evento_i].tiempo.modPasivo();
@@ -185,6 +186,7 @@ class GestionEvento{
                 }else{
                     if(tiempo_fin<tiempo_evento){
                         console.log("SE TERMINO EL TIEMPO: ", tiempo_evento)
+                        this.reiniciarEventos();
                         this.reiniciarProceso();
                     }
                 }
