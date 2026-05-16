@@ -12,8 +12,10 @@ import {
     MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
     MOV_RECTILINEO_2D,
     MOV_RECTILINEO_ACELERADO,
-    MOV_RECTILINEO_UNIFORME
+    MOV_RECTILINEO_UNIFORME, MOV_ROTACION
 } from "./ConstanteEvento";
+import Fisica from "../EditorAnimacion/Fisica";
+import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 
 function movRectilineoUniforme(t, v){
     return v * t;
@@ -101,6 +103,63 @@ function movParabolicoAngulo(t, velocidadInicial, angulo, g = 9.8){
     };
 }
 
+
+function calcularAnguloOrbita(velocidad, tiempo, anguloInicial, radio) {
+    // Velocidad angular (rad/s) = velocidad lineal / radio
+    const omega = velocidad / radio;
+
+    // Ángulo girado en radianes
+    const deltaAngulo = omega * tiempo;
+
+    // Convertir ángulo inicial a radianes y sumar
+    const anguloInicialRad = (anguloInicial * Math.PI) / 180;
+    const anguloNuevoRad = anguloInicialRad + deltaAngulo;
+
+    // Convertir a grados y normalizar entre 0° y 360°
+    const anguloNuevo = (anguloNuevoRad * 180) / Math.PI;
+    return ((anguloNuevo % 360) + 360) % 360;
+}
+
+
+/**
+ * Calcula el nuevo ángulo en un movimiento circular.
+ *
+ * @param {Object} center - {x, y} Coordenadas del centro.
+ * @param {Object} pivot - {x, y} Coordenadas del punto inicial (pivote).
+ * @param {number} time - Tiempo transcurrido.
+ * @param {number} velocity - Velocidad angular (radianes por unidad de tiempo).
+ * @param {number} direction - 1 para horario, 2 para anti-horario.
+ * @returns {number} - El nuevo ángulo en radianes.
+ */
+function getNewAngle(center, pivot, time, velocity, direction) {
+    // 1. Calcular el radio (distancia entre centro y pivote)
+    // Usamos el teorema de Pitágoras: r = sqrt((x2-x1)^2 + (y2-y1)^2)
+    const dx = pivot.x - center.x;
+    const dy = pivot.y - center.y;
+    const radius = Math.sqrt(dx * dx + dy * dy);
+
+    // 2. Calcular el ángulo inicial (en radianes) usando arcotangente
+    // Math.atan2 devuelve el ángulo entre el eje X positivo y el punto (dx, dy)
+    const initialAngle = Math.atan2(dy, dx);
+
+    // 3. Calcular el desplazamiento angular (Δθ = ω * t)
+    const deltaAngle = velocity * time;
+
+    // 4. Determinar el nuevo ángulo según el sentido
+    // Sentido Horario (1): El ángulo disminuye en el sistema de coordenadas estándar
+    // Sentido Anti-horario (2): El ángulo aumenta
+    let finalAngle;
+    if (direction === 1) {
+        finalAngle = initialAngle - deltaAngle;
+    } else {
+        finalAngle = initialAngle + deltaAngle;
+    }
+
+    // Opcional: Normalizar el ángulo entre -PI y PI (o 0 y 2PI)
+    // Esto es útil para mantener los valores dentro de un rango estándar
+    return Math.atan2(Math.sin(finalAngle), Math.cos(finalAngle));
+}
+
 class GestionMovimientos{
 
     constructor() {
@@ -184,6 +243,44 @@ class GestionMovimientos{
             x: x,
             y: y
         }
+    }
+
+
+    static movimientoFiguras(tiempo, tipo, datos, animacion, lista_grupos){
+
+        if(tipo === MOV_ROTACION){
+            console.log("MOV_ROTACION")
+            const velocidad = datos.velAngular;
+            const piv_x = datos.pivoteX;
+            const piv_y = datos.pivoteY;
+            const sentido = datos.sentido;
+
+            // const angulo_rotacion = Fisica.angulo_recta(piv_x, piv_y
+            //     ,0, 0)*(80*tiempo);
+
+            //const angulo_rotacion = calcularAnguloOrbita(velocidad, tiempo, 45, 20)
+            const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos)
+
+            // const angulo_rotacion = Fisica.angulo_recta(200, 200
+            //      ,0, 0)*(80*tiempo);
+
+            const angulo_new = getNewAngle({ x: piv_x, y: piv_y },
+                { x: centro_.centro_x, y: centro_.centro_y }, // Claves x e y definidas
+                                       // Claves x e y definidas
+                tiempo,
+                velocidad,
+                sentido
+            );
+            const anguloGrados = angulo_new * (180 / Math.PI);
+            // console.log(centro_)
+            // console.log("NEW ANGULO: ", anguloGrados)
+            //
+            // console.log("angulo: ", angulo_rotacion);
+            // console.log(lista_grupos);
+            animacion.moverGruposRotacionLienzoPivote(lista_grupos, anguloGrados, piv_x,
+                piv_y)
+        }
+        return null;
     }
 }
 

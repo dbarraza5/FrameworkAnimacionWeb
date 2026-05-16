@@ -1,6 +1,21 @@
 function FormularioRotacion({ datos, setDatos }) {
     return (
         <>
+            {/* Nuevo campo: Sentido de giro */}
+            <div className="mb-3">
+                <label className="form-label">Sentido de giro</label>
+                <select
+                    className="form-select"
+                    value={datos.sentido ?? 1}
+                    onChange={(e) =>
+                        setDatos({ ...datos, sentido: parseInt(e.target.value) })
+                    }
+                >
+                    <option value={1}>Sentido Horario (Clockwise)</option>
+                    <option value={2}>Sentido Anti-horario (Counter-clockwise)</option>
+                </select>
+            </div>
+
             <div className="mb-3">
                 <label className="form-label">Velocidad angular (rad/s)</label>
                 <input

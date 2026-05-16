@@ -76,6 +76,8 @@ export const MOV_PARABOLICO_ANGULO = 8;
 export const MOV_ROTACION = 9;
 export const MOV_ZOOM = 10;
 
+export const TIPO_EFECTO_MOV_OBJETOS = 1;
+export const TIPO_EFECTO_MOV_FIGURAS = 2;
 
 export const MOVIMIENTOS_OBJETOS = {
     [MOV_RECTILINEO_UNIFORME]: "Movimiento Rectilíneo Uniforme (MRU)",

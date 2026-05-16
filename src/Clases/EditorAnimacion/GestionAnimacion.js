@@ -344,6 +344,13 @@ class GestionAnimacion{
         return this.grupos_figuras.filter((grupo)=>grupo.nodo_padre===nombre_grupo)
     }
 
+    get_grupos_padre_ehijos(nombre_grupo){
+        return this.grupos_figuras.filter((grupo)=>{
+            return grupo.nodo_padre===nombre_grupo || grupo.nombre === nombre_grupo;
+        })
+    }
+
+
     procesarPosicionFinalFiguras(nombre_grupo="root"){
         const grupo_padre = this.getGrupo(nombre_grupo);
         const lista_grupos = this.get_grupos_hijos(nombre_grupo)

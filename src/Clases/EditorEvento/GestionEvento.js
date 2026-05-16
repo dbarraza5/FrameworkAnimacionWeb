@@ -4,6 +4,7 @@ import {GestionAnimacion} from "../EditorAnimacion/GestionAnimacion";
 import {ImprimirAnimacion} from "../EditorAnimacion/ImprimirAnimacion";
 import ConfiguracionLienzo from "../EditorAnimacion/ConfiguracionLienzo";
 import TimelineCanvas from "./TimelineCanvas";
+import {TIPO_EFECTO_MOV_FIGURAS, TIPO_EFECTO_MOV_OBJETOS} from "./ConstanteEvento";
 
 let tiempo_universal=performance.now();
 
@@ -131,6 +132,7 @@ class GestionEvento{
             //console.log(tiempo_evento)
             if(!evento_.activar_tiempo){
                 evento_.activar_tiempo = true;
+                this.gestion_grupos_originales.procesarPosicionFinalFiguras()
                 evento_.tiempo.modPasivo();
                 console.log("INICIALIZANDO EL TIEMPO DEL EVENTO")
             }else{
@@ -155,13 +157,27 @@ class GestionEvento{
                             if(tiempo_inicio_mov<=tiempo_evento
                                 && tiempo_fin_mov>=tiempo_evento){
                                 const tipo = movimiento.tipo;
+                                const tipoEfecto = movimiento.tipo_efecto;
                                 const datos = movimiento.datos;
-                                const resultado = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos);
-                                const x = resultado.x;
-                                const y = resultado.y;
+                                let resultado = null;
+                                if(tipoEfecto === TIPO_EFECTO_MOV_OBJETOS){
+                                    resultado = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos);
+                                }
+                                if(tipoEfecto === TIPO_EFECTO_MOV_FIGURAS){
+                                    // console.log("NOMBRE OBJETO: ",objeto.nombre);
+                                    // console.log(objeto);
+                                    const lista_grupos_originales = this.gestion_grupos_originales.get_grupos_padre_ehijos(objeto.id_objeto);
+                                    //const lista_grupos = this.gestion_grupos.get_grupos_padre_ehijos(objeto.nombre);
+                                    resultado = GestionMovimientos.movimientoFiguras(tiempo_virtual_mov, tipo, datos, this.gestion_grupos, lista_grupos_originales);
+                                }
+                                if(resultado){
+                                    const x = resultado.x;
+                                    const y = resultado.y;
 
-                                this.movimientos_grupos[objeto.id_objeto].x+=x;
-                                this.movimientos_grupos[objeto.id_objeto].y+=y;
+                                    this.movimientos_grupos[objeto.id_objeto].x+=x;
+                                    this.movimientos_grupos[objeto.id_objeto].y+=y;
+                                }
+
                             }
                         }
                     }
