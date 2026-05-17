@@ -2,6 +2,11 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import ModalEditarMovimiento from "./ModalEditarMovimiento";
 import ModalAgregarMovimiento from "./ModalAgregarMovimiento";
+import {
+    MOVIMIENTOS_FIGURAS_CORTOS,
+    MOVIMIENTOS_OBJETOS_CORTOS, TIPO_EFECTO_MOV_FIGURAS,
+    TIPO_EFECTO_MOV_OBJETOS
+} from "../../../Clases/EditorEvento/ConstanteEvento";
 
 function PanelMovimientos(props) {
     const [showModalEditar, setShowEditarModal] = useState(false);
@@ -30,16 +35,6 @@ function PanelMovimientos(props) {
         setmovIndexSeleccionado(index);
     };
 
-    const tipos_movimientos = {
-        1: "MRU",
-        2: "MRUA",
-        3: "MRU 2D",
-        4: "Circular",
-        5: "Oscil.",
-        6: "LERP",
-        7: "Grav.",
-        8: "Parab."
-    };
 
     const agregarMovimiento=(mov_)=>{
         console.log("[agregarMovimiento]")
@@ -171,6 +166,7 @@ function PanelMovimientos(props) {
                     <tr>
                         <th scope="col" style={{ width: '40px' }}>#</th>
                         <th scope="col">Tipo</th>
+                        <th scope="col">Efecto</th>
                         <th scope="col" className="text-center" style={{ width: '70px' }}>Activo</th>
                         <th scope="col" className="text-center" style={{ width: '120px' }}>Operaciones</th>
                     </tr>
@@ -179,7 +175,14 @@ function PanelMovimientos(props) {
                     {lista_movimiento.map((mov, index) => (
                         <tr key={index}>
                             <th scope="row" className="text-muted">{index + 1}</th>
-                            <td>{tipos_movimientos[mov.tipo]}</td>
+                            <td>
+                                {mov.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS && MOVIMIENTOS_OBJETOS_CORTOS[mov.tipo]}
+                                {mov.tipo_efecto === TIPO_EFECTO_MOV_FIGURAS && MOVIMIENTOS_FIGURAS_CORTOS[mov.tipo]}
+                            </td>
+                            <td>
+                                {mov.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS ? "Obj" : "Fig"}
+                            </td>
+
                             <td className="text-center">
                                 <input
                                     className="form-check-input"

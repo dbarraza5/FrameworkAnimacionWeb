@@ -90,7 +90,24 @@ export const MOVIMIENTOS_OBJETOS = {
     [MOV_PARABOLICO_ANGULO]: "Parabólico con Ángulo"
 };
 
+
+export const MOVIMIENTOS_OBJETOS_CORTOS = {
+    [MOV_RECTILINEO_UNIFORME]: "MRU",
+    [MOV_RECTILINEO_ACELERADO]: "MRUA",
+    [MOV_RECTILINEO_2D]: "2D",
+    [MOV_CIRCULAR]: "Circ",
+    [MOV_OSCILATORIO]: "Osc",
+    [MOV_LERP]: "LERP",
+    [MOV_GRAVEDAD]: "Grav",
+    [MOV_PARABOLICO_ANGULO]: "Parab"
+};
+
 export const MOVIMIENTOS_FIGURAS = {
     [MOV_ROTACION]: "Movimiento Rotacion",
     [MOV_ZOOM]: "Movimiento Zoom",
+};
+
+export const MOVIMIENTOS_FIGURAS_CORTOS = {
+    [MOV_ROTACION]: "Rot",
+    [MOV_ZOOM]: "Zoom"
 };
