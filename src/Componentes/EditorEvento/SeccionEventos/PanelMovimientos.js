@@ -7,6 +7,7 @@ import {
     MOVIMIENTOS_OBJETOS_CORTOS, TIPO_EFECTO_MOV_FIGURAS,
     TIPO_EFECTO_MOV_OBJETOS
 } from "../../../Clases/EditorEvento/ConstanteEvento";
+import {setIndexMovSeleccionado} from "../../../Store/Configuracion/ConfigEventoSlice";
 
 function PanelMovimientos(props) {
     const [showModalEditar, setShowEditarModal] = useState(false);
@@ -29,60 +30,51 @@ function PanelMovimientos(props) {
     const id_grupo_seleccionado = useSelector(state => state.config_evento.id_grupo_seleccionado);
     const [objeto, setObjeto] = useState(null);
 
+    const dispatch = useDispatch();
+
     const seleccionarMov=(index)=>{
         const mov_ = lista_movimiento[index];
-        setMovimientoSeleccionado(mov_);//(props.evento.movimientos[index]);
+        setMovimientoSeleccionado(mov_);
         setmovIndexSeleccionado(index);
+        dispatch(setIndexMovSeleccionado(index))
     };
 
 
     const agregarMovimiento=(mov_)=>{
         console.log("[agregarMovimiento]")
         console.log(mov_);
-        // 1. Creamos una copia profunda o superficial del array de objetos para no mutar las props
         const nuevosObjetos = [...props.evento.objetos];
-
-        // 2. Buscamos si ya existe el objeto por su ID
         let indiceObjeto = nuevosObjetos.findIndex(obj => obj.id_objeto === id_grupo_seleccionado);
 
         if (indiceObjeto !== -1) {
-            // ESCENARIO A: El objeto existe, añadimos el movimiento a su lista
-            // Clonamos el objeto para mantener inmutabilidad
             nuevosObjetos[indiceObjeto] = {
                 ...nuevosObjetos[indiceObjeto],
                 movimientos: [...nuevosObjetos[indiceObjeto].movimientos, mov_]
             };
         } else {
-            // ESCENARIO B: El objeto NO existe, lo creamos de cero
             const nuevoObjeto = {
-                tipo: 1, // O el tipo por defecto que corresponda
+                tipo: 1,
                 id_objeto: id_grupo_seleccionado,
-                x_inicial: 0, // Valores iniciales por defecto
+                x_inicial: 0,
                 y_inicial: 0,
                 movimientos: [mov_],
                 operaciones: [],
-                // No agregamos _id aquí, usualmente lo genera la base de datos
             };
             nuevosObjetos.push(nuevoObjeto);
             indiceObjeto = nuevosObjetos.length-1;
             setmovIndexSeleccionado(0)
         }
 
-        // 3. Actualizamos el evento completo con la nueva lista de objetos
         const eventoActualizado = {
             ...props.evento,
             objetos: nuevosObjetos
         };
 
-        // 4. Notificamos al componente padre
         props.editandoMovEvento(eventoActualizado);
         setListaMovimientos(nuevosObjetos[indiceObjeto].movimientos);
-        console.log("===================================================")
-        console.log(nuevosObjetos[indiceObjeto])
     }
 
     const eliminarMovimiento=(indice)=>{
-
         let indiceObjeto = props.evento.objetos.findIndex(obj => obj.id_objeto === id_grupo_seleccionado);
         if (indiceObjeto !== -1){
             props.evento.objetos[indiceObjeto].movimientos = props.evento.objetos[indiceObjeto].movimientos.filter((mov, index)=>{
@@ -90,16 +82,18 @@ function PanelMovimientos(props) {
             });
             props.editandoMovEvento(props.evento)
             setListaMovimientos(props.evento.objetos[indiceObjeto].movimientos)
+
+            // Si eliminamos el movimiento que estaba seleccionado, limpiamos la selección
+            if (movIndexSeleccionado === indice) {
+                setMovimientoSeleccionado(null);
+                setmovIndexSeleccionado(null);
+            }
         }
     }
 
     useEffect(() => {
         console.log("[EVENTO][MOV]");
         console.log(props.evento)
-
-        // if(props.evento){
-        //     setListaMovimientos(props.evento.movimientos)
-        // }
     }, [props.evento]);
 
     useEffect(() => {
@@ -114,20 +108,20 @@ function PanelMovimientos(props) {
             }
         }
         setListaMovimientos([])
+        setMovimientoSeleccionado(null);
+        setmovIndexSeleccionado(null);
     }, [id_grupo_seleccionado]);
 
 
     useEffect(() => {
         console.log("[CAMBIO][VERSION]="+props.eventoAnimacion.edicion.version);
         setVerionKey(props.eventoAnimacion.edicion.version);
-
     }, [props.eventoAnimacion.edicion.version]);
 
 
     useEffect(() => {
         console.log("[***Cambio de MOVIMIENTO***]="+movIndexSeleccionado);
-        if(movimientoSeleccionado !== null){
-            console.log(movimientoSeleccionado);
+        if(movimientoSeleccionado !== null && movIndexSeleccionado !== null){
             if(props.evento){
                 for(let i=0; i<props.evento.objetos.length; i++){
                     if(props.evento.objetos[i].id_objeto === id_grupo_seleccionado){
@@ -135,7 +129,8 @@ function PanelMovimientos(props) {
                         break;
                     }
                 }
-                props.editandoMovEvento(props.evento)            }
+                props.editandoMovEvento(props.evento)
+            }
         }
     }, [movimientoSeleccionado]);
 
@@ -157,13 +152,13 @@ function PanelMovimientos(props) {
                         Agregar
                     </button>
                 )}
-
             </div>
 
             <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
                 <table className="table table-hover table-sm align-middle">
                     <thead className="table-light sticky-top">
                     <tr>
+                        <th scope="col" style={{ width: '40px' }} className="text-center">Sel.</th>
                         <th scope="col" style={{ width: '40px' }}>#</th>
                         <th scope="col">Tipo</th>
                         <th scope="col">Efecto</th>
@@ -172,58 +167,80 @@ function PanelMovimientos(props) {
                     </tr>
                     </thead>
                     <tbody>
-                    {lista_movimiento.map((mov, index) => (
-                        <tr key={index}>
-                            <th scope="row" className="text-muted">{index + 1}</th>
-                            <td>
-                                {mov.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS && MOVIMIENTOS_OBJETOS_CORTOS[mov.tipo]}
-                                {mov.tipo_efecto === TIPO_EFECTO_MOV_FIGURAS && MOVIMIENTOS_FIGURAS_CORTOS[mov.tipo]}
-                            </td>
-                            <td>
-                                {mov.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS ? "Obj" : "Fig"}
-                            </td>
+                    {lista_movimiento.map((mov, index) => {
+                        const estaSeleccionado = movIndexSeleccionado === index;
+                        return (
+                            <tr
+                                key={index}
+                                onClick={() => seleccionarMov(index)}
+                                className={estaSeleccionado ? "table-primary" : ""}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                {/* Columna del Radio Button */}
+                                <td className="text-center" onClick={(e) => e.stopPropagation()}>
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="movimientoSeleccionadoRadio"
+                                        checked={estaSeleccionado}
+                                        onChange={() => seleccionarMov(index)}
+                                    />
+                                </td>
+                                <th scope="row" className="text-muted">{index + 1}</th>
+                                <td>
+                                    {mov.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS && MOVIMIENTOS_OBJETOS_CORTOS[mov.tipo]}
+                                    {mov.tipo_efecto === TIPO_EFECTO_MOV_FIGURAS && MOVIMIENTOS_FIGURAS_CORTOS[mov.tipo]}
+                                </td>
+                                <td>
+                                    {mov.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS ? "Obj" : "Fig"}
+                                </td>
 
-                            <td className="text-center">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id={`flexCheckDefault-${index}`}
-                                    checked={mov.activo}
-                                    onChange={(e) => console.log("asdsda das")}
-                                />
-                            </td>
-                            <td className="text-center">
-                                <div className="btn-group btn-group-sm" role="group">
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary"
-                                        title="Editar"
-                                        onClick={() => {
-                                            seleccionarMov(index);
-                                            setShowEditarModal(true);
+                                {/* Detener propagación para que el click no altere la selección de fila */}
+                                <td className="text-center" onClick={(e) => e.stopPropagation()}>
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id={`flexCheckDefault-${index}`}
+                                        checked={mov.activo}
+                                        onChange={(e) => {
+                                            // Aquí maneja tu lógica del checkbox activo
+                                            console.log("Cambio activo", e.target.checked);
                                         }}
-                                    >
-                                        <i className="bi bi-pencil"></i>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-secondary"
-                                        title="Duplicar"
-                                    >
-                                        <i className="bi bi-files"></i>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger"
-                                        title="Eliminar"
-                                        onClick={() => eliminarMovimiento(index)}
-                                    >
-                                        <i className="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
+                                    />
+                                </td>
+                                <td className="text-center" onClick={(e) => e.stopPropagation()}>
+                                    <div className="btn-group btn-group-sm" role="group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-primary"
+                                            title="Editar"
+                                            onClick={() => {
+                                                seleccionarMov(index);
+                                                setShowEditarModal(true);
+                                            }}
+                                        >
+                                            <i className="bi bi-pencil"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-secondary"
+                                            title="Duplicar"
+                                        >
+                                            <i className="bi bi-files"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-danger"
+                                            title="Eliminar"
+                                            onClick={() => eliminarMovimiento(index)}
+                                        >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })}
                     </tbody>
                 </table>
             </div>

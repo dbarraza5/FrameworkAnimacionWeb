@@ -40,6 +40,7 @@ class GestionLienzoEvento{
 
     tipo_modalidad = null;
     tipo_trabajo = null;
+    index_mov_seleccionado =null;
 
     timelineInstance = null;
     eventoLienzoEvento =null;
@@ -131,7 +132,7 @@ class GestionLienzoEvento{
         this.y_mouse = this.eventoLienzoEvento.mouse_virtual_y;
 
         this.tipo_modalidad = this.configuracion_lienzo.procesarGeneral(this.eventoLienzoEvento, this.tipo_modalidad,
-            this.tipo_trabajo)
+            this.tipo_trabajo, this.index_mov_seleccionado)
         //console.log(this.eventoLienzoEvento.stack_event_teclado)
         if(true){
             this.timelineInstance.procesar();

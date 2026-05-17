@@ -72,7 +72,7 @@ class ConfiguracionLienzoEvento{
 
     titulo_modalidad = "#";
     titulo_tipo_trabajo = "#";
-
+    index_movimiento = null;
     ver_info_lienzo = true;
     presionado_s = false;
 
@@ -83,7 +83,7 @@ class ConfiguracionLienzoEvento{
 
     mostrar_imagenes = true;
 
-    procesarGeneral(eventoLienzoFigura, tipo_modalidad, tipo_trabajo){
+    procesarGeneral(eventoLienzoFigura, tipo_modalidad, tipo_trabajo, index_mov){
 
     //     if(tipo_trabajo === MOVER_NADA){
     // if(eventoLienzoFigura.stack_event_teclado.includes("ShiftLeft")){
@@ -111,6 +111,7 @@ class ConfiguracionLienzoEvento{
 
         this.titulo_modalidad = ARRAY_TITULOS_MODALIDAD[tipo_modalidad];
         this.titulo_tipo_trabajo = ARRAY_TITULO_TRABAJO[tipo_trabajo];
+        this.index_movimiento = index_mov;
         return tipo_modalidad;
     }
 
@@ -268,11 +269,12 @@ class ConfiguracionLienzoEvento{
         //ctx.fillText(coor, 0, 15);
 
         if(this.ver_info_lienzo){
-            ctx.fillText("x: "+this.x_delta_original, 0, 15);
-            ctx.fillText("y: "+this.y_delta_original, 0, 30);
+            ctx.fillText("x : "+this.x_delta_original, 0, 15);
+            ctx.fillText("y : "+this.y_delta_original, 0, 30);
 
-            ctx.fillText("t: "+this.titulo_modalidad, 0, 45);
-            ctx.fillText("m: "+this.titulo_tipo_trabajo, 0, 60);
+            ctx.fillText("t : "+this.titulo_modalidad, 0, 45);
+            ctx.fillText("m : "+this.titulo_tipo_trabajo, 0, 60);
+            ctx.fillText("mv: "+this.index_movimiento, 0, 75);
         }
     }
 

@@ -65,6 +65,7 @@ function EditorEvento(props){
 
     const tipo_modalidad = useSelector(state => state.config_evento.tipo_modalidad);
     const tipo_modalidad_trabajo = useSelector(state => state.config_evento.tipo_modalidad_trabajo);
+    const index_mov_seleccionado = useSelector(state => state.config_evento.index_mov_seleccionado);
     const id_evento_seleccionado = useSelector(state => state.config_evento.id_evento_seleccionado);
     const evento_redux = useSelector(state => state.evento.evento);
     const grupos_a_sincronizar = useSelector(state => state.config_evento.grupos_a_sincronizar);
@@ -91,6 +92,12 @@ function EditorEvento(props){
         //setTipoModalidadTrabajo(tipo_modalidad_trabajo);
         gestionEventoLienzo.tipo_modalidad = tipo_modalidad
     }, [tipo_modalidad]);
+
+    useEffect(() => {
+        console.log("****CAMBIAR index_mov_seleccionado: ", index_mov_seleccionado);
+        //setTipoModalidadTrabajo(tipo_modalidad_trabajo);
+        gestionEventoLienzo.index_mov_seleccionado = index_mov_seleccionado
+    }, [index_mov_seleccionado]);
 
     useEffect(() => {
         console.log("Se actualizo El evento por redux")
