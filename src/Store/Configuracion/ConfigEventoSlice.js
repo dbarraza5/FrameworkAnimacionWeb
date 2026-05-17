@@ -62,10 +62,13 @@ const configEventoSlice = createSlice({
         },
         setIdEventoSeleccionado: (state, action)=>{
             state.id_evento_seleccionado = action.payload;
+            state.id_grupo_seleccionado = null;
+            state.index_mov_seleccionado = null;
         },
 
         setIdGrupoSeleccionado: (state, action)=>{
             state.id_grupo_seleccionado = action.payload;
+            state.index_mov_seleccionado = null;
         },
         setIndexMovSeleccionado: (state, action)=>{
             state.index_mov_seleccionado = action.payload;

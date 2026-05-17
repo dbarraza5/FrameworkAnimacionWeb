@@ -53,7 +53,7 @@ class GestionLienzoEvento{
         this.x = 0;
         this.y = 0;
         this.eventos_ = eventos_;
-        this.id_grupo_selec = "default";
+        this.id_grupo_selec = null;
         // this.imprimir_animacion = new ImprimirAnimacion(animacion_,this.configuracion_lienzo, this.id_canvas);
         this.eventoLienzoEvento = eventoLienzoEvento;
         this.timelineInstance = new TimelineCanvas(eventoLienzoEvento, eventos_, setEventoAnimacion);
@@ -131,8 +131,8 @@ class GestionLienzoEvento{
         this.x_mouse = this.eventoLienzoEvento.mouse_virtual_x;
         this.y_mouse = this.eventoLienzoEvento.mouse_virtual_y;
 
-        this.tipo_modalidad = this.configuracion_lienzo.procesarGeneral(this.eventoLienzoEvento, this.tipo_modalidad,
-            this.tipo_trabajo, this.index_mov_seleccionado)
+        this.tipo_modalidad = this.configuracion_lienzo.procesarGeneral(this.eventoLienzoEvento,
+            this.tipo_modalidad, this.tipo_trabajo, this.index_mov_seleccionado, this.grupo_seleccionado)
         //console.log(this.eventoLienzoEvento.stack_event_teclado)
         if(true){
             this.timelineInstance.procesar();

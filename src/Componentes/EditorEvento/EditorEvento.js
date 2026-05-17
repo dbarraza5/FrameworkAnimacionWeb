@@ -69,6 +69,7 @@ function EditorEvento(props){
     const id_evento_seleccionado = useSelector(state => state.config_evento.id_evento_seleccionado);
     const evento_redux = useSelector(state => state.evento.evento);
     const grupos_a_sincronizar = useSelector(state => state.config_evento.grupos_a_sincronizar);
+    const id_grupo_seleccionado = useSelector(state => state.config_evento.id_grupo_seleccionado);
 
 
     const cookie = new Cookies();
@@ -98,6 +99,10 @@ function EditorEvento(props){
         //setTipoModalidadTrabajo(tipo_modalidad_trabajo);
         gestionEventoLienzo.index_mov_seleccionado = index_mov_seleccionado
     }, [index_mov_seleccionado]);
+
+    // useEffect(() => {
+    //     gestionEventoLienzo.index_mov_seleccionado = index_mov_seleccionado
+    // }, [id_grupo_seleccionado]);
 
     useEffect(() => {
         console.log("Se actualizo El evento por redux")
