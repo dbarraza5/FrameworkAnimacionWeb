@@ -22,7 +22,11 @@ import {useDispatch, useSelector} from "react-redux";
 import EdicionFiguras from "../EditorAnimacion/SeccionFiguras/EdicionFiguras";
 import GestionLienzoAnimacion from "../../Clases/EditorAnimacion/GestionLienzoAnimacion";
 import GestionLienzoEvento from "../../Clases/EditorEvento/GestionLienzoEvento";
-import {setIdEventoSeleccionado, setIdGrupoSeleccionado} from "../../Store/Configuracion/ConfigEventoSlice";
+import {
+    setIdEventoSeleccionado,
+    setIdGrupoSeleccionado,
+    setTipoTrabajo
+} from "../../Store/Configuracion/ConfigEventoSlice";
 
 const useCustomEvento=(valor_inicial=null)=>{
     const [evento_, setEvento_] = useState(valor_inicial);
@@ -84,8 +88,9 @@ function EditorEvento(props){
 
     console.log("========================> modalida: ", tipo_modalidad);
     useEffect(() => {
-        console.log("****CAMBIAR MODALIDAD TRABAJO: ", tipo_modalidad_trabajo);
+        console.log("****CAMBIAR MODALIDAD TRABAJO123: ", tipo_modalidad_trabajo);
         //setTipoModalidadTrabajo(tipo_modalidad_trabajo);
+        gestionEventoLienzo.tipo_trabajo =tipo_modalidad_trabajo;
     }, [tipo_modalidad_trabajo]);
 
     useEffect(() => {
@@ -163,6 +168,7 @@ function EditorEvento(props){
                     editar_animacion({"edicion": animacion.edicion})
 
                     gestionEventoLienzo.inicializar()
+                    gestionEventoLienzo.funcionCambioTrabajo = cambiarTipoTrabajo
                     setStartLoopLienzo(true);
                 })
                 .catch(function (response) {
@@ -173,6 +179,10 @@ function EditorEvento(props){
         } catch (err) {
             console.log(err);
         }
+    }
+
+    const cambiarTipoTrabajo = (tipo_trabajo) =>{
+        dispatch(setTipoTrabajo(tipo_trabajo))
     }
 
     useInterval(() => {

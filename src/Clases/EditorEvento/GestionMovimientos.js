@@ -249,7 +249,7 @@ class GestionMovimientos{
     static movimientoFiguras(tiempo, tipo, datos, animacion, lista_grupos){
 
         if(tipo === MOV_ROTACION){
-            console.log("MOV_ROTACION")
+            //console.log("MOV_ROTACION")
             const velocidad = datos.velAngular;
             const piv_x = datos.pivoteX;
             const piv_y = datos.pivoteY;

@@ -347,7 +347,7 @@ export default class TimelineCanvas {
                 if (this.desplazamiento_y < 0) this.desplazamiento_y = 0;
             }
         }
-        console.log("desplzamieto y: "+this.desplazamiento_y);
+        //console.log("desplzamieto y: "+this.desplazamiento_y);
 
         if (this.selected){
             if (this.isResizing) {

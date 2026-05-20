@@ -261,22 +261,56 @@ class ConfiguracionLienzoEvento{
         // }
     }
 
-    imprimirVariablesLienzo(ctx, tipo_trabajo=0){
-        ctx.font = '15px Arial';        // Tamaño y fuente del texto
-        ctx.fillStyle = 'blue';         // Color del texto
+    imprimirVariablesLienzo(ctx, tipo_trabajo = 0) {
 
-        // Dibujar el texto en el canvas
-        const coor = '('+this.x_delta_original+', '+this.y_delta_original+')'
-        //ctx.fillText(coor, 0, 15);
+        ctx.font = '11px Arial';
+        ctx.fillStyle = 'blue';
 
-        if(this.ver_info_lienzo){
-            ctx.fillText("x : "+this.x_delta_original, 0, 15);
-            ctx.fillText("y : "+this.y_delta_original, 0, 30);
+        if (this.ver_info_lienzo) {
 
-            ctx.fillText("t : "+this.titulo_modalidad, 0, 45);
-            //ctx.fillText("m : "+this.titulo_tipo_trabajo, 0, 60);
-            ctx.fillText("g : "+this.id_grupo, 0, 60);
-            ctx.fillText("mv: "+this.index_movimiento, 0, 75);
+            const tiempo = 1.3;
+
+            const lineHeight = 11;
+            let y = 10;
+
+            ctx.fillText(
+                `Pos:(${this.x_delta_original},${this.y_delta_original})`,
+                0,
+                y
+            );
+
+            y += lineHeight;
+
+            ctx.fillText(
+                `Mod:${this.titulo_modalidad}`,
+                0,
+                y
+            );
+            y += lineHeight;
+            ctx.fillText(
+                `Tipo:${this.titulo_tipo_trabajo}`,
+                0,
+                y
+            );
+            y += lineHeight;
+            ctx.fillText(
+                `Grp:${this.id_grupo}`,
+                0,
+                y
+            );
+            y += lineHeight;
+            ctx.fillText(
+                `Mov:${this.index_movimiento}`,
+                0,
+                y
+            );
+            y += lineHeight;
+
+            ctx.fillText(
+                `Sec:${tiempo}`,
+                0,
+                y
+            );
         }
     }
 

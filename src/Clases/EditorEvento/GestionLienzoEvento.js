@@ -1,7 +1,7 @@
 import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
 import TimelineCanvas from "./TimelineCanvas";
-import {MODALIDAD_MOVIMIENTOS} from "./ConstanteEvento";
+import {MODALIDAD_MOVIMIENTOS, TRABAJO_REPRODUCCION} from "./ConstanteEvento";
 import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 import {dibujar_rec_transparencia, dibujar_rectangulo} from "../EditorAnimacion/ImprimirAnimacion";
 
@@ -47,6 +47,8 @@ class GestionLienzoEvento{
 
     grupos_disponibles_generales = [];
     grupo_seleccionado = null;
+
+    funcionCambioTrabajo = null;
 
     constructor(eventos_, eventoLienzoEvento, setEventoAnimacion, seleccionarGrupo) {
         this.id_canvas = "lienzo-evento"
@@ -142,6 +144,8 @@ class GestionLienzoEvento{
                 if(this.timelineInstance.play){
                     this.eventos_.pausarDesEventos();
                     this.eventos_.reproducirProceso();
+                    this.tipo_trabajo = TRABAJO_REPRODUCCION;
+                    this.funcionCambioTrabajo(TRABAJO_REPRODUCCION)
                 }else{
                     this.eventos_.pausarEventos()
                 }
@@ -159,7 +163,7 @@ class GestionLienzoEvento{
 
 
             if(this.eventos_.reiniciar){
-                console.log("DEBERIA AVISAR QUE TERMINO")
+                //console.log("DEBERIA AVISAR QUE TERMINO")
                 this.timelineInstance.reiniciarAnimacion();
             }
 

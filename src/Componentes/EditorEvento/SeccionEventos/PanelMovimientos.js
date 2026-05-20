@@ -5,9 +5,9 @@ import ModalAgregarMovimiento from "./ModalAgregarMovimiento";
 import {
     MOVIMIENTOS_FIGURAS_CORTOS,
     MOVIMIENTOS_OBJETOS_CORTOS, TIPO_EFECTO_MOV_FIGURAS,
-    TIPO_EFECTO_MOV_OBJETOS
+    TIPO_EFECTO_MOV_OBJETOS, TRABAJO_EDICION_MOVIMIENTO
 } from "../../../Clases/EditorEvento/ConstanteEvento";
-import {setIndexMovSeleccionado} from "../../../Store/Configuracion/ConfigEventoSlice";
+import {setIndexMovSeleccionado, setTipoTrabajo} from "../../../Store/Configuracion/ConfigEventoSlice";
 
 function PanelMovimientos(props) {
     const [showModalEditar, setShowEditarModal] = useState(false);
@@ -37,6 +37,7 @@ function PanelMovimientos(props) {
         setMovimientoSeleccionado(mov_);
         setmovIndexSeleccionado(index);
         dispatch(setIndexMovSeleccionado(index))
+        dispatch(setTipoTrabajo(TRABAJO_EDICION_MOVIMIENTO))
     };
 
 

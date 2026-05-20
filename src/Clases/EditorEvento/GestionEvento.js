@@ -141,7 +141,7 @@ class GestionEvento{
                 const tiempo_fin = evento_.evento.tiempo_final/1000;
                 const tiempo_virtual = tiempo_evento-tiempo_inicio;
                 // console.log("tiempo inicio : ", tiempo_inicio)
-                 console.log("tiempo real   : ", tiempo_evento)
+                 //console.log("tiempo real   : ", tiempo_evento)
                 // console.log("tiempo virtual: ", tiempo_virtual)
                 // console.log("tiempo final  : ", tiempo_fin)
                 // console.log()
@@ -219,6 +219,8 @@ class GestionEvento{
             const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
             if(this.reproducir){
                 this.procesandoEvento(evento_, tiempo_evento);
+            }else{
+                this.procesandoEvento(evento_, 3);
             }
 
 

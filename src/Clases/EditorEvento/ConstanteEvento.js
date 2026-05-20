@@ -47,17 +47,21 @@ export const ARRAY_EVENTO_TIPO_MODALIDAD = {
 };
 
 export const TRABAJO_NADA_LIENZO = 0;
-export const TRABAJO_MOVER_LIENZO = 1;
-export const TRABAJO_AUMENTO_LIENZO = 2;
-export const TRABAJO_REDUCCION_LIENZO = 3;
-export const TRABAJO_POSICIONAR_MACRO = 4;
+export const TRABAJO_REPRODUCCION = 1;
+export const TRABAJO_EDICION_MOVIMIENTO = 2;
+export const TRABAJO_MOVER_LIENZO = 3;
+export const TRABAJO_AUMENTO_LIENZO = 4;
+export const TRABAJO_REDUCCION_LIENZO = 5;
+export const TRABAJO_POSICIONAR_MACRO = 6;
 
 export const ARRAY_TITULO_TRABAJO = {
     [TRABAJO_NADA_LIENZO]: "nada",
-    [TRABAJO_MOVER_LIENZO]: "mover lienzo",
-    [TRABAJO_AUMENTO_LIENZO]: "aumento lienzo",
-    [TRABAJO_REDUCCION_LIENZO]: "reduc lienzo",
+    [TRABAJO_MOVER_LIENZO]: "mov lienzo",
+    [TRABAJO_AUMENTO_LIENZO]: "aum lienzo",
+    [TRABAJO_REDUCCION_LIENZO]: "red lienzo",
     [TRABAJO_POSICIONAR_MACRO]: "pos macro",
+    [TRABAJO_REPRODUCCION]: "play",
+    [TRABAJO_EDICION_MOVIMIENTO]: "edit mov",
 };
 
 
