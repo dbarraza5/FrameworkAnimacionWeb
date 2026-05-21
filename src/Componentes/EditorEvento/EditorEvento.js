@@ -261,6 +261,7 @@ function EditorEvento(props){
         // if(timelineInstance){
         //     timelineInstance.cambioModalidad(tipo_modalidad_trabajo, id_evento_seleccionado);
         // }
+        gestionEventoLienzo.id_evento_seleccionado = id_evento_seleccionado;
     }, [tipo_modalidad_trabajo, id_evento_seleccionado]);
 
 

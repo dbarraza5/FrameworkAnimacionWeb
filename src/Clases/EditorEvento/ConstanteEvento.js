@@ -53,6 +53,7 @@ export const TRABAJO_MOVER_LIENZO = 3;
 export const TRABAJO_AUMENTO_LIENZO = 4;
 export const TRABAJO_REDUCCION_LIENZO = 5;
 export const TRABAJO_POSICIONAR_MACRO = 6;
+export const TRABAJO_SELECCION_GRUPO = 7;
 
 export const ARRAY_TITULO_TRABAJO = {
     [TRABAJO_NADA_LIENZO]: "nada",
@@ -62,6 +63,7 @@ export const ARRAY_TITULO_TRABAJO = {
     [TRABAJO_POSICIONAR_MACRO]: "pos macro",
     [TRABAJO_REPRODUCCION]: "play",
     [TRABAJO_EDICION_MOVIMIENTO]: "edit mov",
+    [TRABAJO_SELECCION_GRUPO]: "select grp",
 };
 
 

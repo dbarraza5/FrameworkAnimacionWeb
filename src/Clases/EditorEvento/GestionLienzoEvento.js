@@ -1,7 +1,12 @@
 import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
 import TimelineCanvas from "./TimelineCanvas";
-import {MODALIDAD_MOVIMIENTOS, TRABAJO_REPRODUCCION} from "./ConstanteEvento";
+import {
+    MODALIDAD_MOVIMIENTOS, TRABAJO_EDICION_MOVIMIENTO,
+    TRABAJO_NADA_LIENZO,
+    TRABAJO_REPRODUCCION,
+    TRABAJO_SELECCION_GRUPO
+} from "./ConstanteEvento";
 import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 import {dibujar_rec_transparencia, dibujar_rectangulo} from "../EditorAnimacion/ImprimirAnimacion";
 
@@ -39,8 +44,9 @@ class GestionLienzoEvento{
     configuracion_lienzo = new ConfiguracionLienzoEvento();
 
     tipo_modalidad = null;
-    tipo_trabajo = null;
+    tipo_trabajo = TRABAJO_NADA_LIENZO;
     index_mov_seleccionado =null;
+    id_evento_seleccionado =null;
 
     timelineInstance = null;
     eventoLienzoEvento =null;
@@ -93,25 +99,28 @@ class GestionLienzoEvento{
         this.eventos_.imprimirEventos();
 
         if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
-            for (let i=0; i < this.grupos_disponibles_generales.length; i++){
-                const grupos_ = [this.grupos_disponibles_generales[i]]
-                const rect_seleccion =
-                    OperacionesGrupo.calcularCentroGruposSeleccionados(
-                        this.eventos_.gestion_grupos.get_lista_grupos_by_IDs(grupos_)
-                    )
+            if(this.tipo_trabajo === TRABAJO_SELECCION_GRUPO){
+                for (let i=0; i < this.grupos_disponibles_generales.length; i++){
+                    const grupos_ = [this.grupos_disponibles_generales[i]]
+                    const rect_seleccion =
+                        OperacionesGrupo.calcularCentroGruposSeleccionados(
+                            this.eventos_.gestion_grupos.get_lista_grupos_by_IDs(grupos_)
+                        )
 
-                const x_select_g = rect_seleccion.inf_hor+this.configuracion_lienzo.x_delta_original;
-                const y_select_g = rect_seleccion.inf_ver+this.configuracion_lienzo.y_delta_original;
-                dibujar_rectangulo(ctx, "#76ff14", x_select_g, y_select_g,
-                    rect_seleccion.ancho, rect_seleccion.alto)
-
-                // console.log(this.grupos_disponibles_generales[i])
-                // console.log(this.grupo_seleccionado)
-                // console.log("=============================")
-                if(this.grupo_seleccionado===this.grupos_disponibles_generales[i]){
-                    dibujar_rec_transparencia(ctx, "#76ff14","#c73cee", x_select_g, y_select_g,
+                    const x_select_g = rect_seleccion.inf_hor+this.configuracion_lienzo.x_delta_original;
+                    const y_select_g = rect_seleccion.inf_ver+this.configuracion_lienzo.y_delta_original;
+                    dibujar_rectangulo(ctx, "#76ff14", x_select_g, y_select_g,
                         rect_seleccion.ancho, rect_seleccion.alto)
+                    if(this.grupo_seleccionado===this.grupos_disponibles_generales[i]){
+                        dibujar_rec_transparencia(ctx, "#76ff14","#c73cee", x_select_g, y_select_g,
+                            rect_seleccion.ancho, rect_seleccion.alto)
+                    }
                 }
+            }
+            if(this.tipo_trabajo === TRABAJO_EDICION_MOVIMIENTO){
+                console.log("[evento seleccionado]: ", this.id_evento_seleccionado)
+                console.log("[grupo  seleccionado]: ", this.grupo_seleccionado)
+                console.log("[movimu seleccionado]: ", this.index_mov_seleccionado)
             }
 
         }
@@ -167,7 +176,20 @@ class GestionLienzoEvento{
                 this.timelineInstance.reiniciarAnimacion();
             }
 
-            if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
+
+            this.procesoEdicionMovimientos();
+            this.actualizarLienzo();
+            this.timelineInstance.reiniciar();
+
+        }
+
+        this.eventoLienzoEvento.reset()
+    }
+
+    procesoEdicionMovimientos(){
+        if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
+            console.log(this.tipo_trabajo)
+            if(this.tipo_trabajo === TRABAJO_SELECCION_GRUPO){
                 this.grupos_disponibles_generales = this.eventos_.gestion_grupos.get_nombres_grupos_hijos("root");
                 //console.log(this.grupos_disponibles_generales);
 
@@ -198,12 +220,7 @@ class GestionLienzoEvento{
                 }
             }
 
-            this.actualizarLienzo();
-            this.timelineInstance.reiniciar();
-
         }
-
-        this.eventoLienzoEvento.reset()
     }
 
 
