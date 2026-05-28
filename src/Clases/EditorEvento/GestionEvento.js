@@ -123,6 +123,24 @@ class GestionEvento{
         return this.eventos.find(evento => evento.evento.nombre === nombreEvento) || null;
     }
 
+    obtenerMovimiento(nombreEvento, id_objeto, indice_movimiento){
+        // 1. Buscamos el evento de forma directa por su nombre
+        const eventoEncontrado = this.eventos.find(e => e.evento.nombre === nombreEvento);
+
+        if (!eventoEncontrado) return null;
+
+        // 2. Buscamos el objeto dentro de la lista de objetos de ese evento
+        const objetoEncontrado = eventoEncontrado.evento.objetos.find(obj => obj.id_objeto === id_objeto);
+
+        if (!objetoEncontrado) return null;
+
+        // 3. Accedemos al movimiento por su índice usando el método .at() o validando la posición
+        const movimiento = objetoEncontrado.movimientos[indice_movimiento];
+
+        // Si existe el movimiento en ese índice, lo devuelve; si no, devuelve null
+        return movimiento || null;
+    }
+
     obtenerIndiceEvento(nombreEvento) {
         return this.eventos.findIndex(evento => evento.evento.nombre === nombreEvento);
     }
@@ -151,6 +169,9 @@ class GestionEvento{
                         const objeto = evento_.evento.objetos[obj_i];
                         for(let j=0; j<objeto.movimientos.length; j++){
                             const movimiento = objeto.movimientos[j];
+                            if(!movimiento.activo){
+                                continue;
+                            }
                             const tiempo_inicio_mov = movimiento.tiempo_inicio/1000;
                             const tiempo_fin_mov = movimiento.tiempo_final/1000;
                             const tiempo_virtual_mov = tiempo_virtual-tiempo_inicio_mov;
@@ -220,7 +241,7 @@ class GestionEvento{
             if(this.reproducir){
                 this.procesandoEvento(evento_, tiempo_evento);
             }else{
-                this.procesandoEvento(evento_, 3);
+                //this.procesandoEvento(evento_, 0.5);
             }
 
 

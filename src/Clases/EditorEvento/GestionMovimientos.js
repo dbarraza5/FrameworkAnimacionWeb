@@ -131,34 +131,19 @@ function calcularAnguloOrbita(velocidad, tiempo, anguloInicial, radio) {
  * @param {number} direction - 1 para horario, 2 para anti-horario.
  * @returns {number} - El nuevo ángulo en radianes.
  */
-function getNewAngle(center, pivot, time, velocity, direction) {
-    // 1. Calcular el radio (distancia entre centro y pivote)
-    // Usamos el teorema de Pitágoras: r = sqrt((x2-x1)^2 + (y2-y1)^2)
-    const dx = pivot.x - center.x;
-    const dy = pivot.y - center.y;
-    const radius = Math.sqrt(dx * dx + dy * dy);
+function getNewAngle(currentAngle, deltaTime, velocity, direction) {
 
-    // 2. Calcular el ángulo inicial (en radianes) usando arcotangente
-    // Math.atan2 devuelve el ángulo entre el eje X positivo y el punto (dx, dy)
-    const initialAngle = Math.atan2(dy, dx);
+    const deltaAngle = velocity * deltaTime;
 
-    // 3. Calcular el desplazamiento angular (Δθ = ω * t)
-    const deltaAngle = velocity * time;
-
-    // 4. Determinar el nuevo ángulo según el sentido
-    // Sentido Horario (1): El ángulo disminuye en el sistema de coordenadas estándar
-    // Sentido Anti-horario (2): El ángulo aumenta
-    let finalAngle;
     if (direction === 1) {
-        finalAngle = initialAngle - deltaAngle;
+        currentAngle += deltaAngle;
     } else {
-        finalAngle = initialAngle + deltaAngle;
+        currentAngle -= deltaAngle;
     }
 
-    // Opcional: Normalizar el ángulo entre -PI y PI (o 0 y 2PI)
-    // Esto es útil para mantener los valores dentro de un rango estándar
-    return Math.atan2(Math.sin(finalAngle), Math.cos(finalAngle));
+    return deltaAngle;
 }
+
 
 class GestionMovimientos{
 
@@ -253,32 +238,33 @@ class GestionMovimientos{
             const velocidad = datos.velAngular;
             const piv_x = datos.pivoteX;
             const piv_y = datos.pivoteY;
-            const sentido = datos.sentido;
+            const sentido = 1//datos.sentido;
 
-            // const angulo_rotacion = Fisica.angulo_recta(piv_x, piv_y
-            //     ,0, 0)*(80*tiempo);
 
             //const angulo_rotacion = calcularAnguloOrbita(velocidad, tiempo, 45, 20)
             const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos)
 
-            // const angulo_rotacion = Fisica.angulo_recta(200, 200
-            //      ,0, 0)*(80*tiempo);
+             // const angulo_rotacion = Fisica.angulo_recta(centro_.centro_x, centro_.centro_y
+             //        ,piv_x, piv_y);
 
-            const angulo_new = getNewAngle({ x: piv_x, y: piv_y },
-                { x: centro_.centro_x, y: centro_.centro_y }, // Claves x e y definidas
-                                       // Claves x e y definidas
+            const angulo_rotacion = Fisica.angulo_recta(piv_x, piv_y, centro_.centro_x, centro_.centro_y);
+
+            //const angulo_rotacion = 45//45;
+            console.log("angulo original: ",angulo_rotacion);
+            const angulo_radianes = getNewAngle(angulo_rotacion,
                 tiempo,
                 velocidad,
                 sentido
             );
-            const anguloGrados = angulo_new * (180 / Math.PI);
-            // console.log(centro_)
-            // console.log("NEW ANGULO: ", anguloGrados)
-            //
-            // console.log("angulo: ", angulo_rotacion);
-            // console.log(lista_grupos);
-            animacion.moverGruposRotacionLienzoPivote(lista_grupos, anguloGrados, piv_x,
+
+            // let anguloGrados = (angulo_radianes * 180 / Math.PI) % 360;
+             console.log("angulo nuevo: =",angulo_radianes);
+
+            animacion.moverGruposRotacionLienzoPivote(lista_grupos, angulo_radianes, piv_x,
                 piv_y)
+
+            // const angulo_radianes = getNewAngle({ x: centro_.centro_x, y: centro_.centro_y },
+            //     { x: piv_x, y: piv_y },
         }
         return null;
     }

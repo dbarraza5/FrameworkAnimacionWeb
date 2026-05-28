@@ -2,7 +2,7 @@ import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
 import TimelineCanvas from "./TimelineCanvas";
 import {
-    MODALIDAD_MOVIMIENTOS, TRABAJO_EDICION_MOVIMIENTO,
+    MODALIDAD_MOVIMIENTOS, MOV_ROTACION, TRABAJO_EDICION_MOVIMIENTO,
     TRABAJO_NADA_LIENZO,
     TRABAJO_REPRODUCCION,
     TRABAJO_SELECCION_GRUPO
@@ -118,9 +118,12 @@ class GestionLienzoEvento{
                 }
             }
             if(this.tipo_trabajo === TRABAJO_EDICION_MOVIMIENTO){
-                console.log("[evento seleccionado]: ", this.id_evento_seleccionado)
-                console.log("[grupo  seleccionado]: ", this.grupo_seleccionado)
-                console.log("[movimu seleccionado]: ", this.index_mov_seleccionado)
+                 // console.log("[evento seleccionado]: ", this.id_evento_seleccionado)
+                 // console.log("[grupo  seleccionado]: ", this.grupo_seleccionado)
+                 // console.log("[movimu seleccionado]: ", this.index_mov_seleccionado)
+
+                //this.eventos_.
+                this.imprimiendoMovimientosObjeto()
             }
 
         }
@@ -188,7 +191,7 @@ class GestionLienzoEvento{
 
     procesoEdicionMovimientos(){
         if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
-            console.log(this.tipo_trabajo)
+            //console.log(this.tipo_trabajo)
             if(this.tipo_trabajo === TRABAJO_SELECCION_GRUPO){
                 this.grupos_disponibles_generales = this.eventos_.gestion_grupos.get_nombres_grupos_hijos("root");
                 //console.log(this.grupos_disponibles_generales);
@@ -223,7 +226,75 @@ class GestionLienzoEvento{
         }
     }
 
+    imprimiendoMovimientosObjeto(){
+        const grupo_seleccionado_ = this.eventos_.gestion_grupos.get_grupos_padre_ehijos(this.grupo_seleccionado);
+        const rect_seleccion =
+            OperacionesGrupo.calcularCentroGruposSeleccionados(
+                grupo_seleccionado_
+            )
+        const canvas = document.getElementById(this.id_canvas);
+        const ctx = canvas.getContext('2d');
+        const movimiento = this.eventos_.obtenerMovimiento(this.id_evento_seleccionado, this.grupo_seleccionado, this.index_mov_seleccionado)
+        console.log("ROTACIONNNNN111111111111")
+        if(movimiento){
+            const tipo = movimiento.tipo;
+            const datos = movimiento.datos;
+            console.log("ROTACIONNNNN")
+            if(tipo === MOV_ROTACION){
+                console.log(tipo)
+                const vel_angular = datos.velAngular;
+                const pivote_x = datos.pivoteX;
+                const pivote_y = datos.pivoteY;
+                const x_centro = rect_seleccion.centro_x;
+                const y_centro = rect_seleccion.centro_y;
 
+                console.log(x_centro, " ", y_centro)
+                console.log(pivote_x, " ", pivote_y)
+                // =========================
+                // DISTANCIA / RADIO
+                // =========================
+                const dx = pivote_x - x_centro;
+                const dy = pivote_y - y_centro;
+
+                const radio = Math.sqrt(dx * dx + dy * dy);
+
+                ctx.save();
+
+                // =========================
+                // ESTILO PUNTEADO
+                // =========================
+                ctx.setLineDash([6, 6]);
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = '#8b5cf6';
+
+                // =========================
+                // LINEA CENTRO -> PIVOTE
+                // =========================
+                ctx.beginPath();
+                ctx.moveTo(x_centro, y_centro);
+                ctx.lineTo(pivote_x, pivote_y);
+                ctx.stroke();
+
+                // =========================
+                // CIRCULO DE TRAYECTORIA
+                // =========================
+                ctx.beginPath();
+                ctx.arc(
+                    pivote_x,
+                    pivote_y,
+                    radio,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.stroke();
+
+                ctx.restore();
+                //console.log(movimiento)
+            }
+
+        }
+
+    }
 }
 
 export default GestionLienzoEvento
