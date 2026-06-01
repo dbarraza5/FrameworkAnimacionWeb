@@ -141,6 +141,33 @@ class GestionEvento{
         return movimiento || null;
     }
 
+
+    actualizarDatosMovimiento(nombreEvento, id_objeto, indice_movimiento, nuevosDatos) {
+        // 1. Buscar evento
+        const eventoEncontrado = this.eventos.find(
+            e => e.evento.nombre === nombreEvento
+        );
+
+        if (!eventoEncontrado) return false;
+
+        // 2. Buscar objeto
+        const objetoEncontrado = eventoEncontrado.evento.objetos.find(
+            obj => obj.id_objeto === id_objeto
+        );
+
+        if (!objetoEncontrado) return false;
+
+        // 3. Buscar movimiento
+        const movimiento = objetoEncontrado.movimientos[indice_movimiento];
+
+        if (!movimiento) return false;
+
+        // 4. Reemplazar datos
+        movimiento.datos = nuevosDatos;
+
+        return true;
+    }
+
     obtenerIndiceEvento(nombreEvento) {
         return this.eventos.findIndex(evento => evento.evento.nombre === nombreEvento);
     }

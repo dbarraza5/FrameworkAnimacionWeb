@@ -56,6 +56,9 @@ class GestionLienzoEvento{
 
     funcionCambioTrabajo = null;
 
+    edicion_mov_rotacion_pivote = false;
+    edicion_mov_rotacion_velocidad = false;
+
     constructor(eventos_, eventoLienzoEvento, setEventoAnimacion, seleccionarGrupo) {
         this.id_canvas = "lienzo-evento"
         this.x = 0;
@@ -223,6 +226,92 @@ class GestionLienzoEvento{
                 }
             }
 
+            if(this.tipo_trabajo === TRABAJO_EDICION_MOVIMIENTO){
+                const grupo_seleccionado_ = this.eventos_.gestion_grupos.get_grupos_padre_ehijos(this.grupo_seleccionado);
+                const rect_seleccion =
+                    OperacionesGrupo.calcularCentroGruposSeleccionados(
+                        grupo_seleccionado_
+                    )
+                const movimiento = this.eventos_.obtenerMovimiento(this.id_evento_seleccionado, this.grupo_seleccionado, this.index_mov_seleccionado)
+
+                if(movimiento){
+                    const tipo = movimiento.tipo;
+                    const datos = movimiento.datos;
+                    if(tipo === MOV_ROTACION){
+                        console.log(tipo)
+                        const vel_angular = parseInt(datos.velAngular);
+                        let pivote_x = parseInt(datos.pivoteX);
+                        let pivote_y = parseInt(datos.pivoteY);
+                        const x_centro = rect_seleccion.centro_x;
+                        const y_centro = rect_seleccion.centro_y;
+
+                        // 1. DISTANCIA AL PIVOTE
+                        const distanciaMouse = Math.sqrt(
+                            (this.x_mouse - pivote_x) ** 2 +
+                            (this.y_mouse - pivote_y) ** 2
+                        );
+
+                        // ========================================================
+                        // 2. DETECCIÓN DE LA CABEZA DE LA FLECHA
+                        // ========================================================
+                        const flecha_largo = vel_angular * 0.3;
+                        const punta_x = pivote_x + flecha_largo;
+                        const punta_y = pivote_y;
+
+                        // Calculamos la distancia entre el mouse y la punta de la flecha
+                        const distanciaPuntaFlecha = Math.sqrt(
+                            (this.x_mouse - punta_x) ** 2 +
+                            (this.y_mouse - punta_y) ** 2
+                        );
+
+                        // Le damos un radio de tolerancia de 8 píxeles para que sea fácil de cliquear
+                        const clickEnPuntaFlecha = distanciaPuntaFlecha <= 8;
+                        // ========================================================
+
+                        // LÓGICA DE EDICIÓN DEL PIVOTE
+                        if(!this.edicion_mov_rotacion_pivote && !this.edicion_mov_rotacion_velocidad){
+
+                            if(distanciaMouse <= 5 && this.eventoLienzoEvento.mouse_only_click){
+                                this.edicion_mov_rotacion_pivote = true;
+                            }
+                            // Si el usuario toca la flecha, activamos su propio modo de edición
+                            else if(clickEnPuntaFlecha && this.eventoLienzoEvento.mouse_only_click){
+                                this.edicion_mov_rotacion_velocidad = true;
+                            }
+
+                        } else if(this.edicion_mov_rotacion_pivote) {
+                            // Guardar pivote existente...
+                            if(this.eventoLienzoEvento.mouse_only_click){
+                                this.edicion_mov_rotacion_pivote = false;
+                                datos.pivoteX = this.x_mouse;
+                                datos.pivoteY = this.y_mouse;
+                                this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
+                                    this.grupo_seleccionado,
+                                    this.index_mov_seleccionado,
+                                    datos);
+                            }
+                        }
+                        // LÓGICA PARA MODIFICAR LA VELOCIDAD CON EL MOUSE
+                        else if(this.edicion_mov_rotacion_velocidad) {
+                            if(this.eventoLienzoEvento.mouse_only_click){
+                                this.edicion_mov_rotacion_velocidad = false;
+
+                                // Calculamos la nueva velocidad basada en la distancia del mouse al pivote
+                                // Si el mouse está a la izquierda del pivote, la velocidad debe ser negativa
+                                const nuevo_largo = this.x_mouse - pivote_x;
+                                const nueva_vel = Math.round(nuevo_largo / 0.3);
+
+                                datos.velAngular = nueva_vel;
+
+                                this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
+                                    this.grupo_seleccionado,
+                                    this.index_mov_seleccionado,
+                                    datos);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -235,16 +324,21 @@ class GestionLienzoEvento{
         const canvas = document.getElementById(this.id_canvas);
         const ctx = canvas.getContext('2d');
         const movimiento = this.eventos_.obtenerMovimiento(this.id_evento_seleccionado, this.grupo_seleccionado, this.index_mov_seleccionado)
-        console.log("ROTACIONNNNN111111111111")
+
         if(movimiento){
             const tipo = movimiento.tipo;
             const datos = movimiento.datos;
-            console.log("ROTACIONNNNN")
+
             if(tipo === MOV_ROTACION){
                 console.log(tipo)
-                const vel_angular = datos.velAngular;
-                const pivote_x = datos.pivoteX;
-                const pivote_y = datos.pivoteY;
+                const vel_angular = parseInt(datos.velAngular);
+                let pivote_x = parseInt(datos.pivoteX);
+                let pivote_y = parseInt(datos.pivoteY);
+                if(this.edicion_mov_rotacion_pivote){
+                    pivote_x = this.x_mouse;
+                    pivote_y = this.y_mouse;
+                }
+
                 const x_centro = rect_seleccion.centro_x;
                 const y_centro = rect_seleccion.centro_y;
 
@@ -287,6 +381,77 @@ class GestionLienzoEvento{
                     Math.PI * 2
                 );
                 ctx.stroke();
+
+
+                // =========================
+                // PEQUEÑA CIRCUNFERENCIA EN EL PIVOTE
+                // =========================
+                ctx.setLineDash([]);
+
+                ctx.beginPath();
+                ctx.fillStyle = '#8b5cf6';
+
+                ctx.arc(
+                    pivote_x,
+                    pivote_y,
+                    5,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fill();
+
+                // =========================
+// FLECHA DE VELOCIDAD ANGULAR
+// =========================
+                ctx.setLineDash([]); // Línea continua
+                ctx.lineWidth = 3;
+
+// 1. CONTROL DE ESTADO: Si está editando, cambia a un color llamativo (ej: Amarillo/Naranja #f59e0b)
+                const estaEditandoVel = this.edicion_mov_rotacion_velocidad;
+                const colorFlecha = estaEditandoVel ? '#f59e0b' : '#ef4444';
+
+                ctx.strokeStyle = colorFlecha;
+                ctx.fillStyle = colorFlecha;
+
+// 2. CÁLCULO DEL LARGO DINÁMICO
+                let flecha_largo = 0;
+                let direccion = 1;
+
+                if (estaEditandoVel) {
+                    // Si edita, el largo es la distancia directa en X desde el pivote al mouse
+                    flecha_largo = this.x_mouse - pivote_x;
+                    direccion = flecha_largo >= 0 ? 1 : -1;
+                } else {
+                    // Si no edita, usa el valor guardado
+                    flecha_largo = vel_angular * 0.3;
+                    direccion = vel_angular > 0 ? 1 : -1;
+                }
+
+// Definimos el punto final de la flecha en el eje X
+                const destino_x = pivote_x + flecha_largo;
+                const destino_y = pivote_y;
+
+// Dibujamos si hay velocidad guardada O si el usuario está arrastrando el mouse
+                if (vel_angular !== 0 || estaEditandoVel) {
+
+                    // 1. Dibujar el cuerpo de la flecha (línea recta)
+                    ctx.beginPath();
+                    ctx.moveTo(pivote_x, pivote_y);
+                    ctx.lineTo(destino_x, destino_y);
+                    ctx.stroke();
+
+                    // 2. Dibujar la punta de la flecha
+                    const tamaño_punta = 8; // Tamaño del triángulo
+
+                    ctx.beginPath();
+                    ctx.moveTo(destino_x, destino_y);
+                    // Los otros dos puntos del triángulo retroceden en base a la dirección calculada
+                    ctx.lineTo(destino_x - tamaño_punta * direccion, destino_y - 5);
+                    ctx.lineTo(destino_x - tamaño_punta * direccion, destino_y + 5);
+                    ctx.closePath();
+                    ctx.fill();
+                }
 
                 ctx.restore();
                 //console.log(movimiento)
