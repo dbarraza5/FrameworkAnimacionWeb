@@ -182,36 +182,36 @@ class GestionAnimacion{
         })
     }
 
-    get_figura(nombre_grupo, nombre_figura){
-        const grupo = this.grupos_figuras.filter((g)=>{
-            return g.nombre===nombre_grupo
-        })
-        if(grupo.length>0){
-            const figura = grupo[0].lista_figuras.filter((f)=>f.nombre===nombre_figura)
-            if(figura.length>0){
-                return figura[0]
+    get_figura(nombre_grupo, nombre_figura, clonar = false) {
+        // .find() devuelve directamente el elemento o undefined si no lo encuentra
+        const grupo = this.grupos_figuras.find(g => g.nombre === nombre_grupo);
+        if (grupo) {
+            const figura = grupo.lista_figuras.find(f => f.nombre === nombre_figura);
+            if (figura) {
+                // Si 'clonar' es true, devuelve una copia profunda. Si no, devuelve el original.
+                return clonar ? structuredClone(figura) : figura;
             }
         }
         return null;
     }
 
-    set_figura(nombre_grupo, figura_){
-        this.grupos_figuras = this.grupos_figuras.map((g)=>{
-            if(g.nombre === nombre_grupo){
-                g.lista_figuras.map((figura)=>{
-                    if(figura.nombre === figura_.nombre){
-                        if(figura_.tipo_figura === "RECTA"){
-                            //console.log(figura_)
-                            return this.set_recta(figura_)
+    set_figura(nombre_grupo, figura_) {
+        this.grupos_figuras = this.grupos_figuras.map((g) => {
+            if (g.nombre === nombre_grupo) {
+                // Asignamos el nuevo array devuelto por .map() a g.lista_figuras
+                g.lista_figuras = g.lista_figuras.map((figura) => {
+                    if (figura.nombre === figura_.nombre) {
+                        if (figura_.tipo_figura === "RECTA") {
+                            return this.set_recta(figura_);
                         }
-                        return this.duplicar_figura(figura_)
+                        return this.duplicar_figura(figura_);
                     }
-                    return figura;
-                })
-                return g;
+                    return figura; // Retorna la figura intacta si no es la buscada
+                });
+                return g; // Ahora sí retornamos 'g' con su lista actualizada
             }
             return g;
-        })
+        });
     }
 
     duplicar_figuras_id_figuras(nombre_grupo, lista_id_figuras){
@@ -535,12 +535,12 @@ function normalizar_recta(recta1){
         tipo_figura: recta1.tipo_figura,
         atributos: {}
     }
-    recta1.atributos["x1"] = x1_;
-    recta1.atributos["y1"] = y1_;
-    recta1.atributos["x2"] = x2_;
-    recta1.atributos["y2"] = y2_;
-    recta1.atributos["cx"] = parseInt(recta1.atributos.cx)+cx_;
-    recta1.atributos["cy"] = parseInt(recta1.atributos.cy)+cy_;
+    recta.atributos["x1"] = x1_;
+    recta.atributos["y1"] = y1_;
+    recta.atributos["x2"] = x2_;
+    recta.atributos["y2"] = y2_;
+    recta.atributos["cx"] = parseInt(recta1.atributos.cx)+cx_;
+    recta.atributos["cy"] = parseInt(recta1.atributos.cy)+cy_;
     //console.log(recta_nueva)
     return recta
 }

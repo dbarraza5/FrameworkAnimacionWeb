@@ -5,6 +5,7 @@ import {ImprimirAnimacion} from "../EditorAnimacion/ImprimirAnimacion";
 import ConfiguracionLienzo from "../EditorAnimacion/ConfiguracionLienzo";
 import TimelineCanvas from "./TimelineCanvas";
 import {TIPO_EFECTO_MOV_FIGURAS, TIPO_EFECTO_MOV_OBJETOS} from "./ConstanteEvento";
+import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 
 let tiempo_universal=performance.now();
 
@@ -27,6 +28,7 @@ class GestionEvento{
     tiempo=new Tiempo();
 
     movimientos_grupos = {};
+    movimientos_figuras = {};
     copia_grupos = [];
     gestion_eventos = null;
     gestion_grupos = null;
@@ -185,15 +187,12 @@ class GestionEvento{
                 const tiempo_inicio = evento_.evento.tiempo_inicio/1000;
                 const tiempo_fin = evento_.evento.tiempo_final/1000;
                 const tiempo_virtual = tiempo_evento-tiempo_inicio;
-                // console.log("tiempo inicio : ", tiempo_inicio)
-                 //console.log("tiempo real   : ", tiempo_evento)
-                // console.log("tiempo virtual: ", tiempo_virtual)
-                // console.log("tiempo final  : ", tiempo_fin)
-                // console.log()
+
                 if(tiempo_inicio<=tiempo_evento
                     && tiempo_fin>=tiempo_evento){
                     for(let obj_i=0; obj_i<evento_.evento.objetos.length; obj_i++){
                         const objeto = evento_.evento.objetos[obj_i];
+                        console.log("[=============================")
                         for(let j=0; j<objeto.movimientos.length; j++){
                             const movimiento = objeto.movimientos[j];
                             if(!movimiento.activo){
@@ -208,27 +207,58 @@ class GestionEvento{
                                 const tipo = movimiento.tipo;
                                 const tipoEfecto = movimiento.tipo_efecto;
                                 const datos = movimiento.datos;
-                                let resultado = null;
+                                let resultado_grupos = null;
+                                let resultado_figuras = null;
                                 if(tipoEfecto === TIPO_EFECTO_MOV_OBJETOS){
-                                    resultado = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos);
+                                    resultado_grupos = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos);
                                 }
                                 if(tipoEfecto === TIPO_EFECTO_MOV_FIGURAS){
                                     // console.log("NOMBRE OBJETO: ",objeto.nombre);
                                     // console.log(objeto);
                                     const lista_grupos_originales = this.gestion_grupos_originales.get_grupos_padre_ehijos(objeto.id_objeto);
                                     //const lista_grupos = this.gestion_grupos.get_grupos_padre_ehijos(objeto.nombre);
-                                    resultado = GestionMovimientos.movimientoFiguras(tiempo_virtual_mov, tipo, datos, this.gestion_grupos, lista_grupos_originales);
+
+                                    resultado_figuras = GestionMovimientos.movimientoFiguras(tiempo_virtual_mov, tipo, datos, this.gestion_grupos, lista_grupos_originales);
+                                    console.log(resultado_figuras)
                                 }
-                                if(resultado){
-                                    const x = resultado.x;
-                                    const y = resultado.y;
+                                if(resultado_grupos){
+                                    const x = resultado_grupos.x;
+                                    const y = resultado_grupos.y;
 
                                     this.movimientos_grupos[objeto.id_objeto].x+=x;
                                     this.movimientos_grupos[objeto.id_objeto].y+=y;
                                 }
 
+                                if(resultado_figuras){
+                                    //this.movimientos_figuras
+                                    for (const hash in resultado_figuras) {
+                                        const nuevo = resultado_figuras[hash];
+                                        // Primera vez que aparece la figura
+                                        if (!this.movimientos_figuras[hash]) {
+                                            this.movimientos_figuras[hash] = structuredClone(nuevo);
+                                            continue;
+                                        }
+
+                                        const acumulado = this.movimientos_figuras[hash];
+                                        for (const atributo in nuevo) {
+                                            // No sumar strings
+                                            if (typeof nuevo[atributo] !== "number") {
+                                                acumulado[atributo] = nuevo[atributo];
+                                                continue;
+                                            }
+                                            if (typeof acumulado[atributo] !== "number") {
+                                                acumulado[atributo] = nuevo[atributo];
+                                                continue;
+                                            }
+                                            acumulado[atributo] += nuevo[atributo];
+                                        }
+                                    }
+                                }
+
                             }
                         }
+                        console.log(this.movimientos_figuras)
+                        console.log("=============================]")
                     }
                     //console.log(JSON.parse(JSON.stringify(this.movimientos_grupos)))
                 }else{
@@ -257,11 +287,10 @@ class GestionEvento{
             }
 
             for (let nombre_grupo in this.movimientos_grupos){
-                // const objeto = this.movimientos_grupos[nombre_grupo];
-                // console.log(objeto)
                 this.movimientos_grupos[nombre_grupo]['x']=0;
                 this.movimientos_grupos[nombre_grupo]['y']=0;
             }
+            this.movimientos_figuras = {};
 
             const evento_ = this.obtenerEvento("EventoGeneral");
             const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
@@ -272,14 +301,6 @@ class GestionEvento{
             }
 
 
-            // for(let i=0; i<this.gestion_grupos.grupos_figuras.length; i++){
-            //     const grupo_ = this.gestion_grupos_originales.grupos_figuras[i];
-            //     const x = grupo_.cx+this.movimientos_grupos[grupo_.nombre].x;
-            //     const y = grupo_.cy+this.movimientos_grupos[grupo_.nombre].y;
-            //     this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cx", x);
-            //     this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
-            //     //console.log(`[CXY] MOV ${x}, ${y}`);
-            // }
 
             for (let nombre_grupo in this.movimientos_grupos) {
                 const grupo_ = this.gestion_grupos_originales.getGrupo(nombre_grupo)
@@ -291,6 +312,42 @@ class GestionEvento{
                 }
             }
 
+            for (const [clave, valor] of Object.entries(this.movimientos_figuras)) {
+                console.log(`K ${clave}: ${valor}`);
+                console.log(valor)
+                const lista_grupos_originales = this.gestion_grupos_originales.get_grupos_padre_ehijos(valor.nombre_grupo);
+                const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos_originales)
+                const grupo_ = this.gestion_grupos_originales.getGrupo(valor.nombre_grupo)
+                const figura1_=this.gestion_grupos_originales.get_figura(valor.nombre_grupo, valor.nombre_figura, true)
+                if (figura1_){
+                    const pivote_x = 0;
+                    const pivote_y = 0;
+                    let x = valor.pivote_x//pivote_x - grupo_.cx+centro_.centro_x;
+                    let y = valor.pivote_y//pivote_y - grupo_.cy+centro_.centro_y;
+                    if (figura1_.tipo_figura === "PUNTO" || figura1_.tipo_figura === "CIRCULO") {
+                        figura1_.atributos.cx = x+valor.cx;
+                        figura1_.atributos.cy = y+valor.cy;
+                    }
+
+                    if (figura1_.tipo_figura === "RECTA") {
+                        figura1_.atributos.x1 = valor.x1+x;
+                        figura1_.atributos.y1 = valor.y1+y;
+
+                        figura1_.atributos.x2 = valor.x2+x;
+                        figura1_.atributos.y2 = valor.y2+y;
+
+                        figura1_.atributos.cx = valor.cx;
+                        figura1_.atributos.cy = valor.cy;
+
+                        console.log("[figura1_]")
+                        //console.log(figura1_)
+                        this.gestion_grupos.set_figura(valor.nombre_grupo, figura1_)
+                        console.log(this.gestion_grupos.get_figura(valor.nombre_grupo, valor.nombre_figura))
+                    }
+
+
+                }
+            }
 
         }
         if(this.detener){

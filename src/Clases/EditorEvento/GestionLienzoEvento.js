@@ -238,12 +238,12 @@ class GestionLienzoEvento{
                     const tipo = movimiento.tipo;
                     const datos = movimiento.datos;
                     if(tipo === MOV_ROTACION){
-                        console.log(tipo)
-                        const vel_angular = parseInt(datos.velAngular);
-                        let pivote_x = parseInt(datos.pivoteX);
-                        let pivote_y = parseInt(datos.pivoteY);
+                        //console.log(tipo)
                         const x_centro = rect_seleccion.centro_x;
                         const y_centro = rect_seleccion.centro_y;
+                        const vel_angular = parseInt(datos.velAngular);
+                        let pivote_x = parseInt(datos.pivoteX)+x_centro;
+                        let pivote_y = parseInt(datos.pivoteY)+y_centro;
 
                         // 1. DISTANCIA AL PIVOTE
                         const distanciaMouse = Math.sqrt(
@@ -331,19 +331,20 @@ class GestionLienzoEvento{
 
             if(tipo === MOV_ROTACION){
                 console.log(tipo)
+                const x_centro = rect_seleccion.centro_x;
+                const y_centro = rect_seleccion.centro_y;
                 const vel_angular = parseInt(datos.velAngular);
-                let pivote_x = parseInt(datos.pivoteX);
-                let pivote_y = parseInt(datos.pivoteY);
+                let pivote_x = parseInt(datos.pivoteX)+x_centro;
+                let pivote_y = parseInt(datos.pivoteY)+y_centro;
                 if(this.edicion_mov_rotacion_pivote){
                     pivote_x = this.x_mouse;
                     pivote_y = this.y_mouse;
                 }
 
-                const x_centro = rect_seleccion.centro_x;
-                const y_centro = rect_seleccion.centro_y;
 
-                console.log(x_centro, " ", y_centro)
-                console.log(pivote_x, " ", pivote_y)
+
+                //console.log(x_centro, " ", y_centro)
+                //console.log(pivote_x, " ", pivote_y)
                 // =========================
                 // DISTANCIA / RADIO
                 // =========================

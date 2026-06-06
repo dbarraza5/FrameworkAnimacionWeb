@@ -204,61 +204,155 @@ class OperacionesGrupo{
         }
     }
 
+    static getGrupo(lista_grupo_dinamico, nombre_grupo){
+        const grupo = lista_grupo_dinamico.filter((g)=>{
+            return g.nombre===nombre_grupo
+        })
+        if(grupo.length>0){
+            return grupo[0]
+        }
+        return null;
+    }
+
+    static calcularRotacionGrupoFiguras(copia_lista_grupos,lista_grupo_dinamico, angulo_rotacion, pivote_rotacion_x, pivote_rotacion_y){
+        const movimientos_grupos = {};
+
+        for (let i=0; i<copia_lista_grupos.length; i++){
+            const grupo_copia = copia_lista_grupos[i]
+            const grupo_ =OperacionesGrupo.getGrupo(lista_grupo_dinamico, grupo_copia.nombre);
+
+            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                let figura = grupo_.lista_figuras[j];
+
+                let f_copia = grupo_copia.lista_figuras[j];
+                let resultado=OperacionesGrupo.calcularRotacionFigura(figura, f_copia, grupo_copia,angulo_rotacion,
+                    pivote_rotacion_x, pivote_rotacion_y)
+                const hash = grupo_copia.nombre+figura.nombre;
+                movimientos_grupos[hash] = resultado
+            }
+        }
+        return movimientos_grupos;
+    }
+
+    static calcularRotacionFigura(figura, f_copia, grupo, angulo_rotacion, pivote_x, pivote_y){
+
+        let x = pivote_x - grupo.cx;
+        let y = pivote_y - grupo.cy;
+
+        if (figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO") {
+
+            const angulo_figura = Fisica.angulo_recta(
+                x,
+                y,
+                f_copia.atributos.cx,
+                f_copia.atributos.cy
+            );
+
+            const distancia = Fisica.distanciaEntreDosPuntos(
+                x,
+                y,
+                f_copia.atributos.cx,
+                f_copia.atributos.cy
+            );
+
+            const angulo_nuevo = angulo_rotacion + angulo_figura;
+
+            const dx = Math.cos(
+                Fisica.angulo_radianaes(angulo_nuevo)
+            ) * distancia;
+
+            const dy = Math.sin(
+                Fisica.angulo_radianaes(angulo_nuevo)
+            ) * distancia;
+
+            return {
+                nombre_grupo: grupo.nombre,
+                nombre_figura: f_copia.nombre,
+                tipo: figura.tipo_figura,
+                cx: parseInt(dx),
+                cy: parseInt(dy)
+            };
+        }
+
+        if (figura.tipo_figura === "RECTA") {
+
+            const x1 = f_copia.atributos.x1 + f_copia.atributos.cx;
+            const y1 = f_copia.atributos.y1 + f_copia.atributos.cy;
+
+            const angulo_p1 = Fisica.angulo_recta(x, y, x1, y1);
+            const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1, y1);
+
+            const angulo_nuevo_p1 = angulo_rotacion + angulo_p1;
+
+            const dx1 = Math.cos(
+                Fisica.angulo_radianaes(angulo_nuevo_p1)
+            ) * distancia_p1;
+
+            const dy1 = Math.sin(
+                Fisica.angulo_radianaes(angulo_nuevo_p1)
+            ) * distancia_p1;
+
+            const x2 = f_copia.atributos.x2 + f_copia.atributos.cx;
+            const y2 = f_copia.atributos.y2 + f_copia.atributos.cy;
+
+            const angulo_p2 = Fisica.angulo_recta(x, y, x2, y2);
+            const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2, y2);
+
+            const angulo_nuevo_p2 = angulo_rotacion + angulo_p2;
+
+            const dx2 = Math.cos(
+                Fisica.angulo_radianaes(angulo_nuevo_p2)
+            ) * distancia_p2;
+
+            const dy2 = Math.sin(
+                Fisica.angulo_radianaes(angulo_nuevo_p2)
+            ) * distancia_p2;
+
+            return {
+                nombre_grupo: grupo.nombre,
+                nombre_figura: f_copia.nombre,
+                tipo: figura.tipo_figura,
+                x1: parseInt(dx1),
+                y1: parseInt(dy1),
+
+                x2: parseInt(dx2),
+                y2: parseInt(dy2),
+                cx: 0,
+                cy: 0,
+                pivote_x: pivote_x,
+                pivote_y: pivote_y
+            };
+        }
+
+        return null;
+    }
+
     static rotar_figura(figura, f_copia, grupo, angulo_rotacion, pivote_x, pivote_y){
-        if(figura.tipo_figura === "PUNTO"  || figura.tipo_figura === "CIRCULO" ){
-            console.log("rotar punto: ", figura.nombre)
-            let x = pivote_x - grupo.cx;
-            let y = pivote_y - grupo.cy;
-
-            const angulo_figura = Fisica.angulo_recta(x, y,
-                f_copia.atributos.cx, f_copia.atributos.cy)
-            const distancia = Fisica.distanciaEntreDosPuntos(x, y,
-                f_copia.atributos.cx, f_copia.atributos.cy)
-
-            const algulo_nuevo = angulo_rotacion+ angulo_figura;
-
-            let dx = Math.cos(Fisica.angulo_radianaes(algulo_nuevo))*distancia;
-            let dy = Math.sin(Fisica.angulo_radianaes(algulo_nuevo))*distancia;
-            figura.atributos.cx = parseInt(x+ dx)
-            figura.atributos.cy = parseInt(y+ dy)
+        const nuevosDatos = this.calcularRotacionFigura(
+            figura,
+            f_copia,
+            grupo,
+            angulo_rotacion,
+            pivote_x,
+            pivote_y
+        );
+        let x = pivote_x - grupo.cx;
+        let y = pivote_y - grupo.cy;
+        if (figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO") {
+            figura.atributos.cx = x+nuevosDatos.cx;
+            figura.atributos.cy = y+nuevosDatos.cy;
         }
-        if(figura.tipo_figura === "RECTA"){
-            let x = pivote_x - grupo.cx;
-            let y = pivote_y - grupo.cy;
 
-            const x1 = f_copia.atributos.x1+f_copia.atributos.cx;
-            const y1 = f_copia.atributos.y1+f_copia.atributos.cy;
+        if (figura.tipo_figura === "RECTA") {
+            figura.atributos.x1 = x+nuevosDatos.x1;
+            figura.atributos.y1 = y+nuevosDatos.y1;
 
-            const angulo_p1 = Fisica.angulo_recta(x, y, x1 ,y1)
-            const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1 ,y1)
+            figura.atributos.x2 = x+nuevosDatos.x2;
+            figura.atributos.y2 = y+nuevosDatos.y2;
 
-            const algulo_nuevo_p1 = angulo_rotacion+ angulo_p1;
-            let dx = Math.cos(Fisica.angulo_radianaes(algulo_nuevo_p1))*distancia_p1
-            let dy = Math.sin(Fisica.angulo_radianaes(algulo_nuevo_p1))*distancia_p1
-
-            figura.atributos.x1 = parseInt(x+ dx)
-            figura.atributos.y1 = parseInt(y+ dy)
-
-            const x2 = f_copia.atributos.x2+f_copia.atributos.cx;
-            const y2 = f_copia.atributos.y2+f_copia.atributos.cy;
-
-            const angulo_p2 = Fisica.angulo_recta(x, y, x2 ,y2)
-            const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2 ,y2)
-
-            const algulo_nuevo_p2 = angulo_rotacion+ angulo_p2;
-
-            dx = Math.cos(Fisica.angulo_radianaes(algulo_nuevo_p2))*distancia_p2
-            dy = Math.sin(Fisica.angulo_radianaes(algulo_nuevo_p2))*distancia_p2
-
-            figura.atributos.x2 = parseInt(x+ dx)
-            figura.atributos.y2 = parseInt(y+ dy)
-
-            figura.atributos.cx = 0
-            figura.atributos.cy = 0
-
-            //animacion_.set_figura(nombre_grupo, figura)
+            figura.atributos.cx = nuevosDatos.cx;
+            figura.atributos.cy = nuevosDatos.cy;
         }
-        return figura
     }
 }
 

@@ -232,41 +232,43 @@ class GestionMovimientos{
 
 
     static movimientoFiguras(tiempo, tipo, datos, animacion, lista_grupos){
-
+        let operacion_mov = null;
         if(tipo === MOV_ROTACION){
             //console.log("MOV_ROTACION")
             const velocidad = datos.velAngular;
-            const piv_x = datos.pivoteX;
-            const piv_y = datos.pivoteY;
+
             const sentido = 1//datos.sentido;
 
 
             //const angulo_rotacion = calcularAnguloOrbita(velocidad, tiempo, 45, 20)
             const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos)
-
+            const piv_x = centro_.centro_x+parseInt(datos.pivoteX);
+            const piv_y = centro_.centro_y+parseInt(datos.pivoteY);
              // const angulo_rotacion = Fisica.angulo_recta(centro_.centro_x, centro_.centro_y
              //        ,piv_x, piv_y);
 
             const angulo_rotacion = Fisica.angulo_recta(piv_x, piv_y, centro_.centro_x, centro_.centro_y);
 
             //const angulo_rotacion = 45//45;
-            console.log("angulo original: ",angulo_rotacion);
+            //console.log("angulo original: ",angulo_rotacion);
             const angulo_radianes = getNewAngle(angulo_rotacion,
                 tiempo,
                 velocidad,
                 sentido
             );
 
-            // let anguloGrados = (angulo_radianes * 180 / Math.PI) % 360;
-             console.log("angulo nuevo: =",angulo_radianes);
 
-            animacion.moverGruposRotacionLienzoPivote(lista_grupos, angulo_radianes, piv_x,
-                piv_y)
-
-            // const angulo_radianes = getNewAngle({ x: centro_.centro_x, y: centro_.centro_y },
-            //     { x: piv_x, y: piv_y },
+            operacion_mov=OperacionesGrupo.calcularRotacionGrupoFiguras(lista_grupos, animacion.grupos_figuras
+                 ,angulo_radianes, piv_x,
+                 piv_y)
+            /*const operacion_mov1 = {
+                ...operacion_mov,
+                centro_x:centro_.centro_x,
+                centro_y:centro_.centro_y,
+            }
+            return operacion_mov1*/
         }
-        return null;
+        return operacion_mov;
     }
 }
 

@@ -66,8 +66,8 @@ class GestionPintado {
 
         OperacionesGrupo.moverGrupo(this.grupo_copia, grupo_, centro_grupo.centro_x,
             centro_grupo.centro_y, 300, 300)
-        console.log(centro_grupo)
-        console.log(porcentaje)
+        //console.log(centro_grupo)
+        //console.log(porcentaje)
         this.zoomGrupo(porcentaje)
 
     }
