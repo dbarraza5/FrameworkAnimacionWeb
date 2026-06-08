@@ -283,8 +283,8 @@ class GestionLienzoEvento{
                             // Guardar pivote existente...
                             if(this.eventoLienzoEvento.mouse_only_click){
                                 this.edicion_mov_rotacion_pivote = false;
-                                datos.pivoteX = this.x_mouse;
-                                datos.pivoteY = this.y_mouse;
+                                datos.pivoteX = this.x_mouse-x_centro;
+                                datos.pivoteY = this.y_mouse-y_centro;
                                 this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
                                     this.grupo_seleccionado,
                                     this.index_mov_seleccionado,
@@ -403,19 +403,19 @@ class GestionLienzoEvento{
                 ctx.fill();
 
                 // =========================
-// FLECHA DE VELOCIDAD ANGULAR
-// =========================
+                // FLECHA DE VELOCIDAD ANGULAR
+                // =========================
                 ctx.setLineDash([]); // Línea continua
                 ctx.lineWidth = 3;
 
-// 1. CONTROL DE ESTADO: Si está editando, cambia a un color llamativo (ej: Amarillo/Naranja #f59e0b)
+                // 1. CONTROL DE ESTADO: Si está editando, cambia a un color llamativo (ej: Amarillo/Naranja #f59e0b)
                 const estaEditandoVel = this.edicion_mov_rotacion_velocidad;
                 const colorFlecha = estaEditandoVel ? '#f59e0b' : '#ef4444';
 
                 ctx.strokeStyle = colorFlecha;
                 ctx.fillStyle = colorFlecha;
 
-// 2. CÁLCULO DEL LARGO DINÁMICO
+                // 2. CÁLCULO DEL LARGO DINÁMICO
                 let flecha_largo = 0;
                 let direccion = 1;
 

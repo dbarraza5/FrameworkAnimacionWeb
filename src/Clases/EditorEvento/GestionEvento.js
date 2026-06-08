@@ -250,7 +250,11 @@ class GestionEvento{
                                                 acumulado[atributo] = nuevo[atributo];
                                                 continue;
                                             }
-                                            acumulado[atributo] += nuevo[atributo];
+                                            const es_centro = atributo==="centro_x" || atributo==="centro_y";
+                                            if(!es_centro){
+                                                acumulado[atributo] += nuevo[atributo];
+                                            }
+
                                         }
                                     }
                                 }
@@ -322,11 +326,12 @@ class GestionEvento{
                 if (figura1_){
                     const pivote_x = 0;
                     const pivote_y = 0;
-                    let x = valor.pivote_x//pivote_x - grupo_.cx+centro_.centro_x;
-                    let y = valor.pivote_y//pivote_y - grupo_.cy+centro_.centro_y;
+                    let x = valor.pivote_x+valor.centro_x//pivote_x - grupo_.cx+centro_.centro_x;
+                    let y = valor.pivote_y+valor.centro_y//pivote_y - grupo_.cy+centro_.centro_y;
                     if (figura1_.tipo_figura === "PUNTO" || figura1_.tipo_figura === "CIRCULO") {
                         figura1_.atributos.cx = x+valor.cx;
                         figura1_.atributos.cy = y+valor.cy;
+                        this.gestion_grupos.set_figura(valor.nombre_grupo, figura1_)
                     }
 
                     if (figura1_.tipo_figura === "RECTA") {

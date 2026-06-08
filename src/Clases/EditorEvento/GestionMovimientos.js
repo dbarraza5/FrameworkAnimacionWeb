@@ -260,7 +260,7 @@ class GestionMovimientos{
 
             operacion_mov=OperacionesGrupo.calcularRotacionGrupoFiguras(lista_grupos, animacion.grupos_figuras
                  ,angulo_radianes, piv_x,
-                 piv_y)
+                 piv_y, centro_.centro_x,centro_.centro_y)
             /*const operacion_mov1 = {
                 ...operacion_mov,
                 centro_x:centro_.centro_x,

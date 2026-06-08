@@ -214,7 +214,8 @@ class OperacionesGrupo{
         return null;
     }
 
-    static calcularRotacionGrupoFiguras(copia_lista_grupos,lista_grupo_dinamico, angulo_rotacion, pivote_rotacion_x, pivote_rotacion_y){
+    static calcularRotacionGrupoFiguras(copia_lista_grupos,lista_grupo_dinamico, angulo_rotacion, pivote_rotacion_x, pivote_rotacion_y,
+                                        centro_x, centro_y){
         const movimientos_grupos = {};
 
         for (let i=0; i<copia_lista_grupos.length; i++){
@@ -227,6 +228,13 @@ class OperacionesGrupo{
                 let f_copia = grupo_copia.lista_figuras[j];
                 let resultado=OperacionesGrupo.calcularRotacionFigura(figura, f_copia, grupo_copia,angulo_rotacion,
                     pivote_rotacion_x, pivote_rotacion_y)
+                resultado = {
+                    ...resultado,
+                    centro_x:centro_x,
+                    centro_y:centro_y,
+                    pivote_x: pivote_rotacion_x-centro_x,
+                    pivote_y: pivote_rotacion_y-centro_y,
+                }
                 const hash = grupo_copia.nombre+figura.nombre;
                 movimientos_grupos[hash] = resultado
             }
@@ -318,9 +326,7 @@ class OperacionesGrupo{
                 x2: parseInt(dx2),
                 y2: parseInt(dy2),
                 cx: 0,
-                cy: 0,
-                pivote_x: pivote_x,
-                pivote_y: pivote_y
+                cy: 0
             };
         }
 
