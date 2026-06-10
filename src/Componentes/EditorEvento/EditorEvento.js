@@ -105,9 +105,9 @@ function EditorEvento(props){
         gestionEventoLienzo.index_mov_seleccionado = index_mov_seleccionado
     }, [index_mov_seleccionado]);
 
-    // useEffect(() => {
-    //     gestionEventoLienzo.index_mov_seleccionado = index_mov_seleccionado
-    // }, [id_grupo_seleccionado]);
+     useEffect(() => {
+         gestionEventoLienzo.grupo_seleccionado = id_grupo_seleccionado
+    }, [id_grupo_seleccionado]);
 
     useEffect(() => {
         console.log("Se actualizo El evento por redux")

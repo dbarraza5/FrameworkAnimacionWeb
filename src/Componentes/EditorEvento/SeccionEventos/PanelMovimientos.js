@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import ModalEditarMovimiento from "./ModalEditarMovimiento";
 import ModalAgregarMovimiento from "./ModalAgregarMovimiento";
@@ -7,20 +7,16 @@ import {
     MOVIMIENTOS_OBJETOS_CORTOS, TIPO_EFECTO_MOV_FIGURAS,
     TIPO_EFECTO_MOV_OBJETOS, TRABAJO_EDICION_MOVIMIENTO
 } from "../../../Clases/EditorEvento/ConstanteEvento";
-import {setIndexMovSeleccionado, setTipoTrabajo} from "../../../Store/Configuracion/ConfigEventoSlice";
+import {
+    setIdGrupoSeleccionado,
+    setIndexMovSeleccionado,
+    setTipoTrabajo
+} from "../../../Store/Configuracion/ConfigEventoSlice";
+import SeleccionGrupoArbol from "./SeleccionGrupoArbol";
 
 function PanelMovimientos(props) {
     const [showModalEditar, setShowEditarModal] = useState(false);
     const [showModalAgregar, setShowAgregarModal] = useState(false);
-    const [tipoAccion, setTipoAccion] = useState("MRU");
-
-    const [inicioMin, setInicioMin] = useState("00");
-    const [inicioSeg, setInicioSeg] = useState("00");
-    const [inicioMs, setInicioMs] = useState("000");
-
-    const [finMin, setFinMin] = useState("00");
-    const [finSeg, setFinSeg] = useState("00");
-    const [finMs, setFinMs] = useState("000");
 
     const [lista_movimiento, setListaMovimientos] = useState([]);
     const [movimientoSeleccionado, setMovimientoSeleccionado] = useState(null);
@@ -28,7 +24,8 @@ function PanelMovimientos(props) {
     const [versionKey, setVerionKey] = useState(0);
 
     const id_grupo_seleccionado = useSelector(state => state.config_evento.id_grupo_seleccionado);
-    const [objeto, setObjeto] = useState(null);
+
+    const [grupos, setGrupos] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -111,6 +108,8 @@ function PanelMovimientos(props) {
         setListaMovimientos([])
         setMovimientoSeleccionado(null);
         setmovIndexSeleccionado(null);
+        setGrupos(props.eventoAnimacion.edicion.gestion_grupos_originales.grupos_figuras);
+
     }, [id_grupo_seleccionado]);
 
 
@@ -135,9 +134,19 @@ function PanelMovimientos(props) {
         }
     }, [movimientoSeleccionado]);
 
+    const seleccion_grupo = (nombre)=>{
+        console.log(nombre)
+        dispatch(setIdGrupoSeleccionado(nombre))
+    }
 
     return (
         <div>
+            {/* Aquí insertas el nuevo componente ajustado */}
+            <SeleccionGrupoArbol
+                datosFiguras={grupos}
+                id_grupo_seleccionado={id_grupo_seleccionado}
+                alSeleccionarGrupo={seleccion_grupo} // Tu función de estado aquí
+            />
             {/* Header con título y botón agregar */}
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h6 className="mb-0 fw-semibold text-secondary">

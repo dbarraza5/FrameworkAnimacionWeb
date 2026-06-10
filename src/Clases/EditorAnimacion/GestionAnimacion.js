@@ -303,6 +303,25 @@ class GestionAnimacion{
         return lista_nombres
     }
 
+    get_nombres_grupos_hijos1(nombre_grupo) {
+        let lista_nombres = [];
+
+        // 1. Encontramos los hijos directos del nodo actual
+        let hijos_directos = this.grupos_figuras.filter((grupo) => grupo.nodo_padre === nombre_grupo);
+
+        // 2. Iteramos sobre cada hijo directo encontrado
+        hijos_directos.forEach((hijo) => {
+            // Agregamos el nombre del hijo a la lista
+            lista_nombres.push(hijo.nombre);
+
+            // 3. Llamada recursiva: buscamos los hijos de este hijo y los concatenamos a la lista
+            let descendientes = this.get_nombres_grupos_hijos(hijo.nombre);
+            lista_nombres = lista_nombres.concat(descendientes);
+        });
+
+        return lista_nombres;
+    }
+
     estructura_arbol_grupos1(nombre_grupo){
         //console.log(nombre_grupo)
         let lista_grupo = this.get_nombres_grupos_hijos(nombre_grupo)

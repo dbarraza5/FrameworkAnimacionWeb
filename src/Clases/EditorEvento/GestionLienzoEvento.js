@@ -196,7 +196,7 @@ class GestionLienzoEvento{
         if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
             //console.log(this.tipo_trabajo)
             if(this.tipo_trabajo === TRABAJO_SELECCION_GRUPO){
-                this.grupos_disponibles_generales = this.eventos_.gestion_grupos.get_nombres_grupos_hijos("root");
+                this.grupos_disponibles_generales = this.eventos_.gestion_grupos.get_nombres_grupos_hijos(this.grupo_seleccionado);
                 //console.log(this.grupos_disponibles_generales);
 
                 for (let i=0; i < this.grupos_disponibles_generales.length; i++){
