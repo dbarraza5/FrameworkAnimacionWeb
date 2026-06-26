@@ -224,9 +224,11 @@ class GestionEvento{
                                 if(resultado_grupos){
                                     const x = resultado_grupos.x;
                                     const y = resultado_grupos.y;
+                                    if (objeto.id_objeto in this.movimientos_grupos) {
+                                        this.movimientos_grupos[objeto.id_objeto].x+=x;
+                                        this.movimientos_grupos[objeto.id_objeto].y+=y;
+                                    }
 
-                                    this.movimientos_grupos[objeto.id_objeto].x+=x;
-                                    this.movimientos_grupos[objeto.id_objeto].y+=y;
                                 }
 
                                 if(resultado_figuras){
