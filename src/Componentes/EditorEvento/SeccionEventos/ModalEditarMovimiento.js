@@ -39,7 +39,7 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
     const fin = msToTimeParts(movimiento?.tiempo_final || 0);
 
     const [tipo, setTipo] = useState(movimiento?.tipo || 1);
-    const [tipoEfecto, setTipoEfecto] = useState(1);
+    const [tipoEfecto, setTipoEfecto] = useState(movimiento?.tipo_efecto || 1);
     const [inicioMin, setInicioMin] = useState(inicio?.min||'00');
     const [inicioSeg, setInicioSeg] = useState(inicio?.seg||'00');
     const [inicioMs, setInicioMs] = useState(inicio?.ms||'00');

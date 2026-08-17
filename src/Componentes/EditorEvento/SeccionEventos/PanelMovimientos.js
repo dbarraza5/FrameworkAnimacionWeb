@@ -108,6 +108,13 @@ function PanelMovimientos(props) {
 
     useEffect(() => {
         console.log("[PANEL DE MOVIEMIENTO]: ", id_grupo_seleccionado);
+        // Al cambiar de grupo, cualquier movimiento seleccionado pertenecia al grupo
+        // anterior: hay que deseleccionarlo siempre (antes solo pasaba si el nuevo
+        // grupo no tenia movimientos, lo que dejaba el modal de Editar con datos del
+        // grupo anterior si el nuevo grupo si tenia movimientos en el mismo indice).
+        setMovimientoSeleccionado(null);
+        setmovIndexSeleccionado(null);
+
         if(props.evento){
             const objeto_ = props.evento.objetos.filter((obj)=>{
                 return obj.id_objeto===id_grupo_seleccionado
@@ -118,8 +125,6 @@ function PanelMovimientos(props) {
             }
         }
         setListaMovimientos([])
-        setMovimientoSeleccionado(null);
-        setmovIndexSeleccionado(null);
         setGrupos(props.eventoAnimacion.edicion.gestion_grupos_originales.grupos_figuras);
 
     }, [id_grupo_seleccionado]);

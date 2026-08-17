@@ -48,6 +48,25 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
     const [activo, setActivo] = useState(false);
     const [datos, setDatos] = useState({});
 
+    // El modal se reutiliza entre aperturas (nunca se desmonta), asi que hay que
+    // limpiar los campos manualmente cada vez que se abre; si no, queda lo que se
+    // escribio la vez anterior.
+    useEffect(() => {
+        if(show){
+            setTipo(1);
+            setTipoEfecto(1);
+            setInicioMin('00');
+            setInicioSeg('00');
+            setInicioMs('000');
+            setFinMin('00');
+            setFinSeg('00');
+            setFinMs('000');
+            setTiempoBucle(0);
+            setBucle(false);
+            setActivo(false);
+            setDatos({});
+        }
+    }, [show]);
 
     if (!show) return null;
 
