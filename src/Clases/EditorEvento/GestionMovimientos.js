@@ -202,10 +202,13 @@ class GestionMovimientos{
 
             case MOV_LERP: {
                 // progreso normalizado 0-1 respecto a la duracion del movimiento,
-                // para que siempre alcance el punto final sin importar cuanto dure
+                // para que siempre alcance el punto final sin importar cuanto dure.
+                // Igual que el resto de los movimientos, arranca en (0,0) -- la
+                // posicion real del grupo al ejecutarse -- y no en un "inicio"
+                // arbitrario, para no generar un salto al comenzar.
                 const t_norm = duracion > 0 ? Math.min(Math.max(tiempo / duracion, 0), 1) : 0;
-                x = lerp(parseFloat(datos.inicio_x) || 0, parseFloat(datos.fin_x) || 0, t_norm);
-                y = lerp(parseFloat(datos.inicio_y) || 0, parseFloat(datos.fin_y) || 0, t_norm);
+                x = lerp(0, parseFloat(datos.fin_x) || 0, t_norm);
+                y = lerp(0, parseFloat(datos.fin_y) || 0, t_norm);
                 break;
             }
 

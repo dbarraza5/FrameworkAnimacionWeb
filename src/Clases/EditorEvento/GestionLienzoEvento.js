@@ -2,7 +2,7 @@ import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
 import TimelineCanvas from "./TimelineCanvas";
 import {
-    MODALIDAD_MOVIMIENTOS, MOV_CIRCULAR, MOV_GRAVEDAD, MOV_PARABOLICO_ANGULO,
+    MODALIDAD_MOVIMIENTOS, MOV_CIRCULAR, MOV_GRAVEDAD, MOV_LERP, MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
     MOV_RECTILINEO_2D, MOV_RECTILINEO_ACELERADO, MOV_RECTILINEO_UNIFORME,
     MOV_ROTACION, MOV_ZOOM, TRABAJO_EDICION_MOVIMIENTO,
     TRABAJO_NADA_LIENZO,
@@ -14,6 +14,7 @@ import {dibujar_rec_transparencia, dibujar_rectangulo} from "../EditorAnimacion/
 import ControlVectorLienzo from "./ControlVectorLienzo";
 import ControlFlechaLienzo from "./ControlFlechaLienzo";
 import ControlZoomLienzo from "./ControlZoomLienzo";
+import ControlOscilatorioLienzo from "./ControlOscilatorioLienzo";
 
 // Nombres de campo en `datos` para cada tipo de movimiento que usa ControlVectorLienzo
 // (pivote propio + flecha-medidor de magnitud).
@@ -46,6 +47,13 @@ const CONFIG_FLECHA_POR_TIPO = {
         restriccion_eje: 'y',
         leerVector: (datos) => ({x: 0, y: numero(datos.v0y)}),
         guardarVector: (datos, x, y) => { datos.v0y = Math.round(y); },
+    },
+    [MOV_LERP]: {
+        // igual que los demas: parte de (0,0) -- la posicion real del grupo -- y
+        // el vector es directamente el punto final relativo a ese origen.
+        restriccion_eje: null,
+        leerVector: (datos) => ({x: numero(datos.fin_x), y: numero(datos.fin_y)}),
+        guardarVector: (datos, x, y) => { datos.fin_x = Math.round(x); datos.fin_y = Math.round(y); },
     },
     [MOV_PARABOLICO_ANGULO]: {
         restriccion_eje: null,
@@ -89,6 +97,13 @@ const CONFIG_FLECHA_POR_TIPO = {
 const CAMPOS_ZOOM_POR_TIPO = {
     [MOV_ZOOM]: {campo_pivote_x: 'pivoteX', campo_pivote_y: 'pivoteY', campo_velocidad: 'velocidad'},
 };
+
+// Nombres de campo de amplitud para Oscilatorio (ControlOscilatorioLienzo).
+// `frecuenciaX`/`frecuenciaY` quedan solo en el formulario, sin control en el lienzo.
+const CAMPOS_OSCILATORIO_POR_TIPO = {
+    [MOV_OSCILATORIO]: {campo_amplitud_x: 'amplitudX', campo_amplitud_y: 'amplitudY'},
+};
+
 
 
 class GestionLienzoEvento{
@@ -139,6 +154,7 @@ class GestionLienzoEvento{
     control_vector = new ControlVectorLienzo();
     control_flecha = new ControlFlechaLienzo();
     control_zoom = new ControlZoomLienzo();
+    control_oscilatorio = new ControlOscilatorioLienzo();
 
     constructor(eventos_, eventoLienzoEvento, setEventoAnimacion, seleccionarGrupo) {
         this.id_canvas = "lienzo-evento"
@@ -167,6 +183,9 @@ class GestionLienzoEvento{
         }
         if(CAMPOS_ZOOM_POR_TIPO[tipo]){
             return {control: this.control_zoom, config: CAMPOS_ZOOM_POR_TIPO[tipo]};
+        }
+        if(CAMPOS_OSCILATORIO_POR_TIPO[tipo]){
+            return {control: this.control_oscilatorio, config: CAMPOS_OSCILATORIO_POR_TIPO[tipo]};
         }
         return null;
     }
