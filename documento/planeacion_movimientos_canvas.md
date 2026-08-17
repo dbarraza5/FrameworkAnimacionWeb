@@ -114,41 +114,47 @@ De los 10 tipos de movimiento definidos en `ConstanteEvento.js`, solo **2 tienen
 
 ---
 
-## Fase 4 — Oscilatorio: visual primero, mangos después
+## Fase 4 — Oscilatorio: visual primero, mangos después — IMPLEMENTADA
 
 **Objetivo:** representar 4 parámetros (`amplitudX`, `frecuenciaX`, `amplitudY`, `frecuenciaY`) sin sobrecargar el lienzo.
 
-**Alcance:**
-- **Fase 4a (visual, sin arrastre):** dibujar una elipse tenue centrada en el grupo (ancho `2×amplitudX`, alto `2×amplitudY`) como referencia del rango de oscilación.
-- **Fase 4b (interactiva):** mangos en los bordes de la elipse para ajustar amplitud arrastrando. `frecuencia` queda como input numérico (no es práctico representarlo geométricamente).
+**Alcance realizado (4a y 4b juntas):** nuevo `ControlOscilatorioLienzo.js`, con origen fijo en el centro del grupo (igual convención que `ControlFlechaLienzo`). Dibuja una elipse punteada (`ctx.ellipse`, radio X = `amplitudX`, radio Y = `amplitudY`, sin escala — las amplitudes ya están en las mismas unidades de canvas que el resto de la app) y dos mangos circulares: uno en el borde derecho (eje X) y otro en el borde superior (eje Y). Cada mango se arrastra de forma independiente y solo actualiza su propia amplitud (`amplitudX`/`amplitudY`). `frecuenciaX`/`frecuenciaY` quedan solo en el formulario, sin control en el lienzo, tal como estaba planeado.
 
-**Criterios de verificación:**
-- [ ] Fase 4a: la elipse dibujada coincide en proporciones con los valores de amplitud guardados (verificar con 2-3 combinaciones distintas de amplitudX/amplitudY).
-- [ ] Fase 4b: arrastrar un mango de la elipse actualiza la amplitud correspondiente sin afectar la otra.
+Conectado en `GestionLienzoEvento.js` vía `CAMPOS_OSCILATORIO_POR_TIPO` + una cuarta rama en `resolverControl(tipo)`.
+
+**Criterios de verificación (pendientes de probar en navegador):**
+- [ ] La elipse dibujada coincide en proporciones con los valores de amplitud guardados (probar con 2-3 combinaciones distintas de amplitudX/amplitudY).
+- [ ] Arrastrar el mango del eje X actualiza `amplitudX` sin afectar `amplitudY`, y viceversa.
 - [ ] Al reproducir, el recorrido real del grupo se mantiene dentro de la elipse mostrada.
 
 ---
 
-## Fase 5 — LERP: interacción de dos puntos (condicional)
+## Fase 5 — LERP: interacción de dos puntos — IMPLEMENTADA (y corregida)
 
-**Solo se ejecuta si en la Fase 0 se decidió extender el modelo de datos de LERP a 2D + tiempo normalizado.** Si se decidió dejarlo como está, esta fase se descarta y LERP queda sin interacción en el lienzo (o, como alternativa menor, un slider 1D consistente con el cálculo actual).
+En la Fase 0 se decidió extender el modelo de datos de LERP a 2D + tiempo normalizado, así que esta fase se ejecutó tal como estaba planeada. La implementación inicial usaba dos puntos arrastrables (`ControlLerpLienzo.js`, inicio y fin), pero se detectó una inconsistencia real: todos los demás movimientos "Objetos" (MRU, Gravedad, MRU 2D, Parabólico) devuelven offset `(0,0)` en `t=0` porque su fórmula es proporcional a `t` (ej. `x=v*t`), así que continúan sin salto desde la posición real del grupo. LERP con un `inicio` propio no cumplía eso: al arrancar el movimiento, el grupo saltaba de su posición actual a `origen + inicio_offset`.
 
-**Alcance:**
-- Click para definir el punto de origen y el punto de destino directamente en el lienzo, igual que definir un segmento.
+**Corrección:** LERP ahora siempre parte de `(0,0)` — la posición real del grupo al ejecutarse, igual que el resto — y solo define el punto final (`fin_x`/`fin_y`) relativo a ese origen. Se quitó `inicio_x`/`inicio_y` del modelo de datos, del formulario y de `GestionMovimientos.js` (`x = lerp(0, fin_x, t_norm)`). Con esto, LERP quedó geométricamente idéntico a MRU 2D (un solo vector libre desde el origen del grupo), así que se reutiliza `ControlFlechaLienzo` en vez de una clase dedicada — se eliminó `ControlLerpLienzo.js` por quedar redundante.
 
-**Criterios de verificación:**
-- [ ] Clickear dos puntos en el lienzo guarda correctamente `inicio`/`fin` (o sus equivalentes 2D, según lo decidido en la Fase 0).
-- [ ] Al reproducir, el grupo recorre efectivamente la línea entre ambos puntos durante la ventana de tiempo del movimiento (llega a destino, no se queda a medio camino).
+Con esto, los 10 tipos de movimiento definidos en `ConstanteEvento.js` tienen overlay en el lienzo, en 4 clases de control (no 5).
+
+**Criterios de verificación (pendientes de probar en navegador):**
+- [ ] Al seleccionar un movimiento LERP recién agregado (sin editar), la flecha aparece en el centro del grupo (no en un punto separado).
+- [ ] Arrastrar la punta de la flecha actualiza `fin_x`/`fin_y`.
+- [ ] Al reproducir, el grupo parte de su posición actual (sin salto) y recorre la línea hasta el punto final durante la ventana de tiempo del movimiento, sin quedarse a medio camino.
 
 ---
 
 ## Resumen de fases
 
-| Fase | Contenido | Depende de |
-|---|---|---|
-| 0 | Arreglar MRUA, implementar cálculo de Zoom, decidir modelo de datos de LERP | — |
-| 1 | Refactor: utilidad genérica de flecha/pivote | — (puede ir en paralelo con la Fase 0) |
-| 2 | Parabólico, MRU 2D, Gravedad, MRU, MRUA | Fase 1 (utilidad), Fase 0 (MRUA funcional) |
-| 3 | Zoom (overlay radial) | Fase 0 (cálculo de Zoom), Fase 1 (reutiliza el pivote arrastrable) |
-| 4 | Oscilatorio (visual + mangos) | Fase 1 |
-| 5 | LERP (dos puntos) | Fase 0 (decisión de datos) |
+Todas las fases (0-5) están implementadas. Los 10 tipos de movimiento tienen overlay en el lienzo, repartidos en 4 clases de control: `ControlVectorLienzo` (Rotación, Circular), `ControlFlechaLienzo` (MRU, MRUA, MRU 2D, Gravedad, Parabólico, LERP), `ControlZoomLienzo` (Zoom) y `ControlOscilatorioLienzo` (Oscilatorio), elegidas desde `GestionLienzoEvento.resolverControl(tipo)`.
+
+Queda pendiente, para todas las fases, la verificación manual en navegador marcada en cada checklist — ninguna se probó corriendo la app.
+
+| Fase | Contenido | Depende de | Estado |
+|---|---|---|---|
+| 0 | Arreglar MRUA, implementar cálculo de Zoom, decidir modelo de datos de LERP | — | Implementada |
+| 1 | Refactor: utilidad genérica de flecha/pivote | — (puede ir en paralelo con la Fase 0) | Implementada |
+| 2 | Parabólico, MRU 2D, Gravedad, MRU, MRUA | Fase 1 (utilidad), Fase 0 (MRUA funcional) | Implementada |
+| 3 | Zoom (overlay radial) | Fase 0 (cálculo de Zoom), Fase 1 (reutiliza el pivote arrastrable) | Implementada |
+| 4 | Oscilatorio (visual + mangos) | Fase 1 | Implementada |
+| 5 | LERP (dos puntos) | Fase 0 (decisión de datos) | Implementada |
