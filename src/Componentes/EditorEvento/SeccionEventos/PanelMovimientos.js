@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import ModalEditarMovimiento from "./ModalEditarMovimiento";
 import ModalAgregarMovimiento from "./ModalAgregarMovimiento";
+import ModalCopiarMovimiento from "./ModalCopiarMovimiento";
 import {
     MOVIMIENTOS_FIGURAS_CORTOS,
     MOVIMIENTOS_OBJETOS_CORTOS, TIPO_EFECTO_MOV_FIGURAS,
@@ -17,6 +18,7 @@ import SeleccionGrupoArbol from "./SeleccionGrupoArbol";
 function PanelMovimientos(props) {
     const [showModalEditar, setShowEditarModal] = useState(false);
     const [showModalAgregar, setShowAgregarModal] = useState(false);
+    const [showModalCopiar, setShowCopiarModal] = useState(false);
 
     const [lista_movimiento, setListaMovimientos] = useState([]);
     const [movimientoSeleccionado, setMovimientoSeleccionado] = useState(null);
@@ -38,16 +40,14 @@ function PanelMovimientos(props) {
     };
 
 
-    const agregarMovimiento=(mov_)=>{
-        console.log("[agregarMovimiento]")
-        console.log(mov_);
+    const agregarMovimientosAlGrupo=(movimientosNuevos)=>{
         const nuevosObjetos = [...props.evento.objetos];
         let indiceObjeto = nuevosObjetos.findIndex(obj => obj.id_objeto === id_grupo_seleccionado);
 
         if (indiceObjeto !== -1) {
             nuevosObjetos[indiceObjeto] = {
                 ...nuevosObjetos[indiceObjeto],
-                movimientos: [...nuevosObjetos[indiceObjeto].movimientos, mov_]
+                movimientos: [...nuevosObjetos[indiceObjeto].movimientos, ...movimientosNuevos]
             };
         } else {
             const nuevoObjeto = {
@@ -55,7 +55,7 @@ function PanelMovimientos(props) {
                 id_objeto: id_grupo_seleccionado,
                 x_inicial: 0,
                 y_inicial: 0,
-                movimientos: [mov_],
+                movimientos: movimientosNuevos,
                 operaciones: [],
             };
             nuevosObjetos.push(nuevoObjeto);
@@ -70,6 +70,18 @@ function PanelMovimientos(props) {
 
         props.editandoMovEvento(eventoActualizado);
         setListaMovimientos(nuevosObjetos[indiceObjeto].movimientos);
+    }
+
+    const agregarMovimiento=(mov_)=>{
+        console.log("[agregarMovimiento]")
+        console.log(mov_);
+        agregarMovimientosAlGrupo([mov_]);
+    }
+
+    const aplicarCopiaMovimientos=(movimientosCopiados)=>{
+        console.log("[aplicarCopiaMovimientos]")
+        console.log(movimientosCopiados);
+        agregarMovimientosAlGrupo(movimientosCopiados);
     }
 
     const eliminarMovimiento=(indice)=>{
@@ -154,13 +166,22 @@ function PanelMovimientos(props) {
                     {id_grupo_seleccionado ? id_grupo_seleccionado : "Sin grupo seleccionado"}
                 </h6>
                 {(id_grupo_seleccionado)&&(
-                    <button
-                        className="btn btn-success btn-sm"
-                        onClick={() => setShowAgregarModal(true)}
-                    >
-                        <i className="bi bi-plus-lg me-1"></i>
-                        Agregar
-                    </button>
+                    <div className="d-flex gap-2">
+                        <button
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => setShowCopiarModal(true)}
+                        >
+                            <i className="bi bi-copy me-1"></i>
+                            Copiar
+                        </button>
+                        <button
+                            className="btn btn-success btn-sm"
+                            onClick={() => setShowAgregarModal(true)}
+                        >
+                            <i className="bi bi-plus-lg me-1"></i>
+                            Agregar
+                        </button>
+                    </div>
                 )}
             </div>
 
@@ -269,6 +290,14 @@ function PanelMovimientos(props) {
                 show={showModalAgregar}
                 onClose={() => setShowAgregarModal(false)}
                 agregarMovimiento={agregarMovimiento}
+            />
+            <ModalCopiarMovimiento
+                key={`modal-copiar-movimiento`}
+                show={showModalCopiar}
+                onClose={() => setShowCopiarModal(false)}
+                evento={props.evento}
+                grupos={props.eventoAnimacion.edicion.gestion_grupos_originales.grupos_figuras}
+                aplicarCopia={aplicarCopiaMovimientos}
             />
         </div>
     );
