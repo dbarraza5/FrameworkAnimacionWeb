@@ -143,7 +143,18 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
                             <select
                                 className="form-select"
                                 value={tipoEfecto}
-                                onChange={(e) => setTipoEfecto(parseInt(e.target.value))}
+                                onChange={(e) => {
+                                    const nuevoTipoEfecto = parseInt(e.target.value);
+                                    setTipoEfecto(nuevoTipoEfecto);
+                                    // Igual que en ModalAgregarMovimiento: si no se sincroniza `tipo`
+                                    // a mano, el select de Tipo muestra la primera opcion de la nueva
+                                    // familia pero el estado se queda con el valor viejo, y el
+                                    // formulario de abajo no cambia hasta tocar el select otra vez.
+                                    const primerTipo = nuevoTipoEfecto === 1
+                                        ? Number(Object.keys(MOVIMIENTOS_OBJETOS)[0])
+                                        : Number(Object.keys(MOVIMIENTOS_FIGURAS)[0]);
+                                    setTipo(primerTipo);
+                                }}
                             >
                                 <option value={1}>Objeto</option>
                                 <option value={2}>Figuras</option>

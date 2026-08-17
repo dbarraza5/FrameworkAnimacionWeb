@@ -124,7 +124,19 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
                             <select
                                 className="form-select"
                                 value={tipoEfecto}
-                                onChange={(e) => setTipoEfecto(parseInt(e.target.value))}
+                                onChange={(e) => {
+                                    const nuevoTipoEfecto = parseInt(e.target.value);
+                                    setTipoEfecto(nuevoTipoEfecto);
+                                    // El <select> de Tipo va a mostrar la primera opcion de la
+                                    // nueva familia aunque el estado `tipo` no cambie por si solo
+                                    // (el valor anterior ya no existe en las nuevas opciones) --
+                                    // hay que sincronizar el estado a mano para que el formulario
+                                    // de abajo coincida con lo que se ve seleccionado.
+                                    const primerTipo = nuevoTipoEfecto === 1
+                                        ? Number(Object.keys(MOVIMIENTOS_OBJETOS)[0])
+                                        : Number(Object.keys(MOVIMIENTOS_FIGURAS)[0]);
+                                    setTipo(primerTipo);
+                                }}
                             >
                                 <option value={1}>Objeto</option>
                                 <option value={2}>Figuras</option>
