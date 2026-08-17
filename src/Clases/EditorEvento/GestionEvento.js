@@ -210,7 +210,8 @@ class GestionEvento{
                                 let resultado_grupos = null;
                                 let resultado_figuras = null;
                                 if(tipoEfecto === TIPO_EFECTO_MOV_OBJETOS){
-                                    resultado_grupos = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos);
+                                    const duracion_mov = tiempo_fin_mov-tiempo_inicio_mov;
+                                    resultado_grupos = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos, duracion_mov);
                                 }
                                 if(tipoEfecto === TIPO_EFECTO_MOV_FIGURAS){
                                     // console.log("NOMBRE OBJETO: ",objeto.nombre);

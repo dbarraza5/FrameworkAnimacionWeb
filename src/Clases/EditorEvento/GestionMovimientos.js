@@ -12,7 +12,7 @@ import {
     MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
     MOV_RECTILINEO_2D,
     MOV_RECTILINEO_ACELERADO,
-    MOV_RECTILINEO_UNIFORME, MOV_ROTACION
+    MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ZOOM
 } from "./ConstanteEvento";
 import Fisica from "../EditorAnimacion/Fisica";
 import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
@@ -150,7 +150,7 @@ class GestionMovimientos{
     constructor() {
     }
 
-    static movimientoGrupo(tiempo, tipo, datos){
+    static movimientoGrupo(tiempo, tipo, datos, duracion=0){
         let x=0;
         let y=0;
         switch(tipo){
@@ -160,7 +160,7 @@ class GestionMovimientos{
                 break;
 
             case MOV_RECTILINEO_ACELERADO:
-                x = movRectilineoAcelerado(tiempo, datos.v0, datos.a);
+                x = movRectilineoAcelerado(tiempo, datos.velocidad, datos.aceleracion);
                 break;
 
             case MOV_RECTILINEO_2D:
@@ -200,9 +200,14 @@ class GestionMovimientos{
                 y = movGravedad(tiempo, datos.v0y, datos.g);
                 break;
 
-            case MOV_LERP:
-                x = lerp(datos.inicio, datos.fin, tiempo);
+            case MOV_LERP: {
+                // progreso normalizado 0-1 respecto a la duracion del movimiento,
+                // para que siempre alcance el punto final sin importar cuanto dure
+                const t_norm = duracion > 0 ? Math.min(Math.max(tiempo / duracion, 0), 1) : 0;
+                x = lerp(parseFloat(datos.inicio_x) || 0, parseFloat(datos.fin_x) || 0, t_norm);
+                y = lerp(parseFloat(datos.inicio_y) || 0, parseFloat(datos.fin_y) || 0, t_norm);
                 break;
+            }
 
             case MOV_PARABOLICO_ANGULO:
                 const par = movParabolicoAngulo(
@@ -268,6 +273,19 @@ class GestionMovimientos{
             }
             return operacion_mov1*/
         }
+
+        if(tipo === MOV_ZOOM){
+            const velocidad = parseFloat(datos.velocidad);
+            const porcentaje = velocidad * tiempo;
+
+            const centro_ = OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos)
+            const piv_x = centro_.centro_x + parseInt(datos.pivoteX);
+            const piv_y = centro_.centro_y + parseInt(datos.pivoteY);
+
+            operacion_mov = OperacionesGrupo.calcularZoomGrupoFiguras(lista_grupos, animacion.grupos_figuras,
+                porcentaje, piv_x, piv_y, centro_.centro_x, centro_.centro_y)
+        }
+
         return operacion_mov;
     }
 }

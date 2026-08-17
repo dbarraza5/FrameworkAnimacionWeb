@@ -333,6 +333,126 @@ class OperacionesGrupo{
         return null;
     }
 
+    static calcularZoomGrupoFiguras(copia_lista_grupos, lista_grupo_dinamico, porcentaje, pivote_zoom_x, pivote_zoom_y,
+                                     centro_x, centro_y){
+        const movimientos_grupos = {};
+
+        for (let i=0; i<copia_lista_grupos.length; i++){
+            const grupo_copia = copia_lista_grupos[i]
+            const grupo_ =OperacionesGrupo.getGrupo(lista_grupo_dinamico, grupo_copia.nombre);
+
+            for (let j = 0; j < grupo_.lista_figuras.length; j++) {
+                let figura = grupo_.lista_figuras[j];
+
+                let f_copia = grupo_copia.lista_figuras[j];
+                let resultado=OperacionesGrupo.calcularZoomFigura(figura, f_copia, grupo_copia, porcentaje,
+                    pivote_zoom_x, pivote_zoom_y)
+                resultado = {
+                    ...resultado,
+                    centro_x:centro_x,
+                    centro_y:centro_y,
+                    pivote_x: pivote_zoom_x-centro_x,
+                    pivote_y: pivote_zoom_y-centro_y,
+                }
+                const hash = grupo_copia.nombre+figura.nombre;
+                movimientos_grupos[hash] = resultado
+            }
+        }
+        return movimientos_grupos;
+    }
+
+    // Nota: al no manejarse un atributo de "tamaño" en el pipeline de aplicacion
+    // (GestionEvento solo aplica cx/cy y x1/y1/x2/y2), el zoom se logra alejando
+    // o acercando cada punto de cada figura respecto al pivote, no cambiando radiox/radioy.
+    static calcularZoomFigura(figura, f_copia, grupo, porcentaje, pivote_x, pivote_y){
+
+        let x = pivote_x - grupo.cx;
+        let y = pivote_y - grupo.cy;
+
+        if (figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO") {
+
+            const angulo_figura = Fisica.angulo_recta(
+                x,
+                y,
+                f_copia.atributos.cx,
+                f_copia.atributos.cy
+            );
+
+            const distancia = Fisica.distanciaEntreDosPuntos(
+                x,
+                y,
+                f_copia.atributos.cx,
+                f_copia.atributos.cy
+            );
+
+            const nueva_distancia = distancia + distancia * porcentaje;
+
+            const dx = Math.cos(
+                Fisica.angulo_radianaes(angulo_figura)
+            ) * nueva_distancia;
+
+            const dy = Math.sin(
+                Fisica.angulo_radianaes(angulo_figura)
+            ) * nueva_distancia;
+
+            return {
+                nombre_grupo: grupo.nombre,
+                nombre_figura: f_copia.nombre,
+                tipo: figura.tipo_figura,
+                cx: parseInt(dx),
+                cy: parseInt(dy)
+            };
+        }
+
+        if (figura.tipo_figura === "RECTA") {
+
+            const x1 = f_copia.atributos.x1 + f_copia.atributos.cx;
+            const y1 = f_copia.atributos.y1 + f_copia.atributos.cy;
+
+            const angulo_p1 = Fisica.angulo_recta(x, y, x1, y1);
+            const distancia_p1 = Fisica.distanciaEntreDosPuntos(x, y, x1, y1);
+            const nueva_distancia_p1 = distancia_p1 + distancia_p1 * porcentaje;
+
+            const dx1 = Math.cos(
+                Fisica.angulo_radianaes(angulo_p1)
+            ) * nueva_distancia_p1;
+
+            const dy1 = Math.sin(
+                Fisica.angulo_radianaes(angulo_p1)
+            ) * nueva_distancia_p1;
+
+            const x2 = f_copia.atributos.x2 + f_copia.atributos.cx;
+            const y2 = f_copia.atributos.y2 + f_copia.atributos.cy;
+
+            const angulo_p2 = Fisica.angulo_recta(x, y, x2, y2);
+            const distancia_p2 = Fisica.distanciaEntreDosPuntos(x, y, x2, y2);
+            const nueva_distancia_p2 = distancia_p2 + distancia_p2 * porcentaje;
+
+            const dx2 = Math.cos(
+                Fisica.angulo_radianaes(angulo_p2)
+            ) * nueva_distancia_p2;
+
+            const dy2 = Math.sin(
+                Fisica.angulo_radianaes(angulo_p2)
+            ) * nueva_distancia_p2;
+
+            return {
+                nombre_grupo: grupo.nombre,
+                nombre_figura: f_copia.nombre,
+                tipo: figura.tipo_figura,
+                x1: parseInt(dx1),
+                y1: parseInt(dy1),
+
+                x2: parseInt(dx2),
+                y2: parseInt(dy2),
+                cx: 0,
+                cy: 0
+            };
+        }
+
+        return null;
+    }
+
     static rotar_figura(figura, f_copia, grupo, angulo_rotacion, pivote_x, pivote_y){
         const nuevosDatos = this.calcularRotacionFigura(
             figura,
