@@ -136,12 +136,9 @@ function getNewAngle(currentAngle, deltaTime, velocity, direction) {
     const deltaAngle = velocity * deltaTime;
 
     if (direction === 1) {
-        currentAngle += deltaAngle;
-    } else {
-        currentAngle -= deltaAngle;
+        return currentAngle + deltaAngle;
     }
-
-    return deltaAngle;
+    return currentAngle - deltaAngle;
 }
 
 
@@ -245,7 +242,7 @@ class GestionMovimientos{
             //console.log("MOV_ROTACION")
             const velocidad = datos.velAngular;
 
-            const sentido = 1//datos.sentido;
+            const sentido = parseInt(datos.sentido) || 1;
 
 
             //const angulo_rotacion = calcularAnguloOrbita(velocidad, tiempo, 45, 20)
