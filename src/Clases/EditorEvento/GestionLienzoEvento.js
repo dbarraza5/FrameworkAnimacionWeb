@@ -2,7 +2,7 @@ import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
 import TimelineCanvas from "./TimelineCanvas";
 import {
-    MODALIDAD_MOVIMIENTOS, MOV_ROTACION, TRABAJO_EDICION_MOVIMIENTO,
+    MODALIDAD_MOVIMIENTOS, MOV_CIRCULAR, MOV_ROTACION, TRABAJO_EDICION_MOVIMIENTO,
     TRABAJO_NADA_LIENZO,
     TRABAJO_REPRODUCCION,
     TRABAJO_SELECCION_GRUPO
@@ -59,6 +59,10 @@ class GestionLienzoEvento{
     edicion_mov_rotacion_pivote = false;
     edicion_mov_rotacion_velocidad = false;
 
+    escala_flecha_velocidad = 2;
+    largo_minimo_flecha_velocidad = 20;
+    largo_maximo_flecha_velocidad = 200;
+
     constructor(eventos_, eventoLienzoEvento, setEventoAnimacion, seleccionarGrupo) {
         this.id_canvas = "lienzo-evento"
         this.x = 0;
@@ -73,6 +77,17 @@ class GestionLienzoEvento{
 
     inicializar(){
         this.timelineInstance.inicializar()
+    }
+
+    calcularLargoFlecha(vel_angular){
+        if(vel_angular === 0) return 0;
+        const signo = Math.sign(vel_angular);
+        const magnitud = Math.abs(vel_angular) * this.escala_flecha_velocidad;
+        const magnitud_acotada = Math.min(
+            Math.max(magnitud, this.largo_minimo_flecha_velocidad),
+            this.largo_maximo_flecha_velocidad
+        );
+        return magnitud_acotada * signo;
     }
 
     limpiar(){
@@ -237,13 +252,14 @@ class GestionLienzoEvento{
                 if(movimiento){
                     const tipo = movimiento.tipo;
                     const datos = movimiento.datos;
-                    if(tipo === MOV_ROTACION){
-                        //console.log(tipo)
+                    if(tipo === MOV_ROTACION || tipo === MOV_CIRCULAR){
+                        const esCircular = tipo === MOV_CIRCULAR;
+                        console.log(tipo)
                         const x_centro = rect_seleccion.centro_x;
                         const y_centro = rect_seleccion.centro_y;
-                        const vel_angular = parseInt(datos.velAngular);
-                        let pivote_x = parseInt(datos.pivoteX)+x_centro;
-                        let pivote_y = parseInt(datos.pivoteY)+y_centro;
+                        const vel_angular = parseInt(esCircular ? datos.velocidad_angular : datos.velAngular);
+                        let pivote_x = parseInt(esCircular ? datos.pivote_x : datos.pivoteX)+x_centro;
+                        let pivote_y = parseInt(esCircular ? datos.pivote_y : datos.pivoteY)+y_centro;
 
                         // 1. DISTANCIA AL PIVOTE
                         const distanciaMouse = Math.sqrt(
@@ -254,7 +270,7 @@ class GestionLienzoEvento{
                         // ========================================================
                         // 2. DETECCIÓN DE LA CABEZA DE LA FLECHA
                         // ========================================================
-                        const flecha_largo = vel_angular * 0.3;
+                        const flecha_largo = this.calcularLargoFlecha(vel_angular);
                         const punta_x = pivote_x + flecha_largo;
                         const punta_y = pivote_y;
 
@@ -283,8 +299,13 @@ class GestionLienzoEvento{
                             // Guardar pivote existente...
                             if(this.eventoLienzoEvento.mouse_only_click){
                                 this.edicion_mov_rotacion_pivote = false;
-                                datos.pivoteX = this.x_mouse-x_centro;
-                                datos.pivoteY = this.y_mouse-y_centro;
+                                if(esCircular){
+                                    datos.pivote_x = this.x_mouse-x_centro;
+                                    datos.pivote_y = this.y_mouse-y_centro;
+                                }else{
+                                    datos.pivoteX = this.x_mouse-x_centro;
+                                    datos.pivoteY = this.y_mouse-y_centro;
+                                }
                                 this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
                                     this.grupo_seleccionado,
                                     this.index_mov_seleccionado,
@@ -299,9 +320,13 @@ class GestionLienzoEvento{
                                 // Calculamos la nueva velocidad basada en la distancia del mouse al pivote
                                 // Si el mouse está a la izquierda del pivote, la velocidad debe ser negativa
                                 const nuevo_largo = this.x_mouse - pivote_x;
-                                const nueva_vel = Math.round(nuevo_largo / 0.3);
+                                const nueva_vel = Math.round(nuevo_largo / this.escala_flecha_velocidad);
 
-                                datos.velAngular = nueva_vel;
+                                if(esCircular){
+                                    datos.velocidad_angular = nueva_vel;
+                                }else{
+                                    datos.velAngular = nueva_vel;
+                                }
 
                                 this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
                                     this.grupo_seleccionado,
@@ -329,13 +354,14 @@ class GestionLienzoEvento{
             const tipo = movimiento.tipo;
             const datos = movimiento.datos;
 
-            if(tipo === MOV_ROTACION){
+            if(tipo === MOV_ROTACION || tipo === MOV_CIRCULAR){
+                const esCircular = tipo === MOV_CIRCULAR;
                 console.log(tipo)
                 const x_centro = rect_seleccion.centro_x;
                 const y_centro = rect_seleccion.centro_y;
-                const vel_angular = parseInt(datos.velAngular);
-                let pivote_x = parseInt(datos.pivoteX)+x_centro;
-                let pivote_y = parseInt(datos.pivoteY)+y_centro;
+                const vel_angular = parseInt(esCircular ? datos.velocidad_angular : datos.velAngular);
+                let pivote_x = parseInt(esCircular ? datos.pivote_x : datos.pivoteX)+x_centro;
+                let pivote_y = parseInt(esCircular ? datos.pivote_y : datos.pivoteY)+y_centro;
                 if(this.edicion_mov_rotacion_pivote){
                     pivote_x = this.x_mouse;
                     pivote_y = this.y_mouse;
@@ -425,7 +451,7 @@ class GestionLienzoEvento{
                     direccion = flecha_largo >= 0 ? 1 : -1;
                 } else {
                     // Si no edita, usa el valor guardado
-                    flecha_largo = vel_angular * 0.3;
+                    flecha_largo = this.calcularLargoFlecha(vel_angular);
                     direccion = vel_angular > 0 ? 1 : -1;
                 }
 
