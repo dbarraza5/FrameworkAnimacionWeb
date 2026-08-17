@@ -2,13 +2,93 @@ import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
 import TimelineCanvas from "./TimelineCanvas";
 import {
-    MODALIDAD_MOVIMIENTOS, MOV_CIRCULAR, MOV_ROTACION, TRABAJO_EDICION_MOVIMIENTO,
+    MODALIDAD_MOVIMIENTOS, MOV_CIRCULAR, MOV_GRAVEDAD, MOV_PARABOLICO_ANGULO,
+    MOV_RECTILINEO_2D, MOV_RECTILINEO_ACELERADO, MOV_RECTILINEO_UNIFORME,
+    MOV_ROTACION, MOV_ZOOM, TRABAJO_EDICION_MOVIMIENTO,
     TRABAJO_NADA_LIENZO,
     TRABAJO_REPRODUCCION,
     TRABAJO_SELECCION_GRUPO
 } from "./ConstanteEvento";
 import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 import {dibujar_rec_transparencia, dibujar_rectangulo} from "../EditorAnimacion/ImprimirAnimacion";
+import ControlVectorLienzo from "./ControlVectorLienzo";
+import ControlFlechaLienzo from "./ControlFlechaLienzo";
+import ControlZoomLienzo from "./ControlZoomLienzo";
+
+// Nombres de campo en `datos` para cada tipo de movimiento que usa ControlVectorLienzo
+// (pivote propio + flecha-medidor de magnitud).
+const CAMPOS_VECTOR_POR_TIPO = {
+    [MOV_ROTACION]: {campo_pivote_x: 'pivoteX', campo_pivote_y: 'pivoteY', campo_velocidad: 'velAngular'},
+    [MOV_CIRCULAR]: {campo_pivote_x: 'pivote_x', campo_pivote_y: 'pivote_y', campo_velocidad: 'velocidad_angular'},
+};
+
+const numero = (valor) => parseFloat(valor) || 0;
+
+// Lectura/escritura del vector en unidades propias de cada tipo, para los movimientos
+// con origen fijo (centro del grupo) que usa ControlFlechaLienzo.
+const CONFIG_FLECHA_POR_TIPO = {
+    [MOV_RECTILINEO_UNIFORME]: {
+        restriccion_eje: 'x',
+        leerVector: (datos) => ({x: numero(datos.velocidad), y: 0}),
+        guardarVector: (datos, x) => { datos.velocidad = Math.round(x); },
+    },
+    [MOV_RECTILINEO_ACELERADO]: {
+        restriccion_eje: 'x',
+        leerVector: (datos) => ({x: numero(datos.velocidad), y: 0}),
+        guardarVector: (datos, x) => { datos.velocidad = Math.round(x); },
+    },
+    [MOV_RECTILINEO_2D]: {
+        restriccion_eje: null,
+        leerVector: (datos) => ({x: numero(datos.vx), y: numero(datos.vy)}),
+        guardarVector: (datos, x, y) => { datos.vx = Math.round(x); datos.vy = Math.round(y); },
+    },
+    [MOV_GRAVEDAD]: {
+        restriccion_eje: 'y',
+        leerVector: (datos) => ({x: 0, y: numero(datos.v0y)}),
+        guardarVector: (datos, x, y) => { datos.v0y = Math.round(y); },
+    },
+    [MOV_PARABOLICO_ANGULO]: {
+        restriccion_eje: null,
+        // el dato real es polar (velocidadInicial + angulo); se convierte a cartesiano
+        // solo para poder dibujarlo/arrastrarlo como flecha. El signo de Y se invierte
+        // porque GestionMovimientos ya invierte Y al aplicar el movimiento (lanzamiento
+        // hacia arriba = angulo positivo), y la flecha debe apuntar hacia donde se lanza.
+        leerVector: (datos) => {
+            const v = numero(datos.velocidadInicial);
+            const rad = numero(datos.angulo) * Math.PI / 180;
+            return {x: v * Math.cos(rad), y: -v * Math.sin(rad)};
+        },
+        guardarVector: (datos, x, y) => {
+            datos.velocidadInicial = Math.round(Math.sqrt(x * x + y * y));
+            datos.angulo = Math.round(Math.atan2(-y, x) * 180 / Math.PI);
+        },
+        // Misma formula que GestionMovimientos.movParabolicoAngulo (x = v0x*t,
+        // y_pantalla = -(v0y*t - 0.5*g*t^2)), pero expresada directo en terminos de
+        // `vector` (que ya es {v0x, -v0y}) para no tener que reconvertir a angulo/modulo.
+        calcularTrayectoria: (vector, datos, duracion) => {
+            // mismo criterio que GestionMovimientos.movParabolicoAngulo: g=9.8 solo si
+            // no se definio, sin pisar un g=0 puesto a proposito.
+            const g = (datos.g === undefined || datos.g === '' || datos.g === null)
+                ? 9.8 : parseFloat(datos.g);
+            const t_max = duracion > 0 ? duracion : 1;
+            const pasos = 24;
+            const puntos = [];
+            for(let i = 1; i <= pasos; i++){
+                const t = t_max * (i / pasos);
+                puntos.push({
+                    x: vector.x * t,
+                    y: vector.y * t + 0.5 * g * t * t,
+                });
+            }
+            return puntos;
+        },
+    },
+};
+
+// Nombres de campo para el pivote/velocidad de Zoom (ControlZoomLienzo).
+const CAMPOS_ZOOM_POR_TIPO = {
+    [MOV_ZOOM]: {campo_pivote_x: 'pivoteX', campo_pivote_y: 'pivoteY', campo_velocidad: 'velocidad'},
+};
 
 
 class GestionLienzoEvento{
@@ -56,12 +136,9 @@ class GestionLienzoEvento{
 
     funcionCambioTrabajo = null;
 
-    edicion_mov_rotacion_pivote = false;
-    edicion_mov_rotacion_velocidad = false;
-
-    escala_flecha_velocidad = 2;
-    largo_minimo_flecha_velocidad = 20;
-    largo_maximo_flecha_velocidad = 200;
+    control_vector = new ControlVectorLienzo();
+    control_flecha = new ControlFlechaLienzo();
+    control_zoom = new ControlZoomLienzo();
 
     constructor(eventos_, eventoLienzoEvento, setEventoAnimacion, seleccionarGrupo) {
         this.id_canvas = "lienzo-evento"
@@ -79,15 +156,19 @@ class GestionLienzoEvento{
         this.timelineInstance.inicializar()
     }
 
-    calcularLargoFlecha(vel_angular){
-        if(vel_angular === 0) return 0;
-        const signo = Math.sign(vel_angular);
-        const magnitud = Math.abs(vel_angular) * this.escala_flecha_velocidad;
-        const magnitud_acotada = Math.min(
-            Math.max(magnitud, this.largo_minimo_flecha_velocidad),
-            this.largo_maximo_flecha_velocidad
-        );
-        return magnitud_acotada * signo;
+    // Elige que control de lienzo (y su configuracion de campos) corresponde al tipo
+    // de movimiento actual. Devuelve null si ese tipo todavia no tiene overlay.
+    resolverControl(tipo){
+        if(CAMPOS_VECTOR_POR_TIPO[tipo]){
+            return {control: this.control_vector, config: CAMPOS_VECTOR_POR_TIPO[tipo]};
+        }
+        if(CONFIG_FLECHA_POR_TIPO[tipo]){
+            return {control: this.control_flecha, config: CONFIG_FLECHA_POR_TIPO[tipo]};
+        }
+        if(CAMPOS_ZOOM_POR_TIPO[tipo]){
+            return {control: this.control_zoom, config: CAMPOS_ZOOM_POR_TIPO[tipo]};
+        }
+        return null;
     }
 
     limpiar(){
@@ -252,87 +333,21 @@ class GestionLienzoEvento{
                 if(movimiento){
                     const tipo = movimiento.tipo;
                     const datos = movimiento.datos;
-                    if(tipo === MOV_ROTACION || tipo === MOV_CIRCULAR){
-                        const esCircular = tipo === MOV_CIRCULAR;
-                        console.log(tipo)
-                        const x_centro = rect_seleccion.centro_x;
-                        const y_centro = rect_seleccion.centro_y;
-                        const vel_angular = parseInt(esCircular ? datos.velocidad_angular : datos.velAngular);
-                        let pivote_x = parseInt(esCircular ? datos.pivote_x : datos.pivoteX)+x_centro;
-                        let pivote_y = parseInt(esCircular ? datos.pivote_y : datos.pivoteY)+y_centro;
 
-                        // 1. DISTANCIA AL PIVOTE
-                        const distanciaMouse = Math.sqrt(
-                            (this.x_mouse - pivote_x) ** 2 +
-                            (this.y_mouse - pivote_y) ** 2
+                    const resuelto = this.resolverControl(tipo);
+
+                    if(resuelto){
+                        const {control, config} = resuelto;
+                        control.configurar(config);
+                        const guardo_cambio = control.procesarInteraccion(
+                            this.x_mouse, this.y_mouse, this.eventoLienzoEvento.mouse_only_click,
+                            datos, rect_seleccion.centro_x, rect_seleccion.centro_y
                         );
-
-                        // ========================================================
-                        // 2. DETECCIÓN DE LA CABEZA DE LA FLECHA
-                        // ========================================================
-                        const flecha_largo = this.calcularLargoFlecha(vel_angular);
-                        const punta_x = pivote_x + flecha_largo;
-                        const punta_y = pivote_y;
-
-                        // Calculamos la distancia entre el mouse y la punta de la flecha
-                        const distanciaPuntaFlecha = Math.sqrt(
-                            (this.x_mouse - punta_x) ** 2 +
-                            (this.y_mouse - punta_y) ** 2
-                        );
-
-                        // Le damos un radio de tolerancia de 8 píxeles para que sea fácil de cliquear
-                        const clickEnPuntaFlecha = distanciaPuntaFlecha <= 8;
-                        // ========================================================
-
-                        // LÓGICA DE EDICIÓN DEL PIVOTE
-                        if(!this.edicion_mov_rotacion_pivote && !this.edicion_mov_rotacion_velocidad){
-
-                            if(distanciaMouse <= 5 && this.eventoLienzoEvento.mouse_only_click){
-                                this.edicion_mov_rotacion_pivote = true;
-                            }
-                            // Si el usuario toca la flecha, activamos su propio modo de edición
-                            else if(clickEnPuntaFlecha && this.eventoLienzoEvento.mouse_only_click){
-                                this.edicion_mov_rotacion_velocidad = true;
-                            }
-
-                        } else if(this.edicion_mov_rotacion_pivote) {
-                            // Guardar pivote existente...
-                            if(this.eventoLienzoEvento.mouse_only_click){
-                                this.edicion_mov_rotacion_pivote = false;
-                                if(esCircular){
-                                    datos.pivote_x = this.x_mouse-x_centro;
-                                    datos.pivote_y = this.y_mouse-y_centro;
-                                }else{
-                                    datos.pivoteX = this.x_mouse-x_centro;
-                                    datos.pivoteY = this.y_mouse-y_centro;
-                                }
-                                this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
-                                    this.grupo_seleccionado,
-                                    this.index_mov_seleccionado,
-                                    datos);
-                            }
-                        }
-                        // LÓGICA PARA MODIFICAR LA VELOCIDAD CON EL MOUSE
-                        else if(this.edicion_mov_rotacion_velocidad) {
-                            if(this.eventoLienzoEvento.mouse_only_click){
-                                this.edicion_mov_rotacion_velocidad = false;
-
-                                // Calculamos la nueva velocidad basada en la distancia del mouse al pivote
-                                // Si el mouse está a la izquierda del pivote, la velocidad debe ser negativa
-                                const nuevo_largo = this.x_mouse - pivote_x;
-                                const nueva_vel = Math.round(nuevo_largo / this.escala_flecha_velocidad);
-
-                                if(esCircular){
-                                    datos.velocidad_angular = nueva_vel;
-                                }else{
-                                    datos.velAngular = nueva_vel;
-                                }
-
-                                this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
-                                    this.grupo_seleccionado,
-                                    this.index_mov_seleccionado,
-                                    datos);
-                            }
+                        if(guardo_cambio){
+                            this.eventos_.actualizarDatosMovimiento(this.id_evento_seleccionado,
+                                this.grupo_seleccionado,
+                                this.index_mov_seleccionado,
+                                datos);
                         }
                     }
                 }
@@ -354,136 +369,17 @@ class GestionLienzoEvento{
             const tipo = movimiento.tipo;
             const datos = movimiento.datos;
 
-            if(tipo === MOV_ROTACION || tipo === MOV_CIRCULAR){
-                const esCircular = tipo === MOV_CIRCULAR;
-                console.log(tipo)
-                const x_centro = rect_seleccion.centro_x;
-                const y_centro = rect_seleccion.centro_y;
-                const vel_angular = parseInt(esCircular ? datos.velocidad_angular : datos.velAngular);
-                let pivote_x = parseInt(esCircular ? datos.pivote_x : datos.pivoteX)+x_centro;
-                let pivote_y = parseInt(esCircular ? datos.pivote_y : datos.pivoteY)+y_centro;
-                if(this.edicion_mov_rotacion_pivote){
-                    pivote_x = this.x_mouse;
-                    pivote_y = this.y_mouse;
-                }
+            const resuelto = this.resolverControl(tipo);
 
-
-
-                //console.log(x_centro, " ", y_centro)
-                //console.log(pivote_x, " ", pivote_y)
-                // =========================
-                // DISTANCIA / RADIO
-                // =========================
-                const dx = pivote_x - x_centro;
-                const dy = pivote_y - y_centro;
-
-                const radio = Math.sqrt(dx * dx + dy * dy);
-
-                ctx.save();
-
-                // =========================
-                // ESTILO PUNTEADO
-                // =========================
-                ctx.setLineDash([6, 6]);
-                ctx.lineWidth = 1.5;
-                ctx.strokeStyle = '#8b5cf6';
-
-                // =========================
-                // LINEA CENTRO -> PIVOTE
-                // =========================
-                ctx.beginPath();
-                ctx.moveTo(x_centro, y_centro);
-                ctx.lineTo(pivote_x, pivote_y);
-                ctx.stroke();
-
-                // =========================
-                // CIRCULO DE TRAYECTORIA
-                // =========================
-                ctx.beginPath();
-                ctx.arc(
-                    pivote_x,
-                    pivote_y,
-                    radio,
-                    0,
-                    Math.PI * 2
+            if(resuelto){
+                const {control, config} = resuelto;
+                const duracion = (movimiento.tiempo_final - movimiento.tiempo_inicio) / 1000;
+                control.configurar(config);
+                control.dibujar(
+                    ctx, datos, rect_seleccion.centro_x, rect_seleccion.centro_y,
+                    this.x_mouse, this.y_mouse, duracion
                 );
-                ctx.stroke();
-
-
-                // =========================
-                // PEQUEÑA CIRCUNFERENCIA EN EL PIVOTE
-                // =========================
-                ctx.setLineDash([]);
-
-                ctx.beginPath();
-                ctx.fillStyle = '#8b5cf6';
-
-                ctx.arc(
-                    pivote_x,
-                    pivote_y,
-                    5,
-                    0,
-                    Math.PI * 2
-                );
-
-                ctx.fill();
-
-                // =========================
-                // FLECHA DE VELOCIDAD ANGULAR
-                // =========================
-                ctx.setLineDash([]); // Línea continua
-                ctx.lineWidth = 3;
-
-                // 1. CONTROL DE ESTADO: Si está editando, cambia a un color llamativo (ej: Amarillo/Naranja #f59e0b)
-                const estaEditandoVel = this.edicion_mov_rotacion_velocidad;
-                const colorFlecha = estaEditandoVel ? '#f59e0b' : '#ef4444';
-
-                ctx.strokeStyle = colorFlecha;
-                ctx.fillStyle = colorFlecha;
-
-                // 2. CÁLCULO DEL LARGO DINÁMICO
-                let flecha_largo = 0;
-                let direccion = 1;
-
-                if (estaEditandoVel) {
-                    // Si edita, el largo es la distancia directa en X desde el pivote al mouse
-                    flecha_largo = this.x_mouse - pivote_x;
-                    direccion = flecha_largo >= 0 ? 1 : -1;
-                } else {
-                    // Si no edita, usa el valor guardado
-                    flecha_largo = this.calcularLargoFlecha(vel_angular);
-                    direccion = vel_angular > 0 ? 1 : -1;
-                }
-
-// Definimos el punto final de la flecha en el eje X
-                const destino_x = pivote_x + flecha_largo;
-                const destino_y = pivote_y;
-
-// Dibujamos si hay velocidad guardada O si el usuario está arrastrando el mouse
-                if (vel_angular !== 0 || estaEditandoVel) {
-
-                    // 1. Dibujar el cuerpo de la flecha (línea recta)
-                    ctx.beginPath();
-                    ctx.moveTo(pivote_x, pivote_y);
-                    ctx.lineTo(destino_x, destino_y);
-                    ctx.stroke();
-
-                    // 2. Dibujar la punta de la flecha
-                    const tamaño_punta = 8; // Tamaño del triángulo
-
-                    ctx.beginPath();
-                    ctx.moveTo(destino_x, destino_y);
-                    // Los otros dos puntos del triángulo retroceden en base a la dirección calculada
-                    ctx.lineTo(destino_x - tamaño_punta * direccion, destino_y - 5);
-                    ctx.lineTo(destino_x - tamaño_punta * direccion, destino_y + 5);
-                    ctx.closePath();
-                    ctx.fill();
-                }
-
-                ctx.restore();
-                //console.log(movimiento)
             }
-
         }
 
     }
