@@ -254,17 +254,22 @@ class GestionEvento{
                             }
                             const tiempo_inicio_mov = movimiento.tiempo_inicio/1000;
                             const tiempo_fin_mov = movimiento.tiempo_final/1000;
-                            const tiempo_virtual_mov = tiempo_virtual-tiempo_inicio_mov;
+                            const duracion_mov = tiempo_fin_mov-tiempo_inicio_mov;
+                            // Una vez que el movimiento arranca, sigue aportando su
+                            // desplazamiento aunque su propia ventana ya haya terminado --
+                            // congelado en el valor que tenia al llegar a tiempo_final. Si no
+                            // se congelara, el grupo saltaria de vuelta a la posicion original
+                            // apenas termina cada movimiento individual, en vez de quedarse
+                            // ahi hasta que termine el evento completo.
+                            const tiempo_virtual_mov = Math.min(tiempo_virtual-tiempo_inicio_mov, duracion_mov);
 
-                            if(tiempo_inicio_mov<=tiempo_evento
-                                && tiempo_fin_mov>=tiempo_evento){
+                            if(tiempo_inicio_mov<=tiempo_evento){
                                 const tipo = movimiento.tipo;
                                 const tipoEfecto = movimiento.tipo_efecto;
                                 const datos = movimiento.datos;
                                 let resultado_grupos = null;
                                 let resultado_figuras = null;
                                 if(tipoEfecto === TIPO_EFECTO_MOV_OBJETOS){
-                                    const duracion_mov = tiempo_fin_mov-tiempo_inicio_mov;
                                     resultado_grupos = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos, duracion_mov);
                                 }
                                 if(tipoEfecto === TIPO_EFECTO_MOV_FIGURAS){
