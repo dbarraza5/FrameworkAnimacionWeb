@@ -14,7 +14,6 @@ import {
     MOV_RECTILINEO_ACELERADO,
     MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ZOOM
 } from "./ConstanteEvento";
-import Fisica from "../EditorAnimacion/Fisica";
 import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 
 function movRectilineoUniforme(t, v){
@@ -131,14 +130,14 @@ function calcularAnguloOrbita(velocidad, tiempo, anguloInicial, radio) {
  * @param {number} direction - 1 para horario, 2 para anti-horario.
  * @returns {number} - El nuevo ángulo en radianes.
  */
-function getNewAngle(currentAngle, deltaTime, velocity, direction) {
-
+function getNewAngle(deltaTime, velocity, direction) {
+    // Solo el delta acumulado desde el inicio del movimiento (0 en tiempo=0, para
+    // no saltar desde la posicion real de la figura). No debe combinarse con un
+    // angulo base externo (ver bitacora 2026-08-18): angulo_figura, en
+    // OperacionesGrupo.calcularRotacionFigura, ya representa la posicion real de
+    // cada figura respecto al pivote.
     const deltaAngle = velocity * deltaTime;
-
-    if (direction === 1) {
-        return currentAngle + deltaAngle;
-    }
-    return currentAngle - deltaAngle;
+    return direction === 1 ? deltaAngle : -deltaAngle;
 }
 
 
@@ -244,23 +243,11 @@ class GestionMovimientos{
 
             const sentido = parseInt(datos.sentido) || 1;
 
-
-            //const angulo_rotacion = calcularAnguloOrbita(velocidad, tiempo, 45, 20)
             const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos)
             const piv_x = centro_.centro_x+parseInt(datos.pivoteX);
             const piv_y = centro_.centro_y+parseInt(datos.pivoteY);
-             // const angulo_rotacion = Fisica.angulo_recta(centro_.centro_x, centro_.centro_y
-             //        ,piv_x, piv_y);
 
-            const angulo_rotacion = Fisica.angulo_recta(piv_x, piv_y, centro_.centro_x, centro_.centro_y);
-
-            //const angulo_rotacion = 45//45;
-            //console.log("angulo original: ",angulo_rotacion);
-            const angulo_radianes = getNewAngle(angulo_rotacion,
-                tiempo,
-                velocidad,
-                sentido
-            );
+            const angulo_radianes = getNewAngle(tiempo, velocidad, sentido);
 
 
             operacion_mov=OperacionesGrupo.calcularRotacionGrupoFiguras(lista_grupos, animacion.grupos_figuras
