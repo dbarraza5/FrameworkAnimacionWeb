@@ -187,6 +187,10 @@ export default class TimelineCanvas {
     modalidadMovimientos(){ this.tipo_edicion = 2; }
 
     procesar(){
+        // Mientras se arrastra la linea de tiempo, su posicion la dicta el mouse
+        // (ver _onMouseMove) -- si se siguiera pisando con el reloj real aca, el
+        // arrastre se veria "peleado" con el valor que buscarTiempo() acaba de fijar.
+        if(this.isDraggingLineaTiempo) return;
         this.x_linea_tiempo = this.eventoAnimacion.tiempo_animacion * 100;
     }
 
@@ -281,9 +285,22 @@ export default class TimelineCanvas {
 
         const dentro_area = my >= this.y_timeline && my <= this.alto_canvas;
 
-        if (dentro_area && this.eventoLienzo.stack_event_teclado.includes("KeyX")) {
-            this.isDraggingTimelineX = true;
-            this.dragStartX = mx;
+        // La linea de tiempo (playhead) tiene prioridad sobre el arrastre de fondo,
+        // asi que se detecta primero. Arrastrarla pausa la reproduccion -- si no, el
+        // reloj real seguiria avanzando y pelearia con la posicion que marca el mouse.
+        const sizeColision = 15;
+        const x_col = this.x_linea_tiempo - this.desplazamiento_x - sizeColision / 2;
+        const y_col = this.y_timeline - sizeColision;
+        // La zona de agarre cubre el triangulo de arriba Y todo el largo de la linea
+        // (no solo la puntita), para que sea facil tomarla en cualquier punto.
+        const y_col_max = this.alto_canvas;
+
+        if (mx >= x_col && mx <= x_col + sizeColision && my >= y_col && my <= y_col_max) {
+            this.isDraggingLineaTiempo = true;
+            this.offsetDragLineaTiempo = mx - this.x_linea_tiempo;
+            this.play = false;
+            this.eventoAnimacion.pausarEventos();
+            return;
         }
 
         if (dentro_area && this.eventoLienzo.stack_event_teclado.includes("KeyY")) {
@@ -291,9 +308,11 @@ export default class TimelineCanvas {
             this.dragStartY = my;
         }
 
+        let bloque_golpeado = false;
         for (let ev of this.lista_objetos) {
             const { _renderX: x, _renderY: y, _renderW: w, _renderH: h } = ev;
             if (mx >= x && mx <= x + w && my >= y && my <= y + h) {
+                bloque_golpeado = true;
                 this.selected = ev;
                 if (mx <= x + 5) {
                     this.isResizing = true;
@@ -308,14 +327,12 @@ export default class TimelineCanvas {
             }
         }
 
-        const sizeColision = 15;
-        const x_col = this.x_linea_tiempo - this.desplazamiento_x - sizeColision / 2;
-        const y_col = this.y_timeline - sizeColision;
-
-        if (mx >= x_col && mx <= x_col + sizeColision && my >= y_col && my <= y_col + sizeColision) {
-            this.isDraggingLineaTiempo = true;
-            this.offsetDragLineaTiempo = mx - this.x_linea_tiempo;
-            return;
+        // Arrastrar el fondo del timeline (fuera de un bloque de movimiento o de la
+        // linea de tiempo) desplaza el eje horizontal -- ya no hace falta mantener
+        // presionada ninguna tecla para esto.
+        if (dentro_area && !bloque_golpeado) {
+            this.isDraggingTimelineX = true;
+            this.dragStartX = mx;
         }
     }
 
@@ -362,8 +379,19 @@ export default class TimelineCanvas {
         }
 
         if (this.isDraggingLineaTiempo) {
-            this.x_linea_tiempo = mx - this.offsetDragLineaTiempo;
-            if (this.x_linea_tiempo < 0) this.x_linea_tiempo = 0;
+            let nuevo_x = mx - this.offsetDragLineaTiempo;
+            if (nuevo_x < 0) nuevo_x = 0;
+
+            // No dejar arrastrar mas alla del final del evento activo -- pasado ese
+            // punto el motor reinicia de todos modos en el proximo tick.
+            const evento_general = this.eventoAnimacion.obtenerEvento("EventoGeneral");
+            if (evento_general) {
+                const x_max = (evento_general.evento.tiempo_final / 1000) * 100;
+                if (nuevo_x > x_max) nuevo_x = x_max;
+            }
+
+            this.x_linea_tiempo = nuevo_x;
+            this.eventoAnimacion.buscarTiempo(this.x_linea_tiempo / 100);
         }
     }
 
