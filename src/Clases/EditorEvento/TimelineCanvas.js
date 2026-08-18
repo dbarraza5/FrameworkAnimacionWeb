@@ -1,6 +1,3 @@
-import index from "@mui/material/darkScrollbar";
-import {TRABAJO_ANIMACION_EVENTOS, TRABAJO_ANIMACION_MOVIMIENTOS} from "../../Store/Evento/eventoSlice";
-
 const ALTO_EVENTO_=30;
 
 function dibujarTrianguloEquilatero(ctx, p, ejeX, ejeY) {
@@ -78,6 +75,9 @@ export default class TimelineCanvas {
 
         this.tipo_modalidad_trabajo = null;
         this.id_evento_seleccionado = null;
+        // Grupo cuyos movimientos se estan mostrando/editando en este timeline (nivel
+        // "movimientos"). Null = no hay nada que mostrar (se limpia lista_objetos).
+        this.grupo_seleccionado = null;
         this.play = false;
         this.reset = false;
         this.reiniciar();
@@ -382,32 +382,24 @@ export default class TimelineCanvas {
         this.resizeSide = null;
         this.isDraggingLineaTiempo = false;
 
-        if(this.eventoAnimacion.seleccion_evento >= 0){
-            if(this.tipo_modalidad_trabajo === TRABAJO_ANIMACION_MOVIMIENTOS){
-                const evento_ = this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento];
-                if(evento_ && this.lista_objetos.length === evento_.evento.movimientos.length){
-                    for(let i = 0; i < evento_.evento.movimientos.length; i++){
-                        evento_.evento.movimientos[i].tiempo_inicio = this.lista_objetos[i].inicio;
-                        evento_.evento.movimientos[i].tiempo_final = this.lista_objetos[i].fin;
-                    }
-                    this.eventoAnimacion.eventos[this.eventoAnimacion.seleccion_evento] = evento_;
-                    this.setEventoAnimacion({edicion: this.eventoAnimacion});
-                }
-            }
-            if(this.tipo_modalidad_trabajo === TRABAJO_ANIMACION_EVENTOS){
+        // Nivel "movimientos": escribe de vuelta inicio/fin arrastrados/estirados en
+        // los movimientos reales del grupo activo. El nivel "eventos" (arbol de
+        // eventos) es una fase futura, todavia no implementada aca.
+        if(this.grupo_seleccionado && this.id_evento_seleccionado){
+            const movimientos = this.eventoAnimacion.obtenerMovimientosDeGrupo(
+                this.id_evento_seleccionado, this.grupo_seleccionado
+            );
+            if(movimientos && movimientos.length === this.lista_objetos.length){
                 let cambio = false;
-                for(let i = 0; i < this.lista_objetos.length; i++){
+                for(let i = 0; i < movimientos.length; i++){
                     const obj = this.lista_objetos[i];
-                    for(let j = 0; j < this.eventoAnimacion.eventos.length; j++){
-                        if(this.eventoAnimacion.eventos[j].evento["nombre"] === obj["id"]){
-                            this.eventoAnimacion.eventos[j].evento["tiempo_inicio"] = obj.inicio;
-                            this.eventoAnimacion.eventos[j].evento["tiempo_final"] = obj.fin;
-                            cambio = true;
-                            break;
-                        }
+                    if(movimientos[i].tiempo_inicio !== obj.inicio || movimientos[i].tiempo_final !== obj.fin){
+                        movimientos[i].tiempo_inicio = obj.inicio;
+                        movimientos[i].tiempo_final = obj.fin;
+                        cambio = true;
                     }
                 }
-                if (cambio){
+                if(cambio){
                     this.setEventoAnimacion({edicion: this.eventoAnimacion});
                 }
             }

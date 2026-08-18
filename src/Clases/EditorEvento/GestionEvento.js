@@ -144,6 +144,18 @@ class GestionEvento{
     }
 
 
+    // Devuelve el array completo de movimientos de un grupo (no un movimiento puntual),
+    // para el timeline: necesita verlos todos a la vez, no uno por indice.
+    obtenerMovimientosDeGrupo(nombreEvento, id_objeto){
+        const eventoEncontrado = this.eventos.find(e => e.evento.nombre === nombreEvento);
+        if (!eventoEncontrado) return null;
+
+        const objetoEncontrado = eventoEncontrado.evento.objetos.find(obj => obj.id_objeto === id_objeto);
+        if (!objetoEncontrado) return null;
+
+        return objetoEncontrado.movimientos;
+    }
+
     actualizarDatosMovimiento(nombreEvento, id_objeto, indice_movimiento, nuevosDatos) {
         // 1. Buscar evento
         const eventoEncontrado = this.eventos.find(

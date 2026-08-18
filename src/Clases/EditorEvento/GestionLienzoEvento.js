@@ -148,6 +148,9 @@ class GestionLienzoEvento{
 
     grupos_disponibles_generales = [];
     grupo_seleccionado = null;
+    // Ultimo grupo cuyos movimientos se cargaron en el timeline (para detectar
+    // cuando hay que refrescarlo -- ver actualizarTimelineMovimientos).
+    _grupo_timeline_cargado = null;
 
     funcionCambioTrabajo = null;
 
@@ -192,6 +195,54 @@ class GestionLienzoEvento{
 
     limpiar(){
         this.timelineInstance.dispose();
+    }
+
+    // Mantiene this.timelineInstance.lista_objetos sincronizada con los movimientos
+    // reales del grupo seleccionado (nivel "movimientos" del timeline), sin pisar un
+    // arrastre/estiramiento en curso.
+    actualizarTimelineMovimientos(){
+        if(this.tipo_modalidad !== MODALIDAD_MOVIMIENTOS){
+            return;
+        }
+
+        const t = this.timelineInstance;
+        const interactuando = t.selected || t.isResizing || t.isDraggingLineaTiempo
+            || t.isDraggingTimelineX || t.isDraggingTimelineY;
+        if(interactuando){
+            return;
+        }
+
+        if(!this.grupo_seleccionado){
+            if(this._grupo_timeline_cargado !== null){
+                t.cambiarEventos([]);
+                this._grupo_timeline_cargado = null;
+            }
+            return;
+        }
+
+        t.id_evento_seleccionado = this.id_evento_seleccionado;
+        t.grupo_seleccionado = this.grupo_seleccionado;
+
+        const movimientos = this.eventos_.obtenerMovimientosDeGrupo(this.id_evento_seleccionado, this.grupo_seleccionado);
+        if(!movimientos){
+            return;
+        }
+
+        const desactualizado = this.grupo_seleccionado !== this._grupo_timeline_cargado
+            || movimientos.length !== t.lista_objetos.length
+            || movimientos.some((mov, i) => {
+                const actual = t.lista_objetos[i];
+                return !actual || actual.inicio !== mov.tiempo_inicio || actual.fin !== mov.tiempo_final;
+            });
+
+        if(desactualizado){
+            t.cambiarEventos(movimientos.map((mov, index) => ({
+                id: index,
+                inicio: mov.tiempo_inicio,
+                fin: mov.tiempo_final
+            })));
+            this._grupo_timeline_cargado = this.grupo_seleccionado;
+        }
     }
 
 
@@ -301,6 +352,7 @@ class GestionLienzoEvento{
 
 
             this.procesoEdicionMovimientos();
+            this.actualizarTimelineMovimientos();
             this.actualizarLienzo();
             this.timelineInstance.reiniciar();
 
