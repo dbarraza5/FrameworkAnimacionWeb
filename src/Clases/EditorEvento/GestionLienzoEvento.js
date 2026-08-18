@@ -396,7 +396,12 @@ class GestionLienzoEvento{
             }
 
             if(this.tipo_trabajo === TRABAJO_EDICION_MOVIMIENTO){
-                const grupo_seleccionado_ = this.eventos_.gestion_grupos.get_grupos_padre_ehijos(this.grupo_seleccionado);
+                // gestion_grupos_originales (posicion de reposo), no gestion_grupos (la
+                // posicion en vivo, ya desplazada por este mismo movimiento) -- si no, el
+                // pivote/circulo se recalcula cada frame relativo a donde el grupo ya
+                // llego, y el overlay "persigue" al grupo en vez de quedarse fijo en el
+                // espacio mientras el grupo orbita/avanza sobre el.
+                const grupo_seleccionado_ = this.eventos_.gestion_grupos_originales.get_grupos_padre_ehijos(this.grupo_seleccionado);
                 const rect_seleccion =
                     OperacionesGrupo.calcularCentroGruposSeleccionados(
                         grupo_seleccionado_
@@ -449,7 +454,9 @@ class GestionLienzoEvento{
     }
 
     imprimiendoMovimientosObjeto(){
-        const grupo_seleccionado_ = this.eventos_.gestion_grupos.get_grupos_padre_ehijos(this.grupo_seleccionado);
+        // Ver comentario en procesoEdicionMovimientos(): el overlay se ancla a la
+        // posicion de reposo, no a la posicion en vivo ya desplazada.
+        const grupo_seleccionado_ = this.eventos_.gestion_grupos_originales.get_grupos_padre_ehijos(this.grupo_seleccionado);
         const rect_seleccion =
             OperacionesGrupo.calcularCentroGruposSeleccionados(
                 grupo_seleccionado_
