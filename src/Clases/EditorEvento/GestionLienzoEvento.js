@@ -217,6 +217,8 @@ class GestionLienzoEvento{
         this.eventos_.imprimirEventos();
 
         if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
+            this.dibujarGrupoSeleccionado(ctx);
+
             if(this.tipo_trabajo === TRABAJO_SELECCION_GRUPO){
                 for (let i=0; i < this.grupos_disponibles_generales.length; i++){
                     const grupos_ = [this.grupos_disponibles_generales[i]]
@@ -372,6 +374,26 @@ class GestionLienzoEvento{
                 }
             }
         }
+    }
+
+    // Resalta el grupo actualmente elegido en la seccion de Movimientos con un
+    // rectangulo azul, sin importar el sub-estado (navegando hijos o editando un
+    // movimiento) -- a diferencia del rectangulo verde de TRABAJO_SELECCION_GRUPO,
+    // que solo marca los grupos hijos disponibles mientras se esta navegando.
+    dibujarGrupoSeleccionado(ctx){
+        if(!this.grupo_seleccionado) return;
+
+        const grupo_seleccionado_ = this.eventos_.gestion_grupos.get_grupos_padre_ehijos(this.grupo_seleccionado);
+        if(grupo_seleccionado_.length === 0) return;
+
+        const rect_seleccion = OperacionesGrupo.calcularCentroGruposSeleccionados(grupo_seleccionado_);
+        if(!isFinite(rect_seleccion.inf_hor) || !isFinite(rect_seleccion.inf_ver)) return;
+
+        const x_select_g = rect_seleccion.inf_hor + this.configuracion_lienzo.x_delta_original;
+        const y_select_g = rect_seleccion.inf_ver + this.configuracion_lienzo.y_delta_original;
+
+        dibujar_rec_transparencia(ctx, "#0066ff", "#0066ff", x_select_g, y_select_g,
+            rect_seleccion.ancho, rect_seleccion.alto, 0.15);
     }
 
     imprimiendoMovimientosObjeto(){
