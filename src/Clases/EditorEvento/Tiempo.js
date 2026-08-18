@@ -165,6 +165,21 @@ class Tiempo {
         }
     }
 
+    // Fuerza el reloj a marcar `segundos` exactos en este instante, sin importar si
+    // esta pausado o corriendo. Recalibra tiempoGuardar para que, si mas adelante se
+    // despausa, siga contando desde aca (no salte de vuelta a donde estaba antes de
+    // buscar) -- misma formula que procesoNormalTiempo/procesoPausar, pero invertida.
+    establecer(segundos, tiempo_universal) {
+        this.tiempo_universal = tiempo_universal;
+        const factor = this.tiempoRelativo !== 0 ? this.tiempoRelativo : 1;
+        this.tiempoGuardar = tiempo_universal - segundos * 1000 * factor;
+        this.sumatoriaTiempoPausa = 0;
+        this.tiempodePausa = 0;
+        this.tiempoComienzoPausa = tiempo_universal;
+        this.tiempoActual = segundos;
+        this.tiempoActualAux = segundos;
+    }
+
     setTiempoRelativo(t_relatividad) {
         if (t_relatividad !== this.tiempoRelativo) {
             this.tiempoRelativo = t_relatividad;

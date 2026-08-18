@@ -69,9 +69,18 @@ class GestionEvento{
             this.eventos[evento_i].activar_tiempo = false;
             this.eventos[evento_i].tiempo.modPasivo();
         }
+        // this.tiempo (reloj de clase, el que mueve la linea roja del timeline) puede
+        // haber quedado en un instante no-cero por un buscarTiempo() previo -- hay que
+        // resetearlo tambien, si no "Reiniciar" deja la linea congelada donde estaba.
+        this.tiempo.modPasivo();
+        // modPasivo() deja los relojes despausados; como procesandoEvento() ya corre
+        // siempre (no solo con reproducir=true), hay que volver a pausarlos aca -- si
+        // no, "Reiniciar" dejaria la animacion reproduciendose sola desde el inicio.
+        this.pausarEventos();
     }
 
     pausarDesEventos(){
+        this.tiempo.despausar();
         for(let evento_i=0; evento_i<this.eventos.length; evento_i++){
             //this.eventos[evento_i].activar_tiempo = false;
             this.eventos[evento_i].tiempo.despausar();
@@ -79,9 +88,28 @@ class GestionEvento{
     }
 
     pausarEventos(){
+        this.tiempo.pausar();
         for(let evento_i=0; evento_i<this.eventos.length; evento_i++){
             //this.eventos[evento_i].activar_tiempo = false;
             this.eventos[evento_i].tiempo.pausar();
+        }
+    }
+
+    // Mueve el reloj global y el de EventoGeneral a un instante especifico (en
+    // segundos), sin necesidad de reproducir -- para que el lienzo muestre la
+    // posicion real del grupo en ese momento (ej. al seleccionar un movimiento,
+    // saltar a su tiempo_inicio). No cambia this.reproducir: si estaba pausado,
+    // sigue pausado, solo que ahora "pausado en" el instante indicado.
+    buscarTiempo(segundos){
+        const tiempo_universal_ = performance.now();
+        this.tiempo.establecer(segundos, tiempo_universal_);
+
+        const evento_ = this.obtenerEvento("EventoGeneral");
+        if(evento_){
+            evento_.tiempo.establecer(segundos, tiempo_universal_);
+            // si el reloj del evento nunca se activo (modPasivo nunca corrio),
+            // marcarlo activo para que el proximo tick no lo pise reseteandolo a 0.
+            evento_.activar_tiempo = true;
         }
     }
 
@@ -104,6 +132,12 @@ class GestionEvento{
         this.reseteoMovGrupos();
         console.log("[LISTA EVENTOS] => "+this.eventos.length);
         this.tiempo.pausar();
+        // Antes, procesandoEvento() solo corria si this.reproducir era true, asi que
+        // el reloj de cada evento nunca arrancaba hasta el primer click en Play. Ahora
+        // que procesandoEvento() corre siempre (para poder ver la pose real del grupo
+        // sin reproducir), hay que pausar tambien estos relojes desde el arranque --
+        // si no, la animacion se reproduciria sola apenas carga la pagina.
+        this.pausarEventos();
     }
 
     iniciarRelojes(){
@@ -194,6 +228,14 @@ class GestionEvento{
                 evento_.activar_tiempo = true;
                 this.gestion_grupos_originales.procesarPosicionFinalFiguras()
                 evento_.tiempo.modPasivo();
+                // modPasivo() siempre despausa. Antes esto era inofensivo porque esta
+                // rama solo se ejecutaba en el primer tick DESPUES de apretar Play; ahora
+                // que procesandoEvento corre siempre (incluso en carga inicial/pausado),
+                // hay que volver a pausar aca si no estamos reproduciendo -- si no, el
+                // evento arranca a correr solo apenas se activa por primera vez.
+                if(!this.reproducir){
+                    evento_.tiempo.pausar();
+                }
                 console.log("INICIALIZANDO EL TIEMPO DEL EVENTO")
             }else{
                 const tiempo_inicio = evento_.evento.tiempo_inicio/1000;
@@ -313,11 +355,12 @@ class GestionEvento{
 
             const evento_ = this.obtenerEvento("EventoGeneral");
             const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
-            if(this.reproducir){
-                this.procesandoEvento(evento_, tiempo_evento);
-            }else{
-                //this.procesandoEvento(evento_, 0.5);
-            }
+            // Se procesa siempre (reproduciendo, pausado o recien buscado con
+            // buscarTiempo), no solo mientras this.reproducir es true -- asi el
+            // lienzo siempre refleja la posicion real del grupo en el instante que
+            // marca el reloj del evento, en vez de congelarse en la pose de reposo
+            // apenas se pausa.
+            this.procesandoEvento(evento_, tiempo_evento);
 
 
 

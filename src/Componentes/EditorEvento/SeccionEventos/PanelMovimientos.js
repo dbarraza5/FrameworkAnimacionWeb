@@ -37,6 +37,13 @@ function PanelMovimientos(props) {
         setmovIndexSeleccionado(index);
         dispatch(setIndexMovSeleccionado(index))
         dispatch(setTipoTrabajo(TRABAJO_EDICION_MOVIMIENTO))
+        // Salta el reloj al inicio de este movimiento para que el lienzo muestre al
+        // grupo en su posicion real de ese instante (no la de reposo) mientras se
+        // edita -- el grupo puede no estar donde arranca este overlay si hay otros
+        // movimientos activos antes de tiempo_inicio.
+        if(mov_){
+            props.eventoAnimacion.edicion.buscarTiempo(mov_.tiempo_inicio/1000);
+        }
     };
 
 
