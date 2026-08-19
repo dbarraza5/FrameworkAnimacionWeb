@@ -70,6 +70,11 @@ class ConfiguracionLienzoEvento{
     proporcion_escala = 1.1;
     aplicar_escala = false;
 
+    // Botones de zoom dibujados en la esquina superior derecha del lienzo (fijos,
+    // fuera del area escalada -- ver dibujarBotonesZoom/procesarClickBotonesZoom).
+    boton_zoom_menos = {x: 528, y: 6, w: 26, h: 22};
+    boton_zoom_mas = {x: 560, y: 6, w: 26, h: 22};
+
     titulo_modalidad = "#";
     titulo_tipo_trabajo = "#";
     index_movimiento = null;
@@ -126,90 +131,78 @@ class ConfiguracionLienzoEvento{
     procesarTrabajoConfiguracionAtributosLienzo(eventoLienzoFigura){
         this.puntero.x = eventoLienzoFigura.mouse_x;
         this.puntero.y = eventoLienzoFigura.mouse_y;
-        // if(this.tipo_trabajo === MOVER_NADA){
-        //     if(eventoLienzoFigura.stack_event_teclado.includes("KeyE") && eventoLienzoFigura.mouse_click_down){
-        //         this.x_original_mouse = eventoLienzoFigura.mouse_x;
-        //         this.y_original_mouse = eventoLienzoFigura.mouse_y;
-        //         this.x_original_aux = this.x_delta_original;
-        //         this.y_original_aux = this.y_delta_original;
-        //         this.tipo_trabajo = MOVER_DESPLAZAR_LIENZO;
-        //     }
-        //
-        //     if(eventoLienzoFigura.stack_event_teclado.includes("KeyZ")){
-        //         if(eventoLienzoFigura.mouse_delta_scroll<0){
-        //             this.tipo_trabajo = MOVER_AUMENTO_LIENZO;
-        //         }
-        //         if(eventoLienzoFigura.mouse_delta_scroll>0){
-        //             this.tipo_trabajo = MOVER_REDUCCION_LIENZO;
-        //             //this.escala/=this.proporcion_escala;
-        //         }
-        //     }
-        //
-        //     if(eventoLienzoFigura.stack_event_teclado.includes("KeyR")){
-        //         this.x_delta_original = 0;
-        //         this.y_delta_original = 0;
-        //     }
-        //
-        //     if(eventoLienzoFigura.stack_event_teclado.includes("KeyS") && !this.presionado_s){
-        //         this.ver_info_lienzo = !this.ver_info_lienzo;
-        //         this.presionado_s = true;
-        //     }else{
-        //         this.presionado_s = false;
-        //     }
-        //
-        //     if(eventoLienzoFigura.stack_event_teclado.includes("KeyP") && !this.presionado_p){
-        //         this.pintar_animacion = !this.pintar_animacion;
-        //         this.presionado_p = true;
-        //     }else{
-        //         this.presionado_p = false;
-        //     }
-        // }
-        //
-        // if(this.tipo_trabajo === MOVER_DESPLAZAR_LIENZO){
-        //     const x_delta = eventoLienzoFigura.mouse_x - this.x_original_mouse;
-        //     const y_delta = eventoLienzoFigura.mouse_y - this.y_original_mouse;
-        //     this.x_delta_desplazamiento = this.x_original_aux+ x_delta;
-        //     this.y_delta_desplazamiento = this.y_original_aux+ y_delta;
-        //     this.x_delta_original = this.x_delta_desplazamiento + this.x_delta_zoom;
-        //     this.y_delta_original = this.y_delta_desplazamiento + this.y_delta_zoom;
-        //     if(eventoLienzoFigura.mouse_click_up){
-        //         this.tipo_trabajo = MOVER_NADA;
-        //     }
-        // }
-        //
-        // if(this.tipo_trabajo === MOVER_AUMENTO_LIENZO){
-        //     if(this.escala === 1){
-        //         this.x_des_zoom = 0;
-        //         this.y_des_zoom = 0;
-        //     }
-        //     if(this.escala<3){
-        //         this.escala*=this.proporcion_escala;
-        //         this.x_des_zoom  = 300 - (300- this.x_des_zoom) * this.proporcion_escala;
-        //         this.y_des_zoom  = 300 - (300- this.y_des_zoom) * this.proporcion_escala;
-        //     }
-        //     this.tipo_trabajo = MOVER_NADA;
-        // }
-        //
-        // if(this.tipo_trabajo === MOVER_REDUCCION_LIENZO){
-        //     if(this.escala === 1){
-        //         this.x_des_zoom = 0;
-        //         this.y_des_zoom = 0;
-        //     }
-        //     if(this.escala>1){
-        //         this.escala/=this.proporcion_escala;
-        //         //this.x_des_zoom  = this.puntero.x - (this.puntero.x - this.x_des_zoom) / this.proporcion_escala;
-        //         //this.y_des_zoom  = this.puntero.y - (this.puntero.y - this.y_des_zoom) / this.proporcion_escala;
-        //         this.x_des_zoom  = 300 - (300- this.x_des_zoom) / this.proporcion_escala;
-        //         this.y_des_zoom  = 300 - (300- this.y_des_zoom) / this.proporcion_escala;
-        //     }
-        //     this.tipo_trabajo = MOVER_NADA;
-        // }
+        // El zoom con tecla Z + rueda del mouse (como en el editor de dibujo) se probo
+        // y daba error en este editor, asi que se descarto a favor de los botones +/-
+        // del lienzo -- ver aumentarZoom/disminuirZoom/procesarClickBotonesZoom.
 
         this.aplicar_escala = this.escala !== 1;
 
         if(this.funcion_editar_config){
             this.funcion_editar_config();
         }
+    }
+
+    // Un paso de zoom in/out, con centro fijo en (300,300) -- misma formula que el
+    // editor de dibujo (ConfiguracionLienzo.js), pero disparada por un click de boton
+    // en vez de tecla+rueda del mouse.
+    aumentarZoom(){
+        if(this.escala === 1){
+            this.x_des_zoom = 0;
+            this.y_des_zoom = 0;
+        }
+        if(this.escala < 3){
+            this.escala *= this.proporcion_escala;
+            this.x_des_zoom = 300 - (300 - this.x_des_zoom) * this.proporcion_escala;
+            this.y_des_zoom = 300 - (300 - this.y_des_zoom) * this.proporcion_escala;
+        }
+        this.aplicar_escala = this.escala !== 1;
+    }
+
+    disminuirZoom(){
+        if(this.escala === 1){
+            this.x_des_zoom = 0;
+            this.y_des_zoom = 0;
+        }
+        if(this.escala > 1){
+            this.escala /= this.proporcion_escala;
+            this.x_des_zoom = 300 - (300 - this.x_des_zoom) / this.proporcion_escala;
+            this.y_des_zoom = 300 - (300 - this.y_des_zoom) / this.proporcion_escala;
+        }
+        this.aplicar_escala = this.escala !== 1;
+    }
+
+    // Hit-test de los botones +/- del lienzo, en coordenadas de pantalla (sin pan ni
+    // escala -- los botones son parte de la UI fija, no del contenido del lienzo).
+    // Devuelve true si el click cayo en alguno de los dos.
+    procesarClickBotonesZoom(mouse_x, mouse_y, click){
+        if(!click) return false;
+        const dentro = (b) => mouse_x >= b.x && mouse_x <= b.x + b.w && mouse_y >= b.y && mouse_y <= b.y + b.h;
+        if(dentro(this.boton_zoom_mas)){
+            this.aumentarZoom();
+            return true;
+        }
+        if(dentro(this.boton_zoom_menos)){
+            this.disminuirZoom();
+            return true;
+        }
+        return false;
+    }
+
+    dibujarBotonesZoom(ctx){
+        ctx.save();
+        ctx.font = "16px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        [this.boton_zoom_menos, this.boton_zoom_mas].forEach((b) => {
+            ctx.fillStyle = "#2b2b3d";
+            ctx.fillRect(b.x, b.y, b.w, b.h);
+            ctx.strokeStyle = "#ffffff88";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(b.x, b.y, b.w, b.h);
+            ctx.fillStyle = "#fff";
+            ctx.fillText(b === this.boton_zoom_mas ? "+" : "−", b.x + b.w / 2, b.y + b.h / 2 + 1);
+        });
+        ctx.restore();
     }
 
     procesarTrabajoConfiguracionImagenesLiento(eventoLienzoFigura, animacion_){

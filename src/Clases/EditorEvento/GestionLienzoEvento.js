@@ -260,10 +260,12 @@ class GestionLienzoEvento{
         // this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
 
+        // inicioZoomLienzo/finZoomLienzo deben envolver el dibujo real (el grupo, sus
+        // overlays de seleccion/edicion) para que el zoom se vea reflejado -- antes se
+        // llamaban una justo despues de la otra sin nada en el medio, asi que aunque
+        // `escala` cambiara no tenia ningun efecto visible. El HUD de texto y el
+        // timeline quedan afuera a proposito (UI fija, no debe escalarse).
         this.configuracion_lienzo.inicioZoomLienzo(ctx);
-
-
-        this.configuracion_lienzo.finZoomLienzo(ctx);
 
         this.eventos_.imprimirEventos();
 
@@ -299,7 +301,10 @@ class GestionLienzoEvento{
 
         }
 
+        this.configuracion_lienzo.finZoomLienzo(ctx);
+
         this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
+        this.configuracion_lienzo.dibujarBotonesZoom(ctx);
         this.timelineInstance.imprimir();
     }
 
@@ -307,6 +312,15 @@ class GestionLienzoEvento{
 
         this.puntero_real.x= this.eventoLienzoEvento.mouse_x;
         this.puntero_real.y= this.eventoLienzoEvento.mouse_y;
+
+        // Los botones +/- de zoom son UI fija en coordenadas de pantalla (sin pan ni
+        // escala), asi que se resuelven con el mouse crudo antes de calcular las
+        // coordenadas virtuales de mas abajo. Si el click cayo en un boton, no debe
+        // interpretarse tambien como click sobre el lienzo (seleccion de grupo, arrastre
+        // del pivote, etc.).
+        const click_en_boton_zoom = this.configuracion_lienzo.procesarClickBotonesZoom(
+            this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y, this.eventoLienzoEvento.mouse_only_click
+        );
 
         const deltax =this.puntero_real.x-(300- (300-this.puntero_real.x)/this.configuracion_lienzo.escala);
         const deltay =this.puntero_real.y-(300- (300-this.puntero_real.y)/this.configuracion_lienzo.escala);
@@ -351,7 +365,9 @@ class GestionLienzoEvento{
             }
 
 
-            this.procesoEdicionMovimientos();
+            if(!click_en_boton_zoom){
+                this.procesoEdicionMovimientos();
+            }
             this.actualizarTimelineMovimientos();
             this.actualizarLienzo();
             this.timelineInstance.reiniciar();
