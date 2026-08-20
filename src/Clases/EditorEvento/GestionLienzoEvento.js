@@ -390,7 +390,8 @@ class GestionLienzoEvento{
             // ya lo maneja TimelineCanvas por su cuenta.
             if(this.configuracion_lienzo.arrastrando_lienzo){
                 this.configuracion_lienzo.procesarArrastreLienzo(
-                    this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y, this.eventoLienzoEvento.mouse_click_up
+                    this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y,
+                    this.eventoLienzoEvento.mouse_click_up, this.eventoLienzoEvento.mouse_only_click
                 );
             }else if(!click_en_boton){
                 const interactuo = this.procesoEdicionMovimientos();
@@ -536,9 +537,18 @@ class GestionLienzoEvento{
                 const {control, config} = resuelto;
                 const duracion = (movimiento.tiempo_final - movimiento.tiempo_inicio) / 1000;
                 control.configurar(config);
+                // rect_seleccion.centro_x/y y this.x_mouse/y_mouse estan en coordenadas de
+                // "mundo" (sin pan) -- correcto para el hit-test en procesoEdicionMovimientos,
+                // pero para DIBUJAR hay que sumarles el pan igual que ImprimirAnimacion se lo
+                // suma a las figuras del grupo, si no el overlay (pivote/circulo/flecha)
+                // queda fijo en su lugar mientras el grupo se mueve al arrastrar el lienzo.
                 control.dibujar(
-                    ctx, datos, rect_seleccion.centro_x, rect_seleccion.centro_y,
-                    this.x_mouse, this.y_mouse, duracion
+                    ctx, datos,
+                    rect_seleccion.centro_x + this.configuracion_lienzo.x_delta_original,
+                    rect_seleccion.centro_y + this.configuracion_lienzo.y_delta_original,
+                    this.x_mouse + this.configuracion_lienzo.x_delta_original,
+                    this.y_mouse + this.configuracion_lienzo.y_delta_original,
+                    duracion
                 );
             }
         }

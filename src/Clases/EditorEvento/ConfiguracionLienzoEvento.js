@@ -193,13 +193,21 @@ class ConfiguracionLienzoEvento{
         this.arrastrando_lienzo = true;
     }
 
-    procesarArrastreLienzo(mouse_x, mouse_y, mouse_click_up){
+    procesarArrastreLienzo(mouse_x, mouse_y, mouse_click_up, mouse_only_click){
         if(!this.arrastrando_lienzo) return;
+        // Un mousedown nuevo (mouse_only_click) en medio de un arrastre significa que
+        // el mouseup que lo termino ya paso, aunque ningun tick puntual haya alcanzado
+        // a leer ese "mouse_click_up=true" (mousedown lo pisa a false de inmediato) --
+        // sin este chequeo, el arrastre quedaba pegado en true para siempre y cada click
+        // posterior (ej. el boton Centrar) se procesaba primero pero despues se pisaba
+        // aca mismo, recalculando el pan con el mouse del click nuevo contra el ancla
+        // vieja del arrastre.
+        if(mouse_click_up || mouse_only_click){
+            this.arrastrando_lienzo = false;
+            return;
+        }
         this.x_delta_original = this.x_original_aux + (mouse_x - this.x_original_mouse);
         this.y_delta_original = this.y_original_aux + (mouse_y - this.y_original_mouse);
-        if(mouse_click_up){
-            this.arrastrando_lienzo = false;
-        }
     }
 
     // Hit-test de los botones del lienzo (zoom y centrar), en coordenadas de pantalla
