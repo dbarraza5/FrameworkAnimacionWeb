@@ -169,20 +169,6 @@ class GestionLienzoEvento{
         this.eventoLienzoEvento = eventoLienzoEvento;
         this.timelineInstance = new TimelineCanvas(eventoLienzoEvento, eventos_, setEventoAnimacion);
         this.seleccionarGrupo = seleccionarGrupo;
-
-        // GestionEvento (eventos_) construye su propia ConfiguracionLienzo por su cuenta
-        // y ya se la paso a su ImprimirAnimacion -- una instancia totalmente separada de
-        // esta ConfiguracionLienzoEvento de aca. Sin unificarlas, el pan/zoom que se
-        // maneja en este archivo (arrastre, centrar, zoom) nunca llega al dibujo real
-        // del grupo (imprimirEventos -> ImprimirAnimacion), solo a los overlays propios
-        // (grilla, rectangulos de seleccion) que ya leen this.configuracion_lienzo
-        // directamente -- por eso el fondo se movia pero las figuras no. Se reapuntan
-        // ambas referencias (la de GestionEvento y la que ya capturo ImprimirAnimacion
-        // en su constructor) a esta misma instancia.
-        this.eventos_.configuracion_lienzo = this.configuracion_lienzo;
-        if(this.eventos_.imprimir_animacion){
-            this.eventos_.imprimir_animacion.configuracion_lienzo = this.configuracion_lienzo;
-        }
     }
 
     inicializar(){
@@ -273,6 +259,19 @@ class GestionLienzoEvento{
         // this.animacion_.procesarPosicionFinalFiguras()
         // this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
 
+        // GestionEvento (eventos_) construye su propia ConfiguracionLienzo por su cuenta
+        // y se la paso a su ImprimirAnimacion en el constructor -- una instancia
+        // separada de esta ConfiguracionLienzoEvento de aca, y no conviene apuntar la
+        // referencia una sola vez (React StrictMode reconstruye estos objetos al
+        // montar, asi que la instancia "ganadora" no es necesariamente la misma que se
+        // referencio en ese momento). Se copian los valores de pan cada tick en cambio
+        // -- asi el dibujo real del grupo (imprimirEventos -> ImprimirAnimacion, que
+        // lee esos campos desde su propia copia) siempre queda al dia sin importar
+        // cuantas veces se construyo cada lado.
+        if(this.eventos_.configuracion_lienzo){
+            this.eventos_.configuracion_lienzo.x_delta_original = this.configuracion_lienzo.x_delta_original;
+            this.eventos_.configuracion_lienzo.y_delta_original = this.configuracion_lienzo.y_delta_original;
+        }
 
         // inicioZoomLienzo/finZoomLienzo deben envolver el dibujo real (el grupo, sus
         // overlays de seleccion/edicion) para que el zoom se vea reflejado -- antes se
