@@ -267,6 +267,10 @@ class GestionLienzoEvento{
         // timeline quedan afuera a proposito (UI fija, no debe escalarse).
         this.configuracion_lienzo.inicioZoomLienzo(ctx);
 
+        // Grilla de referencia (sutil, detras del dibujo) -- ayuda a ubicarse al panear
+        // y a notar cuando se volvio exactamente a (0,0).
+        this.configuracion_lienzo.dibujarGrilla(ctx);
+
         this.eventos_.imprimirEventos();
 
         if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
@@ -304,7 +308,7 @@ class GestionLienzoEvento{
         this.configuracion_lienzo.finZoomLienzo(ctx);
 
         this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
-        this.configuracion_lienzo.dibujarBotonesZoom(ctx);
+        this.configuracion_lienzo.dibujarBotones(ctx);
         this.timelineInstance.imprimir();
     }
 
@@ -313,12 +317,12 @@ class GestionLienzoEvento{
         this.puntero_real.x= this.eventoLienzoEvento.mouse_x;
         this.puntero_real.y= this.eventoLienzoEvento.mouse_y;
 
-        // Los botones +/- de zoom son UI fija en coordenadas de pantalla (sin pan ni
-        // escala), asi que se resuelven con el mouse crudo antes de calcular las
+        // Los botones (zoom y centrar) son UI fija en coordenadas de pantalla (sin pan
+        // ni escala), asi que se resuelven con el mouse crudo antes de calcular las
         // coordenadas virtuales de mas abajo. Si el click cayo en un boton, no debe
         // interpretarse tambien como click sobre el lienzo (seleccion de grupo, arrastre
-        // del pivote, etc.).
-        const click_en_boton_zoom = this.configuracion_lienzo.procesarClickBotonesZoom(
+        // del pivote, paneo, etc.).
+        const click_en_boton = this.configuracion_lienzo.procesarClickBotones(
             this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y, this.eventoLienzoEvento.mouse_only_click
         );
 
@@ -365,8 +369,25 @@ class GestionLienzoEvento{
             }
 
 
-            if(!click_en_boton_zoom){
-                this.procesoEdicionMovimientos();
+            // Paneo del lienzo: arrastrar sobre el fondo (no sobre un boton, un grupo
+            // seleccionable o el control de un movimiento en edicion) mueve la vista. Si
+            // ya se estaba arrastrando, se continua sin volver a correr los hit-test de
+            // grupo/pivote de mas abajo (evita que un drag largo termine seleccionando
+            // algo por el camino). El area del timeline (abajo) queda afuera -- ese click
+            // ya lo maneja TimelineCanvas por su cuenta.
+            if(this.configuracion_lienzo.arrastrando_lienzo){
+                this.configuracion_lienzo.procesarArrastreLienzo(
+                    this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y, this.eventoLienzoEvento.mouse_click_up
+                );
+            }else if(!click_en_boton){
+                const interactuo = this.procesoEdicionMovimientos();
+                const y_limite_lienzo = this.timelineInstance.y_timeline - this.timelineInstance._altoUI;
+                const click_en_area_lienzo = this.eventoLienzoEvento.mouse_y < y_limite_lienzo;
+                if(!interactuo && this.eventoLienzoEvento.mouse_only_click && click_en_area_lienzo){
+                    this.configuracion_lienzo.iniciarArrastreLienzo(
+                        this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y
+                    );
+                }
             }
             this.actualizarTimelineMovimientos();
             this.actualizarLienzo();
@@ -377,7 +398,12 @@ class GestionLienzoEvento{
         this.eventoLienzoEvento.reset()
     }
 
+    // Devuelve true si el click de este tick fue "reclamado" por algo del lienzo
+    // (seleccionar un grupo, empezar/continuar/terminar de editar el pivote de un
+    // movimiento) -- GestionLienzoEvento.procesarEventoLienzo() usa esto para no
+    // arrancar tambien un arrastre de paneo del lienzo con el mismo click.
     procesoEdicionMovimientos(){
+        let interactuo = false;
         if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
             //console.log(this.tipo_trabajo)
             if(this.tipo_trabajo === TRABAJO_SELECCION_GRUPO){
@@ -407,6 +433,7 @@ class GestionLienzoEvento{
                         console.log("Deteccion de grupo: ", grupos_);
                         this.grupo_seleccionado = this.grupos_disponibles_generales[i];
                         this.seleccionarGrupo(this.grupo_seleccionado);
+                        interactuo = true;
                     }
                 }
             }
@@ -443,10 +470,15 @@ class GestionLienzoEvento{
                                 this.index_mov_seleccionado,
                                 datos);
                         }
+                        // Cualquier flag "edicionXxx" del control (empezo, sigue o termino de
+                        // editar el pivote/flecha/mango) cuenta como que este click es suyo.
+                        interactuo = guardo_cambio ||
+                            Object.keys(control).some((k) => k.startsWith("edicion") && control[k]);
                     }
                 }
             }
         }
+        return interactuo;
     }
 
     // Resalta el grupo actualmente elegido en la seccion de Movimientos con un

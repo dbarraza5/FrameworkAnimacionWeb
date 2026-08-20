@@ -70,10 +70,14 @@ class ConfiguracionLienzoEvento{
     proporcion_escala = 1.1;
     aplicar_escala = false;
 
-    // Botones de zoom dibujados en la esquina superior derecha del lienzo (fijos,
-    // fuera del area escalada -- ver dibujarBotonesZoom/procesarClickBotonesZoom).
+    // Botones dibujados en la esquina superior derecha del lienzo (fijos, fuera del
+    // area escalada -- ver dibujarBotones/procesarClickBotones).
+    boton_centrar = {x: 492, y: 6, w: 30, h: 22};
     boton_zoom_menos = {x: 528, y: 6, w: 26, h: 22};
     boton_zoom_mas = {x: 560, y: 6, w: 26, h: 22};
+
+    // Paneo del lienzo (arrastrar el fondo para mover la vista).
+    arrastrando_lienzo = false;
 
     titulo_modalidad = "#";
     titulo_tipo_trabajo = "#";
@@ -133,7 +137,7 @@ class ConfiguracionLienzoEvento{
         this.puntero.y = eventoLienzoFigura.mouse_y;
         // El zoom con tecla Z + rueda del mouse (como en el editor de dibujo) se probo
         // y daba error en este editor, asi que se descarto a favor de los botones +/-
-        // del lienzo -- ver aumentarZoom/disminuirZoom/procesarClickBotonesZoom.
+        // del lienzo -- ver aumentarZoom/disminuirZoom/procesarClickBotones.
 
         this.aplicar_escala = this.escala !== 1;
 
@@ -171,10 +175,37 @@ class ConfiguracionLienzoEvento{
         this.aplicar_escala = this.escala !== 1;
     }
 
-    // Hit-test de los botones +/- del lienzo, en coordenadas de pantalla (sin pan ni
-    // escala -- los botones son parte de la UI fija, no del contenido del lienzo).
-    // Devuelve true si el click cayo en alguno de los dos.
-    procesarClickBotonesZoom(mouse_x, mouse_y, click){
+    // Vuelve el paneo a (0,0) de un click -- el zoom (escala/x_des_zoom) no se toca,
+    // solo la posicion.
+    centrarLienzo(){
+        this.x_delta_original = 0;
+        this.y_delta_original = 0;
+    }
+
+    // Arrastrar el fondo del lienzo (fuera de botones/grupos/controles de movimiento)
+    // panea la vista. GestionLienzoEvento decide cuando llamar a estos dos segun si el
+    // click de este tick fue reclamado por otra cosa -- ver procesoEdicionMovimientos.
+    iniciarArrastreLienzo(mouse_x, mouse_y){
+        this.x_original_mouse = mouse_x;
+        this.y_original_mouse = mouse_y;
+        this.x_original_aux = this.x_delta_original;
+        this.y_original_aux = this.y_delta_original;
+        this.arrastrando_lienzo = true;
+    }
+
+    procesarArrastreLienzo(mouse_x, mouse_y, mouse_click_up){
+        if(!this.arrastrando_lienzo) return;
+        this.x_delta_original = this.x_original_aux + (mouse_x - this.x_original_mouse);
+        this.y_delta_original = this.y_original_aux + (mouse_y - this.y_original_mouse);
+        if(mouse_click_up){
+            this.arrastrando_lienzo = false;
+        }
+    }
+
+    // Hit-test de los botones del lienzo (zoom y centrar), en coordenadas de pantalla
+    // (sin pan ni escala -- son UI fija, no contenido del lienzo). Devuelve true si el
+    // click cayo en alguno de los tres.
+    procesarClickBotones(mouse_x, mouse_y, click){
         if(!click) return false;
         const dentro = (b) => mouse_x >= b.x && mouse_x <= b.x + b.w && mouse_y >= b.y && mouse_y <= b.y + b.h;
         if(dentro(this.boton_zoom_mas)){
@@ -185,23 +216,59 @@ class ConfiguracionLienzoEvento{
             this.disminuirZoom();
             return true;
         }
+        if(dentro(this.boton_centrar)){
+            this.centrarLienzo();
+            return true;
+        }
         return false;
     }
 
-    dibujarBotonesZoom(ctx){
+    dibujarBotones(ctx){
         ctx.save();
         ctx.font = "16px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        [this.boton_zoom_menos, this.boton_zoom_mas].forEach((b) => {
+        [this.boton_centrar, this.boton_zoom_menos, this.boton_zoom_mas].forEach((b) => {
             ctx.fillStyle = "#2b2b3d";
             ctx.fillRect(b.x, b.y, b.w, b.h);
             ctx.strokeStyle = "#ffffff88";
             ctx.lineWidth = 1;
             ctx.strokeRect(b.x, b.y, b.w, b.h);
             ctx.fillStyle = "#fff";
-            ctx.fillText(b === this.boton_zoom_mas ? "+" : "−", b.x + b.w / 2, b.y + b.h / 2 + 1);
+            let texto = b === this.boton_zoom_mas ? "+" : "−";
+            if(b === this.boton_centrar){
+                texto = "⊙";
+            }
+            ctx.fillText(texto, b.x + b.w / 2, b.y + b.h / 2 + 1);
         });
+        ctx.restore();
+    }
+
+    // Grilla de referencia, sutil, en coordenadas de mundo (pantea/escala junto con el
+    // contenido -- debe dibujarse dentro del wrap inicioZoomLienzo/finZoomLienzo). Los
+    // ejes por (0,0) se marcan un poco mas oscuros para que sea facil notar cuando el
+    // lienzo esta centrado.
+    dibujarGrilla(ctx){
+        const paso = 50;
+        const rango = 1500;
+        ctx.save();
+        ctx.lineWidth = 1;
+        for(let x = -rango; x <= rango; x += paso){
+            const sx = x + this.x_delta_original;
+            ctx.strokeStyle = x === 0 ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.06)";
+            ctx.beginPath();
+            ctx.moveTo(sx, -rango + this.y_delta_original);
+            ctx.lineTo(sx, rango + this.y_delta_original);
+            ctx.stroke();
+        }
+        for(let y = -rango; y <= rango; y += paso){
+            const sy = y + this.y_delta_original;
+            ctx.strokeStyle = y === 0 ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.06)";
+            ctx.beginPath();
+            ctx.moveTo(-rango + this.x_delta_original, sy);
+            ctx.lineTo(rango + this.x_delta_original, sy);
+            ctx.stroke();
+        }
         ctx.restore();
     }
 
