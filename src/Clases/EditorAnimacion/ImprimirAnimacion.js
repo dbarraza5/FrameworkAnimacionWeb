@@ -121,8 +121,14 @@ class ImprimirAnimacion{
 
     imprimir_circulo(figura, grupo, color_, p_circulo, p_centro, seleccion = false,
                               color_seleccion = "#39ff14") {
-        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
+        // Mismo offset de pan que imprimir_recta/imprimir_punto -- faltaba aca, asi que
+        // los CIRCULO nunca se movian al arrastrar el lienzo aunque el resto de la
+        // figura si.
+        const x_delta_original_ = !this.seccion_pintar? this.configuracion_lienzo.x_delta_original : 0;
+        const y_delta_original_ = !this.seccion_pintar? this.configuracion_lienzo.y_delta_original : 0;
+
+        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid) + x_delta_original_;
+        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid) + y_delta_original_;
         const rx = parseInt(figura.atributos.radiox);
         const ry = parseInt(figura.atributos.radioy);
         dibujar_circulo(this.ctx, color_, x, y, rx, ry);

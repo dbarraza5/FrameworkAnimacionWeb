@@ -169,6 +169,20 @@ class GestionLienzoEvento{
         this.eventoLienzoEvento = eventoLienzoEvento;
         this.timelineInstance = new TimelineCanvas(eventoLienzoEvento, eventos_, setEventoAnimacion);
         this.seleccionarGrupo = seleccionarGrupo;
+
+        // GestionEvento (eventos_) construye su propia ConfiguracionLienzo por su cuenta
+        // y ya se la paso a su ImprimirAnimacion -- una instancia totalmente separada de
+        // esta ConfiguracionLienzoEvento de aca. Sin unificarlas, el pan/zoom que se
+        // maneja en este archivo (arrastre, centrar, zoom) nunca llega al dibujo real
+        // del grupo (imprimirEventos -> ImprimirAnimacion), solo a los overlays propios
+        // (grilla, rectangulos de seleccion) que ya leen this.configuracion_lienzo
+        // directamente -- por eso el fondo se movia pero las figuras no. Se reapuntan
+        // ambas referencias (la de GestionEvento y la que ya capturo ImprimirAnimacion
+        // en su constructor) a esta misma instancia.
+        this.eventos_.configuracion_lienzo = this.configuracion_lienzo;
+        if(this.eventos_.imprimir_animacion){
+            this.eventos_.imprimir_animacion.configuracion_lienzo = this.configuracion_lienzo;
+        }
     }
 
     inicializar(){
