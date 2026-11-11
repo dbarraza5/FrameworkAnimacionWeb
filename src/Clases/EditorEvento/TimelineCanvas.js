@@ -78,6 +78,11 @@ export default class TimelineCanvas {
         // Grupo cuyos movimientos se estan mostrando/editando en este timeline (nivel
         // "movimientos"). Null = no hay nada que mostrar (se limpia lista_objetos).
         this.grupo_seleccionado = null;
+        // Que representan las barras de lista_objetos: 'movimientos' (movimientos del
+        // grupo seleccionado, id = indice) o 'eventos' (sub-eventos del evento
+        // seleccionado, id = nombre del evento). Lo fija GestionLienzoEvento.
+        this.nivel = 'movimientos';
+        this.evento_padre_timeline = null;
         this.play = false;
         this.reset = false;
         this.reiniciar();
@@ -244,10 +249,23 @@ export default class TimelineCanvas {
         ev._renderW = width;
         ev._renderH = this.alto_evento;
 
-        ctx.fillStyle = '#FFA11B';
+        const es_evento = this.nivel === 'eventos';
+        ctx.fillStyle = es_evento ? '#4FA3FF' : '#FFA11B';
         ctx.fillRect(x, y, width, this.alto_evento);
+
+        // texto recortado al ancho de la barra (los nombres de evento pueden ser largos)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, y, width, this.alto_evento);
+        ctx.clip();
         ctx.fillStyle = 'black';
-        ctx.fillText(`${ev.inicio}–${ev.fin}`, x + width / 2 - 20, y + this.alto_evento / 2 + 5);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const texto = ev.etiqueta
+            ? `${ev.etiqueta}  ${ev.inicio}–${ev.fin}`
+            : `${ev.inicio}–${ev.fin}`;
+        ctx.fillText(texto, x + width / 2, y + this.alto_evento / 2);
+        ctx.restore();
     }
 
     _getLaneOffset(idx, salto) {
@@ -382,13 +400,10 @@ export default class TimelineCanvas {
             let nuevo_x = mx - this.offsetDragLineaTiempo;
             if (nuevo_x < 0) nuevo_x = 0;
 
-            // No dejar arrastrar mas alla del final del evento activo -- pasado ese
-            // punto el motor reinicia de todos modos en el proximo tick.
-            const evento_general = this.eventoAnimacion.obtenerEvento("EventoGeneral");
-            if (evento_general) {
-                const x_max = (evento_general.evento.tiempo_final / 1000) * 100;
-                if (nuevo_x > x_max) nuevo_x = x_max;
-            }
+            // No dejar arrastrar mas alla del final del evento que se reproduce (el
+            // seleccionado) -- pasado ese punto el motor reinicia en el proximo tick.
+            const x_max = this.eventoAnimacion.duracionReproduccion() * 100;
+            if (x_max > 0 && nuevo_x > x_max) nuevo_x = x_max;
 
             this.x_linea_tiempo = nuevo_x;
             this.eventoAnimacion.buscarTiempo(this.x_linea_tiempo / 100);
@@ -410,9 +425,28 @@ export default class TimelineCanvas {
         this.resizeSide = null;
         this.isDraggingLineaTiempo = false;
 
+        // Nivel "eventos": escribe inicio/fin arrastrados/estirados en los sub-eventos
+        // reales (tiempos relativos a su evento padre).
+        if(this.nivel === 'eventos'){
+            let cambio = false;
+            for(const obj of this.lista_objetos){
+                const evento_ = this.eventoAnimacion.obtenerEvento(obj.id);
+                if(!evento_) continue;
+                const ev = evento_.evento;
+                if(ev.tiempo_inicio !== obj.inicio || ev.tiempo_final !== obj.fin){
+                    ev.tiempo_inicio = obj.inicio;
+                    ev.tiempo_final = obj.fin;
+                    cambio = true;
+                }
+            }
+            if(cambio){
+                this.setEventoAnimacion({edicion: this.eventoAnimacion});
+            }
+            return;
+        }
+
         // Nivel "movimientos": escribe de vuelta inicio/fin arrastrados/estirados en
-        // los movimientos reales del grupo activo. El nivel "eventos" (arbol de
-        // eventos) es una fase futura, todavia no implementada aca.
+        // los movimientos reales del grupo activo.
         if(this.grupo_seleccionado && this.id_evento_seleccionado){
             const movimientos = this.eventoAnimacion.obtenerMovimientosDeGrupo(
                 this.id_evento_seleccionado, this.grupo_seleccionado

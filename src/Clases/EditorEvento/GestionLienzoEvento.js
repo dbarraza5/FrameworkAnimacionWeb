@@ -202,20 +202,57 @@ class GestionLienzoEvento{
     // Mantiene this.timelineInstance.lista_objetos sincronizada con los movimientos
     // reales del grupo seleccionado (nivel "movimientos" del timeline), sin pisar un
     // arrastre/estiramiento en curso.
-    actualizarTimelineMovimientos(){
-        if(this.tipo_modalidad !== MODALIDAD_MOVIMIENTOS){
-            return;
-        }
-
+    // Elige que muestra el timeline: en la modalidad "movimientos" los movimientos
+    // del grupo seleccionado; en las demas, los sub-eventos del evento seleccionado.
+    actualizarTimeline(){
         const t = this.timelineInstance;
         const interactuando = t.selected || t.isResizing || t.isDraggingLineaTiempo
             || t.isDraggingTimelineX || t.isDraggingTimelineY;
         if(interactuando){
             return;
         }
+        if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
+            this.actualizarTimelineMovimientos();
+        }else{
+            this.actualizarTimelineEventos();
+        }
+    }
+
+    // Nivel "eventos": una barra por cada sub-evento (hijo directo) del evento que se
+    // reproduce. Sus tiempos son relativos al padre, igual que el eje del timeline.
+    actualizarTimelineEventos(){
+        const t = this.timelineInstance;
+        const padre = this.eventos_.eventoReproduccion();
+        const hijos = padre ? this.eventos_.obtenerSubEventos(padre.nombre) : [];
+
+        const desactualizado = t.nivel !== 'eventos'
+            || t.evento_padre_timeline !== (padre && padre.nombre)
+            || hijos.length !== t.lista_objetos.length
+            || hijos.some((hijo, i) => {
+                const actual = t.lista_objetos[i];
+                return !actual || actual.id !== hijo.nombre
+                    || actual.inicio !== hijo.tiempo_inicio || actual.fin !== hijo.tiempo_final;
+            });
+
+        if(desactualizado){
+            t.nivel = 'eventos';
+            t.evento_padre_timeline = padre && padre.nombre;
+            t.cambiarEventos(hijos.map((hijo) => ({
+                id: hijo.nombre,
+                etiqueta: hijo.nombre,
+                inicio: hijo.tiempo_inicio,
+                fin: hijo.tiempo_final
+            })));
+            this._grupo_timeline_cargado = null;
+        }
+    }
+
+    actualizarTimelineMovimientos(){
+        const t = this.timelineInstance;
 
         if(!this.grupo_seleccionado){
-            if(this._grupo_timeline_cargado !== null){
+            if(this._grupo_timeline_cargado !== null || t.nivel !== 'movimientos'){
+                t.nivel = 'movimientos';
                 t.cambiarEventos([]);
                 this._grupo_timeline_cargado = null;
             }
@@ -230,7 +267,8 @@ class GestionLienzoEvento{
             return;
         }
 
-        const desactualizado = this.grupo_seleccionado !== this._grupo_timeline_cargado
+        const desactualizado = t.nivel !== 'movimientos'
+            || this.grupo_seleccionado !== this._grupo_timeline_cargado
             || movimientos.length !== t.lista_objetos.length
             || movimientos.some((mov, i) => {
                 const actual = t.lista_objetos[i];
@@ -238,6 +276,7 @@ class GestionLienzoEvento{
             });
 
         if(desactualizado){
+            t.nivel = 'movimientos';
             t.cambiarEventos(movimientos.map((mov, index) => ({
                 id: index,
                 inicio: mov.tiempo_inicio,
@@ -375,6 +414,9 @@ class GestionLienzoEvento{
                 console.log("ugvyghgcgvh")
             }
 
+            // el motor reproduce el evento seleccionado (si cambia, vuelve a t=0 y pausa;
+            // el aviso de reinicio llega al timeline en el chequeo de mas abajo).
+            this.eventos_.seleccionarEvento(this.id_evento_seleccionado);
             this.eventos_.procesandoEventos();
 
 
@@ -405,7 +447,7 @@ class GestionLienzoEvento{
                     );
                 }
             }
-            this.actualizarTimelineMovimientos();
+            this.actualizarTimeline();
             this.actualizarLienzo();
             this.timelineInstance.reiniciar();
 

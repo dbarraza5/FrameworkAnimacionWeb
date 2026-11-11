@@ -97,7 +97,8 @@ class GestionEvento{
     }
 
     // Mueve el reloj global y el de EventoGeneral a un instante especifico (en
-    // segundos), sin necesidad de reproducir -- para que el lienzo muestre la
+    // segundos, relativo al inicio del evento seleccionado -- ver
+    // eventoReproduccion), sin necesidad de reproducir -- para que el lienzo muestre la
     // posicion real del grupo en ese momento (ej. al seleccionar un movimiento,
     // saltar a su tiempo_inicio). No cambia this.reproducir: si estaba pausado,
     // sigue pausado, solo que ahora "pausado en" el instante indicado.
@@ -239,21 +240,73 @@ class GestionEvento{
                 }
                 console.log("INICIALIZANDO EL TIEMPO DEL EVENTO")
             }else{
-                const tiempo_inicio = evento_.evento.tiempo_inicio/1000;
-                const tiempo_fin = evento_.evento.tiempo_final/1000;
-
-                if(tiempo_inicio<=tiempo_evento
-                    && tiempo_fin>=tiempo_evento){
-                    this.procesarNodoEvento(evento_.evento, tiempo_evento-tiempo_inicio, new Set());
+                // tiempo_evento: segundos desde el inicio del evento SELECCIONADO (es lo
+                // que mide el reloj y muestra el timeline). Se reproduce "en contexto":
+                // el arbol completo se evalua en el instante absoluto equivalente, asi
+                // los eventos anteriores ya terminados aportan su efecto congelado (ej.
+                // "Sentarse" arranca donde termino "Caminar").
+                const seleccionado = this.eventoReproduccion();
+                if(tiempo_evento <= this.duracionReproduccion()){
+                    const raiz = evento_.evento;
+                    const tiempo_absoluto = this.inicioAbsoluto(seleccionado) + tiempo_evento;
+                    this.procesarNodoEvento(raiz, tiempo_absoluto - raiz.tiempo_inicio/1000, new Set());
                 }else{
-                    if(tiempo_fin<tiempo_evento){
-                        console.log("SE TERMINO EL TIEMPO: ", tiempo_evento)
-                        this.reiniciarEventos();
-                        this.reiniciarProceso();
-                    }
+                    console.log("SE TERMINO EL TIEMPO: ", tiempo_evento)
+                    this.reiniciarEventos();
+                    this.reiniciarProceso();
                 }
             }
         }
+    }
+
+    // Sub-eventos (hijos directos) de un evento, en el orden en que estan guardados.
+    obtenerSubEventos(nombre){
+        return this.eventos
+            .filter((e) => e.evento.nodo_padre === nombre && e.evento.nombre !== nombre)
+            .map((e) => e.evento);
+    }
+
+    // Evento que se reproduce: el seleccionado por el usuario o, si no hay (o ya no
+    // existe), EventoGeneral.
+    eventoReproduccion(){
+        const seleccionado = this.id_evento_seleccionado && this.obtenerEvento(this.id_evento_seleccionado);
+        const evento_ = seleccionado || this.obtenerEvento("EventoGeneral");
+        return evento_ ? evento_.evento : null;
+    }
+
+    // Duracion (segundos) del evento que se reproduce = largo del timeline.
+    duracionReproduccion(){
+        const evento = this.eventoReproduccion();
+        return evento ? (evento.tiempo_final - evento.tiempo_inicio)/1000 : 0;
+    }
+
+    // Instante (segundos, en el reloj de EventoGeneral) en que empieza `evento`: los
+    // tiempos de cada sub-evento son relativos a su padre, asi que se acumulan
+    // subiendo por nodo_padre hasta la raiz.
+    inicioAbsoluto(evento){
+        let inicio = 0;
+        const visitados = new Set();
+        while(evento && !visitados.has(evento.nombre)){
+            visitados.add(evento.nombre);
+            inicio += evento.tiempo_inicio/1000;
+            if(evento.nombre === "EventoGeneral"){
+                break;
+            }
+            const padre = this.obtenerEvento(evento.nodo_padre);
+            evento = padre ? padre.evento : null;
+        }
+        return inicio;
+    }
+
+    // Cambia el evento a reproducir. Si cambia, vuelve al inicio y pausa (el reloj
+    // pasa a medir otro evento, seguir desde el instante anterior no tendria sentido).
+    seleccionarEvento(nombre){
+        if(nombre === this.id_evento_seleccionado){
+            return;
+        }
+        this.id_evento_seleccionado = nombre;
+        this.reiniciarEventos();
+        this.reiniciarProceso();
     }
 
     // Procesa un evento y, recursivamente, sus sub-eventos (los que tienen
