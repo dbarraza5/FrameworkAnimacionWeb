@@ -3,6 +3,7 @@ import NavEditorAnimacion from "../EditorAnimacion/NavEditorAnimacion";
 import ModalImportarGrupo from "../EditorAnimacion/SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
 import React, {useEffect, useState} from "react";
 import MenuEvento from "./MenuEvento";
+import {exportarJSON} from "../../Utils/exportarJSON";
 import NavEditorEvento from "./NavEditorEvento";
 import {GestionAnimacion} from "../../Clases/EditorAnimacion/GestionAnimacion";
 import axios from "axios";
@@ -307,6 +308,20 @@ function EditorEvento(props){
         }
     };
 
+    // Exporta el mismo contenido que se sube al backend (eventos + grupos de figuras).
+    const exportarEvento = async () => {
+        try {
+            const edicion = eventoAnimacion.edicion;
+            const datos = {
+                "eventos": edicion.eventos.map((evento) => evento.evento),
+                "grupos_figuras": edicion.gestion_grupos_originales.grupos_figuras
+            };
+            await exportarJSON(datos, "evento_" + edicion._id);
+        } catch (error) {
+            console.error('Error al exportar el evento:', error);
+        }
+    };
+
     const editar_animacion=(animacion_)=>{
         setAnimacion({edicion: animacion_.edicion})
     }
@@ -334,6 +349,7 @@ function EditorEvento(props){
     return(<div>
         <div className="row">
             <MenuEvento  subirAnimacion={subirAnimacion1}
+                         exportarAnimacion={exportarEvento}
             />
             <hr/>
             <NavEditorEvento eventoAnimacion={eventoAnimacion}

@@ -3,6 +3,14 @@ const REFLEJO_NONE = 0;
 const REFLEJO_HORIZONTAL = 1;
 const REFLEJO_VERTICAL = 2;
 
+// Origen absoluto del grupo en el lienzo. Los pivotes de rotacion/zoom son absolutos
+// (salen de calcularCentroGruposSeleccionados, que usa cx_solid), asi que para pasarlos
+// a coordenadas locales del grupo hay que restar la posicion acumulada (cx_solid), no
+// la relativa al padre (cx). Ambas coinciden en grupos de primer nivel; difieren en
+// grupos anidados. Si cx_solid aun no se calculo, se usa cx (comportamiento anterior).
+export const origenGrupoX = (grupo) => parseInt(grupo.cx_solid ?? grupo.cx) || 0;
+export const origenGrupoY = (grupo) => parseInt(grupo.cy_solid ?? grupo.cy) || 0;
+
 
 class OperacionesGrupo{
 
@@ -244,8 +252,8 @@ class OperacionesGrupo{
 
     static calcularRotacionFigura(figura, f_copia, grupo, angulo_rotacion, pivote_x, pivote_y){
 
-        let x = pivote_x - grupo.cx;
-        let y = pivote_y - grupo.cy;
+        let x = pivote_x - origenGrupoX(grupo);
+        let y = pivote_y - origenGrupoY(grupo);
 
         if (figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO") {
 
@@ -366,8 +374,8 @@ class OperacionesGrupo{
     // o acercando cada punto de cada figura respecto al pivote, no cambiando radiox/radioy.
     static calcularZoomFigura(figura, f_copia, grupo, porcentaje, pivote_x, pivote_y){
 
-        let x = pivote_x - grupo.cx;
-        let y = pivote_y - grupo.cy;
+        let x = pivote_x - origenGrupoX(grupo);
+        let y = pivote_y - origenGrupoY(grupo);
 
         if (figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO") {
 
@@ -462,8 +470,8 @@ class OperacionesGrupo{
             pivote_x,
             pivote_y
         );
-        let x = pivote_x - grupo.cx;
-        let y = pivote_y - grupo.cy;
+        let x = pivote_x - origenGrupoX(grupo);
+        let y = pivote_y - origenGrupoY(grupo);
         if (figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO") {
             figura.atributos.cx = x+nuevosDatos.cx;
             figura.atributos.cy = y+nuevosDatos.cy;

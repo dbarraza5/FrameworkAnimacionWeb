@@ -5,7 +5,7 @@ import {ImprimirAnimacion} from "../EditorAnimacion/ImprimirAnimacion";
 import ConfiguracionLienzo from "../EditorAnimacion/ConfiguracionLienzo";
 import TimelineCanvas from "./TimelineCanvas";
 import {TIPO_EFECTO_MOV_FIGURAS, TIPO_EFECTO_MOV_OBJETOS} from "./ConstanteEvento";
-import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
+import OperacionesGrupo, {origenGrupoX, origenGrupoY} from "../EditorAnimacion/OperacionesGrupo";
 
 let tiempo_universal=performance.now();
 
@@ -29,6 +29,7 @@ class GestionEvento{
 
     movimientos_grupos = {};
     movimientos_figuras = {};
+    grupos_trabajo = [];  // pose de las figuras del frame actual (ver procesandoEventos)
     copia_grupos = [];
     gestion_eventos = null;
     gestion_grupos = null;
@@ -240,93 +241,10 @@ class GestionEvento{
             }else{
                 const tiempo_inicio = evento_.evento.tiempo_inicio/1000;
                 const tiempo_fin = evento_.evento.tiempo_final/1000;
-                const tiempo_virtual = tiempo_evento-tiempo_inicio;
 
                 if(tiempo_inicio<=tiempo_evento
                     && tiempo_fin>=tiempo_evento){
-                    for(let obj_i=0; obj_i<evento_.evento.objetos.length; obj_i++){
-                        const objeto = evento_.evento.objetos[obj_i];
-                        console.log("[=============================")
-                        for(let j=0; j<objeto.movimientos.length; j++){
-                            const movimiento = objeto.movimientos[j];
-                            if(!movimiento.activo){
-                                continue;
-                            }
-                            const tiempo_inicio_mov = movimiento.tiempo_inicio/1000;
-                            const tiempo_fin_mov = movimiento.tiempo_final/1000;
-                            const duracion_mov = tiempo_fin_mov-tiempo_inicio_mov;
-                            // Una vez que el movimiento arranca, sigue aportando su
-                            // desplazamiento aunque su propia ventana ya haya terminado --
-                            // congelado en el valor que tenia al llegar a tiempo_final. Si no
-                            // se congelara, el grupo saltaria de vuelta a la posicion original
-                            // apenas termina cada movimiento individual, en vez de quedarse
-                            // ahi hasta que termine el evento completo.
-                            const tiempo_virtual_mov = Math.min(tiempo_virtual-tiempo_inicio_mov, duracion_mov);
-
-                            if(tiempo_inicio_mov<=tiempo_evento){
-                                const tipo = movimiento.tipo;
-                                const tipoEfecto = movimiento.tipo_efecto;
-                                const datos = movimiento.datos;
-                                let resultado_grupos = null;
-                                let resultado_figuras = null;
-                                if(tipoEfecto === TIPO_EFECTO_MOV_OBJETOS){
-                                    resultado_grupos = GestionMovimientos.movimientoGrupo(tiempo_virtual_mov, tipo, datos, duracion_mov);
-                                }
-                                if(tipoEfecto === TIPO_EFECTO_MOV_FIGURAS){
-                                    // console.log("NOMBRE OBJETO: ",objeto.nombre);
-                                    // console.log(objeto);
-                                    const lista_grupos_originales = this.gestion_grupos_originales.get_grupos_padre_ehijos(objeto.id_objeto);
-                                    //const lista_grupos = this.gestion_grupos.get_grupos_padre_ehijos(objeto.nombre);
-
-                                    resultado_figuras = GestionMovimientos.movimientoFiguras(tiempo_virtual_mov, tipo, datos, this.gestion_grupos, lista_grupos_originales);
-                                    console.log(resultado_figuras)
-                                }
-                                if(resultado_grupos){
-                                    const x = resultado_grupos.x;
-                                    const y = resultado_grupos.y;
-                                    if (objeto.id_objeto in this.movimientos_grupos) {
-                                        this.movimientos_grupos[objeto.id_objeto].x+=x;
-                                        this.movimientos_grupos[objeto.id_objeto].y+=y;
-                                    }
-
-                                }
-
-                                if(resultado_figuras){
-                                    //this.movimientos_figuras
-                                    for (const hash in resultado_figuras) {
-                                        const nuevo = resultado_figuras[hash];
-                                        // Primera vez que aparece la figura
-                                        if (!this.movimientos_figuras[hash]) {
-                                            this.movimientos_figuras[hash] = structuredClone(nuevo);
-                                            continue;
-                                        }
-
-                                        const acumulado = this.movimientos_figuras[hash];
-                                        for (const atributo in nuevo) {
-                                            // No sumar strings
-                                            if (typeof nuevo[atributo] !== "number") {
-                                                acumulado[atributo] = nuevo[atributo];
-                                                continue;
-                                            }
-                                            if (typeof acumulado[atributo] !== "number") {
-                                                acumulado[atributo] = nuevo[atributo];
-                                                continue;
-                                            }
-                                            const es_centro = atributo==="centro_x" || atributo==="centro_y";
-                                            if(!es_centro){
-                                                acumulado[atributo] += nuevo[atributo];
-                                            }
-
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                        console.log(this.movimientos_figuras)
-                        console.log("=============================]")
-                    }
-                    //console.log(JSON.parse(JSON.stringify(this.movimientos_grupos)))
+                    this.procesarNodoEvento(evento_.evento, tiempo_evento-tiempo_inicio, new Set());
                 }else{
                     if(tiempo_fin<tiempo_evento){
                         console.log("SE TERMINO EL TIEMPO: ", tiempo_evento)
@@ -338,12 +256,114 @@ class GestionEvento{
         }
     }
 
+    // Procesa un evento y, recursivamente, sus sub-eventos (los que tienen
+    // nodo_padre === evento.nombre). `tiempo_local` (segundos) es el tiempo medido
+    // desde el inicio de ESTE evento.
+    //
+    // Semantica de la jerarquia (igual que la de los movimientos):
+    //  - tiempo_inicio/tiempo_final de un sub-evento son relativos al inicio de su padre.
+    //  - antes de su tiempo_inicio el sub-evento no aporta nada.
+    //  - despues de su tiempo_final queda congelado en su ultimo instante: su efecto
+    //    se conserva (el perro que termino de caminar se queda donde llego), asi los
+    //    eventos hermanos se pueden encadenar uno detras de otro.
+    procesarNodoEvento(evento, tiempo_local, visitados){
+        if(visitados.has(evento.nombre)){
+            return; // proteccion contra ciclos en nodo_padre
+        }
+        visitados.add(evento.nombre);
+
+        for(let obj_i=0; obj_i<evento.objetos.length; obj_i++){
+            const objeto = evento.objetos[obj_i];
+            for(let j=0; j<objeto.movimientos.length; j++){
+                const movimiento = objeto.movimientos[j];
+                if(!movimiento.activo){
+                    continue;
+                }
+                const tiempo_inicio_mov = movimiento.tiempo_inicio/1000;
+                const tiempo_fin_mov = movimiento.tiempo_final/1000;
+                const duracion_mov = tiempo_fin_mov-tiempo_inicio_mov;
+                if(tiempo_local < tiempo_inicio_mov){
+                    continue;
+                }
+                // Una vez que el movimiento arranca, sigue aportando su desplazamiento
+                // aunque su propia ventana ya haya terminado -- congelado en el valor que
+                // tenia al llegar a tiempo_final (si no, el grupo saltaria de vuelta).
+                const tiempo_virtual_mov = Math.min(tiempo_local-tiempo_inicio_mov, duracion_mov);
+                this.aplicarMovimiento(objeto, movimiento, tiempo_virtual_mov, duracion_mov);
+            }
+        }
+
+        const hijos = this.eventos.filter((e) => e.evento.nodo_padre === evento.nombre);
+        for(let i=0; i<hijos.length; i++){
+            const hijo = hijos[i].evento;
+            const inicio_hijo = hijo.tiempo_inicio/1000;
+            const fin_hijo = hijo.tiempo_final/1000;
+            if(tiempo_local < inicio_hijo){
+                continue;
+            }
+            this.procesarNodoEvento(hijo, Math.min(tiempo_local, fin_hijo)-inicio_hijo, visitados);
+        }
+    }
+
+    aplicarMovimiento(objeto, movimiento, tiempo_mov, duracion_mov){
+        const tipo = movimiento.tipo;
+        const datos = movimiento.datos;
+
+        if(movimiento.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS){
+            const resultado = GestionMovimientos.movimientoGrupo(tiempo_mov, tipo, datos, duracion_mov);
+            if (resultado && objeto.id_objeto in this.movimientos_grupos) {
+                this.movimientos_grupos[objeto.id_objeto].x+=resultado.x;
+                this.movimientos_grupos[objeto.id_objeto].y+=resultado.y;
+            }
+        }
+
+        if(movimiento.tipo_efecto === TIPO_EFECTO_MOV_FIGURAS){
+            // El pivote se define respecto al centro ORIGINAL del grupo (estable, no
+            // se corre al deformarse), pero se transforma la pose ACTUAL de las
+            // figuras (grupos_trabajo): asi varios movimientos de figuras sobre la
+            // misma figura se componen en cadena (ej. rotacion de caminar congelada +
+            // rotacion de sentarse) en vez de sumar posiciones absolutas.
+            const id = objeto.id_objeto;
+            const originales = this.gestion_grupos_originales.get_grupos_padre_ehijos(id);
+            const trabajo = this.grupos_trabajo.filter((g) => g.nodo_padre === id || g.nombre === id);
+            const resultado = GestionMovimientos.movimientoFiguras(tiempo_mov, tipo, datos,
+                {grupos_figuras: trabajo}, trabajo, originales);
+            if(!resultado){
+                return;
+            }
+            for (const hash in resultado) {
+                const valor = resultado[hash];
+                const grupo_ = trabajo.find((g) => g.nombre === valor.nombre_grupo);
+                const figura = grupo_ && grupo_.lista_figuras.find((f) => f.nombre === valor.nombre_figura);
+                if(!figura){
+                    continue;
+                }
+                // pivote absoluto -> local al grupo (los atributos de la figura son
+                // locales: al dibujar se les suma el cx_solid del grupo, que ademas
+                // incluye la traslacion de los movimientos "Objeto" de sus ancestros).
+                const x = valor.pivote_x+valor.centro_x - origenGrupoX(grupo_);
+                const y = valor.pivote_y+valor.centro_y - origenGrupoY(grupo_);
+                if (figura.tipo_figura === "PUNTO" || figura.tipo_figura === "CIRCULO") {
+                    figura.atributos.cx = x+valor.cx;
+                    figura.atributos.cy = y+valor.cy;
+                }
+                if (figura.tipo_figura === "RECTA") {
+                    figura.atributos.x1 = valor.x1+x;
+                    figura.atributos.y1 = valor.y1+y;
+                    figura.atributos.x2 = valor.x2+x;
+                    figura.atributos.y2 = valor.y2+y;
+                    figura.atributos.cx = valor.cx;
+                    figura.atributos.cy = valor.cy;
+                }
+            }
+        }
+    }
+
     procesandoEventos(){
         tiempo_universal=performance.now();
         const tiempo = this.tiempo.cronometroC(tiempo_universal);
         if(true)//(this.reproducir)
         {
-            //console.log('tiempo universal: ', tiempo_universal);
             this.tiempo_animacion = tiempo;
             for(let i=0; i<this.eventos.length; i++){
                 for(let j=0; j<this.eventos[i].evento.objetos.length; j++){
@@ -356,7 +376,9 @@ class GestionEvento{
                 this.movimientos_grupos[nombre_grupo]['x']=0;
                 this.movimientos_grupos[nombre_grupo]['y']=0;
             }
-            this.movimientos_figuras = {};
+            // Pose de trabajo de este frame: parte de las figuras originales y cada
+            // movimiento de figuras la va transformando en orden.
+            this.grupos_trabajo = structuredClone(this.gestion_grupos_originales.grupos_figuras);
 
             const evento_ = this.obtenerEvento("EventoGeneral");
             const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
@@ -366,8 +388,6 @@ class GestionEvento{
             // marca el reloj del evento, en vez de congelarse en la pose de reposo
             // apenas se pausa.
             this.procesandoEvento(evento_, tiempo_evento);
-
-
 
             for (let nombre_grupo in this.movimientos_grupos) {
                 const grupo_ = this.gestion_grupos_originales.getGrupo(nombre_grupo)
@@ -379,41 +399,13 @@ class GestionEvento{
                 }
             }
 
-            for (const [clave, valor] of Object.entries(this.movimientos_figuras)) {
-                console.log(`K ${clave}: ${valor}`);
-                console.log(valor)
-                const lista_grupos_originales = this.gestion_grupos_originales.get_grupos_padre_ehijos(valor.nombre_grupo);
-                const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos_originales)
-                const grupo_ = this.gestion_grupos_originales.getGrupo(valor.nombre_grupo)
-                const figura1_=this.gestion_grupos_originales.get_figura(valor.nombre_grupo, valor.nombre_figura, true)
-                if (figura1_){
-                    const pivote_x = 0;
-                    const pivote_y = 0;
-                    let x = valor.pivote_x+valor.centro_x//pivote_x - grupo_.cx+centro_.centro_x;
-                    let y = valor.pivote_y+valor.centro_y//pivote_y - grupo_.cy+centro_.centro_y;
-                    if (figura1_.tipo_figura === "PUNTO" || figura1_.tipo_figura === "CIRCULO") {
-                        figura1_.atributos.cx = x+valor.cx;
-                        figura1_.atributos.cy = y+valor.cy;
-                        this.gestion_grupos.set_figura(valor.nombre_grupo, figura1_)
-                    }
-
-                    if (figura1_.tipo_figura === "RECTA") {
-                        figura1_.atributos.x1 = valor.x1+x;
-                        figura1_.atributos.y1 = valor.y1+y;
-
-                        figura1_.atributos.x2 = valor.x2+x;
-                        figura1_.atributos.y2 = valor.y2+y;
-
-                        figura1_.atributos.cx = valor.cx;
-                        figura1_.atributos.cy = valor.cy;
-
-                        console.log("[figura1_]")
-                        //console.log(figura1_)
-                        this.gestion_grupos.set_figura(valor.nombre_grupo, figura1_)
-                        console.log(this.gestion_grupos.get_figura(valor.nombre_grupo, valor.nombre_figura))
-                    }
-
-
+            // Vuelca la pose de trabajo completa (tambien las figuras sin movimiento
+            // activo, para que al retroceder en el tiempo vuelvan a su forma original).
+            for (let i=0; i<this.grupos_trabajo.length; i++){
+                const g_trabajo = this.grupos_trabajo[i];
+                const g_dinamico = this.gestion_grupos.getGrupo(g_trabajo.nombre);
+                if(g_dinamico){
+                    g_dinamico.lista_figuras = g_trabajo.lista_figuras;
                 }
             }
 

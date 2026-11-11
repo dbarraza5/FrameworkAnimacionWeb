@@ -81,6 +81,8 @@ export const MOV_PARABOLICO_ANGULO = 8;
 
 export const MOV_ROTACION = 9;
 export const MOV_ZOOM = 10;
+// Vaiven: el angulo va y vuelve como amplitud*sin(frecuencia*t) (patas, cola, pendulos).
+export const MOV_ROTACION_OSCILATORIA = 11;
 
 export const TIPO_EFECTO_MOV_OBJETOS = 1;
 export const TIPO_EFECTO_MOV_FIGURAS = 2;
@@ -111,9 +113,11 @@ export const MOVIMIENTOS_OBJETOS_CORTOS = {
 export const MOVIMIENTOS_FIGURAS = {
     [MOV_ROTACION]: "Movimiento Rotacion",
     [MOV_ZOOM]: "Movimiento Zoom",
+    [MOV_ROTACION_OSCILATORIA]: "Rotacion Oscilatoria (vaiven)",
 };
 
 export const MOVIMIENTOS_FIGURAS_CORTOS = {
     [MOV_ROTACION]: "Rot",
-    [MOV_ZOOM]: "Zoom"
+    [MOV_ZOOM]: "Zoom",
+    [MOV_ROTACION_OSCILATORIA]: "RotOsc"
 };

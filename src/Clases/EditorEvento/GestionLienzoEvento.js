@@ -4,7 +4,7 @@ import TimelineCanvas from "./TimelineCanvas";
 import {
     MODALIDAD_MOVIMIENTOS, MOV_CIRCULAR, MOV_GRAVEDAD, MOV_LERP, MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
     MOV_RECTILINEO_2D, MOV_RECTILINEO_ACELERADO, MOV_RECTILINEO_UNIFORME,
-    MOV_ROTACION, MOV_ZOOM, TRABAJO_EDICION_MOVIMIENTO,
+    MOV_ROTACION, MOV_ROTACION_OSCILATORIA, MOV_ZOOM, TRABAJO_EDICION_MOVIMIENTO,
     TRABAJO_NADA_LIENZO,
     TRABAJO_REPRODUCCION,
     TRABAJO_SELECCION_GRUPO
@@ -20,6 +20,8 @@ import ControlOscilatorioLienzo from "./ControlOscilatorioLienzo";
 // (pivote propio + flecha-medidor de magnitud).
 const CAMPOS_VECTOR_POR_TIPO = {
     [MOV_ROTACION]: {campo_pivote_x: 'pivoteX', campo_pivote_y: 'pivoteY', campo_velocidad: 'velAngular'},
+    // el medidor de la flecha edita la amplitud (grados) del vaiven
+    [MOV_ROTACION_OSCILATORIA]: {campo_pivote_x: 'pivoteX', campo_pivote_y: 'pivoteY', campo_velocidad: 'amplitud'},
     [MOV_CIRCULAR]: {campo_pivote_x: 'pivote_x', campo_pivote_y: 'pivote_y', campo_velocidad: 'velocidad_angular'},
 };
 

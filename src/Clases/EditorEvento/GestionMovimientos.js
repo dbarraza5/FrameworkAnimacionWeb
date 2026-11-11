@@ -12,7 +12,7 @@ import {
     MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
     MOV_RECTILINEO_2D,
     MOV_RECTILINEO_ACELERADO,
-    MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ZOOM
+    MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ROTACION_OSCILATORIA, MOV_ZOOM
 } from "./ConstanteEvento";
 import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 
@@ -141,6 +141,15 @@ function getNewAngle(deltaTime, velocity, direction) {
 }
 
 
+// Vaiven: angulo (grados) = amplitud * sin(frecuencia * t), frecuencia en rad/s (igual
+// que el Oscilatorio de objetos; 6.28 = un vaiven completo por segundo). Arranca en 0
+// para no saltar desde la pose real; amplitud negativa = arranca hacia el otro lado
+// (sirve para poner patas en contrafase).
+function anguloOscilatorio(t, amplitud, frecuencia){
+    return (parseFloat(amplitud) || 0) * Math.sin((parseFloat(frecuencia) || 0) * t);
+}
+
+
 class GestionMovimientos{
 
     constructor() {
@@ -235,37 +244,35 @@ class GestionMovimientos{
     }
 
 
-    static movimientoFiguras(tiempo, tipo, datos, animacion, lista_grupos){
+    // lista_grupos: grupos cuyas figuras se transforman (su pose actual).
+    // lista_centro: grupos con los que se calcula el centro de referencia del pivote
+    // (por defecto los mismos; GestionEvento pasa los originales para que el pivote no
+    // se corra cuando otro movimiento ya deformo la figura).
+    static movimientoFiguras(tiempo, tipo, datos, animacion, lista_grupos, lista_centro = lista_grupos){
         let operacion_mov = null;
-        if(tipo === MOV_ROTACION){
-            //console.log("MOV_ROTACION")
-            const velocidad = datos.velAngular;
+        if(tipo === MOV_ROTACION || tipo === MOV_ROTACION_OSCILATORIA){
+            let angulo;  // en grados (calcularRotacionFigura convierte a radianes)
+            if(tipo === MOV_ROTACION){
+                const sentido = parseInt(datos.sentido) || 1;
+                angulo = getNewAngle(tiempo, datos.velAngular, sentido);
+            }else{
+                angulo = anguloOscilatorio(tiempo, datos.amplitud, datos.frecuencia);
+            }
 
-            const sentido = parseInt(datos.sentido) || 1;
-
-            const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos)
-            const piv_x = centro_.centro_x+parseInt(datos.pivoteX);
-            const piv_y = centro_.centro_y+parseInt(datos.pivoteY);
-
-            const angulo_radianes = getNewAngle(tiempo, velocidad, sentido);
-
+            const centro_=OperacionesGrupo.calcularCentroGruposSeleccionados(lista_centro)
+            const piv_x = centro_.centro_x+(parseInt(datos.pivoteX) || 0);
+            const piv_y = centro_.centro_y+(parseInt(datos.pivoteY) || 0);
 
             operacion_mov=OperacionesGrupo.calcularRotacionGrupoFiguras(lista_grupos, animacion.grupos_figuras
-                 ,angulo_radianes, piv_x,
+                 ,angulo, piv_x,
                  piv_y, centro_.centro_x,centro_.centro_y)
-            /*const operacion_mov1 = {
-                ...operacion_mov,
-                centro_x:centro_.centro_x,
-                centro_y:centro_.centro_y,
-            }
-            return operacion_mov1*/
         }
 
         if(tipo === MOV_ZOOM){
             const velocidad = parseFloat(datos.velocidad);
             const porcentaje = velocidad * tiempo;
 
-            const centro_ = OperacionesGrupo.calcularCentroGruposSeleccionados(lista_grupos)
+            const centro_ = OperacionesGrupo.calcularCentroGruposSeleccionados(lista_centro)
             const piv_x = centro_.centro_x + parseInt(datos.pivoteX);
             const piv_y = centro_.centro_y + parseInt(datos.pivoteY);
 

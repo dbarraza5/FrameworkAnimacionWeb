@@ -11,11 +11,12 @@ import {
     MOV_CIRCULAR, MOV_GRAVEDAD, MOV_LERP, MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
     MOV_RECTILINEO_2D,
     MOV_RECTILINEO_ACELERADO,
-    MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ZOOM,
+    MOV_RECTILINEO_UNIFORME, MOV_ROTACION, MOV_ROTACION_OSCILATORIA, MOV_ZOOM,
     MOVIMIENTOS_FIGURAS,
     MOVIMIENTOS_OBJETOS
 } from "../../../Clases/EditorEvento/ConstanteEvento";
 import FormularioRotacion from "./Movimientos/FormularioRotacion";
+import FormularioRotacionOscilatoria from "./Movimientos/FormularioRotacionOscilatoria";
 import FormularioZoom from "./Movimientos/FormularioZoom";
 
 function msToTimeParts(ms) {
@@ -245,6 +246,7 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
                         {tipo === MOV_PARABOLICO_ANGULO && <FormularioParabolico datos={datos} setDatos={setDatos} />}
                         {tipo === MOV_ROTACION && <FormularioRotacion datos={datos} setDatos={setDatos} />}
                         {tipo === MOV_ZOOM && <FormularioZoom datos={datos} setDatos={setDatos} />}
+                        {tipo === MOV_ROTACION_OSCILATORIA && <FormularioRotacionOscilatoria datos={datos} setDatos={setDatos} />}
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Cerrar</button>
