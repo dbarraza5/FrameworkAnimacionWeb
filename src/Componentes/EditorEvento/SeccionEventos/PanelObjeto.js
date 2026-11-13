@@ -17,8 +17,18 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         const g = ev().gestion_grupos_originales.getGrupo(unico);
         if (!g) return null;
         const t = normalizarTransformacion(g.transformacion) || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0};
+        const inst = g.instancia && g.instancia.id_eventos ? g.instancia : null;
+        const asset = inst ? ev().infoAsset(inst.id_eventos) : null;
         return {x: g.cx, y: g.cy, rotacion: t.rotacion, escala_x: t.escala_x, escala_y: t.escala_y,
-            ancla_x: t.ancla_x, ancla_y: t.ancla_y, capa: g.capa, tiene_t: !!g.transformacion};
+            ancla_x: t.ancla_x, ancla_y: t.ancla_y, capa: g.capa, tiene_t: !!g.transformacion,
+            // Fase 6: datos de la instancia por referencia
+            inst_evento: inst ? (inst.evento || "EventoGeneral") : null,
+            inst_bucle: inst ? inst.bucle !== false : null,
+            desfase: inst ? (inst.desfase || 0) : null,
+            asset_estado: asset ? asset.estado : (inst ? "cargando" : null),
+            asset_nombre: asset ? asset.nombre : "",
+            asset_eventos: asset ? asset.eventos : [],
+            asset_error: asset ? asset.error : ""};
     };
 
     useEffect(() => {
@@ -43,6 +53,8 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         if (campo === "x" || campo === "y") {
             const p = ev().posicionObjeto(unico);
             ev().fijarPosicionObjeto(unico, campo === "x" ? v : p.x, campo === "y" ? v : p.y);
+        } else if (campo === "desfase") {
+            ev().cambiarInstancia(unico, {desfase: Math.round(v)});
         } else if (campo === "capa") {
             for (const g of [ev().gestion_grupos_originales.getGrupo(unico), ev().gestion_grupos.getGrupo(unico)]) {
                 if (g) g.capa = Math.round(v);
@@ -107,6 +119,41 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                         {campo("escala_y", "Escala Y", 0.05)}
                         {campo("ancla_x", "Ancla X")}
                         {campo("ancla_y", "Ancla Y")}
+                    </div>
+                </div>
+            )}
+
+            {unico && valores && valores.inst_evento !== null && (
+                <div className="ed-objeto-campos">
+                    <div className="small fw-semibold mb-1">
+                        <i className="bi bi-link-45deg text-info me-1"/>Instancia de {valores.asset_nombre || "asset"}
+                        {valores.asset_estado === "cargando" && <span className="spinner-border spinner-border-sm ms-2"/>}
+                    </div>
+                    {valores.asset_estado === "error" && (
+                        <div className="alert alert-danger py-1 px-2 small mb-2">No se pudo cargar el asset: {valores.asset_error}</div>
+                    )}
+                    <div className="row g-2">
+                        <div className="col-12">
+                            <label className="form-label small mb-0 text-body-secondary">Evento que reproduce</label>
+                            <select className="form-select form-select-sm" value={valores.inst_evento}
+                                    onChange={(e) => ev().cambiarInstancia(unico, {evento: e.target.value})}>
+                                {(valores.asset_eventos.length ? valores.asset_eventos : [valores.inst_evento]).map((n) => (
+                                    <option key={n} value={n}>{n}</option>
+                                ))}
+                            </select>
+                        </div>
+                        {campo("desfase", "Desfase", 100, "ms")}
+                        <div className="col-6 d-flex align-items-end">
+                            <div className="form-check form-switch small mb-1">
+                                <input className="form-check-input" type="checkbox" id="inst-bucle"
+                                       checked={valores.inst_bucle}
+                                       onChange={(e) => ev().cambiarInstancia(unico, {bucle: e.target.checked})}/>
+                                <label className="form-check-label" htmlFor="inst-bucle">Repetir</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="small text-body-secondary mt-1">
+                        El dibujo y los movimientos vienen del asset; para cambiarlos edita su proyecto.
                     </div>
                 </div>
             )}

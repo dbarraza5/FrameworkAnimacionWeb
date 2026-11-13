@@ -9,6 +9,12 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (assets animados)**
+- **Assets animados:** en la Biblioteca aparecen los proyectos con eventos. Al agregar uno a la escena se mueve solo con sus propios eventos (Caminar, Sentarse…). En el Inspector eliges qué evento reproduce, con qué desfase y si se repite. Si el proyecto original cambia, todas sus instancias cambian. Ver [§7](#7-biblioteca-agregar-objetos-a-la-escena).
+
+**2026-11-13 (bucle)**
+- **Bucle:** eventos y movimientos se pueden repetir cada *Tiempo bucle* ms dentro de su duración; los desplazamientos se acumulan (un perro en bucle sigue avanzando). La línea de tiempo marca cada vuelta. Ver [Bucle](#bucle-repetir-un-ciclo).
+
 **2026-11-13 (más tarde)**
 - **El editor ahora corre a 60 cuadros por segundo** (antes ~10): la animación y el arrastre de objetos se ven fluidos, incluso con 20 perros caminando a la vez.
 
@@ -172,14 +178,32 @@ Al abrir el editor queda seleccionado `EventoGeneral`. El evento seleccionado se
 | Evento padre | De qué evento es hijo. |
 | Nombre | Debe ser único. |
 | Tiempo de inicio / fin | `minutos : segundos : milisegundos`, **relativos al inicio del evento padre**. |
-| Tiempo bucle, Tiempo relativo, Coordenada X/Y, Reposicionar | *En desarrollo:* se guardan pero todavía no tienen efecto. |
-| Bucle | *En desarrollo:* todavía no repite el evento. |
+| Bucle + Tiempo bucle (ms) | Repite el contenido del evento cada *tiempo bucle* dentro de su ventana. Ver [Bucle](#bucle-repetir-un-ciclo). |
+| Tiempo relativo, Coordenada X/Y, Reposicionar | *En desarrollo:* se guardan pero todavía no tienen efecto. |
 
 ### Cómo se reproducen los eventos encadenados
 
 - **Tiempos relativos:** un sub-evento empieza en su *tiempo de inicio*, medido desde el comienzo de su padre.
 - **Antes de empezar,** no hace nada.
 - **Al terminar, queda congelado** en su último instante: conserva su efecto. Por eso, si "Caminar" va de 0 a 4 s y "Sentarse" de 4 a 6,5 s, el perro se sienta **donde terminó de caminar**.
+
+### Bucle: repetir un ciclo
+
+Sirve para todo lo repetitivo: un paso de caminata, el giro de una rueda, un semáforo, una bandera al viento.
+
+- **Inicio y fin** dicen **cuánto dura** en total.
+- **Con Bucle activo,** el contenido se repite cada **Tiempo bucle** (ms) dentro de esa ventana. Al terminar la ventana queda congelado, como cualquier evento.
+- **Se aplica a eventos y a movimientos** (cada uno tiene su casilla *Bucle* y su *Tiempo bucle*).
+- **Los desplazamientos se acumulan:** un perro que camina en bucle **sigue avanzando** en cada vuelta y no vuelve al punto de partida. Las rotaciones y oscilaciones simplemente se repiten.
+- **En la línea de tiempo,** una barra en bucle muestra **↻ N ms** y una marca por cada vuelta.
+- `EventoGeneral` no hace bucle: es el rango que reproduce Play.
+
+**Ejemplo, caminar 10 segundos con un paso de 0,8 s:**
+- **Evento "Caminar":** inicio 0, fin 10 000, Bucle activo y Tiempo bucle 800.
+- **Sus movimientos:** van de 0 a 800 ms, un solo paso. Las patas hacen un vaivén completo en esos 800 ms y el perro avanza con un MRU.
+- **Resultado:** camina los 10 s y avanza 30 × 10 = 300 unidades. Un evento "Sentarse" de 10 000 a 12 500 lo sienta donde terminó.
+
+Lo mismo se puede hacer **por movimiento**: deja el evento sin bucle y activa *Bucle* con *Tiempo bucle* 800 en cada movimiento, con su ventana de 0 a 10 000.
 
 ### Reproducir
 
@@ -242,19 +266,47 @@ Las velocidades y distancias están en **unidades del dibujo** (las mismas de la
 
 En la pestaña **Biblioteca** del panel derecho:
 
-1. **Elige el proyecto:** aparecen sus animaciones en miniatura. Hay buscador y botón de recargar.
-2. **Agrega la animación,** de una de dos formas:
+1. **Elige el proyecto.** Aparecen dos secciones:
+   - **Assets animados:** el proyecto completo, dibujo y eventos. Tiene el ícono 🔗.
+   - **Dibujos (copia editable):** cada animación del proyecto, solo el dibujo.
+
+   Hay buscador y botón de recargar.
+2. **Agrega lo que quieras,** de una de dos formas:
    - **arrastra la miniatura** al lienzo y queda donde la sueltas;
    - o **selecciónala** y usa **Agregar al centro**.
+
+### Assets animados (instancias por referencia)
+
+Un asset animado es un **objeto vivo**: la escena no copia su dibujo, lo **lee del proyecto original** cada vez que se abre. Por eso:
+- **se mueve solo** con los eventos de su proyecto (por ejemplo, el perro camina y se sienta);
+- si cambias el dibujo o los eventos del proyecto original y lo subes, **todas sus instancias cambian**;
+- se guarda **solo la referencia** (posición, escala, rotación y qué evento reproduce), así que 50 perros pesan casi nada.
+
+Al seleccionarlo, el **Inspector → Objeto** muestra el bloque **Instancia de …**:
+
+| Campo | Qué hace |
+|---|---|
+| Evento que reproduce | Cuál evento del asset usa esta instancia: *EventoGeneral* (todo), *Caminar*, *Sentarse*… Un sub-evento se reproduce **en contexto**: *Sentarse* arranca donde terminó de caminar. |
+| Desfase (ms) | Retrasa esta instancia respecto a la escena. Con desfases distintos, varios perros iguales no se mueven al unísono. Mientras no le toca, se queda en la pose inicial. |
+| Repetir | Encendido: el evento se repite sin fin y el desplazamiento se acumula (el perro sigue avanzando). Apagado: se reproduce una vez y se queda en la pose final. |
+
+Además, una instancia se puede mover, escalar, rotar, reflejar, ocultar, bloquear y cambiar de capa como cualquier objeto ([§7b](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar)).
+
+**No se puede entrar a sus partes.** Para cambiar su dibujo o sus movimientos, edita su proyecto.
+
+Si el asset no se puede cargar (sin conexión, sesión vencida), el Inspector lo avisa y el editor reintenta cada 5 segundos.
+
+### Dibujos (copia editable)
 
 **Qué crea:**
 - Cada vez que agregas una animación se crea un **objeto nuevo** en la escena. Es un grupo contenedor `<animación>_1`, `_2`…, con todos los grupos de la animación renombrados con ese prefijo, así puedes tener varios perros.
 - Se omiten los grupos vacíos.
 
-**Límites actuales:**
+**Límites de los dibujos:**
 - El objeto agregado es una **copia del dibujo**: **no trae sus eventos** y entra quieto.
 - Si después cambias la animación original, las copias no se actualizan.
-- Ambas cosas están planificadas.
+
+Si quieres que se mueva solo o que siga los cambios del original, usa un **asset animado**.
 
 > **Grupos → Reemplazar grupos…** (pestaña Eventos del panel izquierdo) hace otra cosa: **reemplaza todos** los grupos del editor de eventos por los de una animación.
 
@@ -489,8 +541,12 @@ EventoGeneral (0 – 6,5 s)
 ## 12. Limitaciones conocidas
 
 - **Velocidad de reproducción (⏩):** no implementada; muestra un aviso del navegador.
-- **Campos de evento sin efecto:** `bucle`, `tiempo_bucle`, `x`, `y`, `reposicionar` y `tiempo_relativo`.
-- **Objetos de la Biblioteca:** son copias sin sus eventos.
+- **Campos de evento sin efecto:** `x`, `y`, `reposicionar` y `tiempo_relativo`.
+- **Dibujos de la Biblioteca:** son copias sin sus eventos. Usa los *assets animados* para tener objetos con eventos.
+- **Assets animados:**
+  - todavía no se pueden "desvincular" para convertirlos en una copia editable;
+  - el Inspector muestra el nombre del documento de eventos (`evento_default`) en vez del nombre del proyecto;
+  - un asset dentro de otro asset no se dibuja.
 - **Selección de objetos:** todavía no hay selección arrastrando un rectángulo en el vacío (usa Shift+clic). Escalar o rotar varios objetos a la vez no está disponible (sí moverlos y borrarlos).
 - **Sin deshacer:** las operaciones sobre objetos (mover, borrar, duplicar…) no se pueden deshacer. Recargar la página sin "Subir" descarta todos los cambios.
 - **Movimientos de Figuras:** afectan a los hijos directos, no a los nietos.

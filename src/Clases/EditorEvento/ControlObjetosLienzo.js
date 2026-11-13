@@ -158,7 +158,7 @@ export default class ControlObjetosLienzo {
                 const geo = this.geometria(ev, n);
                 return geo && this.contiene(geo, p);
             });
-            if (objetivo && ev.objetosEscena(objetivo).length) {
+            if (objetivo && ev.objetosEscena(objetivo).length && !ev.esInstancia(objetivo)) {  // a una instancia no se entra (6A)
                 this.arrastre = null;
                 this.entrar(objetivo);
                 usado = true;
@@ -234,7 +234,7 @@ export default class ControlObjetosLienzo {
                 const doble = this._ultimo_clic && this._ultimo_clic.nombre === nombre
                     && ahora - this._ultimo_clic.t < 450;
                 this._ultimo_clic = {nombre, t: ahora};
-                if (doble && !shift && ev.objetosEscena(nombre).length) {
+                if (doble && !shift && ev.objetosEscena(nombre).length && !ev.esInstancia(nombre)) {
                     this._ultimo_clic = null;
                     this.entrar(nombre);
                     return true;

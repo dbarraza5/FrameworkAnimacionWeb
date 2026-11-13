@@ -202,6 +202,7 @@ function ModalAgregarMovimiento({ show, onClose, agregarMovimiento }) {
                                 value={tiempoBucle}
                                 onChange={(e) => setTiempoBucle(e.target.value)}
                             />
+                            <div className="form-text">Con <strong>Bucle</strong> activo, el contenido se repite cada este tiempo dentro de la ventana inicio–fin (los desplazamientos se acumulan entre vueltas).</div>
                         </div>
 
                         {/* Checkboxes */}

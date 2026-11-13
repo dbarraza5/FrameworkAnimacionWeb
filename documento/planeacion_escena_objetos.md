@@ -39,6 +39,7 @@ Cada decisión registra de dónde salió, para no volver a discutirla sin un dat
 | D5 | Meta: instancias **por referencia** al asset (no copias). La copia actual es solo un prototipo. | Con copias, mejorar el perro no actualiza los perros de la escena, y 40 objetos × 12 grupos vuelven el árbol inmanejable. |
 | D6 | Edición en **dos niveles**: en la escena, un clic selecciona el objeto completo; con doble clic se entra al objeto (los demás se atenúan) y Esc sale. | Patrón estándar (símbolos de Flash, aislamiento de Illustrator, componentes de Figma). El lienzo ya tiene un antecedente: el modo de selección de grupos baja a los hijos del grupo seleccionado. |
 | D7 | La animación de un personaje es **en el lugar** (caminar sin avanzar); el desplazamiento por la escena lo da la escena, con velocidad proporcional a la escala. | Si el asset avanza por su cuenta, un perro escalado al 60 % avanza los mismos píxeles que el grande y "patina". |
+| D12 | **Bucle:** la ventana inicio–fin define cuánto dura; con `bucle`, el contenido se repite cada `tiempo_bucle` ms dentro de ella y al terminar se congela. Los desplazamientos se acumulan entre vueltas. La raíz (`EventoGeneral`) no hace bucle. | Separa "cuánto dura" de "cada cuánto se repite" y conserva el encadenamiento (D1). Acumular evita que un personaje que camina en bucle vuelva al punto de partida. |
 | D10 | La selección y manipulación de objetos vive en la modalidad **Evento** (la que se abre por defecto), sin modalidad nueva; la modalidad Movimiento conserva sus controles (ex pregunta P3). | En la modalidad Evento el lienzo no hacía nada salvo panear; agregar un modo "Escena" separado sumaba un concepto sin necesidad. Se puede revisar en la Fase 3. |
 | D11 | El desplazamiento propio de un grupo con transformación (sus movimientos "Objeto") se interpreta **en su marco**: escala y rotación se aplican también al vector de desplazamiento. | Sin esto, un perro reflejado miraba a la izquierda pero avanzaba a la derecha ("moonwalk"), y uno escalado al 60 % avanzaba lo mismo que el grande ("patinaba"). Encaja con D7. |
 | D9 | El ancla de la transformación es, por defecto, el **centro inferior** del objeto ("los pies"); se guarda por instancia y se puede cambiar (ex pregunta P4). | Al escalar, un personaje sigue apoyado en el suelo. Propuesto en el plan y aceptado por el usuario al iniciar la Fase 1. |
@@ -445,7 +446,7 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 
 ---
 
-## Fase 5 — Bucle de eventos y movimientos
+## Fase 5 — Bucle de eventos y movimientos — IMPLEMENTADA
 
 **Objetivo:** que un ciclo (caminar 0,8 s, el parpadeo de un semáforo) se repita sin estirarlo a mano. Es imprescindible para una ciudad.
 
@@ -458,9 +459,31 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 - [ ] "Caminar" con un solo ciclo de 0,8 s en bucle dentro de un evento de 10 s → camina los 10 s.
 - [ ] Al pasar de una vuelta a la siguiente no hay saltos (con un ciclo que cierra en la misma pose).
 
+### Alcance realizado (2026-11-13)
+
+**Decisión D12 (semántica del bucle).** Cambia lo planteado en el punto 3 (un evento en bucle no se repite "hasta que termina su padre"):
+- La ventana `[inicio, fin]` sigue diciendo **cuánto dura**.
+- Con `bucle` y `tiempo_bucle` > 0, el contenido **se repite cada `tiempo_bucle` ms dentro de la ventana**, y al terminar la ventana queda congelado como cualquier evento (D1). Así se controla la duración total y el ciclo por separado, y se puede encadenar "Sentarse" después.
+- Los **desplazamientos (Objeto) se acumulan** entre vueltas: cada vuelta sigue desde donde quedó la anterior. Las figuras se evalúan en el instante del ciclo en curso.
+- `EventoGeneral` no hace bucle: es el rango de reproducción. Además, en los datos de ejemplo tiene `bucle` activo con 1200 ms.
+- Justo al final de una vuelta se toma el final de esa vuelta, no el inicio de la siguiente (pose final congelada correcta).
+
+1. **Motor** (`GestionEvento`):
+   - `cicloBucle(t, bucle, tiempo_bucle)` → `{t en el ciclo, vueltas completas, periodo}`.
+   - En `procesarNodoEvento`, los movimientos en bucle suman `vueltas × desplazamiento de un ciclo` y luego aplican el instante del ciclo; el periodo también se usa como duración (LERP se normaliza por vuelta).
+   - Los sub-eventos en bucle obtienen el desplazamiento de un ciclo entero con `desplazamientosDe(evento, periodo)`, que evalúa el sub-árbol en modo "captura": solo desplazamientos, sin tocar figuras ni el estado del cuadro. Lo multiplican por las vueltas y luego procesan el ciclo en curso. Funciona anidado.
+2. **Línea de tiempo:** las barras en bucle muestran "↻ N ms" y una marca punteada por cada vuelta.
+3. **Formularios:** los campos "Bucle" y "Tiempo bucle (ms)" ya existían (evento y movimiento); se agregó una ayuda que explica la regla.
+
+**Verificado:**
+- [x] Simulador, variante A (**evento** "Caminar" en bucle de 800 ms, movimientos de 0 a 800 ms) y variante B (**movimientos** en bucle de 800 ms en una ventana de 10 s): resultados idénticos. El perro avanza de x = 300 a **x = 600** en 10 s (30 unidades/s), las patas siguen balanceándose en cada vuelta y después se sienta en x = 600.
+- [x] Sin saltos entre vueltas: el máximo cambio de posición entre cuadros de 1/60 s es 1 unidad (el avance de 0,5 por cuadro, redondeado a enteros como ya hacía el motor).
+- [x] Navegador: con la variante A en memoria, Play camina 10 s y se sienta en x ≈ 600; la barra muestra "Caminar 0–10000 ↻ 800 ms" con las marcas de cada vuelta.
+- [ ] Activar el bucle desde el Inspector y guardar con "Subir": no probado en el navegador (las pruebas se hicieron en memoria para no tocar los datos).
+
 ---
 
-## Fase 6 — Instancias por referencia + animación por instancia
+## Fase 6 — Instancias por referencia + animación por instancia — 6A IMPLEMENTADA (6B y 6C pendientes)
 
 **Objetivo:** que cada objeto de la escena use el asset original (D5) y tenga su propia animación activa.
 
@@ -475,6 +498,46 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 - [ ] Tres perros del mismo asset con desfases distintos caminan desincronizados.
 - [ ] Modificar el dibujo del asset "perro" → los tres perros cambian.
 - [ ] Un perro desvinculado ya no cambia con el asset.
+
+### Decisiones tomadas al empezar (2026-11-13)
+- **P2 → opción A:** un asset es el **documento `Eventos` de un proyecto** (su dibujo + sus eventos "Caminar", "Sentarse"…). No hace falta un modelo nuevo: la escena elige cuál evento reproduce cada instancia.
+- **P1 → última versión:** la instancia siempre usa lo último guardado del asset. Las versiones congeladas quedan para 6C.
+
+### Alcance realizado — 6A (2026-11-13)
+Diferencias con el plan: no se creó una lista `objetos` aparte. La instancia es un **grupo contenedor normal** de `grupos_figuras` con un campo nuevo, así siguen funcionando la selección, el panel Objetos, las transformaciones (Fase 1), la capa, la visibilidad y el bloqueo.
+
+- **Modelo (backend):** campo `instancia: {id_eventos, evento, bucle, desfase}` en `grupoFigurasSchema` (`modelo/Animacion.js`). Solo se guarda el contenedor, nunca las partes del asset.
+- **Carga del asset:** `GestionEvento._asset(id)` lo pide con `cargadorAssets` (GET `/api/evento/id/:id`, configurado en `EditorEvento.js`) y arma **un motor propio por asset**. Si falla, reintenta cada 5 s.
+- **Partes virtuales:** `sincronizarInstancias()` inyecta los grupos del asset como `<contenedor>::<grupo>` con `_virtual: true` en las dos listas, y ignora las instancias anidadas. `gruposParaGuardar()` las excluye al Subir y al Exportar. Duplicar copia solo el contenedor.
+- **Reproducción:** `aplicarInstancias(t_escena)` corre en cada cuadro.
+  - El motor del asset evalúa el evento elegido con `evaluarEn(evento, t_escena − desfase, bucle)`, en contexto (D2). Con bucle, el desplazamiento se acumula por vuelta (D12).
+  - La pose se comparte entre instancias con el mismo asset, evento, bucle e instante.
+- **Biblioteca:** tiene una sección nueva, **Assets animados**: los documentos de eventos del proyecto, con miniatura. Se agregan arrastrando o con "Agregar al centro". La instancia queda centrada donde se suelta, con el ancla en los pies (D9).
+- **Inspector → Objeto:** muestra el bloque "Instancia de …" con el evento que reproduce (lista de eventos del asset), el desfase (ms), el interruptor Repetir y el estado de carga o error.
+- **Panel Objetos:** muestra un ícono de enlace y "asset · evento". No se puede "entrar" a una instancia, ni con doble clic ni desde el lienzo.
+
+**Verificado en el navegador** (con el propio documento del perro como asset, sin guardar):
+- [x] Las instancias se agregan desde la Biblioteca (botón) y por motor. Caminan sincronizadas con el perro original.
+- [x] Semántica de los tiempos:
+  - EventoGeneral camina 300→420 y se sienta;
+  - en bucle, la siguiente vuelta sigue desde 420;
+  - un desfase de 2 s espera en la pose inicial y luego va 2 s atrasado;
+  - Caminar en bucle avanza sin parar; sin bucle se congela al final;
+  - Sentarse arranca en contexto, ya caminado.
+- [x] Lo que se guarda tiene solo el contenedor (13 grupos = 12 + 1, sin campos `_`). Un motor nuevo construido con esos datos reconstruye la instancia en la misma posición (586, 145).
+- [x] Si la carga del asset falla, se recupera solo al reintentar.
+- [ ] No probado: **Subir y recargar de verdad** (no se quiso tocar el documento del usuario).
+- [ ] No probado: **arrastrar** la tarjeta del asset al lienzo; usa el mismo camino que el botón.
+- [ ] No probado: tres perros con desfases distintos **a la vista**; sí se probó por motor.
+- [ ] Pendiente: probar con un asset de **otro** proyecto. Hoy solo existe un documento de eventos.
+
+**Pendiente 6B:**
+- "Desvincular" (convertir en copia editable);
+- elegir el evento al soltar;
+- miniatura animada en la Biblioteca;
+- mostrar el nombre del proyecto del asset en vez de `evento_default`.
+
+**Pendiente 6C:** editar el asset desde la escena (abrir su proyecto) y versiones congeladas (P1).
 
 ---
 
@@ -540,8 +603,8 @@ Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (
 
 | # | Pregunta | Afecta a |
 |---|---|---|
-| P1 | ¿Una instancia usa una **versión congelada** del asset o siempre la **última**? (`Requerimientos.md` sugiere congelada.) | Fase 6 |
-| P2 | ¿Dónde viven los eventos de un asset: en el asset (nuevo) o en el documento `Eventos` del proyecto (actual)? | Fase 6 |
+| P1 | ~~¿Versión congelada o la última?~~ **Respondida:** la última (6A); las congeladas quedan para 6C. | Fase 6 |
+| P2 | ~~¿Dónde viven los eventos de un asset?~~ **Respondida:** en el documento `Eventos` del proyecto (opción A). | Fase 6 |
 | P5 | ¿Se unifican el editor de dibujo (`/animacion`) y el de eventos (`/evento`) en un solo editor con modos **Diseño / Animar** (como Rive o Spine), o siguen siendo dos páginas con la misma distribución? | Fase 0 y siguientes |
 | P6 | Tamaño del documento o escena por defecto (ej. 1280×720) y si se configura por proyecto o por escena. | Fases 0 y 8 |
 

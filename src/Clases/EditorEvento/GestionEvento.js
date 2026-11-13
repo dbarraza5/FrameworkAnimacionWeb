@@ -11,6 +11,23 @@ import {normalizarTransformacion, transformarVector} from "../EditorAnimacion/Tr
 
 let tiempo_universal=performance.now();
 
+// Bucle (Fase 5): dado el tiempo transcurrido `t` (segundos) dentro de la ventana de
+// un evento o movimiento, devuelve {t (dentro del ciclo), vueltas (completas),
+// periodo} si tiene bucle activo con tiempo_bucle > 0, o null si no repite.
+// Justo al final de una vuelta se toma como el final de esa vuelta (no el inicio de
+// la siguiente), asi un ciclo que termina la ventana queda congelado en su pose final.
+export function cicloBucle(t, bucle, tiempo_bucle){
+    const periodo = (parseFloat(tiempo_bucle) || 0) / 1000;
+    if(!bucle || !(periodo > 0) || t < 0) return null;
+    let vueltas = Math.floor(t / periodo + 1e-9);
+    let t_ciclo = t - vueltas * periodo;
+    if(t_ciclo < 1e-9 && vueltas > 0){
+        vueltas -= 1;
+        t_ciclo = periodo;
+    }
+    return {t: t_ciclo, vueltas, periodo};
+}
+
 class Evento{
   evento=null;
   tiempo=null;
@@ -252,6 +269,7 @@ class GestionEvento{
                 if(tiempo_evento <= this.duracionReproduccion()){
                     const raiz = evento_.evento;
                     const tiempo_absoluto = this.inicioAbsoluto(seleccionado) + tiempo_evento;
+                    this._t_escena = tiempo_absoluto;   // Fase 6: reloj de las instancias
                     this.procesarNodoEvento(raiz, tiempo_absoluto - raiz.tiempo_inicio/1000, new Set());
                 }else{
                     console.log("SE TERMINO EL TIEMPO: ", tiempo_evento)
@@ -548,7 +566,8 @@ class GestionEvento{
     // grupos se renombran: el prefijo "<objeto>_" pasa a "<copia>_" y los que no lo
     // tenian lo reciben. Devuelve el nombre de la copia.
     duplicarObjeto(nombre, dx = 20, dy = 20){
-        const sub = structuredClone(this.subarbol(nombre, this.gestion_grupos_originales.grupos_figuras));
+        // sin las partes virtuales de instancias (Fase 6): las regenera su asset
+        const sub = structuredClone(this.subarbol(nombre, this.gestion_grupos_originales.grupos_figuras).filter((g) => !g._virtual));
         if(!sub.length) return null;
         const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
         const base = nombre.replace(/_\d+$/, "");
@@ -636,6 +655,16 @@ class GestionEvento{
     //  - despues de su tiempo_final queda congelado en su ultimo instante: su efecto
     //    se conserva (el perro que termino de caminar se queda donde llego), asi los
     //    eventos hermanos se pueden encadenar uno detras de otro.
+    //
+    // Bucle (Fase 5), para sub-eventos y movimientos:
+    //  - la ventana [tiempo_inicio, tiempo_final] sigue diciendo CUANTO dura;
+    //  - con `bucle` y `tiempo_bucle` > 0, el contenido se repite cada tiempo_bucle
+    //    ms dentro de la ventana; al terminar la ventana queda congelado como siempre;
+    //  - los desplazamientos (movimientos "Objeto") se ACUMULAN entre repeticiones:
+    //    cada vuelta sigue desde donde quedo la anterior (el perro que camina en bucle
+    //    avanza, no vuelve al punto de partida). Las figuras no se acumulan: se
+    //    evaluan en el instante del ciclo en curso.
+    //  - EventoGeneral (la raiz) no hace bucle: es el rango de reproduccion.
     procesarNodoEvento(evento, tiempo_local, visitados){
         if(visitados.has(evento.nombre)){
             return; // proteccion contra ciclos en nodo_padre
@@ -659,7 +688,16 @@ class GestionEvento{
                 // aunque su propia ventana ya haya terminado -- congelado en el valor que
                 // tenia al llegar a tiempo_final (si no, el grupo saltaria de vuelta).
                 const tiempo_virtual_mov = Math.min(tiempo_local-tiempo_inicio_mov, duracion_mov);
-                this.aplicarMovimiento(objeto, movimiento, tiempo_virtual_mov, duracion_mov);
+                const c = cicloBucle(tiempo_virtual_mov, movimiento.bucle, movimiento.tiempo_bucle);
+                if(c){
+                    // vueltas completas: solo el desplazamiento acumulado (Objeto)
+                    if(c.vueltas > 0 && movimiento.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS){
+                        this.aplicarMovimiento(objeto, movimiento, c.periodo, c.periodo, c.vueltas);
+                    }
+                    this.aplicarMovimiento(objeto, movimiento, c.t, c.periodo);
+                }else{
+                    this.aplicarMovimiento(objeto, movimiento, tiempo_virtual_mov, duracion_mov);
+                }
             }
         }
 
@@ -671,20 +709,62 @@ class GestionEvento{
             if(tiempo_local < inicio_hijo){
                 continue;
             }
-            this.procesarNodoEvento(hijo, Math.min(tiempo_local, fin_hijo)-inicio_hijo, visitados);
+            const t_hijo = Math.min(tiempo_local, fin_hijo)-inicio_hijo;
+            const c = cicloBucle(t_hijo, hijo.bucle, hijo.tiempo_bucle);
+            if(c){
+                // vueltas completas del sub-evento: desplazamiento de un ciclo entero
+                // (evaluado una vez, sin tocar figuras) multiplicado por las vueltas
+                if(c.vueltas > 0){
+                    const ciclo = this.desplazamientosDe(hijo, c.periodo);
+                    const destino = this._captura || this.movimientos_grupos;
+                    for(const nombre in ciclo){
+                        if(!destino[nombre]) destino[nombre] = {x: 0, y: 0};
+                        destino[nombre].x += ciclo[nombre].x * c.vueltas;
+                        destino[nombre].y += ciclo[nombre].y * c.vueltas;
+                    }
+                }
+                this.procesarNodoEvento(hijo, c.t, visitados);
+            }else{
+                this.procesarNodoEvento(hijo, t_hijo, visitados);
+            }
         }
     }
 
-    aplicarMovimiento(objeto, movimiento, tiempo_mov, duracion_mov){
+    // Desplazamientos (movimientos "Objeto") que produce `evento` en el instante
+    // `tiempo` de su reloj, sin aplicar movimientos de figuras ni tocar el estado del
+    // cuadro. Se usa para acumular las vueltas completas de un sub-evento en bucle.
+    desplazamientosDe(evento, tiempo){
+        const captura_previa = this._captura;
+        this._captura = {};
+        try{
+            this.procesarNodoEvento(evento, tiempo, new Set());
+            return this._captura;
+        }finally{
+            this._captura = captura_previa;
+        }
+    }
+
+    // `repeticiones` (> 0): suma el desplazamiento de este instante esa cantidad de
+    // veces (vueltas completas de un movimiento en bucle); los de figuras se ignoran.
+    aplicarMovimiento(objeto, movimiento, tiempo_mov, duracion_mov, repeticiones = 0){
         const tipo = movimiento.tipo;
         const datos = movimiento.datos;
 
         if(movimiento.tipo_efecto === TIPO_EFECTO_MOV_OBJETOS){
             const resultado = GestionMovimientos.movimientoGrupo(tiempo_mov, tipo, datos, duracion_mov);
-            if (resultado && objeto.id_objeto in this.movimientos_grupos) {
-                this.movimientos_grupos[objeto.id_objeto].x+=resultado.x;
-                this.movimientos_grupos[objeto.id_objeto].y+=resultado.y;
+            const destino = this._captura || this.movimientos_grupos;
+            if(this._captura && !destino[objeto.id_objeto]) destino[objeto.id_objeto] = {x: 0, y: 0};
+            if (resultado && objeto.id_objeto in destino) {
+                const k = repeticiones > 0 ? repeticiones : 1;
+                destino[objeto.id_objeto].x += resultado.x * k;
+                destino[objeto.id_objeto].y += resultado.y * k;
             }
+        }
+
+        // durante una captura (desplazamientosDe) o al sumar vueltas completas, las
+        // figuras no se tocan
+        if(this._captura || repeticiones > 0){
+            return;
         }
 
         if(movimiento.tipo_efecto === TIPO_EFECTO_MOV_FIGURAS){
@@ -750,18 +830,7 @@ class GestionEvento{
                 }
             }
 
-            for (let nombre_grupo in this.movimientos_grupos){
-                this.movimientos_grupos[nombre_grupo]['x']=0;
-                this.movimientos_grupos[nombre_grupo]['y']=0;
-            }
-            // Pose de trabajo de este frame: parte de las figuras originales y cada
-            // movimiento de figuras la va transformando en orden. Fase 4: copia
-            // superficial de los grupos (barata); la lista de figuras de un grupo se
-            // clona solo si un movimiento de figuras la modifica (aplicarMovimiento).
-            // Las listas no clonadas se comparten con los originales: la copia en
-            // vivo no debe modificar sus figuras (nada del editor de eventos lo hace).
-            this.grupos_trabajo = this.gestion_grupos_originales.grupos_figuras.map((g) => ({...g}));
-            this._figuras_clonadas = new Set();
+            this._prepararCuadro();
 
             const evento_ = this.obtenerEvento("EventoGeneral");
             const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
@@ -772,38 +841,276 @@ class GestionEvento{
             // apenas se pausa.
             this.procesandoEvento(evento_, tiempo_evento);
 
-            // indices por nombre (Fase 4: antes getGrupo recorria la lista por cada
-            // grupo, O(n^2) por cuadro)
-            const originales_por_nombre = new Map(this.gestion_grupos_originales.grupos_figuras.map((g) => [g.nombre, g]));
-            const dinamicos_por_nombre = new Map(this.gestion_grupos.grupos_figuras.map((g) => [g.nombre, g]));
+            this._volcarCuadro();
 
-            for (let nombre_grupo in this.movimientos_grupos) {
-                const grupo_ = originales_por_nombre.get(nombre_grupo);
-                const dinamico = dinamicos_por_nombre.get(nombre_grupo);
-                if (grupo_ && dinamico) {
-                    // si el grupo tiene transformacion de instancia, su desplazamiento
-                    // propio va en su marco (reflejado avanza hacia donde mira)
-                    const d = transformarVector(grupo_.transformacion, this.movimientos_grupos[grupo_.nombre]);
-                    dinamico.cx = grupo_.cx + d.x;
-                    dinamico.cy = grupo_.cy + d.y;
-                }
-            }
-
-            // Vuelca la pose de trabajo completa (tambien las figuras sin movimiento
-            // activo, para que al retroceder en el tiempo vuelvan a su forma original).
-            for (let i=0; i<this.grupos_trabajo.length; i++){
-                const g_trabajo = this.grupos_trabajo[i];
-                const g_dinamico = dinamicos_por_nombre.get(g_trabajo.nombre);
-                if(g_dinamico){
-                    g_dinamico.lista_figuras = g_trabajo.lista_figuras;
-                }
-            }
-
+            // Fase 6: instancias por referencia (sus partes las anima el motor de su asset)
+            this.aplicarInstancias(this._t_escena || 0);
         }
         if(this.detener){
             //this.tiempo.pausar();
         }
 
+    }
+
+    // Pone en cero los desplazamientos y arma la pose de trabajo del cuadro.
+    _prepararCuadro(){
+        for (let nombre_grupo in this.movimientos_grupos){
+            this.movimientos_grupos[nombre_grupo]['x']=0;
+            this.movimientos_grupos[nombre_grupo]['y']=0;
+        }
+        // Pose de trabajo de este frame: parte de las figuras originales y cada
+        // movimiento de figuras la va transformando en orden. Fase 4: copia
+        // superficial de los grupos (barata); la lista de figuras de un grupo se
+        // clona solo si un movimiento de figuras la modifica (aplicarMovimiento).
+        // Las listas no clonadas se comparten con los originales: la copia en
+        // vivo no debe modificar sus figuras (nada del editor de eventos lo hace).
+        this.grupos_trabajo = this.gestion_grupos_originales.grupos_figuras.map((g) => ({...g}));
+        this._figuras_clonadas = new Set();
+    }
+
+    // Vuelca desplazamientos y figuras del cuadro en la copia en vivo.
+    _volcarCuadro(){
+        // indices por nombre (Fase 4: antes getGrupo recorria la lista por cada
+        // grupo, O(n^2) por cuadro)
+        const originales_por_nombre = new Map(this.gestion_grupos_originales.grupos_figuras.map((g) => [g.nombre, g]));
+        const dinamicos_por_nombre = new Map(this.gestion_grupos.grupos_figuras.map((g) => [g.nombre, g]));
+
+        for (let nombre_grupo in this.movimientos_grupos) {
+            const grupo_ = originales_por_nombre.get(nombre_grupo);
+            const dinamico = dinamicos_por_nombre.get(nombre_grupo);
+            if (grupo_ && dinamico) {
+                // si el grupo tiene transformacion de instancia, su desplazamiento
+                // propio va en su marco (reflejado avanza hacia donde mira)
+                const d = transformarVector(grupo_.transformacion, this.movimientos_grupos[grupo_.nombre]);
+                dinamico.cx = grupo_.cx + d.x;
+                dinamico.cy = grupo_.cy + d.y;
+            }
+        }
+
+        // Vuelca la pose de trabajo completa (tambien las figuras sin movimiento
+        // activo, para que al retroceder en el tiempo vuelvan a su forma original).
+        for (let i=0; i<this.grupos_trabajo.length; i++){
+            const g_trabajo = this.grupos_trabajo[i];
+            const g_dinamico = dinamicos_por_nombre.get(g_trabajo.nombre);
+            if(g_dinamico){
+                g_dinamico.lista_figuras = g_trabajo.lista_figuras;
+            }
+        }
+    }
+
+    // ================================================================
+    // Fase 6: instancias por referencia
+    // ================================================================
+    // Un grupo con `instancia: {id_eventos, evento, bucle, desfase}` es el
+    // contenedor de un asset (el documento de eventos de otro proyecto). Las partes
+    // del asset se agregan como grupos VIRTUALES debajo del contenedor
+    // ("<contenedor>::<grupo>", `_virtual: true`): no se guardan (ver
+    // gruposParaGuardar) y en cada cuadro el motor del asset les da la pose de su
+    // evento en el instante t_escena - desfase.
+
+    static SEPARADOR_INSTANCIA = "::";
+
+    // fn(id_eventos) => Promise<documento de eventos>; la asigna el editor (axios)
+    cargadorAssets = null;
+    assets = new Map();   // id_eventos -> {estado, motor, error}
+
+    // Evalua ESTE motor (usado como motor de un asset) en el instante `t` (segundos)
+    // de `nombre_evento`, en contexto. Con `bucle`, el evento se repite y los
+    // desplazamientos se acumulan entre vueltas (como D12). Devuelve la pose:
+    // [{nombre, cx, cy, visible, lista_figuras}] (objetos nuevos; las listas de
+    // figuras son de solo lectura).
+    evaluarEn(nombre_evento, t, bucle){
+        const raiz_ = this.obtenerEvento("EventoGeneral");
+        if(!raiz_) return null;
+        const elegido = (this.obtenerEvento(nombre_evento) || raiz_).evento;
+        const raiz = raiz_.evento;
+        const duracion = Math.max(0, (elegido.tiempo_final - elegido.tiempo_inicio) / 1000);
+        this._prepararCuadro();
+        let t_evento = Math.min(Math.max(0, t), duracion);
+        if(bucle && duracion > 0){
+            const c = cicloBucle(Math.max(0, t), true, duracion * 1000);
+            t_evento = c.t;
+            if(c.vueltas > 0){
+                const ciclo = this.desplazamientosDe(elegido, duracion);
+                for(const n in ciclo){
+                    if(!this.movimientos_grupos[n]) this.movimientos_grupos[n] = {x: 0, y: 0};
+                    this.movimientos_grupos[n].x += ciclo[n].x * c.vueltas;
+                    this.movimientos_grupos[n].y += ciclo[n].y * c.vueltas;
+                }
+            }
+        }
+        this.procesarNodoEvento(raiz, this.inicioAbsoluto(elegido) + t_evento - raiz.tiempo_inicio / 1000, new Set());
+        this._volcarCuadro();
+        return this.gestion_grupos.grupos_figuras.map((g) => ({
+            nombre: g.nombre, cx: g.cx, cy: g.cy, visible: g.visible, lista_figuras: g.lista_figuras,
+        }));
+    }
+
+    // Asset (motor propio) de un documento de eventos; lo pide la primera vez.
+    _asset(id){
+        if(!id) return null;
+        let a = this.assets.get(id);
+        // si fallo (red caida, sesion vencida...) se reintenta cada 5 s
+        if(a && a.estado === "error" && performance.now() > (a.reintentar_en || 0)){
+            this.assets.delete(id);
+            a = null;
+        }
+        if(!a && this.cargadorAssets){
+            a = {estado: "cargando"};
+            this.assets.set(id, a);
+            this.cargadorAssets(id).then((doc) => {
+                const motor = new GestionEvento();
+                motor.inicializar(doc.eventos || [], doc.grupos_figuras || [], doc._id);
+                motor.gestion_grupos_originales.procesarPosicionFinalFiguras();
+                motor.reseteoMovGrupos();
+                a.motor = motor;
+                a.nombre = doc.nombre;
+                a.eventos = (doc.eventos || []).map((e) => e.nombre);
+                a.estado = "listo";
+            }).catch((e) => {
+                a.estado = "error";
+                a.error = e?.response?.data?.error?.msj || e?.message || String(e);
+                a.reintentar_en = performance.now() + 5000;
+                console.error("No se pudo cargar el asset", id, e);
+            });
+        }
+        return a && a.estado === "listo" ? a : null;
+    }
+
+    // Contenedores de instancias de la escena (grupos reales con `instancia`).
+    contenedoresInstancia(){
+        return this.gestion_grupos_originales.grupos_figuras.filter((g) => g.instancia && g.instancia.id_eventos && !g._virtual);
+    }
+
+    // Grupos que se guardan con "Subir"/Exportar: sin las partes virtuales.
+    gruposParaGuardar(){
+        return this.gestion_grupos_originales.grupos_figuras.filter((g) => !g._virtual);
+    }
+
+    // Agrega/quita las partes virtuales segun las instancias existentes y sus
+    // assets ya cargados. Barato si nada cambio (compara una firma).
+    sincronizarInstancias(){
+        const contenedores = this.contenedoresInstancia();
+        const firma = contenedores.map((c) => {
+            const listo = !!this._asset(c.instancia.id_eventos);
+            return `${c.nombre}|${c.instancia.id_eventos}|${listo}`;
+        }).join(";");
+        if(firma === this._firma_instancias) return;
+        this._firma_instancias = firma;
+
+        const SEP = GestionEvento.SEPARADOR_INSTANCIA;
+        for(const gestion of [this.gestion_grupos_originales, this.gestion_grupos]){
+            gestion.grupos_figuras = gestion.grupos_figuras.filter((g) => !g._virtual);
+        }
+        for(const c of contenedores){
+            const asset = this._asset(c.instancia.id_eventos);
+            if(!asset) continue;
+            const grupos = asset.motor.gestion_grupos_originales.grupos_figuras
+                .filter((g) => !g.instancia && !g._virtual);      // sin instancias anidadas (6A)
+            const nombres = new Set(grupos.map((g) => g.nombre));
+            const virtuales = grupos.map((g) => {
+                const v = {...g, nombre: `${c.nombre}${SEP}${g.nombre}`,
+                    nodo_padre: nombres.has(g.nodo_padre) ? `${c.nombre}${SEP}${g.nodo_padre}` : c.nombre,
+                    _virtual: true, _instancia: c.nombre, _original: g.nombre};
+                delete v._id; delete v.cx_solid; delete v.cy_solid;
+                return v;
+            });
+            this.gestion_grupos_originales.grupos_figuras.push(...virtuales.map((v) => ({...v})));
+            this.gestion_grupos.grupos_figuras.push(...virtuales.map((v) => ({...v})));
+            // primera vez: ubicar el contenedor para que el dibujo quede donde se solto
+            if(c._ubicar){
+                this._ubicarInstancia(c, virtuales);
+            }
+        }
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+    }
+
+    // Centra el dibujo de una instancia recien agregada en el punto donde se solto y
+    // pone el ancla de su transformacion en los pies.
+    _ubicarInstancia(contenedor, virtuales){
+        const {x, y} = contenedor._ubicar;
+        const nombre = contenedor.nombre;
+        const orden = prepararGrupos(virtuales.map((v) => (v.nodo_padre === nombre ? {...v, nodo_padre: "root"} : v)));
+        const lim = limitesGrupos(orden);
+        if(!lim) return;
+        this._ambos(nombre).forEach((g) => {
+            g.cx = Math.round(x - lim.cx);
+            g.cy = Math.round(y - lim.cy);
+            g.transformacion = {rotacion: 0, escala_x: 1, escala_y: 1,
+                ancla_x: Math.round(lim.cx), ancla_y: Math.round(lim.y1)};
+            delete g._ubicar;
+        });
+    }
+
+    // En cada cuadro: pose de cada instancia segun su asset y su evento.
+    aplicarInstancias(t_escena){
+        this.sincronizarInstancias();
+        const contenedores = this.contenedoresInstancia();
+        if(!contenedores.length) return;
+        const SEP = GestionEvento.SEPARADOR_INSTANCIA;
+        const dinamicos = new Map(this.gestion_grupos.grupos_figuras.map((g) => [g.nombre, g]));
+        const cache = new Map();   // misma pose para instancias con igual asset/evento/instante
+        for(const c of contenedores){
+            const asset = this._asset(c.instancia.id_eventos);
+            if(!asset) continue;
+            const inst = c.instancia;
+            const t = t_escena - (parseFloat(inst.desfase) || 0) / 1000;
+            const clave = `${inst.id_eventos}|${inst.evento}|${!!inst.bucle}|${t.toFixed(4)}`;
+            let pose = cache.get(clave);
+            if(!pose){
+                pose = asset.motor.evaluarEn(inst.evento || "EventoGeneral", t, !!inst.bucle);
+                cache.set(clave, pose);
+            }
+            for(const p of pose || []){
+                const v = dinamicos.get(`${c.nombre}${SEP}${p.nombre}`);
+                if(!v) continue;
+                v.cx = p.cx;
+                v.cy = p.cy;
+                v.visible = p.visible;
+                v.lista_figuras = p.lista_figuras;
+            }
+        }
+    }
+
+    // Agrega una instancia por referencia del documento de eventos `id_eventos` en el
+    // punto (x, y) del dibujo. Se ubica cuando el asset termina de cargar.
+    agregarInstanciaReferencia(id_eventos, nombre_asset, x, y, evento = "EventoGeneral"){
+        const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
+        const base = String(nombre_asset || "instancia").replace(/[^A-Za-z0-9_-]+/g, "_") || "instancia";
+        let n = 1, nombre;
+        do { nombre = `${base}_${n++}`; } while(existentes.has(nombre));
+        const capa = Math.max(0, ...this.gestion_grupos_originales.grupos_figuras
+            .filter((g) => g.nodo_padre === "root").map((g) => Number(g.capa) || 0)) + 1;
+        const contenedor = {
+            nombre, nodo_padre: "root", visible: true, color: "#000000",
+            cx: Math.round(x), cy: Math.round(y), capa, clases: [],
+            lista_figuras: [],
+            lista_pintado: [{color: "#000000", visible: true, elementos: [[]]}],
+            instancia: {id_eventos, evento, bucle: true, desfase: 0},
+            _ubicar: {x, y},
+        };
+        this.gestion_grupos_originales.grupos_figuras.push(structuredClone(contenedor));
+        this.gestion_grupos.grupos_figuras.push(structuredClone(contenedor));
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        this.movimientos_grupos[nombre] = {x: 0, y: 0};
+        this._asset(id_eventos);   // empezar a cargarlo
+        return nombre;
+    }
+
+    esInstancia(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return !!(g && g.instancia && g.instancia.id_eventos);
+    }
+
+    // Datos del asset de una instancia (para el Inspector): nombre y eventos.
+    infoAsset(id_eventos){
+        const a = this.assets.get(id_eventos);
+        return a ? {estado: a.estado, nombre: a.nombre, eventos: a.eventos || [], error: a.error} : null;
+    }
+
+    // Cambia campos de la instancia (evento, bucle, desfase).
+    cambiarInstancia(nombre, cambios){
+        this._ambos(nombre).forEach((g) => { if(g.instancia) g.instancia = {...g.instancia, ...cambios}; });
     }
 
     movimientos(tiempo, lista_mov, objetos){

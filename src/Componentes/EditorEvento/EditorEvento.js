@@ -254,10 +254,25 @@ function EditorEvento(props){
         window.__editorEvento = {evento: refEvento, lienzo: refLienzo};
     }
 
+    // Fase 6: el motor carga los assets de las instancias por referencia (documentos
+    // de eventos de otros proyectos) con esta funcion.
+    if(!refEvento.current.edicion.cargadorAssets){
+        refEvento.current.edicion.cargadorAssets = (id) => axios({
+            method: "get", url: "/api/evento/id/" + id, withCredentials: true,
+            headers: {"Content-Type": "application/json", Authorization: "Bearer " + datos_usuario?.token},
+        }).then((r) => r.data);
+    }
+
     const agregarAnimacionEnPunto = (animacion, x_canvas, y_canvas) => {
         const lienzo = refLienzo.current;
         const evento = refEvento.current;
         const {x, y} = lienzo.coordenadasMundo(x_canvas, y_canvas);
+        if(animacion.tipo === "instancia"){
+            // instancia por referencia: dibujo y eventos vienen del asset
+            const nombre = evento.edicion.agregarInstanciaReferencia(animacion.id_eventos, animacion.nombre, x, y);
+            setEventoAnimacion({edicion: evento.edicion});
+            return nombre;
+        }
         const contenedor = evento.edicion.agregarInstanciaAnimacion(animacion.grupos_figuras, animacion.nombre, x, y);
         if(contenedor){
             setEventoAnimacion({edicion: evento.edicion});
@@ -394,7 +409,7 @@ function EditorEvento(props){
             });
             const datos = {
                 "eventos": eventos_,
-                "grupos_figuras": eventoAnimacion.edicion.gestion_grupos_originales.grupos_figuras
+                "grupos_figuras": eventoAnimacion.edicion.gruposParaGuardar()  // sin partes virtuales de instancias
             };
 
             const url = "/api/evento/id/" + eventoAnimacion.edicion._id;
@@ -432,7 +447,7 @@ function EditorEvento(props){
             const edicion = eventoAnimacion.edicion;
             const datos = {
                 "eventos": edicion.eventos.map((evento) => evento.evento),
-                "grupos_figuras": edicion.gestion_grupos_originales.grupos_figuras
+                "grupos_figuras": edicion.gruposParaGuardar()
             };
             await exportarJSON(datos, "evento_" + edicion._id);
         } catch (error) {

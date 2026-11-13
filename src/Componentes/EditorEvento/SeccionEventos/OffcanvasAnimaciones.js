@@ -46,6 +46,10 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
     const [error, setError] = useState("");
     const [seleccion, setSeleccion] = useState(null);    // id_animacion
     const [filtro, setFiltro] = useState("");
+    // Fase 6: assets animados = documentos de eventos de cada proyecto (se agregan
+    // como instancia por referencia: dibujo + eventos vienen del asset).
+    const [docsEventos, setDocsEventos] = useState({});  // id_proyecto -> [{id, nombre}]
+    const [gruposEv, setGruposEv] = useState({});        // id_eventos -> grupos_figuras
 
     const configAxios = (method, url, data) => ({
         method, url, data,
@@ -117,6 +121,39 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [proyecto, grupos]);
 
+    // Documentos de eventos del proyecto (lista liviana + dibujo de cada uno para la miniatura).
+    useEffect(() => {
+        if (!proyecto || proyecto.id in docsEventos) return;
+        let cancelado = false;
+        (async () => {
+            try {
+                const res = await axios(configAxios("get", `/api/eventos/proyecto-slim/${proyecto.id}`));
+                const lista = (res.data || []).map((d) => ({id: d._id, nombre: d.nombre}));
+                if (cancelado) return;
+                setDocsEventos((prev) => ({...prev, [proyecto.id]: lista}));
+                for (const d of lista) {
+                    axios(configAxios("get", `/api/evento/id/${d.id}`))
+                        .then((r) => setGruposEv((prev) => ({...prev, [d.id]: r.data?.grupos_figuras || []})))
+                        .catch(() => setGruposEv((prev) => ({...prev, [d.id]: []})));
+                }
+            } catch (e) {
+                if (!cancelado) setError(e?.response?.data?.error || e?.message || "Error al cargar los assets animados.");
+            }
+        })();
+        return () => { cancelado = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [proyecto, docsEventos]);
+
+    const assets = (docsEventos[proyecto?.id] || [])
+        .filter((d) => `${proyecto.nombre} ${d.nombre}`.toLowerCase().includes(filtro.trim().toLowerCase()));
+    const paqueteAsset = (d) => ({tipo: "instancia", id_eventos: d.id, nombre: proyecto?.nombre || d.nombre,
+                                  grupos_figuras: gruposEv[d.id] || []});
+    const alArrastrarAsset = (e, d) => {
+        e.dataTransfer.setData(MIME_ANIMACION, JSON.stringify(paqueteAsset(d)));
+        e.dataTransfer.effectAllowed = "copy";
+        setSeleccion("ev:" + d.id);
+    };
+
     const animaciones = (proyecto?.animaciones || [])
         .filter((a) => a.nombre.toLowerCase().includes(filtro.trim().toLowerCase()));
 
@@ -129,7 +166,14 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
         setSeleccion(a.id);
     };
 
-    const seleccionada = proyecto?.animaciones.find((a) => a.id === seleccion) || null;
+    const assetSel = typeof seleccion === "string" && seleccion.startsWith("ev:")
+        ? (docsEventos[proyecto?.id] || []).find((d) => "ev:" + d.id === seleccion) || null : null;
+    const seleccionada = assetSel
+        ? {...paqueteAsset(assetSel), listo: true}
+        : (() => {
+            const a = proyecto?.animaciones.find((x) => x.id === seleccion);
+            return a ? {...paquete(a), listo: a.id in grupos} : null;
+        })();
 
     return (
         <div ref={panelRef} id={id}
@@ -178,7 +222,41 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                     <div className="small text-body-secondary">No hay animaciones en este proyecto.</div>
                 )}
 
-                <div className="row row-cols-2 g-2 overflow-auto">
+                {assets.length > 0 && (
+                    <>
+                        <div className="small fw-semibold d-flex align-items-center gap-1">
+                            <i className="bi bi-link-45deg text-info"/>Assets animados
+                            <span className="text-body-secondary fw-normal">(se mueven con sus eventos)</span>
+                        </div>
+                        <div className="row row-cols-2 g-2 flex-shrink-0">
+                            {assets.map((d) => {
+                                const activa = seleccion === "ev:" + d.id;
+                                return (
+                                    <div className="col" key={d.id}>
+                                        <div role="button" tabIndex={0} draggable
+                                             onDragStart={(e) => alArrastrarAsset(e, d)}
+                                             onClick={() => setSeleccion(activa ? null : "ev:" + d.id)}
+                                             className={`card h-100 ${activa ? "border-primary border-2 shadow-sm" : ""}`}
+                                             style={{cursor: "grab"}}
+                                             title={`Instancia por referencia de ${proyecto.nombre} (${d.nombre})`}>
+                                            <div className="card-body p-2">
+                                                {d.id in gruposEv
+                                                    ? <Miniatura grupos={gruposEv[d.id]}/>
+                                                    : <div className="placeholder-glow"><span className="placeholder col-12 rounded" style={{height: ALTO_MINI}}/></div>}
+                                                <div className="small text-truncate mt-1">
+                                                    <i className="bi bi-link-45deg text-info me-1"/>{proyecto.nombre}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="small fw-semibold">Dibujos (copia editable)</div>
+                    </>
+                )}
+
+                <div className={`row row-cols-2 g-2 ${embebido ? "flex-shrink-0" : "overflow-auto"}`}>
                     {animaciones.map((a) => {
                         const activa = seleccion === a.id;
                         const lista = a.id in grupos;
@@ -208,8 +286,8 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                 <span className="small text-truncate text-body-secondary">
                     {seleccionada ? seleccionada.nombre : "Ninguna seleccionada"}
                 </span>
-                <button className="btn btn-primary btn-sm" disabled={!seleccionada || !(seleccionada.id in grupos)}
-                        onClick={() => onAgregar && onAgregar(paquete(seleccionada))}>
+                <button className="btn btn-primary btn-sm" disabled={!seleccionada || !seleccionada.listo}
+                        onClick={() => onAgregar && onAgregar(seleccionada)}>
                     <i className="bi bi-plus-lg me-1"/>Agregar al centro
                 </button>
             </div>

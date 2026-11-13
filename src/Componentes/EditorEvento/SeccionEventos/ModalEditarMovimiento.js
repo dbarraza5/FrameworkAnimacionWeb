@@ -219,6 +219,7 @@ function ModalEditarMovimiento({ show, onClose, movimiento, setMovimientoSelecci
                                 onChange={(e) => setTiempoBucle(e.target.value)}
                                 placeholder="Ej: +500ms o -1s"
                             />
+                            <div className="form-text">Con <strong>Bucle</strong> activo, el contenido se repite cada este tiempo dentro de la ventana inicio–fin (los desplazamientos se acumulan entre vueltas).</div>
                         </div>
 
                         {/* Checkboxes */}

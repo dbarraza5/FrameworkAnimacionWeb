@@ -304,7 +304,8 @@ class GestionLienzoEvento{
             || hijos.some((hijo, i) => {
                 const actual = t.lista_objetos[i];
                 return !actual || actual.id !== hijo.nombre
-                    || actual.inicio !== hijo.tiempo_inicio || actual.fin !== hijo.tiempo_final;
+                    || actual.inicio !== hijo.tiempo_inicio || actual.fin !== hijo.tiempo_final
+                    || actual.bucle_ms !== (hijo.bucle ? (parseFloat(hijo.tiempo_bucle) || 0) : 0);
             });
 
         if(desactualizado){
@@ -313,6 +314,7 @@ class GestionLienzoEvento{
             t.cambiarEventos(hijos.map((hijo) => ({
                 id: hijo.nombre,
                 etiqueta: hijo.nombre,
+                bucle_ms: hijo.bucle ? (parseFloat(hijo.tiempo_bucle) || 0) : 0,
                 inicio: hijo.tiempo_inicio,
                 fin: hijo.tiempo_final
             })));
@@ -345,7 +347,8 @@ class GestionLienzoEvento{
             || movimientos.length !== t.lista_objetos.length
             || movimientos.some((mov, i) => {
                 const actual = t.lista_objetos[i];
-                return !actual || actual.inicio !== mov.tiempo_inicio || actual.fin !== mov.tiempo_final;
+                return !actual || actual.inicio !== mov.tiempo_inicio || actual.fin !== mov.tiempo_final
+                    || actual.bucle_ms !== (mov.bucle ? (parseFloat(mov.tiempo_bucle) || 0) : 0);
             });
 
         if(desactualizado){
@@ -353,6 +356,7 @@ class GestionLienzoEvento{
             t.cambiarEventos(movimientos.map((mov, index) => ({
                 id: index,
                 etiqueta: etiquetaMovimiento(mov, index),
+                bucle_ms: mov.bucle ? (parseFloat(mov.tiempo_bucle) || 0) : 0,
                 inicio: mov.tiempo_inicio,
                 fin: mov.tiempo_final
             })));

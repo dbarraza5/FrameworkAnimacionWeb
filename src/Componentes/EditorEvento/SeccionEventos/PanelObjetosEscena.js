@@ -33,16 +33,21 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
             const lista = nombres.map((n) => {
                 // sub-arbol con su raiz como raiz (para la miniatura)
                 const sub = e.subarbol(n, originales).map((g) => (g.nombre === n ? {...g, nodo_padre: "root"} : g));
+                const g = e.gestion_grupos_originales.getGrupo(n);
                 return {
                     nombre: n,
                     visible: e.esVisible(n),
                     bloqueado: e.estaBloqueado(n),
                     partes: e.objetosEscena(n).length,
                     grupos: sub,
+                    // Fase 6: instancia por referencia (su dibujo viene de otro proyecto)
+                    instancia: g && g.instancia && g.instancia.id_eventos
+                        ? `${(e.infoAsset(g.instancia.id_eventos) || {}).nombre || "asset"} · ${g.instancia.evento || "EventoGeneral"}`
+                        : null,
                 };
             });
             // solo re-renderizar si algo cambio (la miniatura se redibuja con sus grupos)
-            const f = JSON.stringify(lista.map((x) => [x.nombre, x.visible, x.bloqueado, x.partes,
+            const f = JSON.stringify(lista.map((x) => [x.nombre, x.visible, x.bloqueado, x.partes, x.instancia,
                 x.grupos.map((g) => [g.nombre, g.cx, g.cy, g.visible, (g.lista_figuras || []).length])]));
             if (f !== firma.current) {
                 firma.current = f;
@@ -99,8 +104,8 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                                     ? (sel ? seleccion.filter((n) => n !== it.nombre) : [...seleccion, it.nombre])
                                     : [it.nombre]);
                             }}
-                            onDoubleClick={() => { if (it.partes) control().entrar(it.nombre); }}
-                            title={it.partes ? "Doble clic para editar sus partes" : it.nombre}>
+                            onDoubleClick={() => { if (it.partes && !it.instancia) control().entrar(it.nombre); }}
+                            title={it.instancia ? `Instancia de ${it.instancia}` : it.partes ? "Doble clic para editar sus partes" : it.nombre}>
                             <Miniatura grupos={it.grupos}/>
                             <div className="flex-grow-1 text-truncate">
                                 {editando === it.nombre ? (
@@ -114,8 +119,13 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                                            onBlur={() => confirmarNombre(it.nombre)}/>
                                 ) : (
                                     <>
-                                        <span className="ed-obj-nombre">{it.nombre}</span>
-                                        {it.partes > 0 && <span className="ed-obj-partes">{it.partes} partes</span>}
+                                        <span className="ed-obj-nombre">
+                                            {it.instancia && <i className="bi bi-link-45deg me-1 text-info" title="Instancia por referencia"/>}
+                                            {it.nombre}
+                                        </span>
+                                        {it.instancia
+                                            ? <span className="ed-obj-partes">{it.instancia}</span>
+                                            : it.partes > 0 && <span className="ed-obj-partes">{it.partes} partes</span>}
                                     </>
                                 )}
                             </div>

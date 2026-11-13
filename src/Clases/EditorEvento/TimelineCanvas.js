@@ -341,6 +341,22 @@ export default class TimelineCanvas {
         ctx.fillStyle = es_evento ? '#4FA3FF' : '#FFA11B';
         ctx.fillRect(x, y, width, this.alto_evento);
 
+        // Bucle (Fase 5): una marca por cada vuelta dentro de la barra
+        const periodo = ev.bucle_ms > 0 ? ev.bucle_ms * this.escala : 0;
+        if(periodo >= 3){
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 2]);
+            for(let px = x + periodo; px < x + width - 1; px += periodo){
+                ctx.beginPath();
+                ctx.moveTo(Math.round(px) + 0.5, y + 3);
+                ctx.lineTo(Math.round(px) + 0.5, y + this.alto_evento - 3);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
         // texto recortado al ancho de la barra (los nombres de evento pueden ser largos)
         ctx.save();
         ctx.beginPath();
@@ -349,9 +365,10 @@ export default class TimelineCanvas {
         ctx.fillStyle = 'black';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
+        const bucle = ev.bucle_ms > 0 ? `  ↻ ${ev.bucle_ms} ms` : '';
         const texto = ev.etiqueta
-            ? `${ev.etiqueta}  ${ev.inicio}–${ev.fin}`
-            : `${ev.inicio}–${ev.fin}`;
+            ? `${ev.etiqueta}  ${ev.inicio}–${ev.fin}${bucle}`
+            : `${ev.inicio}–${ev.fin}${bucle}`;
         ctx.fillText(texto, x + width / 2, y + this.alto_evento / 2);
         ctx.restore();
     }
