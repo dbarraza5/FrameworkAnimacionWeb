@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import PanelEventos from "./PanelEventos";
 import PanelMovimientos from "./PanelMovimientos";
 import PanelScripts from "./PanelScripts";
+import PanelObjeto from "./PanelObjeto";
 import {
     MODALIDAD_EVENTOS,
     MODALIDAD_MACRO,
@@ -60,6 +61,11 @@ export default function Inspector(props) {
 
     const seccion_activa = SECCIONES.some((s) => s.modalidad === tipo_modalidad)
         ? tipo_modalidad : MODALIDAD_EVENTOS;
+
+    // Fase 2: si hay objetos seleccionados en el lienzo, el Inspector muestra el objeto.
+    if (props.objetosSeleccionados && props.objetosSeleccionados.length && props.refLienzo) {
+        return <PanelObjeto refLienzo={props.refLienzo} seleccion={props.objetosSeleccionados}/>;
+    }
 
     if (!evento) {
         return (

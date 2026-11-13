@@ -17,6 +17,8 @@ import ControlVectorLienzo from "./ControlVectorLienzo";
 import ControlFlechaLienzo from "./ControlFlechaLienzo";
 import ControlZoomLienzo from "./ControlZoomLienzo";
 import ControlOscilatorioLienzo from "./ControlOscilatorioLienzo";
+import ControlObjetosLienzo from "./ControlObjetosLienzo";
+import {aplicarEnCanvas, cadenaTransformaciones, destransformarPunto, mapaGrupos} from "../EditorAnimacion/TransformacionInstancia";
 
 // Etiqueta corta de un movimiento para el timeline: "1 · MRU", "2 · RotOsc"...
 const etiquetaMovimiento = (mov, index) => {
@@ -168,6 +170,26 @@ class GestionLienzoEvento{
     control_flecha = new ControlFlechaLienzo();
     control_zoom = new ControlZoomLienzo();
     control_oscilatorio = new ControlOscilatorioLienzo();
+    // Fase 2: seleccion y manipulacion de objetos de la escena
+    control_objetos = new ControlObjetosLienzo();
+
+    // Transformacion de instancia del grupo `nombre` (Fase 1), en la pose en vivo o
+    // en la de reposo (originales). Para dibujar los overlays de un grupo dentro de
+    // un objeto escalado/rotado y para llevar el mouse a su espacio propio.
+    cadenaDeGrupo(nombre, originales = false){
+        const gestion = originales ? this.eventos_.gestion_grupos_originales : this.eventos_.gestion_grupos;
+        const grupo = gestion.getGrupo(nombre);
+        return grupo ? cadenaTransformaciones(grupo, mapaGrupos(gestion.grupos_figuras)) : [];
+    }
+
+    // Ejecuta `dibujo()` con el contexto transformado como el grupo `nombre`.
+    conTransformacion(ctx, nombre, originales, dibujo){
+        const cadena = this.cadenaDeGrupo(nombre, originales);
+        ctx.save();
+        aplicarEnCanvas(ctx, cadena, this.configuracion_lienzo.x_delta_original, this.configuracion_lienzo.y_delta_original);
+        dibujo();
+        ctx.restore();
+    }
 
     constructor(eventos_, eventoLienzoEvento, setEventoAnimacion, seleccionarGrupo) {
         this.id_canvas = "lienzo-evento"
@@ -383,6 +405,10 @@ class GestionLienzoEvento{
 
         this.eventos_.imprimirEventos();
 
+        if(this.tipo_modalidad !== MODALIDAD_MOVIMIENTOS){
+            this.control_objetos.dibujar(ctx, this);
+        }
+
         if(this.tipo_modalidad === MODALIDAD_MOVIMIENTOS){
             this.dibujarGrupoSeleccionado(ctx);
 
@@ -396,12 +422,14 @@ class GestionLienzoEvento{
 
                     const x_select_g = rect_seleccion.inf_hor+this.configuracion_lienzo.x_delta_original;
                     const y_select_g = rect_seleccion.inf_ver+this.configuracion_lienzo.y_delta_original;
-                    dibujar_rectangulo(ctx, "#76ff14", x_select_g, y_select_g,
-                        rect_seleccion.ancho, rect_seleccion.alto)
-                    if(this.grupo_seleccionado===this.grupos_disponibles_generales[i]){
-                        dibujar_rec_transparencia(ctx, "#76ff14","#c73cee", x_select_g, y_select_g,
+                    this.conTransformacion(ctx, this.grupos_disponibles_generales[i], false, () => {
+                        dibujar_rectangulo(ctx, "#76ff14", x_select_g, y_select_g,
                             rect_seleccion.ancho, rect_seleccion.alto)
-                    }
+                        if(this.grupo_seleccionado===this.grupos_disponibles_generales[i]){
+                            dibujar_rec_transparencia(ctx, "#76ff14","#c73cee", x_select_g, y_select_g,
+                                rect_seleccion.ancho, rect_seleccion.alto)
+                        }
+                    });
                 }
             }
             if(this.tipo_trabajo === TRABAJO_EDICION_MOVIMIENTO){
@@ -505,7 +533,12 @@ class GestionLienzoEvento{
                     this.eventoLienzoEvento.mouse_click_up, this.eventoLienzoEvento.mouse_only_click
                 );
             }else if(!click_en_boton){
-                const interactuo = this.procesoEdicionMovimientos();
+                let interactuo = this.procesoEdicionMovimientos();
+                // Fase 2: fuera de la modalidad Movimiento, el lienzo selecciona y
+                // manipula objetos de la escena (ver ControlObjetosLienzo).
+                if(!interactuo && this.tipo_modalidad !== MODALIDAD_MOVIMIENTOS){
+                    interactuo = this.control_objetos.procesar(this);
+                }
                 if(!interactuo && this.eventoLienzoEvento.mouse_only_click){
                     this.configuracion_lienzo.iniciarArrastreLienzo(
                         this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y
@@ -519,6 +552,9 @@ class GestionLienzoEvento{
         }
 
         this.eventoLienzoEvento.reset()
+        // pulsaciones no consumidas en este cuadro (ej. en la modalidad Movimiento) se
+        // descartan, para que no se ejecuten mas tarde en otro contexto
+        this.eventoLienzoEvento.cola_teclas = [];
     }
 
     // Devuelve true si el click de este tick fue "reclamado" por algo del lienzo
@@ -546,11 +582,16 @@ class GestionLienzoEvento{
                     const ancho = rect_seleccion.ancho;
                     const alto = rect_seleccion.alto;
 
-                    // 2. Validar si el mouse está dentro de este rectángulo
-                    const isHover = this.x_mouse >= x_select_g &&
-                        this.x_mouse <= x_select_g + ancho &&
-                        this.y_mouse >= y_select_g &&
-                        this.y_mouse <= y_select_g + alto;
+                    // 2. Validar si el mouse está dentro de este rectángulo (el mouse se
+                    // lleva al espacio propio del grupo si su objeto esta transformado)
+                    const mg = destransformarPunto(this.cadenaDeGrupo(this.grupos_disponibles_generales[i]),
+                        {x: this.x_mouse, y: this.y_mouse});
+                    const mx = mg.x + this.configuracion_lienzo.x_delta_original;
+                    const my = mg.y + this.configuracion_lienzo.y_delta_original;
+                    const isHover = mx >= x_select_g &&
+                        mx <= x_select_g + ancho &&
+                        my >= y_select_g &&
+                        my <= y_select_g + alto;
 
                     if(isHover && this.eventoLienzoEvento.mouse_only_click){
                         console.log("Deteccion de grupo: ", grupos_);
@@ -583,8 +624,12 @@ class GestionLienzoEvento{
                     if(resuelto){
                         const {control, config} = resuelto;
                         control.configurar(config);
+                        // el control vive en el espacio propio del grupo: si su objeto
+                        // esta escalado/rotado, el mouse se lleva a ese espacio
+                        const m_local = destransformarPunto(this.cadenaDeGrupo(this.grupo_seleccionado, true),
+                            {x: this.x_mouse, y: this.y_mouse});
                         const guardo_cambio = control.procesarInteraccion(
-                            this.x_mouse, this.y_mouse, this.eventoLienzoEvento.mouse_only_click,
+                            m_local.x, m_local.y, this.eventoLienzoEvento.mouse_only_click,
                             datos, rect_seleccion.centro_x, rect_seleccion.centro_y
                         );
                         if(guardo_cambio){
@@ -620,8 +665,11 @@ class GestionLienzoEvento{
         const x_select_g = rect_seleccion.inf_hor + this.configuracion_lienzo.x_delta_original;
         const y_select_g = rect_seleccion.inf_ver + this.configuracion_lienzo.y_delta_original;
 
-        dibujar_rec_transparencia(ctx, "#0066ff", "#0066ff", x_select_g, y_select_g,
-            rect_seleccion.ancho, rect_seleccion.alto, 0.15);
+        // con la transformacion de su objeto (Fase 1), para que coincida con el dibujo
+        this.conTransformacion(ctx, this.grupo_seleccionado, false, () => {
+            dibujar_rec_transparencia(ctx, "#0066ff", "#0066ff", x_select_g, y_select_g,
+                rect_seleccion.ancho, rect_seleccion.alto, 0.15);
+        });
     }
 
     imprimiendoMovimientosObjeto(){
@@ -651,14 +699,20 @@ class GestionLienzoEvento{
                 // pero para DIBUJAR hay que sumarles el pan igual que ImprimirAnimacion se lo
                 // suma a las figuras del grupo, si no el overlay (pivote/circulo/flecha)
                 // queda fijo en su lugar mientras el grupo se mueve al arrastrar el lienzo.
-                control.dibujar(
-                    ctx, datos,
-                    rect_seleccion.centro_x + this.configuracion_lienzo.x_delta_original,
-                    rect_seleccion.centro_y + this.configuracion_lienzo.y_delta_original,
-                    this.x_mouse + this.configuracion_lienzo.x_delta_original,
-                    this.y_mouse + this.configuracion_lienzo.y_delta_original,
-                    duracion
-                );
+                // Fase 1/2: el overlay se dibuja en el espacio propio del grupo (con la
+                // transformacion de su objeto) y el mouse se lleva a ese espacio.
+                const m_local = destransformarPunto(this.cadenaDeGrupo(this.grupo_seleccionado, true),
+                    {x: this.x_mouse, y: this.y_mouse});
+                this.conTransformacion(ctx, this.grupo_seleccionado, true, () => {
+                    control.dibujar(
+                        ctx, datos,
+                        rect_seleccion.centro_x + this.configuracion_lienzo.x_delta_original,
+                        rect_seleccion.centro_y + this.configuracion_lienzo.y_delta_original,
+                        m_local.x + this.configuracion_lienzo.x_delta_original,
+                        m_local.y + this.configuracion_lienzo.y_delta_original,
+                        duracion
+                    );
+                });
             }
         }
 

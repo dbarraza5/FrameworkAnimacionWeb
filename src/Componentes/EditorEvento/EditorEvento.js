@@ -221,6 +221,10 @@ function EditorEvento(props){
     const refLienzo = useRef(gestionEventoLienzo);
     refEvento.current = eventoAnimacion;
     refLienzo.current = gestionEventoLienzo;
+    // Fase 2: la seleccion de objetos del lienzo llega a React (Inspector -> Objeto)
+    const [objetosSeleccionados, setObjetosSeleccionados] = useState([]);
+    refLienzo.current.control_objetos.alCambiar = setObjetosSeleccionados;
+
     // Solo en desarrollo: acceso desde la consola del navegador para pruebas
     // (ej. cambiar la transformacion de una instancia antes de que existan las
     // manijas de la Fase 2). No existe en el build de produccion.
@@ -449,6 +453,14 @@ function EditorEvento(props){
         }
     });
     const [modo, setModo] = useState("animar"); // "animar" | "dibujo"
+    // al seleccionar un objeto en el lienzo, mostrar el Inspector (no la Biblioteca)
+    useEffect(() => {
+        if(objetosSeleccionados.length){
+            setLayout((l) => (l.pestana_der === "inspector" && l.ver_der) ? l
+                : {...l, pestana_der: "inspector", ver_der: true});
+        }
+    }, [objetosSeleccionados.length]);
+
     useEffect(() => {
         try{ localStorage.setItem(CLAVE_LAYOUT, JSON.stringify(layout)); }catch(e){ /* sin almacenamiento */ }
         // cuadricula y reglas viven en la configuracion del lienzo
@@ -609,7 +621,7 @@ function EditorEvento(props){
                 </div>
                 {/* ambas pestanas quedan montadas (la biblioteca no recarga al volver) */}
                 <div className={`ed-cuerpo ${layout.pestana_der === "inspector" ? "" : "d-none"}`}>
-                    <Inspector {...props_paneles}/>
+                    <Inspector {...props_paneles} refLienzo={refLienzo} objetosSeleccionados={objetosSeleccionados}/>
                 </div>
                 <div className={`ed-cuerpo ${layout.pestana_der === "biblioteca" ? "" : "d-none"}`}>
                     <OffcanvasAnimaciones id="bibliotecaAnimaciones" embebido onAgregar={agregarAnimacionAlCentro}/>

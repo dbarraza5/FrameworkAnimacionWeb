@@ -9,8 +9,13 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (tarde)**
+- **Seleccionar y manipular objetos con el mouse:** clic sobre un objeto (perro, casa…) y aparecen manijas para **mover, escalar, rotar y reflejar**. El Inspector muestra el objeto con sus valores editables. Atajos: flechas, Supr, Ctrl+D, Esc. Ver [§7b](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar).
+- **Un objeto reflejado camina hacia donde mira,** y uno escalado avanza en proporción a su tamaño.
+- **Modalidad Movimiento:** los controles (pivote, flecha) se alinean bien con objetos escalados o rotados.
+
 **2026-11-13**
-- **Escala, rotación y espejo por objeto** (sin deformar su animación). Por ahora solo se aplican desde la consola del navegador; las manijas para hacerlo con el mouse llegan en la próxima versión. Ver [§9](#9-para-desarrolladores).
+- **Escala, rotación y espejo por objeto** (sin deformar su animación).
 
 **2026-11-12**
 - **Nueva pantalla del editor de eventos**, con distribución de editor profesional: lienzo grande, panel Escena, Inspector, Biblioteca, línea de tiempo abajo y barra de estado. Ver [§3](#3-la-pantalla-del-editor-de-eventos).
@@ -36,6 +41,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 5. [Eventos](#5-eventos)
 6. [Movimientos](#6-movimientos)
 7. [Biblioteca: agregar objetos a la escena](#7-biblioteca-agregar-objetos-a-la-escena)
+7b. [Objetos en la escena: seleccionar, mover, escalar, rotar](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar)
 8. [Línea de tiempo](#8-línea-de-tiempo)
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
@@ -243,6 +249,55 @@ En la pestaña **Biblioteca** del panel derecho:
 
 ---
 
+## 7b. Objetos en la escena: seleccionar, mover, escalar, rotar
+
+Un **objeto** es cada grupo de primer nivel que tiene dibujo: el `perro`, una instancia agregada desde la Biblioteca, una casa… Se manipula en la modalidad **Evento**, la que se abre por defecto. En la modalidad *Movimiento*, el lienzo edita movimientos.
+
+### Seleccionar
+
+- **Clic sobre el objeto,** en cualquier parte de su dibujo. Aparece un rectángulo azul con manijas y el Inspector pasa a mostrar el **Objeto**.
+- **Shift + clic:** agrega o quita objetos de la selección.
+- **Clic en el vacío** o **Esc:** deselecciona (arrastrar el vacío sigue moviendo la vista).
+
+### Manipular con el mouse
+
+| Dónde arrastras | Qué hace |
+|---|---|
+| Interior del objeto | **Mover** (todos los seleccionados). |
+| Manija de una **esquina** | **Escalar proporcionalmente**. Con **Shift**, libre. |
+| Manija de un **lado** | **Escalar en un solo eje** (estirar o aplastar). |
+| **Círculo** sobre el rectángulo | **Rotar**. Con **Shift**, en pasos de 15°. |
+
+**El ancla:** la **cruz naranja** es el punto fijo al escalar y rotar. Por defecto está en los pies del objeto, así que al agrandarlo sigue apoyado en el suelo.
+
+**Reflejar:** si arrastras una manija más allá del ancla, el objeto se **refleja**. También hay botones de espejo en el Inspector.
+
+### Teclado (con el lienzo activo)
+
+| Tecla | Acción |
+|---|---|
+| Flechas | Mover 1 unidad (con Shift, 10) |
+| `Supr` / `Retroceso` | Borrar el objeto (con todo su dibujo) |
+| `Ctrl + D` | Duplicar (la copia aparece desplazada y encima) |
+| `Esc` | Deseleccionar |
+
+### Inspector → Objeto
+
+- **Campos:** posición X/Y, rotación (°), capa, escala X/Y y ancla X/Y. Se pueden escribir y se actualizan mientras arrastras las manijas.
+- **Botones:** **Espejo H**, **Espejo V**, **Restablecer** (rotación 0 y escala 1), **Duplicar** y **Borrar**.
+- **Volver a las propiedades del evento:** deselecciona.
+
+### Cómo se combinan transformación y animación
+
+- **La transformación se aplica al dibujar:** escalar, rotar o reflejar **no deforma la animación**. El perro al 60 % camina y se sienta igual que el grande.
+- **El desplazamiento propio del objeto** (por ejemplo, un MRU en el `perro`) va **en el marco del objeto**:
+  - reflejado, **avanza hacia donde mira**;
+  - escalado, **avanza en proporción** y no "patina".
+
+Recuerda **Subir** para guardar los cambios.
+
+---
+
 ## 8. Línea de tiempo
 
 **Cabecera:** a la izquierda, el evento que se reproduce; al centro, los controles; a la derecha, el tiempo `actual / duración` y **⌄** para plegar el panel.
@@ -271,7 +326,7 @@ En la pestaña **Biblioteca** del panel derecho:
 
 ### Transformación de objetos desde la consola
 
-La escala, rotación y espejo por objeto ya funcionan al dibujar, pero todavía no tienen manijas. En **desarrollo** (`npm start`), el editor queda accesible desde la consola del navegador:
+Lo normal es usar las manijas y el Inspector ([§7b](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar)). Para pruebas, en **desarrollo** (`npm start`) el editor queda accesible desde la consola del navegador:
 
 ```js
 const ed = window.__editorEvento.evento.current.edicion;
@@ -396,7 +451,8 @@ EventoGeneral (0 – 6,5 s)
 - **Velocidad de reproducción (⏩):** no implementada; muestra un aviso del navegador.
 - **Campos de evento sin efecto:** `bucle`, `tiempo_bucle`, `x`, `y`, `reposicionar` y `tiempo_relativo`.
 - **Objetos de la Biblioteca:** son copias sin sus eventos.
-- **Objetos escalados o rotados:** el rectángulo de selección y los controles de los movimientos todavía no siguen la transformación.
+- **Selección de objetos:** todavía no hay selección arrastrando un rectángulo en el vacío (usa Shift+clic). Escalar o rotar varios objetos a la vez no está disponible (sí moverlos y borrarlos).
+- **Sin deshacer:** las operaciones sobre objetos (mover, borrar, duplicar…) no se pueden deshacer. Recargar la página sin "Subir" descarta todos los cambios.
 - **Movimientos de Figuras:** afectan a los hijos directos, no a los nietos.
 - **Sin sesión:** el editor muestra un error en vez de ir al inicio de sesión.
 - **Menú Archivo:** todavía no tiene Importar, Guardar como ni Deshacer/Rehacer en el editor de eventos (el editor de dibujo sí tiene deshacer).

@@ -7,6 +7,7 @@ import TimelineCanvas from "./TimelineCanvas";
 import {TIPO_EFECTO_MOV_FIGURAS, TIPO_EFECTO_MOV_OBJETOS} from "./ConstanteEvento";
 import OperacionesGrupo, {origenGrupoX, origenGrupoY} from "../EditorAnimacion/OperacionesGrupo";
 import {limitesGrupos, prepararGrupos} from "../EditorAnimacion/Miniatura";
+import {normalizarTransformacion, transformarVector} from "../EditorAnimacion/TransformacionInstancia";
 
 let tiempo_universal=performance.now();
 
@@ -340,6 +341,137 @@ class GestionEvento{
         return contenedor;
     }
 
+    // ================================================================
+    // Objetos de la escena (Fase 2): un "objeto" es un grupo de primer nivel
+    // (nodo_padre "root") que tiene figuras en su sub-arbol (perro, casa, una
+    // instancia de la Biblioteca...). Estas operaciones escriben tanto en los grupos
+    // originales (lo que se guarda con "Subir") como en la copia en vivo, para que
+    // el cambio se vea en el mismo cuadro.
+    // ================================================================
+
+    // Grupo y todos sus descendientes, de una lista de grupos.
+    subarbol(nombre, lista){
+        const resultado = [];
+        const pendientes = [nombre];
+        const vistos = new Set();
+        while(pendientes.length){
+            const n = pendientes.shift();
+            if(vistos.has(n)) continue;
+            vistos.add(n);
+            const g = lista.find((x) => x.nombre === n);
+            if(g) resultado.push(g);
+            lista.filter((x) => x.nodo_padre === n).forEach((x) => pendientes.push(x.nombre));
+        }
+        return resultado;
+    }
+
+    // Nombres de los objetos de la escena, en orden de dibujo (el ultimo queda arriba).
+    objetosEscena(){
+        const lista = this.gestion_grupos.grupos_figuras;
+        return lista
+            .filter((g) => g.nodo_padre === "root")
+            .filter((g) => this.subarbol(g.nombre, lista).some((x) => (x.lista_figuras || []).length > 0))
+            .sort((a, b) => (Number(a.capa) || 0) - (Number(b.capa) || 0))
+            .map((g) => g.nombre);
+    }
+
+    // Rectangulo del objeto en su espacio propio (sin su transformacion), con la
+    // pose actual (en vivo).
+    limitesObjeto(nombre){
+        const sub = this.subarbol(nombre, this.gestion_grupos.grupos_figuras);
+        return sub.length ? limitesGrupos(prepararGrupos(sub)) : null;
+    }
+
+    // Los dos grupos (original y en vivo) de un nombre.
+    _ambos(nombre){
+        return [this.gestion_grupos_originales.getGrupo(nombre), this.gestion_grupos.getGrupo(nombre)]
+            .filter(Boolean);
+    }
+
+    // Garantiza que el objeto tenga `transformacion` (neutra, ancla en los pies) y la
+    // devuelve. Los objetos dibujados a mano (ej. "perro") no la traen de fabrica.
+    asegurarTransformacion(nombre){
+        const original = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!original) return null;
+        if(!original.transformacion){
+            const sub = this.subarbol(nombre, this.gestion_grupos_originales.grupos_figuras);
+            const lim = limitesGrupos(prepararGrupos(sub));
+            const origen_x = parseFloat(original.cx) || 0, origen_y = parseFloat(original.cy) || 0;
+            const t = {rotacion: 0, escala_x: 1, escala_y: 1,
+                ancla_x: lim ? Math.round(lim.cx - origen_x) : 0,
+                ancla_y: lim ? Math.round(lim.y1 - origen_y) : 0};
+            this._ambos(nombre).forEach((g) => { g.transformacion = {...t}; });
+        }
+        return normalizarTransformacion(original.transformacion);
+    }
+
+    // Cambia campos de la transformacion de un objeto (en original y en vivo).
+    cambiarTransformacion(nombre, cambios){
+        this.asegurarTransformacion(nombre);
+        this._ambos(nombre).forEach((g) => { g.transformacion = {...g.transformacion, ...cambios}; });
+    }
+
+    // Posicion (cx, cy) del objeto.
+    posicionObjeto(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return g ? {x: parseFloat(g.cx) || 0, y: parseFloat(g.cy) || 0} : null;
+    }
+
+    fijarPosicionObjeto(nombre, x, y){
+        this._ambos(nombre).forEach((g) => {
+            g.cx = Math.round(x * 100) / 100;
+            g.cy = Math.round(y * 100) / 100;
+        });
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+    }
+
+    moverObjeto(nombre, dx, dy){
+        const p = this.posicionObjeto(nombre);
+        if(p) this.fijarPosicionObjeto(nombre, p.x + dx, p.y + dy);
+    }
+
+    // Borra el objeto y todo su sub-arbol (los movimientos de eventos que lo
+    // referencian quedan sin efecto).
+    eliminarObjeto(nombre){
+        for(const gestion of [this.gestion_grupos_originales, this.gestion_grupos]){
+            const quitar = new Set(this.subarbol(nombre, gestion.grupos_figuras).map((g) => g.nombre));
+            gestion.grupos_figuras = gestion.grupos_figuras.filter((g) => !quitar.has(g.nombre));
+        }
+        delete this.movimientos_grupos[nombre];
+    }
+
+    // Copia el objeto (con su sub-arbol y su transformacion) desplazado (dx, dy). Los
+    // grupos se renombran: el prefijo "<objeto>_" pasa a "<copia>_" y los que no lo
+    // tenian lo reciben. Devuelve el nombre de la copia.
+    duplicarObjeto(nombre, dx = 20, dy = 20){
+        const sub = structuredClone(this.subarbol(nombre, this.gestion_grupos_originales.grupos_figuras));
+        if(!sub.length) return null;
+        const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
+        const base = nombre.replace(/_\d+$/, "");
+        let n = 1, nuevo;
+        do { nuevo = `${base}_${n++}`; } while(existentes.has(nuevo));
+        const renombrar = (x) => x === nombre ? nuevo
+            : x.startsWith(nombre + "_") ? nuevo + x.slice(nombre.length) : `${nuevo}_${x}`;
+        const nombres = new Set(sub.map((g) => g.nombre));
+        const copia = sub.map((g) => {
+            const c = {...g, nombre: renombrar(g.nombre),
+                nodo_padre: nombres.has(g.nodo_padre) ? renombrar(g.nodo_padre) : g.nodo_padre};
+            delete c._id; delete c.cx_solid; delete c.cy_solid;
+            return c;
+        });
+        if(copia.some((g) => existentes.has(g.nombre))) return null;  // choque de nombres
+        const raiz = copia.find((g) => g.nombre === nuevo);
+        raiz.cx = (parseFloat(raiz.cx) || 0) + dx;
+        raiz.cy = (parseFloat(raiz.cy) || 0) + dy;
+        raiz.capa = Math.max(0, ...this.gestion_grupos_originales.grupos_figuras
+            .filter((g) => g.nodo_padre === "root").map((g) => Number(g.capa) || 0)) + 1;
+        this.gestion_grupos_originales.grupos_figuras.push(...structuredClone(copia));
+        this.gestion_grupos.grupos_figuras.push(...structuredClone(copia));
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        copia.forEach((g) => { this.movimientos_grupos[g.nombre] = {x: 0, y: 0}; });
+        return nuevo;
+    }
+
     // Sub-eventos (hijos directos) de un evento, en el orden en que estan guardados.
     obtenerSubEventos(nombre){
         return this.eventos
@@ -526,8 +658,11 @@ class GestionEvento{
             for (let nombre_grupo in this.movimientos_grupos) {
                 const grupo_ = this.gestion_grupos_originales.getGrupo(nombre_grupo)
                 if (grupo_) {
-                    const x = grupo_.cx+this.movimientos_grupos[grupo_.nombre].x;
-                    const y = grupo_.cy+this.movimientos_grupos[grupo_.nombre].y;
+                    // si el grupo tiene transformacion de instancia, su desplazamiento
+                    // propio va en su marco (reflejado avanza hacia donde mira)
+                    const d = transformarVector(grupo_.transformacion, this.movimientos_grupos[grupo_.nombre]);
+                    const x = grupo_.cx + d.x;
+                    const y = grupo_.cy + d.y;
                     this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cx", x);
                     this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
                 }

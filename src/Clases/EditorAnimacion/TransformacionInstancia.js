@@ -116,6 +116,19 @@ export function aplicarEnCanvas(ctx, cadena, ox = 0, oy = 0) {
     }
 }
 
+// Parte lineal (escala + rotacion, sin ancla) aplicada a un vector. Se usa para que
+// el desplazamiento propio de un objeto transformado (sus movimientos "Objeto") se
+// interprete en su marco: reflejado avanza hacia donde mira; escalado al 60 %
+// avanza el 60 % (no "patina").
+export function transformarVector(t, v) {
+    const n = normalizarTransformacion(t);
+    if (!n || esNeutra(n)) return {x: v.x, y: v.y};
+    const rad = n.rotacion * Math.PI / 180;
+    const c = Math.cos(rad), s = Math.sin(rad);
+    const dx = v.x * n.escala_x, dy = v.y * n.escala_y;
+    return {x: dx * c - dy * s, y: dx * s + dy * c};
+}
+
 // Mapa nombre -> grupo, para resolver ancestros.
 export function mapaGrupos(grupos) {
     const m = new Map();

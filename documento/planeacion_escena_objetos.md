@@ -39,6 +39,8 @@ Cada decisión registra de dónde salió, para no volver a discutirla sin un dat
 | D5 | Meta: instancias **por referencia** al asset (no copias). La copia actual es solo un prototipo. | Con copias, mejorar el perro no actualiza los perros de la escena, y 40 objetos × 12 grupos vuelven el árbol inmanejable. |
 | D6 | Edición en **dos niveles**: en la escena, un clic selecciona el objeto completo; con doble clic se entra al objeto (los demás se atenúan) y Esc sale. | Patrón estándar (símbolos de Flash, aislamiento de Illustrator, componentes de Figma). El lienzo ya tiene un antecedente: el modo de selección de grupos baja a los hijos del grupo seleccionado. |
 | D7 | La animación de un personaje es **en el lugar** (caminar sin avanzar); el desplazamiento por la escena lo da la escena, con velocidad proporcional a la escala. | Si el asset avanza por su cuenta, un perro escalado al 60 % avanza los mismos píxeles que el grande y "patina". |
+| D10 | La selección y manipulación de objetos vive en la modalidad **Evento** (la que se abre por defecto), sin modalidad nueva; la modalidad Movimiento conserva sus controles (ex pregunta P3). | En la modalidad Evento el lienzo no hacía nada salvo panear; agregar un modo "Escena" separado sumaba un concepto sin necesidad. Se puede revisar en la Fase 3. |
+| D11 | El desplazamiento propio de un grupo con transformación (sus movimientos "Objeto") se interpreta **en su marco**: escala y rotación se aplican también al vector de desplazamiento. | Sin esto, un perro reflejado miraba a la izquierda pero avanzaba a la derecha ("moonwalk"), y uno escalado al 60 % avanzaba lo mismo que el grande ("patinaba"). Encaja con D7. |
 | D9 | El ancla de la transformación es, por defecto, el **centro inferior** del objeto ("los pies"); se guarda por instancia y se puede cambiar (ex pregunta P4). | Al escalar, un personaje sigue apoyado en el suelo. Propuesto en el plan y aceptado por el usuario al iniciar la Fase 1. |
 | D8 | Antes de agregar más funciones, el editor pasa a una **distribución de editor profesional** (Fase 0): lienzo grande al centro, paneles fijos alrededor y la línea de tiempo fuera del canvas. | Requerimiento del usuario. Además, las Fases 2 y 3 agregan manijas, un inspector y un panel de objetos que no caben en la interfaz actual. |
 
@@ -293,7 +295,7 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 
 ---
 
-## Fase 2 — Seleccionar y manipular objetos en el lienzo
+## Fase 2 — Seleccionar y manipular objetos en el lienzo — IMPLEMENTADA (sin selección por rectángulo)
 
 **Objetivo:** las operaciones simples que hoy faltan al soltar un objeto: mover, redimensionar, rotar y reflejar, con el mouse.
 
@@ -317,6 +319,38 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 - [ ] Rotar con la manija y reflejar con la barra; Play → correcto.
 - [ ] Con zoom y paneo del lienzo activos, las manijas siguen respondiendo en el lugar correcto.
 - [ ] El valor del panel y el lienzo se mantienen sincronizados en ambas direcciones.
+
+### Alcance realizado (2026-11-13)
+
+**Decisiones:** D10 (dónde vive la edición de escena, ex P3) y D11 (desplazamiento en el marco del objeto), ver *Decisiones*.
+
+1. **Motor** (`GestionEvento`): `objetosEscena` (grupos de primer nivel con figuras), `limitesObjeto`, `asegurarTransformacion` (los objetos dibujados a mano, como `perro`, reciben su transformación al manipularlos por primera vez, con el ancla en los pies), `cambiarTransformacion`, `fijarPosicionObjeto` / `moverObjeto`, `duplicarObjeto` (renombra el sub-árbol y lo desplaza 20, 20) y `eliminarObjeto`. Todo escribe en los grupos originales y en la copia en vivo.
+2. **`ControlObjetosLienzo.js`** (nuevo):
+   - Selección con clic sobre cualquier parte del objeto (el de más arriba primero); Shift+clic suma o quita; clic en el vacío deselecciona (y panea, como antes).
+   - Rectángulo de selección **transformado** (gira y escala con el objeto), con 8 manijas, manija circular de rotación, cruz naranja en el ancla y el nombre del objeto.
+   - Arrastres: interior = mover (todos los seleccionados); esquinas = escala proporcional (Shift: libre); lados = un eje; círculo = rotación (Shift: de a 15°). Arrastrar una manija más allá del ancla refleja.
+   - Teclado: flechas 1 (Shift: 10), Supr/Retroceso, Ctrl+D, Esc.
+3. **Inspector → Objeto** (`PanelObjeto.js`): al seleccionar un objeto, el Inspector cambia solo a esta vista: posición, rotación, escala X/Y, ancla, capa (editables, sincronizados con las manijas por sondeo cada 200 ms) y botones Espejo H/V, Restablecer, Duplicar y Borrar.
+   - **Cambio respecto al plan:** la "barra flotante junto a la selección" se reemplazó por estos botones en el Inspector (siempre en el mismo lugar y sin tapar el dibujo).
+4. **Limitación de la Fase 1 resuelta:** en la modalidad Movimiento, el rectángulo del grupo, los rectángulos de navegación de grupos y los controles de movimiento (pivote, flecha, elipse) se dibujan con la transformación del objeto, y el mouse se lleva a su espacio propio antes de tocarlos (`GestionLienzoEvento.conTransformacion` / `cadenaDeGrupo`). Además, el hit-test de navegación de grupos ya no fallaba con el lienzo paneado.
+5. **Robustez de la entrada** (el lienzo procesa ~10 veces por segundo):
+   - `Lienzo.js` guarda el punto exacto donde se presionó el botón (`mouse_down_x/y`), y los clics se evalúan ahí; si se presiona y suelta dentro del mismo cuadro, la operación igual se completa.
+   - **Cola de pulsaciones** (`cola_teclas`): cada `keydown` se anota y se procesa en el cuadro siguiente; antes una pulsación rápida (< 100 ms) se perdía. La cola se vacía al final de cada cuadro aunque no se use.
+   - En cada cuadro se procesa primero el ratón y después el teclado (clic en el perro + Ctrl+D en el mismo cuadro duplicaba "nada").
+   - Ctrl+D no abre "agregar marcador" del navegador.
+
+**Verificado en el navegador:**
+- [x] Clic sobre el perro → rectángulo con manijas, círculo de rotación, ancla y nombre; el Inspector cambia a "Objeto".
+- [x] Esquina inferior derecha → escala proporcional ×1,879 con los pies en la misma línea; el Inspector muestra los valores nuevos.
+- [x] Círculo de rotación → 26,8°, con rectángulo y manijas girando junto al perro. Arrastrar el interior → mueve (517, 390).
+- [x] Espejo H + Play → camina y se sienta reflejado y **avanza hacia donde mira** (gracias a D11).
+- [x] Ctrl+D → `perro_1` desplazado y encima; Shift+→ ×6 lo mueve 60; Supr borra el seleccionado.
+- [x] Modalidad Movimiento con el perro escalado ×1,6 y rotado 20°: el rectángulo de la pata y el control de su movimiento quedan alineados con la pata.
+- [ ] Arrastrar el pivote/flecha de un movimiento de un objeto transformado: no probado (solo el dibujo).
+- [ ] Editar los campos numéricos del Inspector y ver el cambio en el lienzo: no probado en el navegador.
+- [ ] Guardar ("Subir") y recargar: no probado (para no escribir datos de prueba).
+
+**No incluido (queda para después):** rectángulo de selección arrastrando sobre el vacío (hoy el arrastre en el vacío panea); escalar o rotar varios objetos alrededor de un centro común; ajuste a la cuadrícula al mover; deshacer.
 
 ---
 
@@ -450,7 +484,6 @@ Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (
 |---|---|---|
 | P1 | ¿Una instancia usa una **versión congelada** del asset o siempre la **última**? (`Requerimientos.md` sugiere congelada.) | Fase 6 |
 | P2 | ¿Dónde viven los eventos de un asset: en el asset (nuevo) o en el documento `Eventos` del proyecto (actual)? | Fase 6 |
-| P3 | ¿La edición de escena es una modalidad nueva del editor de eventos o un editor aparte ("Escena")? | Fases 2 y 3 |
 | P5 | ¿Se unifican el editor de dibujo (`/animacion`) y el de eventos (`/evento`) en un solo editor con modos **Diseño / Animar** (como Rive o Spine), o siguen siendo dos páginas con la misma distribución? | Fase 0 y siguientes |
 | P6 | Tamaño del documento o escena por defecto (ej. 1280×720) y si se configura por proyecto o por escena. | Fases 0 y 8 |
 

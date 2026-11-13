@@ -36,6 +36,11 @@ function Lienzo(props){
         //console.log(e.button)
         //console.log(e.buttons)
         props.lienzo.mouse_type_button = e.button
+        // punto exacto donde se presiono (el lienzo procesa ~10 veces por segundo: si
+        // se presiona y suelta dentro del mismo cuadro, mouse_x ya seria el de soltar)
+        const rect_down = e.target.getBoundingClientRect();
+        props.lienzo.mouse_down_x = e.clientX - rect_down.left;
+        props.lienzo.mouse_down_y = e.clientY - rect_down.top;
         props.lienzo.mouse_click_down=true;
         props.lienzo.mouse_click_up=false;
         props.lienzo.mouse_only_click = true;
@@ -65,6 +70,13 @@ function Lienzo(props){
     const eventoKeyDown=(e)=>{
         const name = e.key;
         const  code = e.code;
+        // Ctrl+D (duplicar en el lienzo) no debe abrir "agregar marcador" del navegador
+        if((e.ctrlKey || e.metaKey) && code === "KeyD") e.preventDefault();
+        // cola de pulsaciones: no se pierden aunque se suelten antes del proximo cuadro
+        if(!e.repeat){
+            props.lienzo.cola_teclas = (props.lienzo.cola_teclas || []).concat(
+                {code, ctrl: e.ctrlKey || e.metaKey, shift: e.shiftKey});
+        }
         if(!props.lienzo.stack_event_teclado.includes(code)){
             props.lienzo.stack_event_teclado.push(code)
 
