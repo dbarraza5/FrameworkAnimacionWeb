@@ -321,6 +321,13 @@ class GestionEvento{
             clases: [],
             lista_figuras: [],
             lista_pintado: [{color: "#000000", visible: true, elementos: [[]]}],
+            // Fase 1: transformacion de instancia neutra, con el ancla en el centro
+            // inferior del objeto ("los pies"), relativa al origen del contenedor
+            // (el contenedor no tiene figuras propias; su origen es cx/cy).
+            transformacion: {
+                rotacion: 0, escala_x: 1, escala_y: 1,
+                ancla_x: Math.round(lim.cx), ancla_y: Math.round(lim.y1),
+            },
         };
 
         const agregados = [grupo_contenedor, ...nuevos];

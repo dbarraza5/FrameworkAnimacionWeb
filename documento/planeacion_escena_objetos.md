@@ -39,6 +39,7 @@ Cada decisión registra de dónde salió, para no volver a discutirla sin un dat
 | D5 | Meta: instancias **por referencia** al asset (no copias). La copia actual es solo un prototipo. | Con copias, mejorar el perro no actualiza los perros de la escena, y 40 objetos × 12 grupos vuelven el árbol inmanejable. |
 | D6 | Edición en **dos niveles**: en la escena, un clic selecciona el objeto completo; con doble clic se entra al objeto (los demás se atenúan) y Esc sale. | Patrón estándar (símbolos de Flash, aislamiento de Illustrator, componentes de Figma). El lienzo ya tiene un antecedente: el modo de selección de grupos baja a los hijos del grupo seleccionado. |
 | D7 | La animación de un personaje es **en el lugar** (caminar sin avanzar); el desplazamiento por la escena lo da la escena, con velocidad proporcional a la escala. | Si el asset avanza por su cuenta, un perro escalado al 60 % avanza los mismos píxeles que el grande y "patina". |
+| D9 | El ancla de la transformación es, por defecto, el **centro inferior** del objeto ("los pies"); se guarda por instancia y se puede cambiar (ex pregunta P4). | Al escalar, un personaje sigue apoyado en el suelo. Propuesto en el plan y aceptado por el usuario al iniciar la Fase 1. |
 | D8 | Antes de agregar más funciones, el editor pasa a una **distribución de editor profesional** (Fase 0): lienzo grande al centro, paneles fijos alrededor y la línea de tiempo fuera del canvas. | Requerimiento del usuario. Además, las Fases 2 y 3 agregan manijas, un inspector y un panel de objetos que no caben en la interfaz actual. |
 
 ---
@@ -247,7 +248,7 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 
 ---
 
-## Fase 1 — Transformación de instancia (no destructiva)
+## Fase 1 — Transformación de instancia (no destructiva) — IMPLEMENTADA (falta probar guardar/recargar)
 
 **Objetivo:** que cada objeto de la escena tenga posición, rotación, escala y espejo propios, sin tocar sus figuras ni romper su animación (D4).
 
@@ -267,6 +268,28 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 - [ ] Simulador: `rotacion = 15` → todo el perro inclinado, con la animación intacta.
 - [ ] Navegador: guardar ("Subir"), recargar → la transformación persiste.
 - [ ] Una escena sin transformaciones se ve idéntica a antes (no hay regresión).
+
+### Alcance realizado (2026-11-13)
+
+1. **`Clases/EditorAnimacion/TransformacionInstancia.js`** (módulo compartido): `normalizarTransformacion`, `cadenaTransformaciones` (los ancestros con transformación de un grupo, del más externo al más interno; se componen si hay instancias dentro de instancias), `aplicarEnCanvas`, `transformarPunto` y su inversa `destransformarPunto` (para la Fase 2).
+   - **Cambio respecto al plan:** la transformación no lleva `x`/`y`. La posición sigue siendo el `cx`/`cy` del contenedor, así los movimientos "Objeto" y el código existente lo siguen moviendo igual.
+   - El ancla es relativa al origen del contenedor (`cx_solid`/`cy_solid`) y se mueve con él.
+   - Rotación en grados, positiva = sentido horario en pantalla.
+2. **Dibujo:** `ImprimirAnimacion.imprimirListaGrupos` hace `save` → aplica la cadena → dibuja el grupo (relleno y figuras) → `restore`. Lo usan tanto el editor de eventos como el de dibujo; sin transformaciones no cambia nada.
+3. **`agregarInstanciaAnimacion`** crea el contenedor con `transformacion` neutra y el ancla en el centro inferior del objeto.
+4. **Backend:** `transformacion` agregado a `grupoFigurasSchema` (`modelo/Animacion.js`; `Eventos` usa el mismo esquema).
+5. **Solo en desarrollo:** `window.__editorEvento = {evento, lienzo}` (refs del editor) para probar desde la consola del navegador hasta que existan las manijas.
+
+**Verificado:**
+- [x] Navegador: el perro de la escena, metido en memoria en un contenedor con `escala 0.6`, camina (1,0 s) y se sienta (5,8 s) sin que se separen partes.
+- [x] Navegador: `escala_x = -1` → mira **y avanza** hacia la izquierda (la cabeza pasa de ~125 a ~90 px entre 1,0 s y 3,5 s).
+- [x] Navegador: `rotacion = 15` → el perro sentado gira entero, con la pose intacta.
+- [x] La escena sin transformaciones se ve igual que antes.
+- [x] Backend: los modelos `Animacion` y `Eventos` conservan `transformacion`; los grupos sin ella no cambian (probado con los modelos de Mongoose, sin escribir en la base).
+- [x] Una instancia agregada nace con `transformacion` neutra y el ancla en los pies (ancla absoluta = punto donde se soltó, base del dibujo).
+- [ ] Guardar con "Subir" y recargar en el navegador: no probado, para no escribir datos de prueba en la base del usuario.
+
+**Limitaciones conocidas (se resuelven en la Fase 2):** el rectángulo de selección de grupo y los controles de los movimientos (pivote, flecha, elipse) todavía se dibujan **sin** la transformación del objeto: con un objeto escalado o rotado no coinciden con lo que se ve. La Fase 2 los pasa por `transformarPunto` / `destransformarPunto`.
 
 ---
 
@@ -428,7 +451,6 @@ Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (
 | P1 | ¿Una instancia usa una **versión congelada** del asset o siempre la **última**? (`Requerimientos.md` sugiere congelada.) | Fase 6 |
 | P2 | ¿Dónde viven los eventos de un asset: en el asset (nuevo) o en el documento `Eventos` del proyecto (actual)? | Fase 6 |
 | P3 | ¿La edición de escena es una modalidad nueva del editor de eventos o un editor aparte ("Escena")? | Fases 2 y 3 |
-| P4 | ¿El ancla por defecto es el centro inferior para todos los objetos, o se elige al crear el asset? | Fase 1 |
 | P5 | ¿Se unifican el editor de dibujo (`/animacion`) y el de eventos (`/evento`) en un solo editor con modos **Diseño / Animar** (como Rive o Spine), o siguen siendo dos páginas con la misma distribución? | Fase 0 y siguientes |
 | P6 | Tamaño del documento o escena por defecto (ej. 1280×720) y si se configura por proyecto o por escena. | Fases 0 y 8 |
 
@@ -440,6 +462,7 @@ Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (
 - **Al cerrarla:** cambiar a "— IMPLEMENTADA", agregar un párrafo **"Alcance realizado"** con lo que se hizo de verdad y por qué difiere del plan (si difiere), los commits, y marcar las verificaciones que se probaron. Las que no se probaron quedan sin marcar y se dice explícitamente.
 - **Requerimiento nuevo:** si encaja en una fase, se agrega a su alcance; si no, va a *Pendientes*, o a una fase nueva con la plantilla de abajo.
 - Actualizar la tabla de **Estado actual** cuando algo pase a estar implementado.
+- **Manual de uso (`Manual.md`):** al cerrar una fase (o agregar cualquier función visible), sumar una entrada en **Novedades** y actualizar la sección correspondiente y las **Limitaciones conocidas**. El manual es para quien anima; este documento, para quien desarrolla.
 
 **Plantilla de fase:**
 

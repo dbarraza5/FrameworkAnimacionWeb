@@ -1,4 +1,5 @@
 import {getCoorPunto, getCoorRecta} from "./GestionAnimacion";
+import {aplicarEnCanvas, cadenaTransformaciones, mapaGrupos} from "./TransformacionInstancia";
 
 
 class ImprimirAnimacion{
@@ -45,6 +46,13 @@ class ImprimirAnimacion{
       }
 
 
+        // Transformacion de instancia (Fase 1): cada grupo se dibuja con la
+        // transformacion de sus contenedores aplicada al canvas (ver
+        // TransformacionInstancia.js). Sin transformaciones no cambia nada.
+        const mapa = mapaGrupos(lista_grupo_root);
+        const ox = !this.seccion_pintar ? this.configuracion_lienzo.x_delta_original : 0;
+        const oy = !this.seccion_pintar ? this.configuracion_lienzo.y_delta_original : 0;
+
         for (let i = 0; i < lista_grupo_root.length; i++) {
             const grupo = lista_grupo_root[i]
             if(!grupo.visible){
@@ -54,6 +62,12 @@ class ImprimirAnimacion{
                 const pintura = grupo.lista_pintado[j];
                 this.pintarGrupoAnimacion(grupo, pintura, true)
             }*/
+
+            const cadena = cadenaTransformaciones(grupo, mapa);
+            if(cadena.length){
+                this.ctx.save();
+                aplicarEnCanvas(this.ctx, cadena, ox, oy);
+            }
 
             if(pintado){
                 for(let j = 0; j<grupo.lista_pintado.length; j++){
@@ -84,6 +98,10 @@ class ImprimirAnimacion{
                     this.imprimir_circulo(figura, grupo, color_figura, p_circulo, p_centro, seleccion);
                 }
 
+            }
+
+            if(cadena.length){
+                this.ctx.restore();
             }
         }
     }

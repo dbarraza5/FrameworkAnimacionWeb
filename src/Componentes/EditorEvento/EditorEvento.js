@@ -221,6 +221,12 @@ function EditorEvento(props){
     const refLienzo = useRef(gestionEventoLienzo);
     refEvento.current = eventoAnimacion;
     refLienzo.current = gestionEventoLienzo;
+    // Solo en desarrollo: acceso desde la consola del navegador para pruebas
+    // (ej. cambiar la transformacion de una instancia antes de que existan las
+    // manijas de la Fase 2). No existe en el build de produccion.
+    if(process.env.NODE_ENV === "development"){
+        window.__editorEvento = {evento: refEvento, lienzo: refLienzo};
+    }
 
     const agregarAnimacionEnPunto = (animacion, x_canvas, y_canvas) => {
         const lienzo = refLienzo.current;
