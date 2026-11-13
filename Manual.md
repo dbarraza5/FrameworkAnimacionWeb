@@ -87,6 +87,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
 11. [Ejemplo paso a paso: un perro que camina y se sienta](#11-ejemplo-paso-a-paso-un-perro-que-camina-y-se-sienta)
+11b. [Ejemplo incluido: una calle](#11b-ejemplo-incluido-una-calle)
 12. [Limitaciones conocidas](#12-limitaciones-conocidas)
 
 ---
@@ -712,6 +713,35 @@ EventoGeneral (0 – 6,5 s)
 - `cabeza`: **LERP** para acomodarse.
 
 **5. Probar:** selecciona `EventoGeneral` y dale **Play**. Selecciona solo "Sentarse" para ver ese tramo en contexto.
+
+---
+
+## 11b. Ejemplo incluido: una calle
+
+El proyecto del perro trae una escena de ejemplo, **"Calle (escena)"**. Ábrela desde la lista de eventos del proyecto. Combina casi todo lo del editor.
+
+**Assets del proyecto** (en la Biblioteca, *Assets animados*; cada uno también como dibujo editable):
+
+| Asset | Qué tiene |
+|---|---|
+| Árbol, Casa roja / azul / amarilla, Farol, Nube, Calle | Estáticos. La Calle es una franja de 3000 de ancho con cielo, veredas, asfalto y líneas. |
+| Auto | Ruedas que giran: claves de rotación con *Repetir*. |
+| Persona, Persona 2 | Caminan en el lugar: piernas y brazos con *Ir y volver*. |
+| Pájaro | Aletea. |
+| Sol | Rayos que giran despacio. |
+
+**La escena:**
+- **Instancias por referencia** de todos los assets. El perro es tu asset del perro con el evento *Caminar*, al 55 %.
+- **Claves de posición** con *Repetir*: autos en los dos sentidos (uno reflejado con Espejo), las personas, el pájaro (sube y baja) y las nubes.
+- **Profundidad** activada:
+  - plano −3: la calle;
+  - plano −2: sol y nubes;
+  - plano −1: casas, árboles y faroles del fondo;
+  - plano 0: personas, perro y autos;
+  - plano 1: el farol del frente.
+- **Cámara** que recorre la calle en 16 s, de ida y vuelta. Actívale **Vista de cámara** y dale ▶.
+
+Úsala como punto de partida: duplica objetos, cambia claves o arrastra más assets desde la Biblioteca.
 
 ---
 

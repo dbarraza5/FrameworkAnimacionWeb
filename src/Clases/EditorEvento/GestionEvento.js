@@ -1497,8 +1497,9 @@ class GestionEvento{
     // punto (x, y) del dibujo. Se ubica cuando el asset termina de cargar.
     agregarInstanciaReferencia(id_eventos, nombre_asset, x, y, evento = "EventoGeneral"){
         const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
-        // "proyecto · documento" -> el objeto se llama como el proyecto
-        const base = String(nombre_asset || "instancia").split(" · ")[0]
+        // "proyecto · documento" -> el objeto se llama como el documento (con un solo
+        // documento en el proyecto, el nombre del asset ya es el del proyecto)
+        const base = String(nombre_asset || "instancia").split(" · ").pop()
             .replace(/[^A-Za-z0-9_-]+/g, "_") || "instancia";
         let n = 1, nombre;
         do { nombre = `${base}_${n++}`; } while(existentes.has(nombre));
