@@ -51,18 +51,23 @@ function puntoContorno(grupo, elemento){
     return null;
 }
 
-export function dibujarMiniatura(canvas, grupos_figuras, margen = 8){
+// `encuadre` (opcional, de limitesGrupos sobre la pose de reposo): fija la escala y
+// la altura para animar la miniatura sin que "respire"; en X sigue al dibujo
+// (camina en el lugar).
+export function dibujarMiniatura(canvas, grupos_figuras, margen = 8, encuadre = null){
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const orden = prepararGrupos(grupos_figuras);
-    const lim = limitesGrupos(orden);
-    if (!lim) return false;
+    const lim_actual = limitesGrupos(orden);
+    if (!lim_actual) return false;
+    const lim = encuadre || lim_actual;
 
     const ancho = Math.max(lim.x1 - lim.x0, 1), alto = Math.max(lim.y1 - lim.y0, 1);
     const escala = Math.min((canvas.width - 2 * margen) / ancho, (canvas.height - 2 * margen) / alto, 4);
+    const centro_x = encuadre ? lim_actual.cx : lim.cx;
     const T = (p) => ({
-        x: canvas.width / 2 + (p.x - lim.cx) * escala,
+        x: canvas.width / 2 + (p.x - centro_x) * escala,
         y: canvas.height / 2 + (p.y - lim.cy) * escala,
     });
 
@@ -100,4 +105,9 @@ export function dibujarMiniatura(canvas, grupos_figuras, margen = 8){
         }
     }
     return true;
+}
+
+// Solo desarrollo: acceso desde la consola para pruebas.
+if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+    window.__miniatura = {dibujarMiniatura, prepararGrupos, limitesGrupos};
 }

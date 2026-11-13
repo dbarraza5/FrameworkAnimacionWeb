@@ -256,12 +256,34 @@ function EditorEvento(props){
 
     // Fase 6: el motor carga los assets de las instancias por referencia (documentos
     // de eventos de otros proyectos) con esta funcion.
+    // Con `version` (6C) trae la foto congelada en vez del documento actual.
     if(!refEvento.current.edicion.cargadorAssets){
-        refEvento.current.edicion.cargadorAssets = (id) => axios({
-            method: "get", url: "/api/evento/id/" + id, withCredentials: true,
+        refEvento.current.edicion.cargadorAssets = (id, version) => axios({
+            method: "get", url: version ? "/api/evento/version/" + version : "/api/evento/id/" + id,
+            withCredentials: true,
             headers: {"Content-Type": "application/json", Authorization: "Bearer " + datos_usuario?.token},
         }).then((r) => r.data);
     }
+
+    // 6C: al volver a esta pestaña (por ejemplo, despues de editar un asset en otra)
+    // se vuelven a pedir los assets que siguen "la ultima" version.
+    useEffect(() => {
+        let ultimo = 0;
+        const alVolver = () => {
+            if(document.visibilityState !== "visible") return;
+            const ahora = performance.now();
+            if(ahora - ultimo < 2000) return;
+            ultimo = ahora;
+            const edicion = refEvento.current?.edicion;
+            if(edicion && edicion.assets && edicion.assets.size) void edicion.recargarAssets();
+        };
+        window.addEventListener("focus", alVolver);
+        document.addEventListener("visibilitychange", alVolver);
+        return () => {
+            window.removeEventListener("focus", alVolver);
+            document.removeEventListener("visibilitychange", alVolver);
+        };
+    }, []);
 
     const agregarAnimacionEnPunto = (animacion, x_canvas, y_canvas) => {
         const lienzo = refLienzo.current;
@@ -269,7 +291,8 @@ function EditorEvento(props){
         const {x, y} = lienzo.coordenadasMundo(x_canvas, y_canvas);
         if(animacion.tipo === "instancia"){
             // instancia por referencia: dibujo y eventos vienen del asset
-            const nombre = evento.edicion.agregarInstanciaReferencia(animacion.id_eventos, animacion.nombre, x, y);
+            const nombre = evento.edicion.agregarInstanciaReferencia(animacion.id_eventos, animacion.nombre, x, y,
+                animacion.evento || "EventoGeneral");
             setEventoAnimacion({edicion: evento.edicion});
             return nombre;
         }

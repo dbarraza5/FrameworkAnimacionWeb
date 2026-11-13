@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Cookies} from "react-cookie";
 import axios from "axios";
-import {dibujarMiniatura} from "../../../Clases/EditorAnimacion/Miniatura";
+import {dibujarMiniatura, limitesGrupos, prepararGrupos} from "../../../Clases/EditorAnimacion/Miniatura";
+import {GestionEvento} from "../../../Clases/EditorEvento/GestionEvento";
 
 // Tipo MIME propio para el arrastre: el lienzo de eventos solo acepta este tipo.
 export const MIME_ANIMACION = "application/x-framework-animacion";
@@ -28,6 +29,44 @@ function Miniatura({grupos}) {
     );
 }
 
+// Fase 6B: miniatura de un asset animado. Quieta muestra el dibujo; con `animar`
+// (mouse encima) reproduce en bucle el evento elegido con un motor propio.
+function MiniaturaAnimada({doc, evento, animar}) {
+    const ref = useRef(null);
+    const motor = useRef(null);
+    useEffect(() => {
+        const canvas = ref.current;
+        if (!canvas || !doc) return;
+        const reposo = doc.grupos_figuras || [];
+        if (!animar) { dibujarMiniatura(canvas, reposo); return; }
+        if (!motor.current) {
+            const m = new GestionEvento();
+            m.inicializar(doc.eventos || [], reposo, doc._id);
+            m.gestion_grupos_originales.procesarPosicionFinalFiguras();
+            m.reseteoMovGrupos();
+            motor.current = m;
+        }
+        const encuadre = limitesGrupos(prepararGrupos(reposo));
+        const por_nombre = new Map(reposo.map((g) => [g.nombre, g]));
+        const t0 = performance.now();
+        let id;
+        const cuadro = () => {
+            const pose = motor.current.evaluarEn(evento || "EventoGeneral", (performance.now() - t0) / 1000, true) || [];
+            const grupos = pose.map((p) => ({...por_nombre.get(p.nombre), ...p}));
+            dibujarMiniatura(canvas, grupos, 8, encuadre);
+            id = requestAnimationFrame(cuadro);
+        };
+        cuadro();
+        return () => cancelAnimationFrame(id);
+    }, [doc, evento, animar]);
+    return (
+        <div className="bg-body-tertiary rounded" style={{height: ALTO_MINI}}>
+            <canvas ref={ref} width={ANCHO_MINI} height={ALTO_MINI} className="d-block mx-auto"
+                    style={{maxWidth: "100%", pointerEvents: "none"}}/>
+        </div>
+    );
+}
+
 // Panel lateral (derecha) con las animaciones de cada proyecto como miniaturas.
 // Cada miniatura se puede arrastrar y soltar sobre el lienzo de eventos, o
 // seleccionar y agregar al centro de la vista con el boton. `onAgregar(animacion)`
@@ -49,7 +88,9 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
     // Fase 6: assets animados = documentos de eventos de cada proyecto (se agregan
     // como instancia por referencia: dibujo + eventos vienen del asset).
     const [docsEventos, setDocsEventos] = useState({});  // id_proyecto -> [{id, nombre}]
-    const [gruposEv, setGruposEv] = useState({});        // id_eventos -> grupos_figuras
+    const [docsAsset, setDocsAsset] = useState({});      // id_eventos -> documento completo (dibujo + eventos)
+    const [eventoAsset, setEventoAsset] = useState({});  // id_eventos -> evento elegido para agregar
+    const [hover, setHover] = useState(null);            // id_eventos con el mouse encima (se anima)
 
     const configAxios = (method, url, data) => ({
         method, url, data,
@@ -133,8 +174,8 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                 setDocsEventos((prev) => ({...prev, [proyecto.id]: lista}));
                 for (const d of lista) {
                     axios(configAxios("get", `/api/evento/id/${d.id}`))
-                        .then((r) => setGruposEv((prev) => ({...prev, [d.id]: r.data?.grupos_figuras || []})))
-                        .catch(() => setGruposEv((prev) => ({...prev, [d.id]: []})));
+                        .then((r) => setDocsAsset((prev) => ({...prev, [d.id]: r.data || {}})))
+                        .catch(() => setDocsAsset((prev) => ({...prev, [d.id]: {}})));
                 }
             } catch (e) {
                 if (!cancelado) setError(e?.response?.data?.error || e?.message || "Error al cargar los assets animados.");
@@ -146,8 +187,13 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
 
     const assets = (docsEventos[proyecto?.id] || [])
         .filter((d) => `${proyecto.nombre} ${d.nombre}`.toLowerCase().includes(filtro.trim().toLowerCase()));
-    const paqueteAsset = (d) => ({tipo: "instancia", id_eventos: d.id, nombre: proyecto?.nombre || d.nombre,
-                                  grupos_figuras: gruposEv[d.id] || []});
+    // Nombre del asset: el del proyecto (y el del documento si el proyecto tiene varios).
+    const nombreAsset = (d) => ((docsEventos[proyecto?.id] || []).length > 1
+        ? `${proyecto?.nombre} · ${d.nombre}` : (proyecto?.nombre || d.nombre));
+    const eventosDe = (d) => (docsAsset[d.id]?.eventos || []).map((e) => e.nombre);
+    const paqueteAsset = (d) => ({tipo: "instancia", id_eventos: d.id, nombre: nombreAsset(d),
+                                  evento: eventoAsset[d.id] || "EventoGeneral",
+                                  grupos_figuras: docsAsset[d.id]?.grupos_figuras || []});
     const alArrastrarAsset = (e, d) => {
         e.dataTransfer.setData(MIME_ANIMACION, JSON.stringify(paqueteAsset(d)));
         e.dataTransfer.effectAllowed = "copy";
@@ -236,16 +282,29 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                                         <div role="button" tabIndex={0} draggable
                                              onDragStart={(e) => alArrastrarAsset(e, d)}
                                              onClick={() => setSeleccion(activa ? null : "ev:" + d.id)}
+                                             onMouseEnter={() => setHover(d.id)}
+                                             onMouseLeave={() => setHover((h) => (h === d.id ? null : h))}
                                              className={`card h-100 ${activa ? "border-primary border-2 shadow-sm" : ""}`}
                                              style={{cursor: "grab"}}
-                                             title={`Instancia por referencia de ${proyecto.nombre} (${d.nombre})`}>
+                                             title={`Instancia por referencia de ${nombreAsset(d)}. Pasa el mouse para verla moverse.`}>
                                             <div className="card-body p-2">
-                                                {d.id in gruposEv
-                                                    ? <Miniatura grupos={gruposEv[d.id]}/>
+                                                {d.id in docsAsset
+                                                    ? <MiniaturaAnimada doc={docsAsset[d.id]} evento={eventoAsset[d.id]}
+                                                                        animar={hover === d.id}/>
                                                     : <div className="placeholder-glow"><span className="placeholder col-12 rounded" style={{height: ALTO_MINI}}/></div>}
                                                 <div className="small text-truncate mt-1">
-                                                    <i className="bi bi-link-45deg text-info me-1"/>{proyecto.nombre}
+                                                    <i className="bi bi-link-45deg text-info me-1"/>{nombreAsset(d)}
                                                 </div>
+                                                {eventosDe(d).length > 1 && (
+                                                    <select className="form-select form-select-sm mt-1" draggable={false}
+                                                            title="Evento que reproducirá al agregarlo"
+                                                            value={eventoAsset[d.id] || "EventoGeneral"}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            onMouseDown={(e) => e.stopPropagation()}
+                                                            onChange={(e) => setEventoAsset((p) => ({...p, [d.id]: e.target.value}))}>
+                                                        {eventosDe(d).map((n) => <option key={n} value={n}>{n}</option>)}
+                                                    </select>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

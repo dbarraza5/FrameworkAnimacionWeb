@@ -42,7 +42,10 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                     grupos: sub,
                     // Fase 6: instancia por referencia (su dibujo viene de otro proyecto)
                     instancia: g && g.instancia && g.instancia.id_eventos
-                        ? `${(e.infoAsset(g.instancia.id_eventos) || {}).nombre || "asset"} · ${g.instancia.evento || "EventoGeneral"}`
+                        ? `${e.nombreAsset(g)} · ${g.instancia.evento || "EventoGeneral"}` +
+                          (g.instancia.version
+                              ? ` · v${(e.infoAsset(g.instancia.id_eventos, g.instancia.version) || {}).numero_version || "?"}`
+                              : "")
                         : null,
                 };
             });

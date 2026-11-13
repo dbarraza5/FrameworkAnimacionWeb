@@ -1,5 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
+import axios from "axios";
+import {Cookies} from "react-cookie";
 import {normalizarTransformacion} from "../../../Clases/EditorAnimacion/TransformacionInstancia";
+
+// 6C: llamadas a la API de versiones de un documento de eventos.
+const configApi = (method, url) => ({
+    method, url, withCredentials: true,
+    headers: {"Content-Type": "application/json", Authorization: `Bearer ${new Cookies().get("usuario")?.token}`},
+});
 
 // Inspector -> Objeto (Fase 2): propiedades del objeto seleccionado en el lienzo:
 // posicion, rotacion, escala, espejo y capa, mas duplicar / borrar.
@@ -18,7 +26,7 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         if (!g) return null;
         const t = normalizarTransformacion(g.transformacion) || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0};
         const inst = g.instancia && g.instancia.id_eventos ? g.instancia : null;
-        const asset = inst ? ev().infoAsset(inst.id_eventos) : null;
+        const asset = inst ? ev().infoAsset(inst.id_eventos, inst.version) : null;
         return {x: g.cx, y: g.cy, rotacion: t.rotacion, escala_x: t.escala_x, escala_y: t.escala_y,
             ancla_x: t.ancla_x, ancla_y: t.ancla_y, capa: g.capa, tiene_t: !!g.transformacion,
             // Fase 6: datos de la instancia por referencia
@@ -26,9 +34,36 @@ export default function PanelObjeto({refLienzo, seleccion}) {
             inst_bucle: inst ? inst.bucle !== false : null,
             desfase: inst ? (inst.desfase || 0) : null,
             asset_estado: asset ? asset.estado : (inst ? "cargando" : null),
-            asset_nombre: asset ? asset.nombre : "",
+            asset_nombre: inst ? ev().nombreAsset(g) : "",
             asset_eventos: asset ? asset.eventos : [],
-            asset_error: asset ? asset.error : ""};
+            asset_error: asset ? asset.error : "",
+            id_eventos: inst ? inst.id_eventos : null,
+            inst_version: inst ? (inst.version || "") : null};
+    };
+
+    // 6C: versiones congeladas del asset de la instancia seleccionada
+    const [versiones, setVersiones] = useState([]);
+    const [msjVersion, setMsjVersion] = useState("");
+    const idAsset = valores && valores.id_eventos;
+    const cargarVersiones = () => {
+        if (!idAsset) { setVersiones([]); return; }
+        axios(configApi("get", `/api/evento/id/${idAsset}/versiones`))
+            .then((r) => setVersiones(r.data || []))
+            .catch((e) => setMsjVersion("No se pudieron leer las versiones: " + (e?.message || e)));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => { setMsjVersion(""); cargarVersiones(); }, [idAsset]);
+
+    const fijarVersionActual = async () => {
+        try {
+            setMsjVersion("Guardando versión…");
+            const r = await axios(configApi("post", `/api/evento/id/${idAsset}/versiones`));
+            ev().cambiarInstancia(unico, {version: r.data._id});
+            setMsjVersion(`Fijada en la versión ${r.data.numero}.`);
+            cargarVersiones();
+        } catch (e) {
+            setMsjVersion("No se pudo crear la versión: " + (e?.response?.data?.error || e?.message || e));
+        }
     };
 
     useEffect(() => {
@@ -152,9 +187,49 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                             </div>
                         </div>
                     </div>
+                    <div className="mt-2">
+                        <label className="form-label small mb-0 text-body-secondary">Versión del asset</label>
+                        <div className="input-group input-group-sm">
+                            <select className="form-select form-select-sm" value={valores.inst_version}
+                                    onChange={(e) => { ev().cambiarInstancia(unico, {version: e.target.value}); setMsjVersion(""); }}>
+                                <option value="">Última (se actualiza sola)</option>
+                                {versiones.map((v) => (
+                                    <option key={v._id} value={v._id}>
+                                        v{v.numero} · {new Date(v.fecha_creacion).toLocaleString()}{v.descripcion ? ` · ${v.descripcion}` : ""}
+                                    </option>
+                                ))}
+                            </select>
+                            <button className="btn btn-outline-secondary" onClick={fijarVersionActual}
+                                    title="Guarda una foto del asset tal como está ahora y fija esta instancia en ella: ya no cambiará aunque se edite el original.">
+                                <i className="bi bi-pin-angle me-1"/>Fijar actual
+                            </button>
+                        </div>
+                        {msjVersion && <div className="small text-body-secondary mt-1">{msjVersion}</div>}
+                    </div>
+                    <div className="d-flex flex-wrap gap-1 mt-2">
+                        <button className="btn btn-sm btn-outline-info"
+                                title="Abre el proyecto del asset en otra pestaña. Al guardar allí con Subir y volver aquí, las instancias que siguen la última versión se actualizan solas."
+                                onClick={() => window.open(`/evento/${valores.id_eventos}`, "_blank", "noopener")}>
+                            <i className="bi bi-box-arrow-up-right me-1"/>Abrir para editar
+                        </button>
+                        <button className="btn btn-sm btn-outline-secondary" title="Volver a leer el asset del servidor"
+                                onClick={() => { void ev().recargarAssets(); cargarVersiones(); }}>
+                            <i className="bi bi-arrow-clockwise me-1"/>Recargar
+                        </button>
+                    </div>
                     <div className="small text-body-secondary mt-1">
                         El dibujo y los movimientos vienen del asset; para cambiarlos edita su proyecto.
                     </div>
+                    <button className="btn btn-sm btn-outline-warning mt-2" disabled={valores.asset_estado !== "listo"}
+                            title="Convertir en una copia del dibujo, editable parte por parte. Deja de seguir al asset y queda quieta (sin sus eventos)."
+                            onClick={() => {
+                                if (!window.confirm(`¿Desvincular "${unico}"? Pasará a ser una copia del dibujo, sin los eventos del asset, y ya no se actualizará si cambia el original.`)) return;
+                                const r = ev().desvincularInstancia(unico);
+                                if (r.error) { alert(r.error); return; }
+                                control().seleccionar([r.nombre]);
+                            }}>
+                        <i className="bi bi-link-45deg me-1"/>Desvincular (copia editable)
+                    </button>
                 </div>
             )}
 

@@ -144,9 +144,12 @@ export default class ControlObjetosLienzo {
             this._notificarRuta();
         }
         // descartar seleccionados que ya no existen (o no son seleccionables)
+        // (una instancia sigue seleccionada aunque su asset se este cargando y por un
+        // momento no tenga partes, p. ej. al cambiarle la version)
         const existentes = new Set(this.seleccionables(ev));
-        if (this.seleccion.some((n) => !existentes.has(n))) {
-            this.seleccion = this.seleccion.filter((n) => existentes.has(n));
+        const sigue = (n) => existentes.has(n) || (ev.esInstancia(n) && !!ev.gestion_grupos_originales.getGrupo(n));
+        if (this.seleccion.some((n) => !sigue(n))) {
+            this.seleccion = this.seleccion.filter(sigue);
             this._notificar();
         }
         let usado = this._procesarRaton(lienzo, ev, io);

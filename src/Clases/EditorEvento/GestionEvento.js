@@ -931,8 +931,14 @@ class GestionEvento{
             const c = cicloBucle(Math.max(0, t), true, duracion * 1000);
             t_evento = c.t;
             if(c.vueltas > 0){
+                // Por vuelta solo avanza el objeto entero (grupos de primer nivel): las
+                // partes (cola, patas...) vuelven a su pose al empezar cada vuelta. Si se
+                // acumularan, lo que mueven para sentarse quedaria desplazado.
                 const ciclo = this.desplazamientosDe(elegido, duracion);
+                const primer_nivel = new Set(this.gestion_grupos_originales.grupos_figuras
+                    .filter((g) => g.nodo_padre === "root").map((g) => g.nombre));
                 for(const n in ciclo){
+                    if(!primer_nivel.has(n)) continue;
                     if(!this.movimientos_grupos[n]) this.movimientos_grupos[n] = {x: 0, y: 0};
                     this.movimientos_grupos[n].x += ciclo[n].x * c.vueltas;
                     this.movimientos_grupos[n].y += ciclo[n].y * c.vueltas;
@@ -946,35 +952,61 @@ class GestionEvento{
         }));
     }
 
-    // Asset (motor propio) de un documento de eventos; lo pide la primera vez.
-    _asset(id){
+    // Clave del cache de assets: el documento, o el documento en una version fija (6C).
+    static claveAsset(id, version){
+        return version ? `${id}@${version}` : id;
+    }
+
+    // Asset (motor propio) de un documento de eventos -- o de una version congelada
+    // suya -- ; lo pide la primera vez. `cargadorAssets(id, version)` devuelve el doc.
+    _asset(id, version){
         if(!id) return null;
-        let a = this.assets.get(id);
+        const clave = GestionEvento.claveAsset(id, version);
+        let a = this.assets.get(clave);
         // si fallo (red caida, sesion vencida...) se reintenta cada 5 s
-        if(a && a.estado === "error" && performance.now() > (a.reintentar_en || 0)){
-            this.assets.delete(id);
+        if(a && a.estado === "error" && !a.motor && performance.now() > (a.reintentar_en || 0)){
+            this.assets.delete(clave);
             a = null;
         }
         if(!a && this.cargadorAssets){
-            a = {estado: "cargando"};
-            this.assets.set(id, a);
-            this.cargadorAssets(id).then((doc) => {
-                const motor = new GestionEvento();
-                motor.inicializar(doc.eventos || [], doc.grupos_figuras || [], doc._id);
-                motor.gestion_grupos_originales.procesarPosicionFinalFiguras();
-                motor.reseteoMovGrupos();
-                a.motor = motor;
-                a.nombre = doc.nombre;
-                a.eventos = (doc.eventos || []).map((e) => e.nombre);
-                a.estado = "listo";
-            }).catch((e) => {
-                a.estado = "error";
-                a.error = e?.response?.data?.error?.msj || e?.message || String(e);
-                a.reintentar_en = performance.now() + 5000;
-                console.error("No se pudo cargar el asset", id, e);
-            });
+            a = {estado: "cargando", rev: 0, id, version: version || null};
+            this.assets.set(clave, a);
+            this._cargarAsset(a);
         }
-        return a && a.estado === "listo" ? a : null;
+        return a && a.motor ? a : null;
+    }
+
+    _cargarAsset(a){
+        return this.cargadorAssets(a.id, a.version).then((doc) => {
+            const motor = new GestionEvento();
+            motor.inicializar(doc.eventos || [], doc.grupos_figuras || [], doc._id);
+            motor.gestion_grupos_originales.procesarPosicionFinalFiguras();
+            motor.reseteoMovGrupos();
+            a.motor = motor;
+            a.nombre = doc.nombre;
+            a.eventos = (doc.eventos || []).map((e) => e.nombre);
+            a.numero_version = doc.version ? doc.version.numero : null;
+            a.estado = "listo";
+            a.error = "";
+            a.rev++;                       // cambia la firma -> se reinyectan las partes
+        }).catch((e) => {
+            a.estado = "error";
+            a.error = e?.response?.data?.error?.msj || e?.response?.data?.error || e?.message || String(e);
+            a.reintentar_en = performance.now() + 5000;
+            console.error("No se pudo cargar el asset", a.id, a.version, e);
+        });
+    }
+
+    // Vuelve a pedir los assets que siguen "la ultima" (las versiones fijas no
+    // cambian). Mientras tanto las instancias siguen con lo que tenian.
+    recargarAssets(){
+        const pendientes = [];
+        for(const a of this.assets.values()){
+            if(a.version || a.estado === "cargando") continue;
+            if(!a.motor) a.estado = "cargando";
+            pendientes.push(this._cargarAsset(a));
+        }
+        return Promise.all(pendientes);
     }
 
     // Contenedores de instancias de la escena (grupos reales con `instancia`).
@@ -992,8 +1024,8 @@ class GestionEvento{
     sincronizarInstancias(){
         const contenedores = this.contenedoresInstancia();
         const firma = contenedores.map((c) => {
-            const listo = !!this._asset(c.instancia.id_eventos);
-            return `${c.nombre}|${c.instancia.id_eventos}|${listo}`;
+            const a = this._asset(c.instancia.id_eventos, c.instancia.version);
+            return `${c.nombre}|${GestionEvento.claveAsset(c.instancia.id_eventos, c.instancia.version)}|${a ? a.rev : "-"}`;
         }).join(";");
         if(firma === this._firma_instancias) return;
         this._firma_instancias = firma;
@@ -1003,7 +1035,7 @@ class GestionEvento{
             gestion.grupos_figuras = gestion.grupos_figuras.filter((g) => !g._virtual);
         }
         for(const c of contenedores){
-            const asset = this._asset(c.instancia.id_eventos);
+            const asset = this._asset(c.instancia.id_eventos, c.instancia.version);
             if(!asset) continue;
             const grupos = asset.motor.gestion_grupos_originales.grupos_figuras
                 .filter((g) => !g.instancia && !g._virtual);      // sin instancias anidadas (6A)
@@ -1051,11 +1083,11 @@ class GestionEvento{
         const dinamicos = new Map(this.gestion_grupos.grupos_figuras.map((g) => [g.nombre, g]));
         const cache = new Map();   // misma pose para instancias con igual asset/evento/instante
         for(const c of contenedores){
-            const asset = this._asset(c.instancia.id_eventos);
+            const asset = this._asset(c.instancia.id_eventos, c.instancia.version);
             if(!asset) continue;
             const inst = c.instancia;
             const t = t_escena - (parseFloat(inst.desfase) || 0) / 1000;
-            const clave = `${inst.id_eventos}|${inst.evento}|${!!inst.bucle}|${t.toFixed(4)}`;
+            const clave = `${GestionEvento.claveAsset(inst.id_eventos, inst.version)}|${inst.evento}|${!!inst.bucle}|${t.toFixed(4)}`;
             let pose = cache.get(clave);
             if(!pose){
                 pose = asset.motor.evaluarEn(inst.evento || "EventoGeneral", t, !!inst.bucle);
@@ -1076,7 +1108,9 @@ class GestionEvento{
     // punto (x, y) del dibujo. Se ubica cuando el asset termina de cargar.
     agregarInstanciaReferencia(id_eventos, nombre_asset, x, y, evento = "EventoGeneral"){
         const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
-        const base = String(nombre_asset || "instancia").replace(/[^A-Za-z0-9_-]+/g, "_") || "instancia";
+        // "proyecto · documento" -> el objeto se llama como el proyecto
+        const base = String(nombre_asset || "instancia").split(" · ")[0]
+            .replace(/[^A-Za-z0-9_-]+/g, "_") || "instancia";
         let n = 1, nombre;
         do { nombre = `${base}_${n++}`; } while(existentes.has(nombre));
         const capa = Math.max(0, ...this.gestion_grupos_originales.grupos_figuras
@@ -1086,7 +1120,8 @@ class GestionEvento{
             cx: Math.round(x), cy: Math.round(y), capa, clases: [],
             lista_figuras: [],
             lista_pintado: [{color: "#000000", visible: true, elementos: [[]]}],
-            instancia: {id_eventos, evento, bucle: true, desfase: 0},
+            // `nombre`: como se llama el asset en la Biblioteca (nombre del proyecto)
+            instancia: {id_eventos, nombre: nombre_asset || "", evento, bucle: true, desfase: 0},
             _ubicar: {x, y},
         };
         this.gestion_grupos_originales.grupos_figuras.push(structuredClone(contenedor));
@@ -1097,15 +1132,65 @@ class GestionEvento{
         return nombre;
     }
 
+    // Fase 6B: "Desvincular". Convierte la instancia en una copia normal del dibujo
+    // del asset (en su pose de reposo), editable parte por parte. Deja de seguir
+    // al asset y no trae sus eventos (queda quieta). Devuelve el nombre del
+    // contenedor, o un mensaje de error si el asset todavia no esta cargado.
+    desvincularInstancia(nombre){
+        const c = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!c || !c.instancia || !c.instancia.id_eventos) return {error: "No es una instancia."};
+        if(!this._asset(c.instancia.id_eventos, c.instancia.version)) return {error: "El asset todavía no está cargado."};
+        const SEP = GestionEvento.SEPARADOR_INSTANCIA;
+        const existentes = new Set(this.gestion_grupos_originales.grupos_figuras
+            .filter((g) => !(g._virtual && g._instancia === nombre)).map((g) => g.nombre));
+        // nombre real de cada parte: <contenedor>_<grupo> (como las copias de la Biblioteca)
+        const renombre = new Map();
+        for(const g of this.gestion_grupos_originales.grupos_figuras){
+            if(!(g._virtual && g._instancia === nombre)) continue;
+            let nuevo = `${nombre}_${g._original}`, k = 2;
+            while(existentes.has(nuevo)) nuevo = `${nombre}_${g._original}_${k++}`;
+            existentes.add(nuevo);
+            renombre.set(g.nombre, nuevo);
+        }
+        const convertir = (g) => {
+            if(!(g._virtual && g._instancia === nombre)) return g;
+            const r = {...g, nombre: renombre.get(g.nombre),
+                nodo_padre: renombre.get(g.nodo_padre) || g.nodo_padre};
+            delete r._virtual; delete r._instancia; delete r._original;
+            return r;
+        };
+        // las partes de la lista original (pose de reposo) pasan a las dos listas
+        const reales = this.gestion_grupos_originales.grupos_figuras
+            .filter((g) => g._virtual && g._instancia === nombre).map(convertir);
+        for(const gestion of [this.gestion_grupos_originales, this.gestion_grupos]){
+            gestion.grupos_figuras = gestion.grupos_figuras
+                .filter((g) => !(g._virtual && g._instancia === nombre))
+                .concat(structuredClone(reales));
+        }
+        this._ambos(nombre).forEach((g) => { delete g.instancia; });
+        for(const g of reales) this.movimientos_grupos[g.nombre] = {x: 0, y: 0};
+        this._firma_instancias = null;
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        return {nombre};
+    }
+
+    // Nombre visible del asset de una instancia (el de la Biblioteca si se guardo).
+    nombreAsset(grupo){
+        const inst = grupo && grupo.instancia;
+        if(!inst) return "";
+        return inst.nombre || (this.infoAsset(inst.id_eventos, inst.version) || {}).nombre || "asset";
+    }
+
     esInstancia(nombre){
         const g = this.gestion_grupos_originales.getGrupo(nombre);
         return !!(g && g.instancia && g.instancia.id_eventos);
     }
 
     // Datos del asset de una instancia (para el Inspector): nombre y eventos.
-    infoAsset(id_eventos){
-        const a = this.assets.get(id_eventos);
-        return a ? {estado: a.estado, nombre: a.nombre, eventos: a.eventos || [], error: a.error} : null;
+    infoAsset(id_eventos, version){
+        const a = this.assets.get(GestionEvento.claveAsset(id_eventos, version));
+        return a ? {estado: a.motor && a.estado === "error" ? "listo" : a.estado, nombre: a.nombre, eventos: a.eventos || [],
+            error: a.error, numero_version: a.numero_version} : null;
     }
 
     // Cambia campos de la instancia (evento, bucle, desfase).

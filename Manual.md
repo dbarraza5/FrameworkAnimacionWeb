@@ -9,6 +9,15 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (assets animados, 3)**
+- **Versiones:** una instancia puede quedar **fijada** a una versión del asset y ya no cambia aunque se edite el original. Botón *Fijar actual* en el Inspector.
+- **Abrir para editar** el proyecto de un asset desde la escena. Al volver, la escena se actualiza sola.
+
+**2026-11-13 (assets animados, 2)**
+- **Desvincular:** convierte una instancia en una copia editable del dibujo. Ver [Assets animados](#assets-animados-instancias-por-referencia).
+- **Elegir el evento antes de agregar** un asset, en el selector de su tarjeta. **Miniatura animada:** pasa el mouse por la tarjeta para verlo moverse.
+- **Bucle de assets corregido:** en cada vuelta el objeto sigue avanzando pero sus partes vuelven a su pose. Antes, la segunda vuelta de "caminar y sentarse" dejaba la cola y las patas fuera de lugar.
+
 **2026-11-13 (assets animados)**
 - **Assets animados:** en la Biblioteca aparecen los proyectos con eventos. Al agregar uno a la escena se mueve solo con sus propios eventos (Caminar, Sentarse…). En el Inspector eliges qué evento reproduce, con qué desfase y si se repite. Si el proyecto original cambia, todas sus instancias cambian. Ver [§7](#7-biblioteca-agregar-objetos-a-la-escena).
 
@@ -292,7 +301,24 @@ Al seleccionarlo, el **Inspector → Objeto** muestra el bloque **Instancia de �
 
 Además, una instancia se puede mover, escalar, rotar, reflejar, ocultar, bloquear y cambiar de capa como cualquier objeto ([§7b](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar)).
 
+**Antes de agregarlo:**
+- en la tarjeta del asset puedes elegir **qué evento reproducirá**; después se cambia en el Inspector;
+- pasa el mouse por la tarjeta para ver la animación.
+
 **No se puede entrar a sus partes.** Para cambiar su dibujo o sus movimientos, edita su proyecto.
+
+**Editar el asset y versiones:**
+- **Abrir para editar** abre el proyecto del asset en otra pestaña. Cámbialo ahí y haz **Subir**. Al volver a la escena, las instancias que siguen la **última** versión se actualizan solas; también puedes usar **Recargar**.
+- **Versión del asset:**
+  - **Última (se actualiza sola):** opción por defecto. Sigue cada cambio del original.
+  - **v1, v2…:** fotos congeladas del asset. Una instancia fijada se ve siempre igual, aunque el original cambie. En el panel Objetos aparece con "· vN".
+- **Fijar actual** toma una foto del asset **tal como está guardado ahora** y fija la instancia en ella. Para volver a seguir los cambios, elige *Última*.
+
+**Desvincular (copia editable):** en el Inspector → Objeto, el botón **Desvincular** convierte la instancia en una copia normal del dibujo, en su pose de reposo.
+- Ya puedes entrar a sus partes y animarlas con eventos de esta escena.
+- **Ya no sigue al asset:** los cambios del original no le llegan.
+- **No trae los eventos del asset:** queda quieta.
+- No se puede deshacer, salvo recargando sin Subir.
 
 Si el asset no se puede cargar (sin conexión, sesión vencida), el Inspector lo avisa y el editor reintenta cada 5 segundos.
 
@@ -544,9 +570,10 @@ EventoGeneral (0 – 6,5 s)
 - **Campos de evento sin efecto:** `x`, `y`, `reposicionar` y `tiempo_relativo`.
 - **Dibujos de la Biblioteca:** son copias sin sus eventos. Usa los *assets animados* para tener objetos con eventos.
 - **Assets animados:**
-  - todavía no se pueden "desvincular" para convertirlos en una copia editable;
-  - el Inspector muestra el nombre del documento de eventos (`evento_default`) en vez del nombre del proyecto;
-  - un asset dentro de otro asset no se dibuja.
+  - al desvincular, la copia no conserva los eventos del asset;
+  - las instancias agregadas antes del 2026-11-13 (2) muestran el nombre del documento (`evento_default`) en vez del proyecto;
+  - un asset dentro de otro asset no se dibuja;
+  - las versiones no se pueden borrar ni describir desde el editor.
 - **Selección de objetos:** todavía no hay selección arrastrando un rectángulo en el vacío (usa Shift+clic). Escalar o rotar varios objetos a la vez no está disponible (sí moverlos y borrarlos).
 - **Sin deshacer:** las operaciones sobre objetos (mover, borrar, duplicar…) no se pueden deshacer. Recargar la página sin "Subir" descarta todos los cambios.
 - **Movimientos de Figuras:** afectan a los hijos directos, no a los nietos.

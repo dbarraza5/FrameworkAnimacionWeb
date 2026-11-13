@@ -483,7 +483,7 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 
 ---
 
-## Fase 6 — Instancias por referencia + animación por instancia — 6A IMPLEMENTADA (6B y 6C pendientes)
+## Fase 6 — Instancias por referencia + animación por instancia — IMPLEMENTADA (6A, 6B y 6C)
 
 **Objetivo:** que cada objeto de la escena use el asset original (D5) y tenga su propia animación activa.
 
@@ -526,18 +526,63 @@ Diferencias con el plan: no se creó una lista `objetos` aparte. La instancia es
   - Sentarse arranca en contexto, ya caminado.
 - [x] Lo que se guarda tiene solo el contenedor (13 grupos = 12 + 1, sin campos `_`). Un motor nuevo construido con esos datos reconstruye la instancia en la misma posición (586, 145).
 - [x] Si la carga del asset falla, se recupera solo al reintentar.
-- [ ] No probado: **Subir y recargar de verdad** (no se quiso tocar el documento del usuario).
+- [x] **Subir y recargar de verdad**, hecho en la 6B sobre copias temporales del documento del perro, borradas al terminar. El original no se tocó.
+- [x] Asset de **otro documento**: una instancia en la copia A apunta a la copia B. Al cambiar el color del cuerpo en B, la instancia de A sale azul al recargar. **La propagación funciona.**
 - [ ] No probado: **arrastrar** la tarjeta del asset al lienzo; usa el mismo camino que el botón.
 - [ ] No probado: tres perros con desfases distintos **a la vista**; sí se probó por motor.
-- [ ] Pendiente: probar con un asset de **otro** proyecto. Hoy solo existe un documento de eventos.
 
-**Pendiente 6B:**
-- "Desvincular" (convertir en copia editable);
-- elegir el evento al soltar;
-- miniatura animada en la Biblioteca;
-- mostrar el nombre del proyecto del asset en vez de `evento_default`.
+### Alcance realizado — 6B (2026-11-13)
+- **Desvincular:** `GestionEvento.desvincularInstancia(nombre)` y botón en Inspector → Objeto, con confirmación.
+  - Las partes virtuales pasan a ser grupos reales `<contenedor>_<grupo>`, en la pose de reposo, y se quita `instancia`.
+  - La copia queda quieta: los eventos del asset no se copian, porque referencian grupos por nombre de otro documento.
+- **Nombre del asset:** se guarda en `instancia.nombre` (campo nuevo también en el backend) y se muestra con `nombreAsset(grupo)`.
+  - Formato: el proyecto, más el documento si el proyecto tiene varios.
+  - El objeto en escena se llama como el proyecto (`animacion1_1`).
+  - Las instancias viejas sin `nombre` muestran el del documento.
+- **Elegir el evento al agregar:** selector en cada tarjeta de asset; el paquete de arrastre lleva `evento`.
+- **Miniatura animada:** con el mouse encima, la tarjeta reproduce en bucle el evento elegido.
+  - Usa un motor propio y `evaluarEn`.
+  - `dibujarMiniatura(canvas, grupos, margen, encuadre)` fija la escala con la pose de reposo para que no "respire" y sigue al dibujo en X (camina en el lugar).
+- **Corrección en `evaluarEn` (bucle de assets):**
+  - Antes, por cada vuelta se acumulaba el desplazamiento de **todos** los grupos, incluidos los que mueven la cola y las patas para sentarse. En la segunda vuelta de EventoGeneral el perro salía desarmado.
+  - Ahora solo se acumula el de los grupos de **primer nivel** (el objeto entero avanza); las partes vuelven a su pose en cada vuelta.
+  - Esto afecta solo a las instancias. El bucle de eventos del editor (Fase 5, D12) no cambia.
+- **Desarrollo:** `window.__miniatura` (solo en desarrollo) expone las funciones de miniatura para probar desde la consola.
 
-**Pendiente 6C:** editar el asset desde la escena (abrir su proyecto) y versiones congeladas (P1).
+**Verificado en el navegador**, sobre copias temporales:
+- [x] Subir guarda solo el contenedor, con evento, desfase, escala y `nombre`; al recargar la instancia vuelve igual.
+- [x] El cambio en el asset se propaga.
+- [x] Tarjeta con "Sentarse" elegido → la instancia reproduce Sentarse.
+- [x] Las miniaturas en t = 0…14 s son correctas tras la corrección del bucle; la miniatura se anima al pasar el mouse.
+- [x] Desvincular deja 12 grupos reales y ninguno virtual; se puede entrar a sus partes; se guarda y se recarga como copia.
+- Nota: durante las pruebas Chrome entregaba ~1–2 cuadros por segundo con la ventana en segundo plano. El hilo principal estaba libre (~5 ms) y el motor tarda 0,7 ms por cuadro, así que no es un problema del editor.
+
+### Alcance realizado — 6C (2026-11-13)
+- **Versiones congeladas (backend):**
+  - colección nueva `versiones_eventos` (`modelo/VersionEventos.js`) con `{id_eventos, numero, descripcion, fecha_creacion, contenido}`; `contenido` es la foto del documento como `Mixed`;
+  - rutas `GET` / `POST /api/evento/id/:id/versiones` y `GET /api/evento/version/:id_version`, documentadas en el README del backend;
+  - campo `instancia.version` en el schema del grupo.
+- **Motor:**
+  - el caché de assets usa la clave `id` o `id@version`, y `cargadorAssets(id, version)`;
+  - `recargarAssets()` vuelve a pedir los assets que siguen "la última"; las versiones no cambian. La instancia sigue mostrando lo que tenía mientras carga, y al llegar `rev++` cambia la firma y se reinyectan las partes;
+  - el caché de poses incluye la versión.
+- **Inspector → Objeto**, en el bloque de instancia:
+  - selector **Versión del asset**: "Última (se actualiza sola)" o v1, v2…;
+  - **Fijar actual**: crea una versión con lo guardado ahora y fija la instancia en ella;
+  - **Abrir para editar**: abre `/evento/<id>` en otra pestaña;
+  - **Recargar**.
+- **Recarga automática:** al volver a la pestaña (`focus` / `visibilitychange`, como mucho cada 2 s) el editor recarga los assets que siguen la última versión. Así, se edita el asset en otra pestaña, se hace Subir, se vuelve y la escena ya está al día.
+- **Panel Objetos:** las instancias fijadas muestran "· vN".
+- **Corrección:** al cambiar la versión, la instancia se quedaba sin partes un momento y el control la sacaba de la selección. Ahora una instancia sigue seleccionada mientras su asset carga.
+
+**Verificado en el navegador**, sobre copias temporales A (escena) y B (asset), borradas al terminar junto con sus versiones; el original no se tocó:
+- [x] "Fijar actual" crea v1, v2… y la selección se mantiene.
+- [x] Cuerpo de B a rojo + Recargar → la instancia "última" se pone roja y la fijada sigue café.
+- [x] Cuerpo de B a verde + volver a la pestaña → la "última" se pone verde sola.
+- [x] Subir + recargar: `instancia.version` se guarda y la fijada se ve igual.
+- [ ] No probado: el botón "Abrir para editar" (abre una pestaña nueva). Arma la URL `/evento/<id_eventos>`, la misma de la lista de proyectos.
+
+**Fuera de alcance (backlog):** borrar versiones viejas, ponerles descripción desde la interfaz y comprobar el dueño del documento en las rutas. Las rutas existentes tampoco lo comprueban.
 
 ---
 
@@ -603,7 +648,7 @@ Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (
 
 | # | Pregunta | Afecta a |
 |---|---|---|
-| P1 | ~~¿Versión congelada o la última?~~ **Respondida:** la última (6A); las congeladas quedan para 6C. | Fase 6 |
+| P1 | ~~¿Versión congelada o la última?~~ **Respondida:** por defecto la última; cada instancia se puede fijar a una versión (6C). | Fase 6 |
 | P2 | ~~¿Dónde viven los eventos de un asset?~~ **Respondida:** en el documento `Eventos` del proyecto (opción A). | Fase 6 |
 | P5 | ¿Se unifican el editor de dibujo (`/animacion`) y el de eventos (`/evento`) en un solo editor con modos **Diseño / Animar** (como Rive o Spine), o siguen siendo dos páginas con la misma distribución? | Fase 0 y siguientes |
 | P6 | Tamaño del documento o escena por defecto (ej. 1280×720) y si se configura por proyecto o por escena. | Fases 0 y 8 |
