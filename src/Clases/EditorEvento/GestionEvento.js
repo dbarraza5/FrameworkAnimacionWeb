@@ -9,6 +9,7 @@ import OperacionesGrupo, {origenGrupoX, origenGrupoY} from "../EditorAnimacion/O
 import {limitesGrupos, prepararGrupos} from "../EditorAnimacion/Miniatura";
 import {normalizarTransformacion, transformarVector} from "../EditorAnimacion/TransformacionInstancia";
 import * as Claves from "./Claves";
+import {SimFisica, grupoEsEfecto, particulasEn, TIPOS_EFECTO, efectoDefecto} from "./Fisica";
 
 let tiempo_universal=performance.now();
 
@@ -416,7 +417,7 @@ class GestionEvento{
         // Fase 3)
         const {hijos, con_figuras} = this._indice(this.gestion_grupos.grupos_figuras);
         return (hijos.get(padre) || [])
-            .filter((g) => con_figuras(g.nombre) || GestionEvento.grupoEsCamara(g))
+            .filter((g) => con_figuras(g.nombre) || GestionEvento.grupoEsCamara(g) || grupoEsEfecto(g))
             .sort((a, b) => (Number(a.capa) || 0) - (Number(b.capa) || 0))
             .map((g) => g.nombre);
     }
@@ -544,6 +545,90 @@ class GestionEvento{
         return resultado;
     }
 
+    // ================================================================
+    // Fase 9A: efectos (fuerzas y particulas) y reaccion fisica (ver Fisica.js)
+    // ================================================================
+    fisica = new SimFisica(this);
+
+    esEfecto(nombre){
+        return grupoEsEfecto(this.gestion_grupos_originales.getGrupo(nombre));
+    }
+
+    agregarEfecto(tipo, x, y){
+        if(!TIPOS_EFECTO[tipo]) return null;
+        const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
+        const base = TIPOS_EFECTO[tipo].etiqueta;
+        let nombre = base, n = 2;
+        while(existentes.has(nombre)) nombre = `${base} ${n++}`;
+        const capa = Math.max(0, ...this.gestion_grupos_originales.grupos_figuras
+            .filter((g) => g.nodo_padre === "root").map((g) => Number(g.capa) || 0)) + 1;
+        const g = {nombre, nodo_padre: "root", visible: true, color: "#ff8a3d", cx: Math.round(x), cy: Math.round(y),
+            capa, clases: ["efecto"], lista_figuras: [],
+            lista_pintado: [{color: "#000000", visible: true, elementos: [[]]}], efecto: efectoDefecto(tipo)};
+        this.gestion_grupos_originales.grupos_figuras.push(structuredClone(g));
+        this.gestion_grupos.grupos_figuras.push(structuredClone(g));
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        this.movimientos_grupos[nombre] = {x: 0, y: 0};
+        return nombre;
+    }
+
+    fijarEfecto(nombre, clave, valor){
+        this._ambos(nombre).forEach((g) => { if(g.efecto) g.efecto = {...g.efecto, [clave]: valor}; });
+    }
+
+    fisicaDe(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return (g && g.fisica) || {modo: "fijo"};
+    }
+
+    fijarFisica(nombre, cambios){
+        this._ambos(nombre).forEach((g) => {
+            const f = {...(g.fisica || {modo: "fijo"}), ...cambios};
+            if(f.modo === "fijo" && Object.keys(f).length === 1) delete g.fisica; else g.fisica = f;
+        });
+    }
+
+    // Particulas y (en el editor) los iconos de los efectos, en coordenadas del dibujo.
+    dibujarEfectos(ctx, ox, oy, px, mostrar_iconos){
+        const t = this.tiempoActualMs();
+        const efs = this.gestion_grupos_originales.grupos_figuras.filter((g) => grupoEsEfecto(g) && !g._virtual);
+        for(const g of efs){
+            const ef = g.efecto;
+            if(ef.tipo !== "particulas") continue;
+            const pos = (tt) => ({x: this.valorPropiedad(g.nombre, "x", tt), y: this.valorPropiedad(g.nombre, "y", tt)});
+            for(const p of particulasEn(ef, pos, t)){
+                ctx.globalAlpha = Math.max(0, Math.min(1, p.alfa));
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x + ox, p.y + oy, Math.max(0.5, p.tam / 2), 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+        if(!mostrar_iconos) return;
+        ctx.save();
+        ctx.lineWidth = 1.5 * px;
+        for(const g of efs){
+            const ef = g.efecto, x = this.valorPropiedad(g.nombre, "x", t) + ox, y = this.valorPropiedad(g.nombre, "y", t) + oy;
+            ctx.strokeStyle = ef.tipo === "disparo" ? "#ff5252" : "#ff8a3d";
+            ctx.setLineDash([5 * px, 4 * px]);
+            ctx.beginPath();
+            if(ef.tipo === "explosion") ctx.arc(x, y, Math.max(1, ef.radio || 0), 0, Math.PI * 2);
+            else if(ef.tipo === "tornado") ctx.rect(x - (ef.radio || 0), y - (ef.alto || 0), 2 * (ef.radio || 0), ef.alto || 0);
+            else if(ef.tipo === "disparo" || ef.tipo === "viento"){
+                const a = (ef.angulo || 0) * Math.PI / 180, L = ef.tipo === "disparo" ? (ef.alcance || 0) : 120;
+                ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.beginPath(); ctx.arc(x, y, 6 * px, 0, Math.PI * 2); ctx.fill();
+            ctx.font = `${11 * px}px sans-serif`;
+            ctx.fillText(g.nombre, x + 9 * px, y - 8 * px);
+        }
+        ctx.restore();
+    }
+
     // Lo que ve la camara ahora (con sus claves): rectangulo en coordenadas del dibujo.
     rectCamara(){
         const nombre = this.nombreCamara();
@@ -574,6 +659,12 @@ class GestionEvento{
     // (cx_solid) que el dibujo calcula en cada cuadro, sin clonar nada; si todavia no
     // existen (primer cuadro), las calcula sobre una copia.
     limitesObjeto(nombre){
+        // 9A: un efecto se toma por su centro
+        if(this.esEfecto(nombre)){
+            const g = this.gestion_grupos.getGrupo(nombre) || this.gestion_grupos_originales.getGrupo(nombre);
+            const x = parseFloat(g.cx) || 0, y = parseFloat(g.cy) || 0;
+            return {x0: x - 14, y0: y - 14, x1: x + 14, y1: y + 14, cx: x, cy: y};
+        }
         // 8A: la camara no tiene figuras; sus limites son lo que ve
         if(this.esCamara(nombre)){
             const r = this.rectCamara();
@@ -1229,6 +1320,9 @@ class GestionEvento{
 
             // Fase 6: instancias por referencia (sus partes las anima el motor de su asset)
             this.aplicarInstancias(this._t_escena || 0);
+
+            // Fase 9A: efectos y fisica de piezas (despues de claves e instancias)
+            try { this.fisica.aplicar(this.tiempoActualMs()); } catch (err) { console.error("fisica", err); }
         }
         if(this.detener){
             //this.tiempo.pausar();
@@ -1424,7 +1518,7 @@ class GestionEvento{
             const asset = this._asset(c.instancia.id_eventos, c.instancia.version);
             if(!asset) continue;
             const grupos = asset.motor.gestion_grupos_originales.grupos_figuras
-                .filter((g) => !g.instancia && !g._virtual && !GestionEvento.grupoEsCamara(g));   // sin instancias anidadas (6A) ni la camara del asset (8A)
+                .filter((g) => !g.instancia && !g._virtual && !GestionEvento.grupoEsCamara(g) && !grupoEsEfecto(g));   // sin instancias anidadas (6A) ni camara/efectos del asset
             const nombres = new Set(grupos.map((g) => g.nombre));
             const virtuales = grupos.map((g) => {
                 const v = {...g, nombre: `${c.nombre}${SEP}${g.nombre}`,
@@ -1472,7 +1566,10 @@ class GestionEvento{
             const asset = this._asset(c.instancia.id_eventos, c.instancia.version);
             if(!asset) continue;
             const inst = c.instancia;
-            const t = t_escena - (parseFloat(inst.desfase) || 0) / 1000;
+            // 9A: si la fisica solto al objeto (o a una pieza suya), su animacion se congela
+            const dc = dinamicos.get(c.nombre);
+            const t_obj = dc && dc._t_congelado != null ? Math.min(t_escena, dc._t_congelado) : t_escena;
+            const t = t_obj - (parseFloat(inst.desfase) || 0) / 1000;
             const clave = `${GestionEvento.claveAsset(inst.id_eventos, inst.version)}|${inst.evento}|${!!inst.bucle}|${t.toFixed(4)}`;
             let pose = cache.get(clave);
             if(!pose){

@@ -192,9 +192,14 @@ function EditorEvento(props){
                     setStartLoopLienzo(true);
                 })
                 .catch(function (response) {
-                    console.log("error obtener proyectos")
-                    console.log(response.data);
-                    props.manejadorErrores(response.data)
+                    // error del servidor (axios) o error de programa al preparar el editor:
+                    // este ultimo no tiene `response` y antes se perdia sin rastro
+                    if(!response || !response.response){
+                        console.error("Error al preparar el editor de eventos:", response);
+                        return;
+                    }
+                    console.log("error obtener evento", response.response.data);
+                    props.manejadorErrores(response.response.data)
                 });
         } catch (err) {
             console.log(err);

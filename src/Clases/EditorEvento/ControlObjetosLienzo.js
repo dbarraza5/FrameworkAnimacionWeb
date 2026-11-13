@@ -98,8 +98,9 @@ export default class ControlObjetosLienzo {
         const t = normalizarTransformacion(grupo.transformacion) || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0};
         const ox = parseFloat(grupo.cx_solid ?? grupo.cx) || 0, oy = parseFloat(grupo.cy_solid ?? grupo.cy) || 0;
         const camara = !!(ev.esCamara && ev.esCamara(nombre));
+        const efecto = !!(ev.esEfecto && ev.esEfecto(nombre));
         return {lim, grupo, cadena, local, aMundo, t,
-            camara,
+            camara, efecto,
             ancla: grupo.transformacion ? {x: ox + t.ancla_x, y: oy + t.ancla_y} : {x: (lim.x0 + lim.x1) / 2, y: lim.y1}};
     }
 
@@ -124,7 +125,7 @@ export default class ControlObjetosLienzo {
 
     // Desplazamiento del ancla respecto del origen del objeto.
     _offsetAncla(ev, nombre) {
-        if (ev.esCamara && ev.esCamara(nombre)) return {x: 0, y: 0};   // 8A: el centro de lo que ve
+        if ((ev.esCamara && ev.esCamara(nombre)) || (ev.esEfecto && ev.esEfecto(nombre))) return {x: 0, y: 0};   // 8A/9A: su centro
         const g = ev.gestion_grupos.getGrupo(nombre);
         const t = g && normalizarTransformacion(g.transformacion);
         if (g && g.transformacion && t) return {x: t.ancla_x, y: t.ancla_y};
@@ -285,7 +286,7 @@ export default class ControlObjetosLienzo {
         }
 
         // --- nuevo clic: manijas del objeto seleccionado ---
-        if (this.seleccion.length === 1 && !(ev.esCamara && ev.esCamara(this.seleccion[0]))) {
+        if (this.seleccion.length === 1 && !(ev.esCamara && ev.esCamara(this.seleccion[0])) && !(ev.esEfecto && ev.esEfecto(this.seleccion[0]))) {
             const nombre = this.seleccion[0];
             const geo = this.geometria(ev, nombre);
             if (geo) {
@@ -482,11 +483,11 @@ export default class ControlObjetosLienzo {
             ctx.closePath();
             ctx.stroke();
             if (this.seleccion.length !== 1) continue;
-            if (geo.camara) {
+            if (geo.camara || geo.efecto) {
                 // 8A: la camara no escala ni rota con manijas (su zoom va en el Inspector)
                 ctx.font = `${11 * px}px sans-serif`;
                 ctx.fillStyle = COLOR;
-                ctx.fillText(`🎥 ${nombre}`, esquinas[0].x, esquinas[0].y - 6 * px);
+                ctx.fillText(`${geo.camara ? "🎥 " : ""}${nombre}`, esquinas[0].x, esquinas[0].y - 6 * px);
                 this._dibujarTrayectoria(ctx, ev, nombre, P, px);
                 continue;
             }

@@ -9,6 +9,10 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (efectos y física)**
+- **Efectos:** explosión, tornado, disparo, viento y partículas (fuego, humo, polvo). Los objetos pueden ser fijos, rígidos o **desarmarse en sus partes**, y el editor calcula cómo vuelan, caen y quedan. Ver [§7f](#7f-efectos-y-física-explosiones-tornados-disparos).
+- **Tres escenas de ejemplo:** un meteorito que cae y explota, un tornado que cruza la calle y un disparo.
+
 **2026-11-13 (cámara y profundidad)**
 - **Cámara:** cada escena tiene una cámara que se puede mover, acercar y animar con claves. Con **Vista de cámara** ves cómo quedará el resultado. Ver [§7e](#7e-cámara-y-profundidad).
 - **Profundidad:** el botón *Profundidad* del panel Objetos hace que lo que está más abajo se dibuje delante. El campo **Plano** del Inspector manda algo siempre al fondo o al frente.
@@ -83,6 +87,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 7c. [Panel Objetos y entrar a un objeto](#7c-panel-objetos-y-entrar-a-un-objeto)
 7d. [Animar con fotogramas clave](#7d-animar-con-fotogramas-clave)
 7e. [Cámara y profundidad](#7e-cámara-y-profundidad)
+7f. [Efectos y física: explosiones, tornados, disparos](#7f-efectos-y-física-explosiones-tornados-disparos)
 8. [Línea de tiempo](#8-línea-de-tiempo)
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
@@ -565,6 +570,40 @@ Por defecto, los objetos se dibujan según su **capa** (flechas ▲▼ del panel
   | 1 | Primer plano: un poste delante de la cámara. Siempre delante. |
 
 - La altura que cuenta es la de los **pies** del objeto (su ancla). Los assets agregados desde la Biblioteca ya la tienen en los pies.
+
+---
+
+## 7f. Efectos y física: explosiones, tornados, disparos
+
+En vez de animar a mano cómo se rompe cada cosa, pones un **efecto** (una fuerza) y le dices a cada objeto **cómo reacciona**. El editor calcula el resto: dirección, fuerza según la distancia, caída, rebote.
+
+### 1. Agregar un efecto
+En el panel **Objetos**, menú **+ Efecto**:
+
+| Efecto | Qué hace | Parámetros principales |
+|---|---|---|
+| Explosión | Empuja todo hacia afuera en un instante. Más fuerte cerca. | Detona en (ms), fuerza, radio, hacia arriba |
+| Tornado | Atrae, hace girar y eleva lo que está dentro de su columna. | Desde / hasta, radio, alto, fuerza, elevación, giro |
+| Disparo | Golpea lo primero que toca su rayo. Con **Al impactar = pieza** empuja solo esa pieza (o el objeto entero si es rígido). Con **Al impactar = objeto** desarma todo el objeto alcanzado: sus partes salen hacia atrás, más fuerte cerca del impacto. | Dispara en (ms), dirección (°), fuerza, alcance, al impactar, radio del impacto, dispersión |
+| Viento | Empuja constantemente en una dirección. | Desde / hasta, dirección, fuerza |
+| Partículas | Fuego, humo, polvo, chispas (solo visual). | Desde / hasta, por segundo, vida, velocidad, dirección, dispersión, tamaño, colores, modo (chorro o remolino) |
+
+El efecto es un objeto más: se mueve, se le ponen **claves** (un tornado que avanza, una estela que sigue a un meteorito) y en el lienzo se ve su radio, columna o rayo. Esa guía no aparece en Vista de cámara.
+
+### 2. Decir cómo reacciona cada objeto
+Inspector → Objeto → **Física (ante efectos)**:
+- **Fijo** (por defecto): no le afecta nada. Úsalo para la calle y el cielo.
+- **Rígido:** vuela entero, como un auto que sale despedido o una persona que cae.
+- **Se desarma en sus partes:** cada parte (cabeza, patas, paredes, techo…) sale por su lado según dónde estaba respecto de la fuerza. Con **Nivel 2** también se separan las partes de sus partes.
+
+### 3. Qué pasa al soltarse
+- Las piezas caen hasta la altura donde estaban los **pies** del objeto, rebotan, frenan y quedan **apoyadas** sobre un lado. Si quedan muy inclinadas, **vuelcan**: una persona empujada cae de espaldas.
+- La animación propia del objeto (caminar, ruedas, alas) **se congela** en ese instante.
+- Las piezas no chocan entre sí.
+- Todo se recalcula solo y es **siempre igual**: puedes mover el cursor de tiempo hacia atrás y adelante.
+
+### Ejemplos incluidos
+Abre desde la lista de eventos del proyecto **Meteorito (escena)**, **Tornado (escena)**, **Disparo (escena)** (la víctima cae entera) y **Disparo 2 (escena)** (la víctima se desarma), activa **Vista de cámara** (en la Cámara) y dale ▶.
 
 ---
 

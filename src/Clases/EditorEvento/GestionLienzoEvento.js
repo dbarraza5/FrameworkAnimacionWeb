@@ -430,6 +430,12 @@ class GestionLienzoEvento{
 
         this.eventos_.imprimirEventos();
 
+        // 9A: particulas (siempre) e iconos de los efectos (no en "Vista de camara")
+        if(this.eventos_.dibujarEfectos){
+            const cl = this.configuracion_lienzo;
+            this.eventos_.dibujarEfectos(ctx, cl.x_delta_original, cl.y_delta_original, 1 / (cl.escala || 1), !cl.vista_camara);
+        }
+
         // 8A: fuera de lo que ve la camara, oscurecido (siempre un poco; en "Vista de
         // camara", casi negro: se ve como quedara el video)
         if(rect_camara) this.configuracion_lienzo.dibujarMascaraCamara(ctx);

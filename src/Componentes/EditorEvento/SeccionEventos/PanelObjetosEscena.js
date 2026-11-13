@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {dibujarMiniatura} from "../../../Clases/EditorAnimacion/Miniatura";
+import {TIPOS_EFECTO} from "../../../Clases/EditorEvento/Fisica";
 
 // Panel "Objetos" (Fase 3): lista de los objetos de la escena -- o de las partes del
 // objeto en el que se "entro" -- con miniatura, visibilidad, bloqueo, orden de capa
@@ -37,6 +38,7 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                 return {
                     nombre: n,
                     camara: e.esCamara(n),
+                    efecto: e.esEfecto(n) ? (e.gestion_grupos_originales.getGrupo(n).efecto || {}).tipo : null,
                     visible: e.esVisible(n),
                     bloqueado: e.estaBloqueado(n),
                     partes: e.objetosEscena(n).length,
@@ -101,6 +103,23 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                     </span>
                 ))}
                 </div>
+                {/* Fase 9A: agregar un efecto (fuerza o particulas) en el centro de la vista */}
+                {nivelActual === 0 && (
+                    <select className="form-select form-select-sm py-0 me-1" style={{width: "auto", fontSize: "0.75rem"}}
+                            value="" title="Agregar un efecto: explosión, tornado, disparo, viento o partículas"
+                            onChange={(e) => {
+                                const tipo = e.target.value;
+                                if (!tipo) return;
+                                const L = refLienzo.current, c = L.configuracion_lienzo;
+                                const p = c.pantallaAMundo(c.ancho / 2, c.alto / 2);
+                                const n = ev().agregarEfecto(tipo, p.x, p.y);
+                                if (n) control().seleccionar([n]);
+                                firma.current = "";
+                            }}>
+                        <option value="">+ Efecto</option>
+                        {Object.entries(TIPOS_EFECTO).map(([k, v]) => <option key={k} value={k}>{v.etiqueta}</option>)}
+                    </select>
+                )}
                 <button className={`btn btn-sm py-0 px-1 ${profundidad ? "btn-warning" : "btn-outline-secondary"}`}
                         title={profundidad
                             ? "Profundidad activada: lo que está más abajo se dibuja delante (dentro de cada plano). Clic para usar el orden de capas."
@@ -130,7 +149,9 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                             }}
                             onDoubleClick={() => { if (it.partes && !it.instancia) control().entrar(it.nombre); }}
                             title={it.instancia ? `Instancia de ${it.instancia}` : it.partes ? "Doble clic para editar sus partes" : it.nombre}>
-                            {it.camara
+                            {it.efecto
+                                ? <span className="ed-obj-mini d-inline-flex align-items-center justify-content-center" style={{width: 44, height: 32}}><i className={`bi ${(TIPOS_EFECTO[it.efecto] || {}).icono || "bi-stars"} text-danger fs-5`}/></span>
+                                : it.camara
                                 ? <span className="ed-obj-mini d-inline-flex align-items-center justify-content-center" style={{width: 44, height: 32}}><i className="bi bi-camera-video text-warning fs-5"/></span>
                                 : <Miniatura grupos={it.grupos}/>}
                             <div className="flex-grow-1 text-truncate">

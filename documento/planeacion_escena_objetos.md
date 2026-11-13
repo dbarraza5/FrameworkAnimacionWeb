@@ -42,6 +42,7 @@ Cada decisión registra de dónde salió, para no volver a discutirla sin un dat
 | D12 | **Bucle:** la ventana inicio–fin define cuánto dura; con `bucle`, el contenido se repite cada `tiempo_bucle` ms dentro de ella y al terminar se congela. Los desplazamientos se acumulan entre vueltas. La raíz (`EventoGeneral`) no hace bucle. | Separa "cuánto dura" de "cada cuánto se repite" y conserva el encadenamiento (D1). Acumular evita que un personaje que camina en bucle vuelva al punto de partida. |
 | D13 | **Fotogramas clave en vez de recorridos (Fase 7):** el movimiento por la escena se hace con claves genéricas de propiedades de objeto (posición, rotación, escala, opacidad), no con una herramienta de caminos. | Es el mecanismo de todos los editores de animación y sirve para cualquier escenario, no solo para la ciudad. Un recorrido es un caso particular (claves de posición). |
 | D14 | **Cámara como objeto y profundidad por plano + altura (Fase 8):** la cámara es un objeto de la escena con claves (x, y, zoom). El orden de dibujo, cuando se pide, es plano y luego altura de los pies, por nivel. No hay capas fijas de ciudad. | Mismo criterio que D13: mecanismos generales (After Effects; `y_sort` + `z_index` de Godot). La "capa" existente no servía para ordenar por altura porque cada objeto nuevo recibe una distinta. |
+| D15 | **Fenómenos físicos con campos de fuerza + física de piezas (Fase 9):** se simula en vivo (determinista, con caché) y se puede hornear a claves. Las piezas no chocan entre sí por ahora (solo suelo). | Animar a mano cada destrucción según dirección, fuerza y distancia es inviable. Es el esquema de Blender, After Effects (Newton) y Unity/Godot. Hornear reutiliza las claves de la Fase 7 y deja el resultado editable. |
 | D10 | La selección y manipulación de objetos vive en la modalidad **Evento** (la que se abre por defecto), sin modalidad nueva; la modalidad Movimiento conserva sus controles (ex pregunta P3). | En la modalidad Evento el lienzo no hacía nada salvo panear; agregar un modo "Escena" separado sumaba un concepto sin necesidad. Se puede revisar en la Fase 3. |
 | D11 | El desplazamiento propio de un grupo con transformación (sus movimientos "Objeto") se interpreta **en su marco**: escala y rotación se aplican también al vector de desplazamiento. | Sin esto, un perro reflejado miraba a la izquierda pero avanzaba a la derecha ("moonwalk"), y uno escalado al 60 % avanzaba lo mismo que el grande ("patinaba"). Encaja con D7. |
 | D9 | El ancla de la transformación es, por defecto, el **centro inferior** del objeto ("los pies"); se guarda por instancia y se puede cambiar (ex pregunta P4). | Al escalar, un personaje sigue apoyado en el suelo. Propuesto en el plan y aceptado por el usuario al iniciar la Fase 1. |
@@ -725,6 +726,96 @@ Las capas de la ciudad salen de ahí: fondo = plano −1, calle = plano 0 con pr
 **Verificación original de la fase:**
 - [x] "Una persona que pasa por delante de un auto lo tapa…": comprobado con dos perros.
 - [ ] "Una calle 3 veces más ancha que el lienzo se recorre con la cámara": el mecanismo está, pero falta una escena real.
+
+---
+
+## Fase 9 — Fuerzas, física de piezas y efectos (destrucción, disparos, tornado) — 9A IMPLEMENTADA (con disparo, tornado, viento y partículas); 9B pendiente
+
+**Objetivo:** animar fenómenos como un meteorito que cae y explota, impactos de disparos o un tornado, **sin animar a mano cada objeto**. Se describe *qué empuja* (un campo de fuerza) y *cómo reacciona* cada objeto; el editor calcula el movimiento. Los objetos se pueden **desarmar en sus partes** (los grupos que ya tienen: cabeza, patas, cola…), y cada pieza sale según su dirección y distancia a la fuerza.
+
+**Referencias:**
+- **Blender:** cuerpos rígidos y campos de fuerza (Explosión, Viento, Vórtice, Turbulencia), con "hornear" a claves.
+- **After Effects:** Newton y Shatter.
+- **Unity / Godot:** "ragdoll" en un instante, impulso con caída por distancia, partículas.
+
+**Decisiones (D15, 2026-11-13):**
+- **Simulación en vivo y horneado, las dos.** En vivo para probar fuerzas rápido (determinista, con semilla y caché por cuadro, así que se puede mover el cursor de tiempo). "Hornear" la convierte en **fotogramas clave** normales de cada pieza (Fase 7), editables y guardados con la escena.
+- **Las piezas no chocan entre sí** (por ahora): solo gravedad, **suelo**, rebote y fricción.
+
+**Diseño:**
+1. **Campos de fuerza como objetos de la escena**, como la cámara (8A): se ubican, se mueven y se animan con claves.
+   - **Explosión:** impulso radial en el instante de detonación, con caída según la distancia hasta un radio y un sesgo hacia arriba.
+   - **Disparo / impacto** (9C): impulso direccional a lo que toca su trayectoria.
+   - **Tornado** (9C): fuerza tangencial alrededor de un eje, atracción al eje y elevación.
+   - **Viento y gravedad** (9C): fuerzas constantes.
+2. **Reacción por objeto** (Inspector): *fijo*, *rígido* (vuela entero) o *se desarma* (con umbral de fuerza y **nivel**: partes, o partes de partes).
+   - La masa sale del área de sus polígonos y es ajustable.
+   - La velocidad angular de cada pieza sale de qué tan descentrado recibe el impulso.
+3. **Física 2D sencilla:** paso fijo, gravedad, suelo (una altura por escena), rebote y fricción; sin choques entre piezas.
+   - Las piezas de **instancias** se simulan sobre sus partes virtuales, sin desvincular.
+4. **Hornear a claves:** botón que escribe claves de x, y y rotación (más opacidad si se desvanece) en cada pieza. Después la pieza se edita como cualquier animación.
+5. **Partículas** (9D): emisor con cantidad, vida, velocidad, dispersión, color y desvanecido, para fuego, humo, polvo, chispas y escombros chicos.
+6. **Extras** (9D): temblor de cámara (claves de ruido en la cámara) y destello (opacidad).
+
+**Partes:**
+- **9A:** motor de física de piezas (desarmar, gravedad, suelo) + campo **Explosión** + simulación en vivo.
+- **9B:** hornear a claves.
+- **9C:** disparo, tornado, viento.
+- **9D:** partículas y temblor de cámara.
+
+**Verificación:**
+- [ ] Una explosión en medio de la calle desarma al perro: sus partes salen hacia afuera según su lado, las cercanas más lejos, y caen al suelo y rebotan.
+- [ ] Al mover el cursor de tiempo hacia atrás y adelante se ve siempre lo mismo (determinista).
+- [ ] Hornear y luego retocar a mano una pieza; Subir y recargar conserva el resultado.
+- [ ] Un tornado levanta y hace girar objetos rígidos; un disparo desarma solo lo que toca.
+
+### Alcance realizado — 9A (2026-11-13)
+Se implementó más que la 9A prevista: también **disparo, tornado, viento y partículas** (de 9C y 9D), porque el usuario pidió tres escenas (meteorito, tornado, disparo). Queda **hornear a claves (9B)**.
+
+- **`Clases/EditorEvento/Fisica.js`** (nuevo):
+  - `TIPOS_EFECTO` con sus parámetros y `MODOS_FISICA`;
+  - `particulasEn()`: sin estado, cada partícula es una fórmula de su edad; modos "chorro" y "remolino";
+  - `SimFisica`: arma los cuerpos y simula a paso fijo (60 por s), determinista, guardando cada paso.
+- **Cuerpos:**
+  - un objeto *rígido* es un cuerpo; uno que *se desarma* aporta sus partes (baja por contenedores sin dibujo, como instancia → raíz del asset; con nivel 2, también las partes de partes);
+  - masa = área de la caja / 6000, entre 0,6 y 4;
+  - **suelo propio** = altura de los pies del objeto al soltarse.
+- **Fuerzas:**
+  - explosión: impulso radial con caída por distancia y sesgo hacia arriba;
+  - disparo: rayo que empuja a la primera pieza que toca, con giro según dónde pega;
+  - tornado: atracción al eje, remolino, elevación y techo;
+  - viento.
+- **Suelo:** rebote, fricción, se apoya sobre un lado y **vuelca** si se inclina más allá de su punto de vuelco.
+- **"Ragdoll":** al soltarse una pieza, la animación propia de su objeto se congela (`_t_congelado`; las instancias usan ese tiempo).
+- **Motor:**
+  - `esEfecto`, `agregarEfecto`, `fijarEfecto`, `fisicaDe`, `fijarFisica`, `dibujarEfectos`;
+  - `fisica.aplicar(t)` en cada cuadro, después de claves e instancias; coloca cada pieza suelta en el espacio de su padre (con espejo y escala).
+- **Interfaz:**
+  - menú **+ Efecto** en el panel Objetos;
+  - Inspector de efecto, con sus parámetros según el tipo;
+  - Inspector de objeto: **Física** (fijo, rígido, se desarma) y nivel;
+  - en el lienzo, iconos de los efectos (radio, columna del tornado, rayo del disparo), que no se muestran en Vista de cámara.
+- **Backend:** `efecto` y `fisica` (Mixed) en el grupo.
+- **Escenas de ejemplo** (script `escenas9.js`; assets nuevos *Meteorito* y *Persona armada*):
+  - **Meteorito (escena):** cae con estela de fuego, explosión con bola de fuego y humo, temblor de cámara; casas, árboles, autos, gente y perro se desarman.
+  - **Tornado (escena):** remolino de polvo que cruza la calle y se lleva todo; la cámara lo sigue.
+  - **Disparo (escena):** el tirador dispara (fogonazo y humo), la víctima (rígida) cae de espaldas y queda tendida, y el perro huye.
+
+**Verificado en el navegador:**
+- [x] Explosión: las piezas se sueltan en el instante, vuelan según su lado y distancia, caen y quedan apoyadas. Moviendo el cursor de tiempo se ve siempre lo mismo.
+- [x] Tornado: levanta y hace girar piezas de casas, árboles, faroles y el auto.
+- [x] Disparo: la víctima es empujada, vuelca y queda tendida a 90° con la animación congelada.
+- [x] Ajuste de valores para que el resultado quede en cuadro: velocidad máxima 1200, masa mínima 0,6, roce con el aire y fricción con el suelo.
+- [x] **Correcciones posteriores:**
+  - el simulador no debe entrar en la copia JSON del motor (referencia circular: el editor no cargaba ninguna escena);
+  - antes de soltarse, la posición de una instancia incluye el avance propio de su asset (el perro "Caminar"), evaluado con su motor (`_deltaInterno`, guardado por paso).
+- [x] **Disparo, opción "Al impactar":**
+  - *pieza* (por defecto) empuja solo lo que toca;
+  - *objeto* desarma todo el objeto alcanzado (sus partes salen en la dirección del disparo, con caída por distancia al impacto, dispersión y giro).
+  - Escena **Disparo 2 (escena)** con la víctima que se desarma. Comprobado: las 6 partes salen hacia atrás y quedan tendidas.
+- [x] Suelo: el "acomodo" al lado más cercano solo actúa cuando la pieza casi no gira, y el freno de giro es más suave. Así las piezas que empujan poco también vuelcan.
+- [ ] Pendiente 9B: hornear a claves.
+- [ ] Sin probar: guardar con Subir una escena con efectos editados en la interfaz (las escenas de ejemplo se crearon directo en la base).
 
 ---
 

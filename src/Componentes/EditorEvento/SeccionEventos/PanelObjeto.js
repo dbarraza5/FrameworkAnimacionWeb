@@ -3,6 +3,7 @@ import axios from "axios";
 import {Cookies} from "react-cookie";
 import {normalizarTransformacion} from "../../../Clases/EditorAnimacion/TransformacionInstancia";
 import {INTERPOLACIONES, MODOS_BUCLE} from "../../../Clases/EditorEvento/Claves";
+import {TIPOS_EFECTO, MODOS_FISICA} from "../../../Clases/EditorEvento/Fisica";
 
 // Propiedades que se pueden animar con fotogramas clave (Fase 7).
 const PROPS_CLAVE = ["x", "y", "rotacion", "escala_x", "escala_y", "opacidad", "zoom"];
@@ -43,6 +44,8 @@ export default function PanelObjeto({refLienzo, seleccion}) {
             opacidad: val("opacidad"), rombos, t_ms: e.tiempoActualMs(),
             // Fase 8A: camara
             es_camara: e.esCamara(unico), zoom: val("zoom"),
+            // Fase 9A: efecto y reaccion fisica
+            es_efecto: e.esEfecto(unico), efecto: g.efecto ? {...g.efecto} : null, fisica: e.fisicaDe(unico),
             plano: e.planoObjeto(unico),
             cam_ancho: g.camara ? g.camara.ancho : null, cam_alto: g.camara ? g.camara.alto : null,
             vista_camara: !!refLienzo.current.configuracion_lienzo.vista_camara,
@@ -327,6 +330,66 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                             }}>
                         <i className="bi bi-link-45deg me-1"/>Desvincular (copia editable)
                     </button>
+                </div>
+            )}
+
+            {/* Fase 9A: parametros de un efecto */}
+            {unico && valores && valores.es_efecto && valores.efecto && (
+                <div className="ed-objeto-campos">
+                    <div className="small fw-semibold mb-1">
+                        <i className={`bi ${(TIPOS_EFECTO[valores.efecto.tipo] || {}).icono || "bi-stars"} me-1 text-warning`}/>
+                        {(TIPOS_EFECTO[valores.efecto.tipo] || {}).etiqueta || valores.efecto.tipo}
+                    </div>
+                    <div className="row g-2">
+                        {((TIPOS_EFECTO[valores.efecto.tipo] || {}).params || []).map(([k, etiqueta, paso]) => (
+                            <div className="col-6" key={k}>
+                                <label className="form-label small mb-0 text-body-secondary">{etiqueta}</label>
+                                {typeof paso === "string" && paso.startsWith("lista:") ? (
+                                    <select className="form-select form-select-sm" value={valores.efecto[k] ?? ""}
+                                            onChange={(e) => ev().fijarEfecto(unico, k, e.target.value)}>
+                                        {paso.slice(6).split(",").map((o) => <option key={o} value={o}>{o}</option>)}
+                                    </select>
+                                ) : paso === "texto" ? (
+                                    <input type="color" className="form-control form-control-sm form-control-color w-100"
+                                           value={valores.efecto[k] || "#000000"}
+                                           onChange={(e) => ev().fijarEfecto(unico, k, e.target.value)}/>
+                                ) : (
+                                    <input type="number" step={paso} className="form-control form-control-sm"
+                                           defaultValue={valores.efecto[k]} key={`${unico}-${k}`}
+                                           onChange={(e) => { const v = parseFloat(e.target.value); if (Number.isFinite(v)) ev().fijarEfecto(unico, k, v); }}/>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="small text-body-secondary mt-1">
+                        Muévelo con el mouse o anima su posición con claves (por ejemplo, un tornado que avanza).
+                        Solo afecta a los objetos que no son "Fijos".
+                    </div>
+                </div>
+            )}
+
+            {/* Fase 9A: como reacciona el objeto a los efectos */}
+            {unico && valores && !valores.es_efecto && !valores.es_camara && (
+                <div className="ed-objeto-campos">
+                    <div className="row g-2">
+                        <div className="col-8">
+                            <label className="form-label small mb-0 text-body-secondary">Física (ante efectos)</label>
+                            <select className="form-select form-select-sm" value={valores.fisica.modo || "fijo"}
+                                    onChange={(e) => ev().fijarFisica(unico, {modo: e.target.value})}>
+                                {Object.entries(MODOS_FISICA).map(([k, v]) => <option key={k} value={k}>{v.etiqueta}</option>)}
+                            </select>
+                        </div>
+                        {valores.fisica.modo === "desarmar" && (
+                            <div className="col-4">
+                                <label className="form-label small mb-0 text-body-secondary">Nivel</label>
+                                <select className="form-select form-select-sm" value={valores.fisica.nivel || 1}
+                                        title="1: sus partes. 2: también las partes de sus partes."
+                                        onChange={(e) => ev().fijarFisica(unico, {nivel: parseInt(e.target.value, 10)})}>
+                                    <option value={1}>1</option><option value={2}>2</option>
+                                </select>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 
