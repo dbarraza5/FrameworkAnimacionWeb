@@ -132,6 +132,52 @@
 .editor-pro .ed-der .ed-objeto-campos .row { --bs-gutter-x: .5rem; }
 .editor-pro .ed-der .ed-objeto-campos .row > .col-6 { flex: 0 0 50%; max-width: 50%; }
 
+/* ---- panel Objetos (Fase 3) ---- */
+.editor-pro .ed-migas { border-bottom: 1px solid var(--ed-borde); white-space: nowrap; overflow-x: auto; }
+.editor-pro .ed-migas .btn-link { text-decoration: none; font-size: 12px; }
+.editor-pro .ed-obj-fila {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px 4px 8px;
+    border-bottom: 1px solid #ffffff0d;
+    cursor: pointer;
+    user-select: none;
+}
+.editor-pro .ed-obj-fila:hover { background: #ffffff0a; }
+.editor-pro .ed-obj-fila.seleccionada { background: #4c8dff2e; box-shadow: inset 2px 0 0 #4c8dff; }
+.editor-pro .ed-obj-fila.oculta .ed-obj-nombre, .editor-pro .ed-obj-fila.oculta .ed-obj-mini { opacity: .4; }
+.editor-pro .ed-obj-mini { flex: 0 0 auto; background: #1b1c1f; border-radius: 3px; }
+.editor-pro .ed-obj-nombre { display: block; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; }
+.editor-pro .ed-obj-partes { display: block; font-size: 10.5px; color: var(--ed-texto-2); }
+.editor-pro .ed-obj-acciones { display: flex; gap: 1px; flex: 0 0 auto; }
+.editor-pro .ed-obj-acciones button {
+    border: 0; background: transparent; color: var(--ed-texto-2);
+    width: 22px; height: 22px; padding: 0; border-radius: 4px; font-size: 12px;
+}
+.editor-pro .ed-obj-acciones button:hover:not(:disabled) { background: #ffffff14; color: #fff; }
+.editor-pro .ed-obj-acciones button:disabled { opacity: .3; }
+.editor-pro .ed-obj-acciones button.activo { color: #ff8a3d; }
+
+/* migas sobre el lienzo al entrar a un objeto */
+.editor-pro .ed-migas-lienzo {
+    position: absolute;
+    top: 26px;
+    left: 26px;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    padding: 3px 10px;
+    border: 1px solid #ff8a3d88;
+    border-radius: 6px;
+    background: #2b2d31ee;
+    color: var(--ed-texto);
+    font-size: 12px;
+}
+.editor-pro .ed-migas-lienzo button { border: 0; background: transparent; color: #9cc0ff; padding: 0; font: inherit; }
+.editor-pro .ed-migas-lienzo button:hover { text-decoration: underline; }
+.editor-pro .ed-migas-lienzo button.actual { color: #ff8a3d; font-weight: 600; }
+
 /* ---- lienzo ---- */
 .editor-pro .ed-lienzo {
     grid-area: lienzo;

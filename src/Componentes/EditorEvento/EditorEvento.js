@@ -6,6 +6,7 @@ import MenuEvento from "./MenuEvento";
 import OffcanvasAnimaciones, {MIME_ANIMACION} from "./SeccionEventos/OffcanvasAnimaciones";
 import NavEventos from "./SeccionEventos/NavEventos";
 import Inspector from "./SeccionEventos/Inspector";
+import PanelObjetosEscena from "./SeccionEventos/PanelObjetosEscena";
 import Lienzo from "../EditorAnimacion/Lienzo";
 import Separador from "./Layout/Separador";
 import BarraEstado from "./Layout/BarraEstado";
@@ -18,7 +19,7 @@ import {actualizarBackup, restaurarState, setNombreAnimacion} from "../../Store/
 import {Cookies} from 'react-cookie';
 import {GestionEvento} from "../../Clases/EditorEvento/GestionEvento";
 import ControlEventoLienzoFigura from "../../Clases/EditorAnimacion/ControlEventoLienzoFigura";
-import {useInterval} from "react-use";
+// (useInterval ya no se usa: el lienzo corre con requestAnimationFrame)
 import TimelineCanvas from "../../Clases/EditorEvento/TimelineCanvas";
 import {
     MODALIDAD_ANIMACION,
@@ -200,10 +201,28 @@ function EditorEvento(props){
         dispatch(setTipoTrabajo(tipo_trabajo))
     }
 
-    useInterval(() => {
-        // procesoAnimacion();
-        gestionEventoLienzo.procesarEventoLienzo(setEventoAnimacion, null)
-    }, startLoopLienzo ? 100 : null);
+    // Bucle del lienzo (Fase 4): requestAnimationFrame, sincronizado con la pantalla
+    // (~60 cuadros por segundo; el navegador lo pausa si la pestana no esta visible).
+    // Antes era useInterval(..., 100) = ~10 cuadros por segundo.
+    const refSetEvento = useRef(setEventoAnimacion);
+    refSetEvento.current = setEventoAnimacion;
+    useEffect(() => {
+        if(!startLoopLienzo) return;
+        let id = null;
+        let errores = 0;
+        const cuadro = () => {
+            try{
+                gestionEventoLienzo.procesarEventoLienzo(refSetEvento.current, null);
+            }catch(e){
+                // un error en un cuadro no debe detener el bucle (se informa pocas veces)
+                if(errores++ < 5) console.error("Error en el cuadro del lienzo:", e);
+            }
+            id = requestAnimationFrame(cuadro);
+        };
+        id = requestAnimationFrame(cuadro);
+        return () => cancelAnimationFrame(id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [startLoopLienzo]);
 
     const procesoAnimacion=()=>{
         if(tipo_modalidad === MODALIDAD_ANIMACION){
@@ -224,6 +243,9 @@ function EditorEvento(props){
     // Fase 2: la seleccion de objetos del lienzo llega a React (Inspector -> Objeto)
     const [objetosSeleccionados, setObjetosSeleccionados] = useState([]);
     refLienzo.current.control_objetos.alCambiar = setObjetosSeleccionados;
+    // Fase 3: ruta de objetos en los que se "entro" (doble clic)
+    const [rutaObjetos, setRutaObjetos] = useState([]);
+    refLienzo.current.control_objetos.alCambiarRuta = setRutaObjetos;
 
     // Solo en desarrollo: acceso desde la consola del navegador para pruebas
     // (ej. cambiar la transformacion de una instancia antes de que existan las
@@ -445,7 +467,7 @@ function EditorEvento(props){
     // ---- Distribucion del editor (Fase 0): tamanos y visibilidad de paneles ----
     const [layout, setLayout] = useState(() => {
         const base = {izq: 320, der: 320, abajo: 230, ver_izq: true, ver_der: true, ver_abajo: true,
-            pestana_der: "inspector", grilla: true, reglas: true};
+            pestana_der: "inspector", pestana_izq: "objetos", grilla: true, reglas: true};
         try{
             return {...base, ...JSON.parse(localStorage.getItem(CLAVE_LAYOUT) || "{}")};
         }catch(e){
@@ -484,6 +506,9 @@ function EditorEvento(props){
         eventoLienzoFigura: eventoLienzoEvento, setEventLienzoFigura: setEventLienzoEvento,
         tipoModalidad: tipo_modalidad, setTipoModalidad: setTipoModalidadTrabajo,
         edicion_figuras, manejadorErrores: props.manejadorErrores,
+        // Fase 3: objeto en el que se "entro" (el arbol de grupos de Movimientos se
+        // limita a sus partes)
+        objetoActivo: rutaObjetos.length ? rutaObjetos[rutaObjetos.length - 1] : null,
     };
 
     const clases = ["editor-pro", `modo-${modo}`,
@@ -563,15 +588,27 @@ function EditorEvento(props){
                 </button>
             </header>
 
-            {/* ---- panel izquierdo: eventos, movimientos, grupos ---- */}
+            {/* ---- panel izquierdo: Objetos de la escena / Eventos ---- */}
             <aside className="ed-panel ed-izq">
-                <div className="ed-cabecera">
-                    <span>Escena</span>
+                <div className="ed-cabecera ed-pestanas">
+                    <div className="d-flex h-100">
+                        {[["objetos", "bi-boxes", "Objetos"], ["eventos", "bi-calendar-event", "Eventos"]].map(([clave, icono, texto]) => (
+                            <button key={clave} type="button"
+                                    className={`ed-pestana ${(layout.pestana_izq || "objetos") === clave ? "activa" : ""}`}
+                                    onClick={() => setLayout((l) => ({...l, pestana_izq: clave}))}>
+                                <i className={`bi ${icono} me-1`}/>{texto}
+                            </button>
+                        ))}
+                    </div>
                     <button className="btn btn-sm p-0 text-secondary" onClick={() => alternar("ver_izq")} title="Ocultar panel">
                         <i className="bi bi-chevron-double-left"/>
                     </button>
                 </div>
-                <div className="ed-cuerpo">
+                {/* ambas pestanas quedan montadas */}
+                <div className={`ed-cuerpo ${(layout.pestana_izq || "objetos") === "objetos" ? "" : "d-none"}`}>
+                    <PanelObjetosEscena refLienzo={refLienzo} ruta={rutaObjetos} seleccion={objetosSeleccionados}/>
+                </div>
+                <div className={`ed-cuerpo ${layout.pestana_izq === "eventos" ? "" : "d-none"}`}>
                     <NavEventos {...props_paneles}/>
                 </div>
                 <Separador orientacion="vertical" titulo="Arrastrar para cambiar el ancho"
@@ -582,6 +619,22 @@ function EditorEvento(props){
             <main className="ed-lienzo">
                 <Lienzo lienzo={eventoLienzoEvento} id="lienzo-evento" editar_animacion={() => {}}
                         setEventLienzoFigura={setEventLienzoEvento}/>
+                {/* Fase 3: migas del objeto en el que se entro (clic = volver a ese nivel) */}
+                {rutaObjetos.length > 0 && (
+                    <div className="ed-migas-lienzo">
+                        <button onClick={() => refLienzo.current.control_objetos.irANivel(0)}>
+                            <i className="bi bi-arrow-left me-1"/>Escena
+                        </button>
+                        {rutaObjetos.map((n, i) => (
+                            <span key={n}>
+                                <i className="bi bi-chevron-right mx-1"/>
+                                <button className={i === rutaObjetos.length - 1 ? "actual" : ""}
+                                        onClick={() => refLienzo.current.control_objetos.irANivel(i + 1)}>{n}</button>
+                            </span>
+                        ))}
+                        <span className="ms-2 opacity-75">· Esc para salir</span>
+                    </div>
+                )}
                 {/* pestanas en el borde para volver a abrir un panel oculto */}
                 {!layout.ver_izq && (
                     <button type="button" className="ed-reabrir izq" onClick={() => alternar("ver_izq")}

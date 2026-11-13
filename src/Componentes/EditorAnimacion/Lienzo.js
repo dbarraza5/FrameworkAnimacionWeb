@@ -112,6 +112,12 @@ function Lienzo(props){
                    onMouseMove={(e)=>eventoMouseMove(e)}
                    onMouseUp={(e)=>eventoMouseUp(e)}
                    onMouseDown={(e)=>eventoMouseDown(e)}
+                   onDoubleClick={(e)=>{
+                       // doble clic nativo (dos clics rapidos pueden caer en el mismo
+                       // cuadro del lienzo y verse como uno solo)
+                       const r = e.target.getBoundingClientRect();
+                       props.lienzo.doble_clic = {x: e.clientX - r.left, y: e.clientY - r.top};
+                   }}
                    onMouseOver={(e)=>eventoMouseEntrada(e)}
                    onMouseOut={(e)=>eventoMouseSalida(e)}
                    tabIndex={0}

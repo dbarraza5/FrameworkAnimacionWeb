@@ -15,6 +15,17 @@ import {
 } from "../../../Store/Configuracion/ConfigEventoSlice";
 import SeleccionGrupoArbol from "./SeleccionGrupoArbol";
 
+// Grupos que muestra el arbol de seleccion: todos, o (Fase 3) solo el sub-arbol del
+// objeto en el que se "entro" en el lienzo, con ese objeto como raiz.
+function gruposDelArbol(props, grupos_estado) {
+    const todos = props.eventoAnimacion?.edicion?.gestion_grupos_originales?.grupos_figuras || grupos_estado || [];
+    const activo = props.objetoActivo;
+    if (!activo) return todos;
+    const nombres = new Set(props.eventoAnimacion.edicion.subarbol(activo, todos).map((g) => g.nombre));
+    return todos.filter((g) => nombres.has(g.nombre))
+        .map((g) => (g.nombre === activo ? {...g, nodo_padre: "root"} : g));
+}
+
 function PanelMovimientos(props) {
     const [showModalEditar, setShowEditarModal] = useState(false);
     const [showModalAgregar, setShowAgregarModal] = useState(false);
@@ -167,7 +178,7 @@ function PanelMovimientos(props) {
         <div>
             {/* Aquí insertas el nuevo componente ajustado */}
             <SeleccionGrupoArbol
-                datosFiguras={grupos}
+                datosFiguras={gruposDelArbol(props, grupos)}
                 id_grupo_seleccionado={id_grupo_seleccionado}
                 alSeleccionarGrupo={seleccion_grupo} // Tu función de estado aquí
             />

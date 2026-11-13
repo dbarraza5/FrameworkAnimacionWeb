@@ -32,6 +32,57 @@ export default class ControlObjetosLienzo {
     seleccion = [];          // nombres de objetos seleccionados
     arrastre = null;         // operacion en curso
     alCambiar = null;        // callback(seleccion) -> React (Inspector)
+    // Fase 3: objetos en los que se "entro" (doble clic), del mas externo al mas
+    // interno. Dentro de un objeto, lo seleccionable son sus partes (grupos hijos).
+    ruta = [];
+    alCambiarRuta = null;    // callback(ruta) -> React (panel Objetos, migas)
+    _ultimo_clic = null;     // para detectar doble clic
+
+    contexto() {
+        return this.ruta.length ? this.ruta[this.ruta.length - 1] : "root";
+    }
+
+    // Objetos que se pueden seleccionar en el contexto actual (visibles y sin bloquear),
+    // en orden de dibujo.
+    seleccionables(ev) {
+        return ev.objetosEscena(this.contexto()).filter((n) => ev.esVisible(n) && !ev.estaBloqueado(n));
+    }
+
+    _notificarRuta() {
+        if (this.alCambiarRuta) this.alCambiarRuta([...this.ruta]);
+    }
+
+    // Entrar a un objeto: sus partes pasan a ser lo seleccionable; el resto se atenua.
+    entrar(nombre) {
+        this.ruta = [...this.ruta, nombre];
+        this.seleccion = [];
+        this.arrastre = null;
+        this._notificar();
+        this._notificarRuta();
+    }
+
+    // Volver al nivel `n` de la ruta (0 = la escena completa).
+    irANivel(n) {
+        const salida = this.ruta[n];   // al salir, queda seleccionado el objeto del que se salio
+        this.ruta = this.ruta.slice(0, Math.max(0, n));
+        this.seleccion = salida ? [salida] : [];
+        this.arrastre = null;
+        this._notificar();
+        this._notificarRuta();
+    }
+
+    salir() {
+        if (this.ruta.length) this.irANivel(this.ruta.length - 1);
+    }
+
+    // Transformaciones de los ancestros de `nombre` (sin la propia): las operaciones
+    // sobre una parte se calculan en el espacio de su objeto padre.
+    cadenaPadre(ev, nombre) {
+        const g = ev.gestion_grupos.getGrupo(nombre);
+        if (!g || !g.nodo_padre || g.nodo_padre === "root") return [];
+        const padre = ev.gestion_grupos.getGrupo(g.nodo_padre);
+        return padre ? cadenaTransformaciones(padre, mapaGrupos(ev.gestion_grupos.grupos_figuras)) : [];
+    }
 
     // ---- geometria ----
 
@@ -87,13 +138,32 @@ export default class ControlObjetosLienzo {
     procesar(lienzo) {
         const ev = lienzo.eventos_;
         const io = lienzo.eventoLienzoEvento;
-        // descartar seleccionados que ya no existen
-        const existentes = new Set(ev.objetosEscena());
+        // si un objeto de la ruta ya no existe (se borro o renombro), volver a la escena
+        if (this.ruta.some((n) => !ev.gestion_grupos.getGrupo(n))) {
+            this.ruta = [];
+            this._notificarRuta();
+        }
+        // descartar seleccionados que ya no existen (o no son seleccionables)
+        const existentes = new Set(this.seleccionables(ev));
         if (this.seleccion.some((n) => !existentes.has(n))) {
             this.seleccion = this.seleccion.filter((n) => existentes.has(n));
             this._notificar();
         }
-        const usado = this._procesarRaton(lienzo, ev, io);
+        let usado = this._procesarRaton(lienzo, ev, io);
+        // doble clic nativo (Lienzo.js): entrar al objeto que esta bajo el puntero
+        if (io.doble_clic) {
+            const p = lienzo.configuracion_lienzo.pantallaAMundo(io.doble_clic.x, io.doble_clic.y);
+            io.doble_clic = null;
+            const objetivo = this.seleccionables(ev).slice().reverse().find((n) => {
+                const geo = this.geometria(ev, n);
+                return geo && this.contiene(geo, p);
+            });
+            if (objetivo && ev.objetosEscena(objetivo).length) {
+                this.arrastre = null;
+                this.entrar(objetivo);
+                usado = true;
+            }
+        }
         this._teclado(lienzo, ev, io);
         return usado;
     }
@@ -155,10 +225,20 @@ export default class ControlObjetosLienzo {
         }
 
         // --- clic sobre un objeto (el de mas arriba primero) ---
-        const objetos = ev.objetosEscena().slice().reverse();
+        const objetos = this.seleccionables(ev).slice().reverse();
         for (const nombre of objetos) {
             const geo = this.geometria(ev, nombre);
             if (geo && this.contiene(geo, m)) {
+                // doble clic sobre el mismo objeto: entrar a editar sus partes
+                const ahora = performance.now();
+                const doble = this._ultimo_clic && this._ultimo_clic.nombre === nombre
+                    && ahora - this._ultimo_clic.t < 450;
+                this._ultimo_clic = {nombre, t: ahora};
+                if (doble && !shift && ev.objetosEscena(nombre).length) {
+                    this._ultimo_clic = null;
+                    this.entrar(nombre);
+                    return true;
+                }
                 if (shift) {
                     this.seleccion = this.seleccion.includes(nombre)
                         ? this.seleccion.filter((n) => n !== nombre)
@@ -187,8 +267,11 @@ export default class ControlObjetosLienzo {
         if (tipo !== "mover") ev.asegurarTransformacion(nombre);
         // geometria de nuevo: asegurarTransformacion pudo crear el ancla
         const g = tipo !== "mover" ? this.geometria(ev, nombre) : geo;
+        // todo el arrastre se calcula en el espacio del objeto padre (una parte de un
+        // objeto rotado/escalado se mueve "dentro" de el)
+        const cadena_padre = this.cadenaPadre(ev, nombre);
         this.arrastre = {
-            tipo, manija, inicio: m, nombre,
+            tipo, manija, inicio: destransformarPunto(cadena_padre, m), nombre, cadena_padre,
             t0: g.t, ancla: g.ancla,
             posiciones: Object.fromEntries(this.seleccion.map((n) => [n, ev.posicionObjeto(n)])),
             // vector ancla -> manija en el espacio propio (sin escala ni rotacion)
@@ -196,8 +279,9 @@ export default class ControlObjetosLienzo {
         };
     }
 
-    _arrastrar(ev, m, shift) {
+    _arrastrar(ev, m_dibujo, shift) {
         const a = this.arrastre;
+        const m = destransformarPunto(a.cadena_padre || [], m_dibujo);
         if (a.tipo === "mover") {
             const dx = m.x - a.inicio.x, dy = m.y - a.inicio.y;
             for (const [n, p] of Object.entries(a.posiciones)) {
@@ -243,8 +327,19 @@ export default class ControlObjetosLienzo {
     _teclado(lienzo, ev, io) {
         const cola = io.cola_teclas || [];
         io.cola_teclas = [];
-        if (!this.seleccion.length) return;
+        // cada pulsacion se procesa en orden (dos Esc seguidos: deseleccionar y salir)
         for (const k of cola) {
+            if (k.code === "Escape") {
+                // Esc: primero deselecciona; sin seleccion, sale del objeto en que se entro
+                if (this.seleccion.length) {
+                    this.seleccion = [];
+                    this._notificar();
+                } else {
+                    this.salir();
+                }
+                continue;
+            }
+            if (!this.seleccion.length) continue;   // el resto actua sobre la seleccion
             const paso = k.shift ? 10 : 1;
             const flechas = {ArrowLeft: [-paso, 0], ArrowRight: [paso, 0], ArrowUp: [0, -paso], ArrowDown: [0, paso]};
             if (flechas[k.code]) {
@@ -254,11 +349,6 @@ export default class ControlObjetosLienzo {
                 this.seleccion.forEach((n) => ev.eliminarObjeto(n));
                 this.seleccion = [];
                 this._notificar();
-                return;
-            } else if (k.code === "Escape") {
-                this.seleccion = [];
-                this._notificar();
-                return;
             } else if (k.code === "KeyD" && k.ctrl) {
                 const copias = this.seleccion.map((n) => ev.duplicarObjeto(n)).filter(Boolean);
                 if (copias.length) this.seleccion = copias;
@@ -269,12 +359,30 @@ export default class ControlObjetosLienzo {
 
     // ---- dibujo (dentro del wrap de zoom del lienzo; ox/oy = paneo) ----
     dibujar(ctx, lienzo) {
-        if (!this.seleccion.length) return;
         const ev = lienzo.eventos_;
         const c = lienzo.configuracion_lienzo;
         const ox = c.x_delta_original, oy = c.y_delta_original;
         const px = 1 / (c.escala || 1);
         const P = (p) => ({x: p.x + ox, y: p.y + oy});
+
+        // contorno punteado del objeto en el que se entro (contexto de edicion)
+        if (this.ruta.length) {
+            const geo = this.geometria(ev, this.contexto());
+            if (geo) {
+                const q = [[0, 0], [1, 0], [1, 1], [0, 1]].map(([u, v]) => P(geo.aMundo(geo.local(u, v))));
+                ctx.save();
+                ctx.setLineDash([6 * px, 4 * px]);
+                ctx.lineWidth = 1.5 * px;
+                ctx.strokeStyle = "#ff8a3d";
+                ctx.beginPath();
+                q.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+                ctx.closePath();
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        if (!this.seleccion.length) return;
         ctx.save();
         ctx.lineWidth = 1.5 * px;
         ctx.strokeStyle = COLOR;

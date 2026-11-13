@@ -9,6 +9,14 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (más tarde)**
+- **El editor ahora corre a 60 cuadros por segundo** (antes ~10): la animación y el arrastre de objetos se ven fluidos, incluso con 20 perros caminando a la vez.
+
+**2026-11-13 (noche)**
+- **Panel Objetos:** la pestaña *Objetos* del panel izquierdo lista los objetos de la escena con miniatura; desde ahí se ocultan, bloquean, renombran y se cambian de capa. Ver [§7c](#7c-panel-objetos-y-entrar-a-un-objeto).
+- **Entrar a un objeto** con doble clic para editar sus partes (rotar la cabeza, mover una pata…); lo demás se atenúa. Esc para salir.
+- Ocultar un grupo ahora oculta también sus partes.
+
 **2026-11-13 (tarde)**
 - **Seleccionar y manipular objetos con el mouse:** clic sobre un objeto (perro, casa…) y aparecen manijas para **mover, escalar, rotar y reflejar**. El Inspector muestra el objeto con sus valores editables. Atajos: flechas, Supr, Ctrl+D, Esc. Ver [§7b](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar).
 - **Un objeto reflejado camina hacia donde mira,** y uno escalado avanza en proporción a su tamaño.
@@ -42,6 +50,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 6. [Movimientos](#6-movimientos)
 7. [Biblioteca: agregar objetos a la escena](#7-biblioteca-agregar-objetos-a-la-escena)
 7b. [Objetos en la escena: seleccionar, mover, escalar, rotar](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar)
+7c. [Panel Objetos y entrar a un objeto](#7c-panel-objetos-y-entrar-a-un-objeto)
 8. [Línea de tiempo](#8-línea-de-tiempo)
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
@@ -113,7 +122,9 @@ Hay dos editores:
 
 ### Paneles
 
-- **Escena (izquierda):** el evento seleccionado y los botones **Lista**, **Árbol** y **Nuevo**. Tiene además las pestañas **Grupos** (reemplazar grupos) y **Config**.
+- **Panel izquierdo:** tiene dos pestañas.
+  - **Objetos:** la lista de objetos de la escena ([§7c](#7c-panel-objetos-y-entrar-a-un-objeto)).
+  - **Eventos:** el evento seleccionado, los botones **Lista**, **Árbol** y **Nuevo**, y las sub-pestañas **Grupos** (reemplazar grupos) y **Config**.
 - **Inspector (derecha):** propiedades del evento seleccionado, en cuatro secciones: **Evento**, **Movimiento**, **Script** y **Macro**.
 - **Biblioteca (derecha, segunda pestaña):** las animaciones de tus proyectos en miniatura.
 - **Línea de tiempo (abajo).**
@@ -152,7 +163,7 @@ Hay dos editores:
 - **Lista:** todos los eventos. El botón ✏️ de una fila lo selecciona.
 - **Árbol:** los eventos como jerarquía.
 
-Al abrir el editor queda seleccionado `EventoGeneral`. El evento seleccionado se muestra en el panel Escena, el Inspector y la línea de tiempo.
+Al abrir el editor queda seleccionado `EventoGeneral`. El evento seleccionado se muestra en la pestaña Eventos del panel izquierdo, el Inspector y la línea de tiempo. Los botones Nuevo, Lista y Árbol están en esa pestaña.
 
 ### Propiedades (Inspector → Evento)
 
@@ -245,7 +256,7 @@ En la pestaña **Biblioteca** del panel derecho:
 - Si después cambias la animación original, las copias no se actualizan.
 - Ambas cosas están planificadas.
 
-> **Grupos → Reemplazar grupos…** (en el panel Escena) hace otra cosa: **reemplaza todos** los grupos del editor de eventos por los de una animación.
+> **Grupos → Reemplazar grupos…** (pestaña Eventos del panel izquierdo) hace otra cosa: **reemplaza todos** los grupos del editor de eventos por los de una animación.
 
 ---
 
@@ -295,6 +306,35 @@ Un **objeto** es cada grupo de primer nivel que tiene dibujo: el `perro`, una in
   - escalado, **avanza en proporción** y no "patina".
 
 Recuerda **Subir** para guardar los cambios.
+
+---
+
+## 7c. Panel Objetos y entrar a un objeto
+
+El panel izquierdo tiene dos pestañas: **Objetos** (la lista de la escena) y **Eventos** (selección de eventos, grupos y configuración).
+
+### La lista de objetos
+
+Cada fila muestra la miniatura del objeto, su nombre y cuántas partes tiene. **Arriba** está lo que se dibuja **adelante**.
+
+| Acción | Cómo |
+|---|---|
+| Seleccionar | Clic en la fila (Shift + clic suma a la selección) |
+| Entrar a sus partes | Doble clic en la fila |
+| Renombrar | ✏️, escribir y Enter (Esc cancela). Los eventos que lo usan se actualizan solos. |
+| Traer adelante / llevar atrás | ▲ / ▼ |
+| Ocultar / mostrar | 👁 (oculta también todas sus partes) |
+| Bloquear | 🔒: el objeto no se puede seleccionar en el lienzo. Útil para fondos y edificios. |
+
+### Entrar a un objeto
+
+**Doble clic** sobre un objeto (en el lienzo o en la lista) entra a editar sus **partes**:
+- **Partes seleccionables:** por ejemplo, la cabeza, el cuerpo o una pata del perro. Se seleccionan y manipulan con las mismas manijas de [§7b](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar).
+- **Partes de partes:** si una parte tiene partes (la cabeza tiene oreja, ojo y nariz), se puede volver a entrar con doble clic.
+- **Lo demás se ve atenuado** y no se puede seleccionar. El objeto activo se marca con un contorno naranja punteado.
+- **Dónde estás:** la ruta aparece arriba del lienzo y de la lista ("Escena › perro"). Haz clic en un nivel para volver a él.
+- **Salir:** **Esc** primero deselecciona y, sin selección, sale un nivel.
+- **Movimientos:** en Inspector → Movimiento, el árbol de grupos muestra solo las partes del objeto activo.
 
 ---
 
@@ -456,5 +496,4 @@ EventoGeneral (0 – 6,5 s)
 - **Movimientos de Figuras:** afectan a los hijos directos, no a los nietos.
 - **Sin sesión:** el editor muestra un error en vez de ir al inicio de sesión.
 - **Menú Archivo:** todavía no tiene Importar, Guardar como ni Deshacer/Rehacer en el editor de eventos (el editor de dibujo sí tiene deshacer).
-- **Fluidez:** el lienzo se actualiza unas 10 veces por segundo.
 - **Script y Macro:** en desarrollo.

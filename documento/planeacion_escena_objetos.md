@@ -60,8 +60,8 @@ Lo implementado en la rama `animacion` del frontend:
 | Biblioteca de animaciones (offcanvas con miniaturas) + soltar como instancia (D3) | **Sin commit** | `OffcanvasAnimaciones.js`, `Miniatura.js`, `GestionEvento.agregarInstanciaAnimacion` |
 
 **Limitaciones conocidas que afectan a este plan:**
-- El lienzo se refresca cada 100 ms (≈10 cuadros por segundo) y el motor escribe en consola en cada cuadro.
-- En cada cuadro se clonan **todos** los grupos (`grupos_trabajo`): con muchos objetos va a pesar.
+- ~~El lienzo se refresca cada 100 ms y el motor escribe en consola en cada cuadro~~ → resuelto en la Fase 4 (60 cuadros por segundo).
+- ~~En cada cuadro se clonan **todos** los grupos (`grupos_trabajo`)~~ → resuelto en la Fase 4 (copia al escribir).
 - No hay bucle de eventos ni de movimientos (`bucle`/`tiempo_bucle` existen en el modelo pero no se usan).
 - Las instancias son copias (D5) y entran **quietas**: el dibujo se copia, los eventos del asset no.
 - `grupoFigurasSchema` (backend) es estricto: cualquier campo nuevo en un grupo (ej. `transformacion`) **Mongoose lo descarta al guardar** si no se agrega al schema.
@@ -354,7 +354,7 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 
 ---
 
-## Fase 3 — Panel de objetos de la escena + entrar/salir de un objeto
+## Fase 3 — Panel de objetos de la escena + entrar/salir de un objeto — IMPLEMENTADA
 
 **Objetivo:** que una escena con muchos objetos siga siendo manejable (D6).
 
@@ -369,9 +369,40 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 - [ ] Esc vuelve a la escena con la selección del objeto intacta.
 - [ ] Ocultar y bloquear desde el panel funciona y persiste al guardar.
 
+### Alcance realizado (2026-11-13)
+
+1. **Panel "Objetos"** (`SeccionEventos/PanelObjetosEscena.js`): el panel izquierdo tiene pestañas **Objetos** (por defecto) y **Eventos** (el contenido anterior).
+   - Cada fila: miniatura, nombre, cantidad de partes y botones Renombrar, Subir/Bajar capa, Visible y Bloquear. Arriba va lo que se dibuja adelante.
+   - Clic = seleccionar (Shift suma); doble clic = entrar.
+   - Migas "Escena › perro" arriba de la lista.
+   - **Cambio respecto al plan:** el orden de capa se cambia con flechas ▲/▼, no arrastrando (más simple y sin ambigüedad).
+2. **Entrar a un objeto** (`ControlObjetosLienzo.ruta`):
+   - Con doble clic en el lienzo (evento nativo `dblclick`) o en la lista, lo seleccionable pasan a ser sus **partes** (grupos hijos con dibujo). Se mueven, escalan y rotan con las mismas manijas; sirve también para partes de partes.
+   - Las operaciones sobre una parte se calculan en el espacio de su objeto padre, aunque esté rotado o escalado.
+   - Lo que queda fuera se dibuja **atenuado** (25 %), con contorno naranja punteado del objeto activo y migas sobre el lienzo.
+   - **Esc** deselecciona; si no hay selección, sale un nivel (y deja seleccionado el objeto del que se salió).
+   - En Inspector → Movimiento, el árbol de grupos se limita al objeto activo.
+3. **Bloqueado:** no se puede seleccionar en el lienzo. Se guarda como la clase `"bloqueado"` en `clases`, que ya existe en el esquema: **sin cambios en el backend**.
+4. **Visibilidad heredada:** ocultar un grupo ahora oculta también a sus descendientes (antes solo al grupo).
+5. **Motor:** `objetosEscena(padre)`, `limitesObjeto` y `asegurarTransformacion` calculan con el árbol completo (sirven para partes); `esVisible` / `fijarVisible`, `estaBloqueado` / `fijarBloqueado`, `moverCapa` (renumera las capas de los hermanos) y `renombrarObjeto` (actualiza hijos, eventos que lo referencian y movimientos). `duplicarObjeto` pone la copia encima de sus hermanos.
+6. **Teclado:** las pulsaciones de la cola se procesan todas y en orden (dos Esc seguidos: deseleccionar y salir).
+
+**Verificado en el navegador:**
+- [x] Panel Objetos con el perro (miniatura, "7 partes").
+- [x] Doble clic en el perro → migas, contorno naranja, la lista muestra sus 7 partes con miniaturas.
+- [x] Dentro del perro: seleccionar y **rotar la cabeza** con su manija.
+- [x] Ocultar la cola con el ojo → desaparece del lienzo y la fila se atenúa.
+- [x] Esc, Esc → deselecciona y sale; el perro queda seleccionado en la escena.
+- [x] Duplicar y entrar a la copia → el perro original se ve atenuado; las partes de la copia aparecen renombradas (`perro_1_cabeza`…).
+- [x] Bloquear el perro → clic sobre él en el lienzo no lo selecciona.
+- [x] Renombrar `perro_1` → `perro_chico` desde la lista; sus 7 partes siguen colgando de él.
+- [ ] Escena con 10+ objetos: no probado (no hay tantos assets todavía).
+- [ ] Movimientos de una parte en el timeline estando "dentro": no probado.
+- [ ] Persistencia de visible/bloqueado al guardar y recargar: no probado (para no escribir datos de prueba).
+
 ---
 
-## Fase 4 — Rendimiento base
+## Fase 4 — Rendimiento base — IMPLEMENTADA
 
 **Objetivo:** que la escena se mueva fluida antes de llenarla de objetos.
 
@@ -384,6 +415,33 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 **Verificación:**
 - [ ] Escena con 20 perros: animación fluida (objetivo ≥ 50 cuadros por segundo en un equipo normal).
 - [ ] Los resultados del simulador no cambian (mismas poses en los mismos instantes).
+
+### Alcance realizado (2026-11-13)
+
+1. **Bucle con `requestAnimationFrame`** (`EditorEvento.js`): reemplaza `useInterval(…, 100)`. Va sincronizado con la pantalla (~60 cuadros por segundo) y el navegador lo pausa con la pestaña oculta. Un error en un cuadro no detiene el bucle (se informa en consola, como máximo 5 veces).
+2. **Logs por cuadro eliminados:** los dos `console.log` de `GestionMovimientos` que corrían en cada cuadro en Circular y Oscilatorio (este serializaba JSON en cada cuadro y lo usa la caminata). Los demás logs del motor ocurren solo ante acciones (cargar, reproducir…), no por cuadro.
+3. **Copia al escribir en `grupos_trabajo`:** en cada cuadro se hace una copia superficial de los grupos; la lista de figuras de un grupo se clona recién cuando un movimiento de figuras la modifica. Las listas no clonadas se comparten con los originales; la copia en vivo no modifica sus figuras (verificado por búsqueda en el código).
+4. **Consultas O(n²) → O(n) por cuadro:**
+   - `GestionEvento._indice` (nombre → grupo, padre → hijos, "tiene figuras") para `subarbol` y `objetosEscena`.
+   - Mapas por nombre en `procesandoEventos`, donde antes había `getGrupo` (recorrido lineal) por cada grupo.
+   - `limitesObjeto` usa las posiciones absolutas que el dibujo ya calcula, sin clonar todos los grupos.
+5. **Medición:** la barra de estado ya mostraba los cuadros por segundo (Fase 0); para medir el costo de cada cuadro se instrumentó `procesarEventoLienzo` desde la consola.
+
+**Verificado (Chrome, reproduciendo, medido durante 3 s):**
+
+| Escena | Cuadros por segundo | ms por cuadro (promedio / p95) |
+|---|---|---|
+| 1 perro | 60 | 3,6 / 7,5 |
+| 20 perros (19 copias quietas) | 60 | 5,3 / 8,3 |
+| **20 perros caminando** (180 movimientos activos, 221 grupos) | **60** | **7,8 / 13,9** |
+
+- [x] Escena con 20 perros caminando: 60 cuadros por segundo (antes el tope era ~10 por el intervalo de 100 ms).
+- [x] **Resultados idénticos:** con el simulador se corrió el motor de antes (commit `cbdd393`) y el nuevo, volcando todas las coordenadas de todas las figuras en 9 instantes, más una segunda visita a un instante ya calculado. Los dos volcados son byte a byte iguales, lo que confirma que compartir las listas no altera los originales.
+
+**Queda para más adelante:**
+- Objetos estáticos dibujados una sola vez en un canvas oculto (Fase 8).
+- `ControlObjetosLienzo` sigue recorriendo los objetos en cada clic (no en cada cuadro), así que no afecta la fluidez.
+- Con cientos de objetos convendría un índice espacial.
 
 ---
 

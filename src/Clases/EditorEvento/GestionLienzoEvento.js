@@ -403,6 +403,19 @@ class GestionLienzoEvento{
         // y a notar cuando se volvio exactamente a (0,0).
         this.configuracion_lienzo.dibujarGrilla(ctx);
 
+        // Fase 3: dentro de un objeto, todo lo que no es parte de el se ve atenuado
+        const imprimir = this.eventos_.imprimir_animacion;
+        if(imprimir){
+            const ruta = this.control_objetos.ruta;
+            if(ruta.length){
+                const lista = this.eventos_.gestion_grupos.grupos_figuras;
+                const dentro = new Set(this.eventos_.subarbol(ruta[ruta.length - 1], lista).map((g) => g.nombre));
+                imprimir.atenuados = new Set(lista.filter((g) => !dentro.has(g.nombre)).map((g) => g.nombre));
+            }else{
+                imprimir.atenuados = null;
+            }
+        }
+
         this.eventos_.imprimirEventos();
 
         if(this.tipo_modalidad !== MODALIDAD_MOVIMIENTOS){
@@ -555,6 +568,7 @@ class GestionLienzoEvento{
         // pulsaciones no consumidas en este cuadro (ej. en la modalidad Movimiento) se
         // descartan, para que no se ejecuten mas tarde en otro contexto
         this.eventoLienzoEvento.cola_teclas = [];
+        this.eventoLienzoEvento.doble_clic = null;
     }
 
     // Devuelve true si el click de este tick fue "reclamado" por algo del lienzo

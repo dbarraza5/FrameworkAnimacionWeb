@@ -175,7 +175,6 @@ class GestionMovimientos{
                 break;
 
             case MOV_CIRCULAR:
-                console.log(datos)
                 const circ = movCircular(
                     tiempo,
                     datos.pivote_x,
@@ -196,7 +195,6 @@ class GestionMovimientos{
                     parseFloat(datos.amplitudY) || 0,
                     parseFloat(datos.frecuenciaY) || 0
                 );
-                console.log(JSON.parse(JSON.stringify(osc)))
                 x = osc.x;
                 y = osc.y;
                 break

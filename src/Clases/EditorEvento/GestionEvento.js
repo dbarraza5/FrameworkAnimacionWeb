@@ -32,6 +32,7 @@ class GestionEvento{
     movimientos_grupos = {};
     movimientos_figuras = {};
     grupos_trabajo = [];  // pose de las figuras del frame actual (ver procesandoEventos)
+    _figuras_clonadas = new Set();  // grupos de grupos_trabajo con figuras ya clonadas
     copia_grupos = [];
     gestion_eventos = null;
     gestion_grupos = null;
@@ -349,37 +350,137 @@ class GestionEvento{
     // el cambio se vea en el mismo cuadro.
     // ================================================================
 
+    // Indice de una lista de grupos (Fase 4: estas consultas corren en cada cuadro):
+    // nombre -> grupo, padre -> hijos y "tiene figuras en su sub-arbol". O(n).
+    _indice(lista){
+        const por_nombre = new Map();
+        const hijos = new Map();
+        for(const g of lista){
+            por_nombre.set(g.nombre, g);
+            if(!hijos.has(g.nodo_padre)) hijos.set(g.nodo_padre, []);
+            hijos.get(g.nodo_padre).push(g);
+        }
+        const memo = new Map();
+        const con_figuras = (nombre, visitando = new Set()) => {
+            if(memo.has(nombre)) return memo.get(nombre);
+            if(visitando.has(nombre)) return false;   // ciclo en nodo_padre
+            visitando.add(nombre);
+            const g = por_nombre.get(nombre);
+            const r = (!!g && (g.lista_figuras || []).length > 0)
+                || (hijos.get(nombre) || []).some((h) => con_figuras(h.nombre, visitando));
+            memo.set(nombre, r);
+            return r;
+        };
+        return {por_nombre, hijos, con_figuras};
+    }
+
     // Grupo y todos sus descendientes, de una lista de grupos.
     subarbol(nombre, lista){
+        const {por_nombre, hijos} = this._indice(lista);
         const resultado = [];
         const pendientes = [nombre];
         const vistos = new Set();
         while(pendientes.length){
-            const n = pendientes.shift();
+            const n = pendientes.pop();
             if(vistos.has(n)) continue;
             vistos.add(n);
-            const g = lista.find((x) => x.nombre === n);
+            const g = por_nombre.get(n);
             if(g) resultado.push(g);
-            lista.filter((x) => x.nodo_padre === n).forEach((x) => pendientes.push(x.nombre));
+            (hijos.get(n) || []).forEach((x) => pendientes.push(x.nombre));
         }
         return resultado;
     }
 
     // Nombres de los objetos de la escena, en orden de dibujo (el ultimo queda arriba).
-    objetosEscena(){
-        const lista = this.gestion_grupos.grupos_figuras;
-        return lista
-            .filter((g) => g.nodo_padre === "root")
-            .filter((g) => this.subarbol(g.nombre, lista).some((x) => (x.lista_figuras || []).length > 0))
+    objetosEscena(padre = "root"){
+        // (con `padre` distinto de "root": las partes de un objeto en el que se "entro",
+        // Fase 3)
+        const {hijos, con_figuras} = this._indice(this.gestion_grupos.grupos_figuras);
+        return (hijos.get(padre) || [])
+            .filter((g) => con_figuras(g.nombre))
             .sort((a, b) => (Number(a.capa) || 0) - (Number(b.capa) || 0))
             .map((g) => g.nombre);
     }
 
-    // Rectangulo del objeto en su espacio propio (sin su transformacion), con la
-    // pose actual (en vivo).
+    // Rectangulo del objeto en su espacio propio (sin su transformacion ni la de sus
+    // ancestros), con la pose actual (en vivo). Usa las posiciones absolutas
+    // (cx_solid) que el dibujo calcula en cada cuadro, sin clonar nada; si todavia no
+    // existen (primer cuadro), las calcula sobre una copia.
     limitesObjeto(nombre){
         const sub = this.subarbol(nombre, this.gestion_grupos.grupos_figuras);
-        return sub.length ? limitesGrupos(prepararGrupos(sub)) : null;
+        if(!sub.length) return null;
+        if(sub.every((g) => Number.isFinite(g.cx_solid) && Number.isFinite(g.cy_solid))){
+            return limitesGrupos(sub);
+        }
+        const nombres = new Set(sub.map((g) => g.nombre));
+        return limitesGrupos(prepararGrupos(this.gestion_grupos.grupos_figuras).filter((g) => nombres.has(g.nombre)));
+    }
+
+    // ---- propiedades de objeto para el panel de la escena (Fase 3) ----
+
+    esVisible(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return !!g && g.visible !== false;
+    }
+
+    fijarVisible(nombre, visible){
+        this._ambos(nombre).forEach((g) => { g.visible = !!visible; });
+    }
+
+    // "Bloqueado" (no se puede seleccionar en el lienzo) se guarda como la clase
+    // "bloqueado" en `clases`, que ya existe en el esquema del backend.
+    estaBloqueado(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return !!g && (g.clases || []).includes("bloqueado");
+    }
+
+    fijarBloqueado(nombre, bloqueado){
+        this._ambos(nombre).forEach((g) => {
+            const clases = (g.clases || []).filter((c) => c !== "bloqueado");
+            g.clases = bloqueado ? [...clases, "bloqueado"] : clases;
+        });
+    }
+
+    // Sube (+1) o baja (-1) el objeto un lugar en el orden de dibujo entre sus
+    // hermanos, renumerando las capas de todos ellos (0, 1, 2...).
+    moverCapa(nombre, direccion){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!g) return;
+        const hermanos = this.gestion_grupos_originales.grupos_figuras
+            .filter((x) => x.nodo_padre === g.nodo_padre)
+            .sort((a, b) => (Number(a.capa) || 0) - (Number(b.capa) || 0));
+        const i = hermanos.findIndex((x) => x.nombre === nombre);
+        const j = i + direccion;
+        if(i < 0 || j < 0 || j >= hermanos.length) return;
+        [hermanos[i], hermanos[j]] = [hermanos[j], hermanos[i]];
+        hermanos.forEach((h, k) => this._ambos(h.nombre).forEach((x) => { x.capa = k; }));
+    }
+
+    // Renombra un objeto (grupo): actualiza los hijos (nodo_padre) y los eventos que
+    // lo referencian. Devuelve un mensaje de error o null si salio bien.
+    renombrarObjeto(viejo, nuevo){
+        nuevo = String(nuevo || "").trim();
+        if(!nuevo) return "El nombre no puede estar vacío.";
+        if(nuevo === viejo) return null;
+        if(nuevo === "root") return "Nombre reservado.";
+        if(this.gestion_grupos_originales.getGrupo(nuevo)) return `Ya existe un grupo llamado "${nuevo}".`;
+        for(const gestion of [this.gestion_grupos_originales, this.gestion_grupos]){
+            for(const g of gestion.grupos_figuras){
+                if(g.nombre === viejo) g.nombre = nuevo;
+                if(g.nodo_padre === viejo) g.nodo_padre = nuevo;
+            }
+        }
+        for(const e of this.eventos){
+            for(const o of e.evento.objetos || []){
+                if(o.id_objeto === viejo) o.id_objeto = nuevo;
+            }
+        }
+        if(this.movimientos_grupos[viejo]){
+            this.movimientos_grupos[nuevo] = this.movimientos_grupos[viejo];
+            delete this.movimientos_grupos[viejo];
+        }
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        return null;
     }
 
     // Los dos grupos (original y en vivo) de un nombre.
@@ -394,9 +495,12 @@ class GestionEvento{
         const original = this.gestion_grupos_originales.getGrupo(nombre);
         if(!original) return null;
         if(!original.transformacion){
-            const sub = this.subarbol(nombre, this.gestion_grupos_originales.grupos_figuras);
-            const lim = limitesGrupos(prepararGrupos(sub));
-            const origen_x = parseFloat(original.cx) || 0, origen_y = parseFloat(original.cy) || 0;
+            // posiciones absolutas con todo el arbol (sirve tambien para partes)
+            const nombres = new Set(this.subarbol(nombre, this.gestion_grupos_originales.grupos_figuras).map((g) => g.nombre));
+            const orden = prepararGrupos(this.gestion_grupos_originales.grupos_figuras);
+            const lim = limitesGrupos(orden.filter((g) => nombres.has(g.nombre)));
+            const propio = orden.find((g) => g.nombre === nombre);
+            const origen_x = propio ? propio.cx_solid : 0, origen_y = propio ? propio.cy_solid : 0;
             const t = {rotacion: 0, escala_x: 1, escala_y: 1,
                 ancla_x: lim ? Math.round(lim.cx - origen_x) : 0,
                 ancla_y: lim ? Math.round(lim.y1 - origen_y) : 0};
@@ -464,7 +568,7 @@ class GestionEvento{
         raiz.cx = (parseFloat(raiz.cx) || 0) + dx;
         raiz.cy = (parseFloat(raiz.cy) || 0) + dy;
         raiz.capa = Math.max(0, ...this.gestion_grupos_originales.grupos_figuras
-            .filter((g) => g.nodo_padre === "root").map((g) => Number(g.capa) || 0)) + 1;
+            .filter((g) => g.nodo_padre === raiz.nodo_padre).map((g) => Number(g.capa) || 0)) + 1;  // encima de sus hermanos
         this.gestion_grupos_originales.grupos_figuras.push(...structuredClone(copia));
         this.gestion_grupos.grupos_figuras.push(...structuredClone(copia));
         this.gestion_grupos_originales.procesarPosicionFinalFiguras();
@@ -597,6 +701,14 @@ class GestionEvento{
             if(!resultado){
                 return;
             }
+            // copia al escribir (Fase 4): la lista de figuras de un grupo se clona
+            // recien cuando un movimiento de figuras la va a modificar
+            for(const g of trabajo){
+                if(!this._figuras_clonadas.has(g.nombre)){
+                    g.lista_figuras = structuredClone(g.lista_figuras);
+                    this._figuras_clonadas.add(g.nombre);
+                }
+            }
             for (const hash in resultado) {
                 const valor = resultado[hash];
                 const grupo_ = trabajo.find((g) => g.nombre === valor.nombre_grupo);
@@ -643,8 +755,13 @@ class GestionEvento{
                 this.movimientos_grupos[nombre_grupo]['y']=0;
             }
             // Pose de trabajo de este frame: parte de las figuras originales y cada
-            // movimiento de figuras la va transformando en orden.
-            this.grupos_trabajo = structuredClone(this.gestion_grupos_originales.grupos_figuras);
+            // movimiento de figuras la va transformando en orden. Fase 4: copia
+            // superficial de los grupos (barata); la lista de figuras de un grupo se
+            // clona solo si un movimiento de figuras la modifica (aplicarMovimiento).
+            // Las listas no clonadas se comparten con los originales: la copia en
+            // vivo no debe modificar sus figuras (nada del editor de eventos lo hace).
+            this.grupos_trabajo = this.gestion_grupos_originales.grupos_figuras.map((g) => ({...g}));
+            this._figuras_clonadas = new Set();
 
             const evento_ = this.obtenerEvento("EventoGeneral");
             const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
@@ -655,16 +772,20 @@ class GestionEvento{
             // apenas se pausa.
             this.procesandoEvento(evento_, tiempo_evento);
 
+            // indices por nombre (Fase 4: antes getGrupo recorria la lista por cada
+            // grupo, O(n^2) por cuadro)
+            const originales_por_nombre = new Map(this.gestion_grupos_originales.grupos_figuras.map((g) => [g.nombre, g]));
+            const dinamicos_por_nombre = new Map(this.gestion_grupos.grupos_figuras.map((g) => [g.nombre, g]));
+
             for (let nombre_grupo in this.movimientos_grupos) {
-                const grupo_ = this.gestion_grupos_originales.getGrupo(nombre_grupo)
-                if (grupo_) {
+                const grupo_ = originales_por_nombre.get(nombre_grupo);
+                const dinamico = dinamicos_por_nombre.get(nombre_grupo);
+                if (grupo_ && dinamico) {
                     // si el grupo tiene transformacion de instancia, su desplazamiento
                     // propio va en su marco (reflejado avanza hacia donde mira)
                     const d = transformarVector(grupo_.transformacion, this.movimientos_grupos[grupo_.nombre]);
-                    const x = grupo_.cx + d.x;
-                    const y = grupo_.cy + d.y;
-                    this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cx", x);
-                    this.gestion_grupos.set_atributo_grupo(grupo_.nombre, "cy", y);
+                    dinamico.cx = grupo_.cx + d.x;
+                    dinamico.cy = grupo_.cy + d.y;
                 }
             }
 
@@ -672,7 +793,7 @@ class GestionEvento{
             // activo, para que al retroceder en el tiempo vuelvan a su forma original).
             for (let i=0; i<this.grupos_trabajo.length; i++){
                 const g_trabajo = this.grupos_trabajo[i];
-                const g_dinamico = this.gestion_grupos.getGrupo(g_trabajo.nombre);
+                const g_dinamico = dinamicos_por_nombre.get(g_trabajo.nombre);
                 if(g_dinamico){
                     g_dinamico.lista_figuras = g_trabajo.lista_figuras;
                 }

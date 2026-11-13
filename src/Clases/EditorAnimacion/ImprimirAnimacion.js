@@ -1,6 +1,18 @@
 import {getCoorPunto, getCoorRecta} from "./GestionAnimacion";
 import {aplicarEnCanvas, cadenaTransformaciones, mapaGrupos} from "./TransformacionInstancia";
 
+// Un grupo se dibuja solo si el y todos sus ancestros estan visibles.
+function visibleEfectivo(grupo, mapa) {
+    const vistos = new Set();
+    let g = grupo;
+    while (g && !vistos.has(g.nombre)) {
+        if (g.visible === false) return false;
+        vistos.add(g.nombre);
+        g = g.nodo_padre && g.nodo_padre !== "root" ? mapa.get(g.nodo_padre) : null;
+    }
+    return true;
+}
+
 
 class ImprimirAnimacion{
   animacion_=null;
@@ -55,7 +67,8 @@ class ImprimirAnimacion{
 
         for (let i = 0; i < lista_grupo_root.length; i++) {
             const grupo = lista_grupo_root[i]
-            if(!grupo.visible){
+            // visibilidad heredada: un grupo oculto oculta tambien a sus descendientes
+            if(!visibleEfectivo(grupo, mapa)){
                 continue;
             }
             /*for(let j = 0; j<grupo.lista_pintado.length; j++){
@@ -64,9 +77,13 @@ class ImprimirAnimacion{
             }*/
 
             const cadena = cadenaTransformaciones(grupo, mapa);
-            if(cadena.length){
+            // Fase 3: al "entrar" a un objeto, lo que queda fuera se dibuja atenuado
+            const atenuado = !!(this.atenuados && this.atenuados.has(grupo.nombre));
+            const con_estado = cadena.length > 0 || atenuado;
+            if(con_estado){
                 this.ctx.save();
-                aplicarEnCanvas(this.ctx, cadena, ox, oy);
+                if(cadena.length) aplicarEnCanvas(this.ctx, cadena, ox, oy);
+                if(atenuado) this.ctx.globalAlpha = 0.25;
             }
 
             if(pintado){
@@ -100,7 +117,7 @@ class ImprimirAnimacion{
 
             }
 
-            if(cadena.length){
+            if(con_estado){
                 this.ctx.restore();
             }
         }
