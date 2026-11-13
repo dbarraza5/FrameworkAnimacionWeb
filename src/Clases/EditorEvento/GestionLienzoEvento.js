@@ -7,14 +7,22 @@ import {
     MOV_ROTACION, MOV_ROTACION_OSCILATORIA, MOV_ZOOM, TRABAJO_EDICION_MOVIMIENTO,
     TRABAJO_NADA_LIENZO,
     TRABAJO_REPRODUCCION,
-    TRABAJO_SELECCION_GRUPO
+    TRABAJO_SELECCION_GRUPO,
+    MOVIMIENTOS_OBJETOS_CORTOS, MOVIMIENTOS_FIGURAS_CORTOS, TIPO_EFECTO_MOV_FIGURAS
 } from "./ConstanteEvento";
+
 import OperacionesGrupo from "../EditorAnimacion/OperacionesGrupo";
 import {dibujar_rec_transparencia, dibujar_rectangulo} from "../EditorAnimacion/ImprimirAnimacion";
 import ControlVectorLienzo from "./ControlVectorLienzo";
 import ControlFlechaLienzo from "./ControlFlechaLienzo";
 import ControlZoomLienzo from "./ControlZoomLienzo";
 import ControlOscilatorioLienzo from "./ControlOscilatorioLienzo";
+
+// Etiqueta corta de un movimiento para el timeline: "1 · MRU", "2 · RotOsc"...
+const etiquetaMovimiento = (mov, index) => {
+    const nombres = mov.tipo_efecto === TIPO_EFECTO_MOV_FIGURAS ? MOVIMIENTOS_FIGURAS_CORTOS : MOVIMIENTOS_OBJETOS_CORTOS;
+    return `${index + 1} · ${nombres[mov.tipo] || "Mov"}${mov.activo === false ? " (off)" : ""}`;
+};
 
 // Nombres de campo en `datos` para cada tipo de movimiento que usa ControlVectorLienzo
 // (pivote propio + flecha-medidor de magnitud).
@@ -221,6 +229,14 @@ class GestionLienzoEvento{
         }
         const ctx = canvas.getContext('2d');
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // si el lienzo cambio de tamano (se mostro/oculto/redimensiono un panel), se
+        // corre la vista la mitad de la diferencia: el centro de lo que se veia sigue
+        // en el centro (en vez de quedar pegado a la esquina superior izquierda).
+        const config = this.configuracion_lienzo;
+        if(this._vista_inicializada && (config.ancho !== ancho || config.alto !== alto)){
+            config.x_des_zoom += (ancho - config.ancho) / 2;
+            config.y_des_zoom += (alto - config.alto) / 2;
+        }
         this.configuracion_lienzo.actualizarTamano(ancho, alto);
         // primera vez con un tamano real: encuadrar el documento
         if(!this._vista_inicializada && canvas.clientWidth > 0 && canvas.clientHeight > 0){
@@ -314,6 +330,7 @@ class GestionLienzoEvento{
             t.nivel = 'movimientos';
             t.cambiarEventos(movimientos.map((mov, index) => ({
                 id: index,
+                etiqueta: etiquetaMovimiento(mov, index),
                 inicio: mov.tiempo_inicio,
                 fin: mov.tiempo_final
             })));
@@ -399,6 +416,11 @@ class GestionLienzoEvento{
         }
 
         this.configuracion_lienzo.finZoomLienzo(ctx);
+
+        // reglas (pantalla, sin zoom) con la marca del cursor si esta sobre el lienzo
+        const ev = this.eventoLienzoEvento;
+        this.configuracion_lienzo.dibujarReglas(ctx,
+            ev && ev.mouse_sobre_lienzo ? {x: ev.mouse_x, y: ev.mouse_y} : null);
 
         this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
         this.configuracion_lienzo.dibujarBotones(ctx);

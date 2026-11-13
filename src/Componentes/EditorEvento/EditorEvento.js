@@ -5,6 +5,7 @@ import React, {useEffect, useRef, useState} from "react";
 import MenuEvento from "./MenuEvento";
 import OffcanvasAnimaciones, {MIME_ANIMACION} from "./SeccionEventos/OffcanvasAnimaciones";
 import NavEventos from "./SeccionEventos/NavEventos";
+import Inspector from "./SeccionEventos/Inspector";
 import Lienzo from "../EditorAnimacion/Lienzo";
 import Separador from "./Layout/Separador";
 import BarraEstado from "./Layout/BarraEstado";
@@ -168,6 +169,10 @@ function EditorEvento(props){
                         tipo_modalidad: MODALIDAD_ANIMACION,
                         tipo_modalidad_trabajo: TRABAJO_ANIMACION_EVENTOS,
                         id_evento_seleccionado: "EventoGeneral"}));
+                    // la seleccion que leen los paneles (Escena, Inspector) y el lienzo
+                    // vive en config_evento: arrancar con EventoGeneral seleccionado
+                    // (antes quedaba en null y se mostraba "Evento: Ninguno").
+                    dispatch(setIdEventoSeleccionado("EventoGeneral"));
                     const evento_flat = JSON.parse(JSON.stringify(eventoAnimacion.edicion));
                     dispatch(setEventoActual({edicion: evento_flat}))
 
@@ -429,7 +434,8 @@ function EditorEvento(props){
 
     // ---- Distribucion del editor (Fase 0): tamanos y visibilidad de paneles ----
     const [layout, setLayout] = useState(() => {
-        const base = {izq: 320, der: 300, abajo: 230, ver_izq: true, ver_der: true, ver_abajo: true};
+        const base = {izq: 320, der: 320, abajo: 230, ver_izq: true, ver_der: true, ver_abajo: true,
+            pestana_der: "inspector", grilla: true, reglas: true};
         try{
             return {...base, ...JSON.parse(localStorage.getItem(CLAVE_LAYOUT) || "{}")};
         }catch(e){
@@ -439,6 +445,10 @@ function EditorEvento(props){
     const [modo, setModo] = useState("animar"); // "animar" | "dibujo"
     useEffect(() => {
         try{ localStorage.setItem(CLAVE_LAYOUT, JSON.stringify(layout)); }catch(e){ /* sin almacenamiento */ }
+        // cuadricula y reglas viven en la configuracion del lienzo
+        const c = refLienzo.current.configuracion_lienzo;
+        c.mostrar_grilla = layout.grilla !== false;
+        c.mostrar_reglas = layout.reglas !== false;
     }, [layout]);
     const redimensionar = (clave, delta, min, max) =>
         setLayout((l) => ({...l, [clave]: Math.min(max, Math.max(min, l[clave] + delta))}));
@@ -463,7 +473,12 @@ function EditorEvento(props){
 
     return(
         <div className={clases} data-bs-theme="dark"
-             style={{"--ed-izq": `${layout.izq}px`, "--ed-der": `${layout.der}px`, "--ed-abajo": `${layout.abajo}px`}}>
+             style={{
+                 // un panel oculto mide 0 (el estilo inline le gana a la clase .sin-*)
+                 "--ed-izq": `${layout.ver_izq ? layout.izq : 0}px`,
+                 "--ed-der": `${layout.ver_der ? layout.der : 0}px`,
+                 "--ed-abajo": `${layout.ver_abajo ? layout.abajo : 0}px`,
+             }}>
 
             {/* ---- barra superior ---- */}
             <header className="ed-barra">
@@ -492,6 +507,11 @@ function EditorEvento(props){
                         <li><button className="dropdown-item" onClick={() => alternar("ver_abajo")}>
                             <i className={`bi ${layout.ver_abajo ? "bi-check2" : "bi-dot"} me-2`}/>Linea de tiempo</button></li>
                         <li><hr className="dropdown-divider"/></li>
+                        <li><button className="dropdown-item" onClick={() => alternar("grilla")}>
+                            <i className={`bi ${layout.grilla !== false ? "bi-check2" : "bi-dot"} me-2`}/>Cuadrícula</button></li>
+                        <li><button className="dropdown-item" onClick={() => alternar("reglas")}>
+                            <i className={`bi ${layout.reglas !== false ? "bi-check2" : "bi-dot"} me-2`}/>Reglas</button></li>
+                        <li><hr className="dropdown-divider"/></li>
                         <li><button className="dropdown-item" onClick={() => lienzoAccion("ajustar")}><i className="bi bi-arrows-fullscreen me-2"/>Ajustar a la vista</button></li>
                         <li><button className="dropdown-item" onClick={() => lienzoAccion("100")}><i className="bi bi-1-square me-2"/>Zoom 100 %</button></li>
                     </ul>
@@ -507,6 +527,19 @@ function EditorEvento(props){
                             onClick={() => setModo("dibujo")}>Dibujo</button>
                 </div>
                 <span className="ed-espacio"/>
+                {/* mostrar/ocultar paneles (siempre visibles, aunque el panel este oculto) */}
+                <div className="btn-group btn-group-sm me-2" role="group" aria-label="Paneles">
+                    {[["ver_izq", "bi-layout-sidebar", "Panel de escena (izquierda)"],
+                      ["ver_abajo", "bi-layout-text-window-reverse", "Línea de tiempo (abajo)"],
+                      ["ver_der", "bi-layout-sidebar-reverse", "Panel derecho (Inspector / Biblioteca)"]].map(([clave, icono, texto]) => (
+                        <button key={clave} type="button"
+                                className={`btn ${layout[clave] ? "btn-secondary" : "btn-outline-secondary"}`}
+                                onClick={() => alternar(clave)} aria-pressed={layout[clave]}
+                                title={`${layout[clave] ? "Ocultar" : "Mostrar"}: ${texto}`}>
+                            <i className={`bi ${icono}`}/>
+                        </button>
+                    ))}
+                </div>
                 <button className="btn btn-sm btn-primary" onClick={subirAnimacion1} title="Guardar en el servidor">
                     <i className="bi bi-cloud-upload me-1"/>Subir
                 </button>
@@ -531,17 +564,48 @@ function EditorEvento(props){
             <main className="ed-lienzo">
                 <Lienzo lienzo={eventoLienzoEvento} id="lienzo-evento" editar_animacion={() => {}}
                         setEventLienzoFigura={setEventLienzoEvento}/>
+                {/* pestanas en el borde para volver a abrir un panel oculto */}
+                {!layout.ver_izq && (
+                    <button type="button" className="ed-reabrir izq" onClick={() => alternar("ver_izq")}
+                            title="Mostrar el panel de escena">
+                        <i className="bi bi-chevron-double-right"/><span>Escena</span>
+                    </button>
+                )}
+                {!layout.ver_der && (
+                    <button type="button" className="ed-reabrir der" onClick={() => alternar("ver_der")}
+                            title="Mostrar el panel derecho">
+                        <i className="bi bi-chevron-double-left"/><span>Inspector</span>
+                    </button>
+                )}
+                {!layout.ver_abajo && (
+                    <button type="button" className="ed-reabrir abajo" onClick={() => alternar("ver_abajo")}
+                            title="Mostrar la línea de tiempo">
+                        <i className="bi bi-chevron-double-up me-1"/>Línea de tiempo
+                    </button>
+                )}
             </main>
 
-            {/* ---- panel derecho: biblioteca (el inspector llega en la Fase 0.B) ---- */}
+            {/* ---- panel derecho: Inspector (lo seleccionado) / Biblioteca ---- */}
             <aside className="ed-panel ed-der">
-                <div className="ed-cabecera">
-                    <span><i className="bi bi-collection me-1"/>Biblioteca</span>
+                <div className="ed-cabecera ed-pestanas">
+                    <div className="d-flex h-100">
+                        {[["inspector", "bi-sliders", "Inspector"], ["biblioteca", "bi-collection", "Biblioteca"]].map(([clave, icono, texto]) => (
+                            <button key={clave} type="button"
+                                    className={`ed-pestana ${layout.pestana_der === clave ? "activa" : ""}`}
+                                    onClick={() => setLayout((l) => ({...l, pestana_der: clave}))}>
+                                <i className={`bi ${icono} me-1`}/>{texto}
+                            </button>
+                        ))}
+                    </div>
                     <button className="btn btn-sm p-0 text-secondary" onClick={() => alternar("ver_der")} title="Ocultar panel">
                         <i className="bi bi-chevron-double-right"/>
                     </button>
                 </div>
-                <div className="ed-cuerpo">
+                {/* ambas pestanas quedan montadas (la biblioteca no recarga al volver) */}
+                <div className={`ed-cuerpo ${layout.pestana_der === "inspector" ? "" : "d-none"}`}>
+                    <Inspector {...props_paneles}/>
+                </div>
+                <div className={`ed-cuerpo ${layout.pestana_der === "biblioteca" ? "" : "d-none"}`}>
                     <OffcanvasAnimaciones id="bibliotecaAnimaciones" embebido onAgregar={agregarAnimacionAlCentro}/>
                 </div>
                 <Separador orientacion="vertical" titulo="Arrastrar para cambiar el ancho"
@@ -551,6 +615,10 @@ function EditorEvento(props){
             {/* ---- linea de tiempo ---- */}
             <section className="ed-panel ed-abajo">
                 <canvas id="timeline-evento"/>
+                <button type="button" className="ed-ocultar-abajo" onClick={() => alternar("ver_abajo")}
+                        title="Ocultar la línea de tiempo">
+                    <i className="bi bi-chevron-double-down"/>
+                </button>
                 <Separador orientacion="horizontal" titulo="Arrastrar para cambiar el alto"
                            onArrastrar={(d) => redimensionar("abajo", -d, 120, 520)}/>
             </section>

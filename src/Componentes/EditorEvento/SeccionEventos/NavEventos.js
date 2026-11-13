@@ -105,7 +105,9 @@ function NavEventos(props){
 
         console.log("[id_evento_seleccionado]");
         console.log(evento_)
-    }, [id_evento_seleccionado]);
+        // tambien cuando terminan de llegar los eventos (al abrir, la seleccion inicial
+        // llega antes que los datos y quedaba "Ninguno")
+    }, [id_evento_seleccionado, props.eventoAnimacion.edicion.eventos.length]);
 
     const seleccionarModalidad=(tipo_modalidad)=>{
         //console.log(tipo_modalidad);
@@ -163,63 +165,13 @@ function NavEventos(props){
                 <div className="tab-pane fade show active" id="nav-eventos" role="tabpanel" tabIndex="1">
                     <div className="p-3">
                         <SeleccionEvento {...props}/>
-                        {/* --- SUB-NAVEGACIÓN --- */}
+                        {/* Las propiedades del evento (Evento / Movimiento / Script / Macro) se
+                            editan en el Inspector del panel derecho (Inspector.js). */}
                         {evento !== null && (
-                            <section>
-                                <ul className="nav nav-pills mb-3" id="subnav-eventos" role="tablist">
-                                    <li className="nav-item" role="presentation">
-                                        <button className="nav-link active" id="sub-evento-tab" data-bs-toggle="pill"
-                                                data-bs-target="#sub-pane-evento" type="button" role="tab"
-                                                onClick={() => seleccionarModalidad(MODALIDAD_EVENTOS)}>
-                                            Evento
-                                        </button>
-                                    </li>
-                                    <li className="nav-item" role="presentation">
-                                        <button className="nav-link" id="sub-movimiento-tab" data-bs-toggle="pill"
-                                                data-bs-target="#sub-pane-movimiento" type="button" role="tab"
-                                                onClick={() => seleccionarModalidad(MODALIDAD_MOVIMIENTOS)}>
-                                            Movimiento
-                                        </button>
-                                    </li>
-                                    <li className="nav-item" role="presentation">
-                                        <button className="nav-link" id="sub-script-tab" data-bs-toggle="pill"
-                                                data-bs-target="#sub-pane-script" type="button" role="tab"
-                                                onClick={() => seleccionarModalidad(MODALIDAD_SCRIPT)}>
-                                            Script
-                                        </button>
-                                    </li>
-                                    <li className="nav-item" role="presentation">
-                                        <button className="nav-link" id="sub-macro-tab" data-bs-toggle="pill"
-                                                data-bs-target="#sub-pane-macro" type="button" role="tab"
-                                                onClick={() => seleccionarModalidad(MODALIDAD_MACRO)}>
-                                            Macro
-                                        </button>
-                                    </li>
-                                </ul>
-
-                                {/* --- CONTENIDO DEL SUB-NAV --- */}
-                                <div className="tab-content border p-3 rounded" id="subnav-content">
-                                    <div className="tab-pane fade show active" id="sub-pane-evento" role="tabpanel">
-
-                                        <PanelEventos
-                                            {...props}
-                                            evento={evento}
-                                            guardandoEvento={editandoEvento}
-                                            key={`panel-${evento?.evento?.nombre || 'sin-nombre'}`}
-                                        />
-                                    </div>
-                                    <div className="tab-pane fade" id="sub-pane-movimiento" role="tabpanel">
-                                        <PanelMovimientos {...props} evento={evento} editandoMovEvento={editandoMovEvento}/>
-                                    </div>
-                                    <div className="tab-pane fade" id="sub-pane-script" role="tabpanel">
-                                        <PanelScripts {...props}/>
-                                    </div>
-                                    <div className="tab-pane fade" id="sub-pane-macro" role="tabpanel">
-                                        {/* <PanelAnimacion {...props}/> */}
-                                        <div className="text-muted">Panel de Macro (En desarrollo)</div>
-                                    </div>
-                                </div>
-                            </section>
+                            <div className="small text-body-secondary px-1">
+                                <i className="bi bi-layout-sidebar-reverse me-1"/>
+                                Propiedades y movimientos del evento en el <strong>Inspector</strong> (derecha).
+                            </div>
                         )}
 
                     </div>

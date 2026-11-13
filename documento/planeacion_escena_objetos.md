@@ -68,7 +68,7 @@ Lo implementado en la rama `animacion` del frontend:
 
 ---
 
-## Fase 0 — Interfaz de editor profesional (lienzo grande) — EN CURSO (0.A implementada, falta 0.B)
+## Fase 0 — Interfaz de editor profesional (lienzo grande) — IMPLEMENTADA (0.A + 0.B; quedan dos pruebas de arrastre sin hacer)
 
 **Objetivo:** que el editor de eventos se vea y se use como un editor de animación profesional. El lienzo ocupa todo el espacio disponible, cada cosa tiene un lugar fijo y predecible, y la interfaz queda lista para las fases siguientes (inspector, panel de objetos, manijas) (D8).
 
@@ -194,14 +194,56 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 - [ ] Arrastrar y estirar barras del timeline en el panel nuevo: no probado todavía.
 - [ ] Revisión una por una de todas las acciones anteriores: pendiente (0.B).
 
-### Pendiente para 0.B
+### Avance 0.B — IMPLEMENTADA (2026-11-12)
 
-1. **Inspector derecho:** mover los formularios de evento y de movimiento (hoy en las sub-pestañas del panel izquierdo) a un inspector que muestre lo seleccionado. La biblioteca pasa a una pestaña.
-2. **Lista de pistas** a la izquierda del timeline, alineada con las barras.
-3. El panel izquierdo muestra "Evento: Ninguno" al abrir, aunque se reproduce `EventoGeneral`: `NavEventos` busca el evento seleccionado antes de que se descarguen los datos y no vuelve a intentarlo.
-4. El HUD del lienzo (texto arriba a la izquierda) duplica la barra de estado y muestra `Mod: undefined`: quitarlo o dejarlo solo en modo debug.
-5. Limpiar los avisos de React de `Lienzo.js` (props que no van al `<canvas>`, `autofocus`/`tabindex`).
-6. El menú Archivo perdió «Importar» (abría un modal que no existe en esta página), y también «Refrescar», «Guardar como» y «Deshacer/Rehacer», que no hacían nada. Reponerlos cuando tengan implementación.
+**Alcance realizado:**
+1. **Inspector** (`SeccionEventos/Inspector.js`): el panel derecho tiene dos pestañas, **Inspector** y **Biblioteca**; ambas quedan montadas y la elegida se recuerda.
+   - El inspector muestra el evento seleccionado con sus secciones **Evento / Movimiento / Script / Macro** (los mismos `PanelEventos`, `PanelMovimientos` y `PanelScripts` de antes).
+   - La sección activa sigue la modalidad global: elegir "Movimiento" pone el lienzo y el timeline en modo movimientos.
+   - El panel izquierdo "Escena" conserva la selección de evento (Lista / Árbol / Nuevo) y las pestañas Eventos / Grupos / Config.
+   - En el inspector, los formularios de dos columnas se apilan en una sola y no hay desplazamiento horizontal.
+2. **Lista de pistas** en el timeline (`TimelineCanvas._dibujarPistas`): columna de 150 px con el nombre de cada barra, alineado con ella ("SUB-EVENTOS": Caminar, Sentarse; "MOVIMIENTOS": "1 · RotOsc"…; un movimiento inactivo muestra "(off)").
+   - Las barras, la regla y la línea roja se dibujan desplazadas y recortadas a la derecha de la columna, y el mouse se convierte a esas coordenadas.
+   - Si el panel mide menos de 420 px, la columna se oculta.
+3. **Selección inicial:** al cargar se selecciona `EventoGeneral` en `config_evento` (la selección que leen los paneles y el lienzo; antes solo se guardaba en `state.evento`). Ya no aparece "Evento: Ninguno". La selección aparece igual en Escena, Inspector y timeline.
+4. **HUD de depuración** del lienzo oculto por defecto (`ver_info_lienzo = false`): la barra de estado ya muestra esa información.
+5. **Avisos de React de `Lienzo.js`** eliminados: ya no pasa props del componente al `<canvas>` y usa `autoFocus` / `tabIndex`.
+6. **Arreglos del armazón:**
+   - Un panel oculto quedaba ocupando su ancho (el estilo inline le ganaba a la clase `.sin-*`).
+   - El lienzo ahora mantiene centrado lo que se veía cuando cambia de tamaño (al mostrar u ocultar un panel).
+   - Botones `btn-outline-secondary` con más contraste en tema oscuro (parecían deshabilitados).
+   - Encabezados de tabla `table-light` reemplazados para que sigan el tema.
+
+**Verificado en el navegador:**
+- [x] Al abrir: Escena "Evento: EventoGeneral", Inspector con sus propiedades, timeline con las pistas Caminar / Sentarse.
+- [x] Elegir "Caminar" en la lista de eventos actualiza Escena, Inspector y timeline (duración 00:04.00, "Sin sub-eventos").
+- [x] Inspector → Movimiento: el timeline pasa a "MOVIMIENTOS"; al elegir el grupo `pata_del_cercana` aparece la pista "1 · RotOsc" (0–4000) y el rectángulo de selección se dibuja sobre la pata con zoom al 47 %.
+- [x] Al seleccionar el movimiento, su control (pivote en la cadera, círculo y flecha de amplitud) se dibuja alineado con la pata, también después de hacer zoom con la rueda (100 %).
+- [x] Sin excepciones en la consola. Sin los avisos de `Lienzo.js`.
+- [ ] Arrastrar el pivote o la flecha de un movimiento con zoom: no probado (solo se verificó que se dibujan en el lugar correcto).
+- [ ] Arrastrar o estirar barras del timeline con la columna de pistas: no probado.
+
+**Extra: cuadrícula como plano de coordenadas (2026-11-12, a pedido del usuario)** — `ConfiguracionLienzoEvento.dibujarGrilla` / `dibujarReglas`:
+- Cuadrícula **infinita**: cubre todo lo visible, también la mesa de trabajo. Su densidad se adapta al zoom: paso 1, 2 o 5 × 10ⁿ con ≥10 px entre líneas, y principales cada 5 pasos.
+- **Ejes** por el origen: X en rojo, Y en verde, rotulados "X →" e "Y ↓". Convención de pantalla: Y crece hacia abajo y el origen es la esquina superior izquierda del documento. Se decidió **no** invertir Y: obligaría a migrar los datos y los movimientos (gravedad, parabólico, LERP).
+- **Reglas** numeradas arriba y a la izquierda, con el origen marcado y una marca de la posición del cursor. Los botones de zoom bajaron para no taparlas.
+- Menú **Ver → Cuadrícula / Reglas**, recordado con el resto de la distribución.
+- Se quitó la **hoja blanca** del documento: el lienzo es un único plano oscuro con la misma cuadrícula en todas partes. El área del documento (1280×720) queda indicada solo con un contorno punteado sutil.
+- [x] Verificado en el navegador al 23 % y al 15 % de zoom.
+
+**Extra: volver a mostrar paneles (2026-11-12, reportado por el usuario):** al ocultar un panel desaparecía su botón y la línea de tiempo no se podía plegar. Ahora hay tres formas de manejarlos:
+- Tres botones fijos en la barra superior (izquierdo / línea de tiempo / derecho), resaltados si el panel está visible.
+- Pestañas en el borde del lienzo ("Escena", "Inspector", "Línea de tiempo") cuando un panel está oculto.
+- Botón ⌄ en la cabecera de la línea de tiempo para plegarla.
+- [x] Verificado en el navegador: ocultar y reabrir los tres paneles.
+
+**Queda pendiente (pasa a *Pendientes*):**
+- Ajuste a la cuadrícula (*snap*) al mover cosas: cuando exista la manipulación de objetos (Fase 2).
+- Con la ventana angosta (~980 px) los paneles laterales por defecto (320 + 320 px) dejan el lienzo muy chico: considerar anchos por defecto proporcionales a la ventana, o plegar un panel automáticamente.
+- El menú Archivo perdió «Importar» (abría un modal que no existe en esta página), y también «Refrescar», «Guardar como» y «Deshacer/Rehacer», que no hacían nada. Reponerlos cuando tengan implementación.
+- Avisos de React en otros componentes: `MenuLateral` (`href` inválido), `PanelEventos` (input controlado → no controlado), y en el editor de figuras del modo Dibujo (`SeleccionGrupo`, `TablaGrupos`, `ListaGrupos`, `PropiedadGrupoFiguras`).
+- Sin sesión, `/evento/:id` muestra el error "Cannot read properties of undefined (reading 'token')" en vez de llevar al inicio de sesión (ya estaba en `Requerimientos.md`).
+- `NavEditorEvento.js` quedó sin uso (la distribución vive en `EditorEvento.js`).
 
 ---
 
@@ -348,6 +390,11 @@ La fase se dividió en dos entregas que se pueden probar por separado: **0.A** (
 ## Pendientes (backlog)
 
 Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (o se suma a una) y se borra de aquí.
+
+**Interfaz (restos de la Fase 0)**
+- Reponer en Archivo «Importar», «Refrescar», «Guardar como», «Deshacer/Rehacer» cuando tengan implementación.
+- Avisos de React en `MenuLateral`, `PanelEventos` y el editor de figuras (ver Avance 0.B).
+- Sin sesión, `/evento/:id` falla en vez de redirigir al inicio de sesión.
 
 **Herramientas**
 - **T1 — Llevar el simulador al repo** (ej. `herramientas/simulador/`): correr el motor en Node y generar PNG o tiras de cuadros, para verificar fases sin navegador y detectar regresiones. *Prioridad alta: lo usan las verificaciones de casi todas las fases.*

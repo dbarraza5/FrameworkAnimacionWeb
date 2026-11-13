@@ -199,7 +199,7 @@ function PanelMovimientos(props) {
 
             <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
                 <table className="table table-hover table-sm align-middle">
-                    <thead className="table-light sticky-top">
+                    <thead className="sticky-top">
                     <tr>
                         <th scope="col" style={{ width: '40px' }} className="text-center">Sel.</th>
                         <th scope="col" style={{ width: '40px' }}>#</th>

@@ -90,6 +90,21 @@
 }
 .editor-pro .ed-cuerpo { flex: 1 1 auto; min-height: 0; overflow: auto; }
 
+/* pestanas en la cabecera de un panel (Inspector / Biblioteca) */
+.editor-pro .ed-cabecera.ed-pestanas { padding-left: 0; }
+.editor-pro .ed-pestana {
+    border: 0;
+    background: transparent;
+    color: var(--ed-texto-2);
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    padding: 0 12px;
+    border-bottom: 2px solid transparent;
+}
+.editor-pro .ed-pestana:hover { color: var(--ed-texto); }
+.editor-pro .ed-pestana.activa { color: var(--ed-texto); border-bottom-color: #4c8dff; background: var(--ed-panel); }
+
 /* contenido existente (formularios Bootstrap) mas compacto dentro de los paneles */
 .editor-pro .ed-cuerpo .form-control,
 .editor-pro .ed-cuerpo .form-select,
@@ -97,6 +112,22 @@
 .editor-pro .ed-cuerpo .container-fluid { padding-left: 0; padding-right: 0; }
 .editor-pro .ed-cuerpo .nav-tabs { padding: 0 6px; }
 .editor-pro .ed-cuerpo .nav-link { padding: 6px 10px; font-size: 12.5px; }
+
+/* En tema oscuro el "secondary" de Bootstrap casi no contrasta (los botones parecian
+   deshabilitados): dentro del editor se aclara. */
+.editor-pro .btn-outline-secondary {
+    --bs-btn-color: #c3c8cf;
+    --bs-btn-border-color: #555a62;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #3a3d42;
+    --bs-btn-hover-border-color: #6b7078;
+}
+
+/* El inspector es angosto: los formularios pensados en dos columnas (row/col-*)
+   se apilan en una sola, y nunca hay desplazamiento horizontal. */
+.editor-pro .ed-der .ed-cuerpo { overflow-x: hidden; }
+.editor-pro .ed-der .row > [class*="col"] { flex: 0 0 100%; max-width: 100%; }
+.editor-pro .ed-der .row { --bs-gutter-x: 0; row-gap: .25rem; }
 
 /* ---- lienzo ---- */
 .editor-pro .ed-lienzo {
@@ -117,6 +148,54 @@
 
 /* ---- timeline ---- */
 .editor-pro .ed-abajo canvas { width: 100%; height: 100%; display: block; }
+/* boton para plegar la linea de tiempo (esquina superior derecha de su cabecera) */
+.editor-pro .ed-ocultar-abajo {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    width: 26px;
+    height: 26px;
+    border: 1px solid #555a62;
+    border-radius: 5px;
+    background: #2b2d31;
+    color: var(--ed-texto);
+    line-height: 1;
+    z-index: 6;
+}
+.editor-pro .ed-ocultar-abajo:hover { background: #3a3d42; color: #fff; }
+
+/* ---- pestanas para volver a abrir un panel oculto (borde del lienzo) ---- */
+.editor-pro .ed-reabrir {
+    position: absolute;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #555a62;
+    background: #2b2d31ee;
+    color: var(--ed-texto);
+    font-size: 12px;
+    padding: 6px 4px;
+}
+.editor-pro .ed-reabrir:hover { background: #3a3d42; color: #fff; }
+.editor-pro .ed-reabrir.izq,
+.editor-pro .ed-reabrir.der {
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    writing-mode: vertical-rl;
+}
+.editor-pro .ed-reabrir.izq { left: 0; border-left: 0; border-radius: 0 6px 6px 0; }
+.editor-pro .ed-reabrir.der { right: 0; border-right: 0; border-radius: 6px 0 0 6px; }
+.editor-pro .ed-reabrir.izq i, .editor-pro .ed-reabrir.der i { writing-mode: horizontal-tb; }
+.editor-pro .ed-reabrir.abajo {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    padding: 3px 12px;
+}
 
 /* ---- barra de estado ---- */
 .editor-pro .ed-estado {

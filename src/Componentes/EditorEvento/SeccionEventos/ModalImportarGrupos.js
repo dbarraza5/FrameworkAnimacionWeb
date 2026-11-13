@@ -349,7 +349,7 @@ export default function ModalImportarGrupos({
                                                                     htmlFor={inputId}
                                                                 >
                                                                     {it.label}
-                                                                    <span className="ms-2 badge text-bg-light border">
+                                                                    <span className="ms-2 badge text-bg-secondary border">
                                     {it.projectName}
                                   </span>
                                                                 </label>

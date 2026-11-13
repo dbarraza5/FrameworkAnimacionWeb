@@ -95,7 +95,7 @@ class ConfiguracionLienzoEvento{
     actualizarTamano(ancho, alto){
         this.ancho = ancho;
         this.alto = alto;
-        const y = 8, h = 24;
+        const y = 26, h = 24;  // debajo de la regla superior
         this.boton_zoom_mas = {x: ancho - 8 - 28, y, w: 28, h};
         this.boton_zoom_menos = {x: ancho - 8 - 28 * 2 - 4, y, w: 28, h};
         this.boton_centrar = {x: ancho - 8 - 28 * 3 - 8, y, w: 28, h};
@@ -136,14 +136,17 @@ class ConfiguracionLienzoEvento{
         this.zoomEnPunto(1 / this.escala, this.ancho / 2, this.alto / 2);
     }
 
-    // Mesa de trabajo (fondo) + hoja del documento. Se dibuja dentro del wrap de zoom.
+    // Area del documento: solo un contorno punteado sutil sobre el plano (sin hoja
+    // blanca, a pedido del usuario: el lienzo es un unico plano con la misma
+    // cuadricula en todas partes). Se dibuja dentro del wrap de zoom.
     dibujarDocumento(ctx){
         const d = this.documento;
+        const px = 1 / this.escala;
         ctx.save();
-        ctx.fillStyle = "#ffffff";
-        ctx.shadowColor = "rgba(0,0,0,0.45)";
-        ctx.shadowBlur = 12 / this.escala;
-        ctx.fillRect(d.x + this.x_delta_original, d.y + this.y_delta_original, d.ancho, d.alto);
+        ctx.strokeStyle = "rgba(200,205,212,0.45)";
+        ctx.lineWidth = px;
+        ctx.setLineDash([6 * px, 4 * px]);
+        ctx.strokeRect(d.x + this.x_delta_original, d.y + this.y_delta_original, d.ancho, d.alto);
         ctx.restore();
     }
 
@@ -153,7 +156,9 @@ class ConfiguracionLienzoEvento{
     titulo_modalidad = "#";
     titulo_tipo_trabajo = "#";
     index_movimiento = null;
-    ver_info_lienzo = true;
+    // HUD de depuracion (texto arriba a la izquierda): oculto por defecto, la barra de
+    // estado del editor ya muestra esa informacion.
+    ver_info_lienzo = false;
     presionado_s = false;
 
     pintar_animacion = false;
@@ -303,32 +308,143 @@ class ConfiguracionLienzoEvento{
         ctx.restore();
     }
 
-    // Grilla de referencia, sutil, en coordenadas de mundo (pantea/escala junto con el
-    // contenido -- debe dibujarse dentro del wrap inicioZoomLienzo/finZoomLienzo). Los
-    // ejes por (0,0) se marcan un poco mas oscuros para que sea facil notar cuando el
-    // lienzo esta centrado.
-    // (solo dentro del area del documento; el grosor se compensa con la escala para
-    // que la linea mida ~1 px en pantalla con cualquier zoom).
+    // ---- Cuadricula y reglas (plano de coordenadas del dibujo) ----
+    // Convencion de pantalla: X crece a la derecha, Y crece HACIA ABAJO (igual que todo
+    // el motor y los datos guardados). El origen (0,0) es la esquina superior izquierda
+    // del documento.
+    mostrar_grilla = true;
+    mostrar_reglas = true;
+    alto_regla = 18;
+
+    // Paso "lindo" (1, 2 o 5 x 10^n) en unidades del dibujo para que las lineas
+    // secundarias queden separadas al menos `px_min` pixeles en pantalla.
+    pasoGrilla(px_min = 10){
+        const bruto = px_min / this.escala;
+        const exp = Math.pow(10, Math.floor(Math.log10(bruto)));
+        for(const m of [1, 2, 5, 10]){
+            if(m * exp >= bruto) return m * exp;
+        }
+        return 10 * exp;
+    }
+
+    // Rectangulo del dibujo visible en el canvas.
+    limitesVisibles(){
+        const a = this.pantallaAMundo(0, 0);
+        const b = this.pantallaAMundo(this.ancho, this.alto);
+        return {x0: a.x, y0: a.y, x1: b.x, y1: b.y};
+    }
+
+    // Cuadricula infinita (cubre todo lo visible, tambien la mesa de trabajo), en
+    // coordenadas del dibujo -- se dibuja dentro del wrap inicioZoomLienzo/finZoomLienzo.
+    // Lineas secundarias cada `paso`, principales cada 5 pasos y los ejes X (rojo) e
+    // Y (verde) por el origen. El grosor se compensa con la escala (~1 px en pantalla).
     dibujarGrilla(ctx){
-        const paso = 50;
-        const d = this.documento;
+        if(!this.mostrar_grilla) return;
+        const paso = this.pasoGrilla(10);
+        const principal = paso * 5;
+        const {x0, y0, x1, y1} = this.limitesVisibles();
         const ox = this.x_delta_original, oy = this.y_delta_original;
+        const px = 1 / this.escala;
+        const linea = (xa, ya, xb, yb) => {
+            ctx.beginPath();
+            ctx.moveTo(xa + ox, ya + oy);
+            ctx.lineTo(xb + ox, yb + oy);
+            ctx.stroke();
+        };
         ctx.save();
-        ctx.lineWidth = 1 / this.escala;
-        for(let x = d.x; x <= d.x + d.ancho; x += paso){
-            ctx.strokeStyle = x === 0 ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.06)";
-            ctx.beginPath();
-            ctx.moveTo(x + ox, d.y + oy);
-            ctx.lineTo(x + ox, d.y + d.alto + oy);
-            ctx.stroke();
+        ctx.lineWidth = px;
+        // gris neutro semitransparente: se ve sobre la hoja blanca y sobre la mesa oscura
+        for(let x = Math.floor(x0 / paso) * paso; x <= x1; x += paso){
+            const es_principal = Math.abs(x / principal - Math.round(x / principal)) < 1e-6;
+            ctx.strokeStyle = es_principal ? "rgba(128,128,128,0.32)" : "rgba(128,128,128,0.14)";
+            linea(x, y0, x, y1);
         }
-        for(let y = d.y; y <= d.y + d.alto; y += paso){
-            ctx.strokeStyle = y === 0 ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.06)";
-            ctx.beginPath();
-            ctx.moveTo(d.x + ox, y + oy);
-            ctx.lineTo(d.x + d.ancho + ox, y + oy);
-            ctx.stroke();
+        for(let y = Math.floor(y0 / paso) * paso; y <= y1; y += paso){
+            const es_principal = Math.abs(y / principal - Math.round(y / principal)) < 1e-6;
+            ctx.strokeStyle = es_principal ? "rgba(128,128,128,0.32)" : "rgba(128,128,128,0.14)";
+            linea(x0, y, x1, y);
         }
+        // ejes por el origen
+        ctx.lineWidth = 1.5 * px;
+        ctx.strokeStyle = "rgba(220,70,70,0.85)";   // eje X (y = 0)
+        linea(x0, 0, x1, 0);
+        ctx.strokeStyle = "rgba(60,170,90,0.85)";   // eje Y (x = 0)
+        linea(0, y0, 0, y1);
+        // rotulos de los ejes, cerca del borde visible
+        ctx.font = `${11 * px}px sans-serif`;
+        ctx.textBaseline = "bottom";
+        ctx.fillStyle = "rgba(220,70,70,0.95)";
+        ctx.fillText("X →", x1 - 34 * px + ox, -4 * px + oy);
+        ctx.fillStyle = "rgba(60,170,90,0.95)";
+        ctx.fillText("Y ↓", 5 * px + ox, y1 - 6 * px + oy);
+        ctx.restore();
+    }
+
+    // Reglas con numeros arriba y a la izquierda (en pantalla, fuera del wrap de zoom).
+    // `mouse` (opcional): posicion del cursor en el canvas, se marca en ambas reglas.
+    dibujarReglas(ctx, mouse = null){
+        if(!this.mostrar_reglas) return;
+        const h = this.alto_regla;
+        const paso = this.pasoGrilla(10);
+        const principal = paso * 5;
+        const etiqueta = this.pasoGrilla(60) >= principal ? this.pasoGrilla(60) : principal;
+        const {x0, y0, x1, y1} = this.limitesVisibles();
+        const sx = (x) => this.x_des_zoom + this.escala * (x + this.x_delta_original);
+        const sy = (y) => this.y_des_zoom + this.escala * (y + this.y_delta_original);
+        const es_mult = (v, m) => Math.abs(v / m - Math.round(v / m)) < 1e-6;
+        const fmt = (v) => String(Math.round(v * 1000) / 1000);
+
+        ctx.save();
+        ctx.fillStyle = "#26282c";
+        ctx.fillRect(0, 0, this.ancho, h);
+        ctx.fillRect(0, 0, h, this.alto);
+        ctx.strokeStyle = "#5b6068";
+        ctx.fillStyle = "#aab0b8";
+        ctx.lineWidth = 1;
+        ctx.font = "10px sans-serif";
+
+        // regla superior (X)
+        ctx.textBaseline = "top";
+        ctx.textAlign = "left";
+        for(let x = Math.floor(x0 / paso) * paso; x <= x1; x += paso){
+            const p = Math.round(sx(x)) + 0.5;
+            if(p < h) continue;
+            const largo = es_mult(x, principal) ? 7 : 3;
+            ctx.beginPath(); ctx.moveTo(p, h); ctx.lineTo(p, h - largo); ctx.stroke();
+            if(es_mult(x, etiqueta)) ctx.fillText(fmt(x), p + 2, 1);
+        }
+        // regla izquierda (Y), numeros girados
+        for(let y = Math.floor(y0 / paso) * paso; y <= y1; y += paso){
+            const p = Math.round(sy(y)) + 0.5;
+            if(p < h) continue;
+            const largo = es_mult(y, principal) ? 7 : 3;
+            ctx.beginPath(); ctx.moveTo(h, p); ctx.lineTo(h - largo, p); ctx.stroke();
+            if(es_mult(y, etiqueta)){
+                ctx.save();
+                ctx.translate(1, p - 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText(fmt(y), 0, 0);
+                ctx.restore();
+            }
+        }
+        // origen marcado con el color de cada eje
+        const ox_p = sx(0), oy_p = sy(0);
+        if(ox_p >= h && ox_p <= this.ancho){ ctx.fillStyle = "rgba(60,170,90,0.95)"; ctx.fillRect(ox_p - 1, 0, 2, h); }
+        if(oy_p >= h && oy_p <= this.alto){ ctx.fillStyle = "rgba(220,70,70,0.95)"; ctx.fillRect(0, oy_p - 1, h, 2); }
+        // posicion del cursor
+        if(mouse && mouse.x > h && mouse.y > h){
+            ctx.fillStyle = "#4c8dff";
+            ctx.fillRect(Math.round(mouse.x) - 0.5, 0, 1, h);
+            ctx.fillRect(0, Math.round(mouse.y) - 0.5, h, 1);
+        }
+        // esquina
+        ctx.fillStyle = "#1e1f22";
+        ctx.fillRect(0, 0, h, h);
+        ctx.strokeStyle = "#3c3f45";
+        ctx.beginPath();
+        ctx.moveTo(0, h + 0.5); ctx.lineTo(this.ancho, h + 0.5);
+        ctx.moveTo(h + 0.5, 0); ctx.lineTo(h + 0.5, this.alto);
+        ctx.stroke();
         ctx.restore();
     }
 

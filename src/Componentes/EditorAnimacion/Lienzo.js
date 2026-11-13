@@ -90,8 +90,11 @@ function Lienzo(props){
     }
 
 
-    return(<canvas {...props}
-                   autofocus
+    // solo los atributos HTML van al <canvas>; lienzo/editar_animacion/
+    // setEventLienzoFigura son props del componente (React avisaba en consola)
+    const {lienzo, editar_animacion, setEventLienzoFigura, ...atributos_canvas} = props;
+    return(<canvas {...atributos_canvas}
+                   autoFocus
                    onKeyDown={(e)=>eventoKeyDown(e)}
                    onKeyUp={(e)=>eventoKeyUp(e)}
                    onMouseMove={(e)=>eventoMouseMove(e)}
@@ -99,7 +102,7 @@ function Lienzo(props){
                    onMouseDown={(e)=>eventoMouseDown(e)}
                    onMouseOver={(e)=>eventoMouseEntrada(e)}
                    onMouseOut={(e)=>eventoMouseSalida(e)}
-                   tabindex='0'
+                   tabIndex={0}
                    onWheel={manejarRueda}
                    width="600" height="600" style={props.style || style}></canvas>)
 }

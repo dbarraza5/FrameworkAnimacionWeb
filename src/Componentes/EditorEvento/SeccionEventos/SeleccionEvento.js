@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import ModalAgregarEvento from "./ModalAgregarEvento";
 import ModalListaEventos from "./ModalListaEventos";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setIdEventoSeleccionado, setTipoModalidad} from "../../../Store/Configuracion/ConfigEventoSlice";
 
 
@@ -12,6 +12,10 @@ function SeleccionEvento(props){
     const [evento, setEvento] = useState(null);
     const [indexIvento, setIndexEvento] = useState(null);
     const dispatch = useDispatch();
+    // El evento que se muestra sale de la seleccion global (redux), que al abrir ya
+    // es "EventoGeneral"; el estado local `evento` solo se llenaba al elegir a mano.
+    const id_evento_seleccionado = useSelector(state => state.config_evento.id_evento_seleccionado);
+    const evento_mostrado = props.eventoAnimacion.edicion.obtenerEvento(id_evento_seleccionado)?.evento || evento;
 
     const seleccionEvento=(index)=>{
         // setEvento(props.eventoAnimacion.edicion.eventos[index].evento);
@@ -98,13 +102,13 @@ function SeleccionEvento(props){
 
                     {/* Información del Evento: Reducido a una sola línea */}
                     <div className="d-flex align-items-center flex-shrink-1 text-truncate">
-                        <div className={`me-2 px-2 py-1 rounded border ${evento ? 'border-primary text-primary' : 'border-secondary text-secondary'} bg-body small`}>
-                            <i className={`bi ${evento ? 'bi-calendar-check' : 'bi-calendar-x'}`}></i>
+                        <div className={`me-2 px-2 py-1 rounded border ${evento_mostrado ? 'border-primary text-primary' : 'border-secondary text-secondary'} bg-body small`}>
+                            <i className={`bi ${evento_mostrado ? 'bi-calendar-check' : 'bi-calendar-x'}`}></i>
                         </div>
                         <div className="text-truncate">
                             <span className="text-muted small fw-bold text-uppercase me-2" style={{ fontSize: '0.65rem' }}>Evento:</span>
                             <span className="small fw-semibold text-body">
-                    {evento ? evento.nombre : "Ninguno"}
+                    {evento_mostrado ? evento_mostrado.nombre : "Ninguno"}
                 </span>
                         </div>
                     </div>

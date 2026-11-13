@@ -90,6 +90,8 @@ export default class TimelineCanvas {
         // El timeline vive en su propio canvas (panel inferior del editor): plegarlo es
         // cosa del panel, asi que ya no hay boton "cortina".
         this.id_canvas = 'timeline-evento';
+        // columna izquierda con el nombre de cada pista (alineada con su barra)
+        this.ancho_pistas = 150;
         this._nombresBotones = ["restablecer", "play", "velocidad"];
         this._botonW = 28;
         this._botonH = 28;
@@ -235,6 +237,16 @@ export default class TimelineCanvas {
         ctx.fillStyle = '#1e1e2f';
         ctx.fillRect(0, this.y_timeline, this.ancho_canvas, this.altura_timeline);
 
+        // Area de barras: a la derecha de la columna de pistas. Se dibuja trasladada en
+        // x0 y recortada, asi todas las coordenadas internas (barras, regla, linea roja,
+        // _renderX) siguen siendo "locales al area" como antes de existir la columna.
+        const x0 = this._x0();
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x0, this.y_timeline - 12, this.ancho_canvas - x0, this.altura_timeline + 12);
+        ctx.clip();
+        ctx.translate(x0, 0);
+
         ctx.fillStyle = 'white';
         const i_paso_ = Math.floor(this.desplazamiento_x / this.segmento_px);
         const pasos = this.num_segmentos + i_paso_;
@@ -254,6 +266,60 @@ export default class TimelineCanvas {
         });
 
         this.dibujarLineaTiempo();
+        ctx.restore();
+
+        this._dibujarPistas();
+    }
+
+    // Ancho de la columna de pistas (0 si el panel es muy angosto).
+    _x0() {
+        return this.ancho_canvas >= 420 ? this.ancho_pistas : 0;
+    }
+
+    _yCarril(idx) {
+        const salto = this.alto_evento + this.sep_entre_even;
+        return this.y_timeline + this._getLaneOffset(idx, salto) - this.desplazamiento_y;
+    }
+
+    // Columna izquierda: el nombre de cada pista, alineado con su barra.
+    _dibujarPistas() {
+        const x0 = this._x0();
+        if (!x0) return;
+        const ctx = this.ctx;
+        ctx.save();
+        ctx.fillStyle = '#232428';
+        ctx.fillRect(0, this.y_timeline, x0, this.altura_timeline);
+        ctx.strokeStyle = '#3c3f45';
+        ctx.beginPath();
+        ctx.moveTo(x0 - 0.5, this.y_timeline);
+        ctx.lineTo(x0 - 0.5, this.alto_canvas);
+        ctx.stroke();
+
+        ctx.font = '11px sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#9aa0a6';
+        const titulo = this.nivel === 'eventos' ? 'SUB-EVENTOS' : 'MOVIMIENTOS';
+        ctx.fillText(titulo, 10, this.y_timeline + 10);
+
+        const es_evento = this.nivel === 'eventos';
+        ctx.beginPath();
+        ctx.rect(0, this.y_timeline + 20, x0 - 1, this.altura_timeline - 20);
+        ctx.clip();
+        this.lista_objetos.forEach((ev, idx) => {
+            const y = this._yCarril(idx);
+            if (y < this.y_timeline) return;
+            const yc = y + this.alto_evento / 2;
+            ctx.fillStyle = es_evento ? '#4FA3FF' : '#FFA11B';
+            ctx.fillRect(10, yc - 5, 10, 10);
+            ctx.fillStyle = this.selected === ev ? '#ffffff' : '#d6d9de';
+            const texto = ev.etiqueta || `Pista ${idx + 1}`;
+            ctx.fillText(texto, 28, yc, x0 - 36);
+        });
+        if (this.lista_objetos.length === 0) {
+            ctx.fillStyle = '#6c7179';
+            ctx.fillText(es_evento ? 'Sin sub-eventos' : 'Sin movimientos', 10, this.y_timeline + 36);
+        }
+        ctx.restore();
     }
 
     _dibujarEvento(ev, idx) {
@@ -306,12 +372,12 @@ export default class TimelineCanvas {
     }
 
     _onMouseDown(e) {
-        const mx = e.offsetX;
+        const mx_canvas = e.offsetX;
         const my = e.offsetY;
 
         // --- DETECCIÓN DE CLICK EN BOTONES (MÁXIMA PRIORIDAD) ---
         for (let b of this.botones) {
-            if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+            if (mx_canvas >= b.x && mx_canvas <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
                 if (b.nombre === "cortina")     this.toggleCortina();
                 if (b.nombre === "restablecer") this.reiniciarAnimacion();
                 if (b.nombre === "play")        this.reproducirAnimacion();
@@ -322,6 +388,11 @@ export default class TimelineCanvas {
 
         // Si la cortina está cerrada, ignoramos interacciones internas del timeline
         if (this.isCollapsed) return;
+
+        // Desde aca, x en coordenadas del area de barras (a la derecha de las pistas).
+        // Un click sobre la columna de pistas no arrastra nada.
+        if (mx_canvas < this._x0()) return;
+        const mx = mx_canvas - this._x0();
 
         const dentro_area = my >= this.y_timeline && my <= this.alto_canvas;
 
@@ -379,7 +450,7 @@ export default class TimelineCanvas {
     _onMouseMove(e) {
         if (this.isCollapsed) return; // Desactivar movimientos si está cerrado
 
-        const mx = e.offsetX;
+        const mx = e.offsetX - this._x0();   // coordenadas del area de barras
         const mx_delta = mx - - this.desplazamiento_x;
 
         if (this.isDraggingTimelineX) {
@@ -513,7 +584,8 @@ export default class TimelineCanvas {
         ctx.fillStyle = "#d6d9de";
         ctx.textAlign = "right";
         ctx.textBaseline = "middle";
-        ctx.fillText(`${fmt(actual)} / ${fmt(total)}`, this.ancho_canvas - 12, this._altoUI / 2);
+        // deja lugar al boton de plegar el panel (esquina superior derecha, HTML)
+        ctx.fillText(`${fmt(actual)} / ${fmt(total)}`, this.ancho_canvas - 44, this._altoUI / 2);
         const evento = this.eventoAnimacion.eventoReproduccion ? this.eventoAnimacion.eventoReproduccion() : null;
         if (evento) {
             ctx.textAlign = "left";
