@@ -87,8 +87,10 @@ export default class TimelineCanvas {
         this.reset = false;
         this.reiniciar();
 
-        // Agregamos el botón 'cortina' al inicio del array de nombres
-        this._nombresBotones = ["cortina", "restablecer", "play", "velocidad"];
+        // El timeline vive en su propio canvas (panel inferior del editor): plegarlo es
+        // cosa del panel, asi que ya no hay boton "cortina".
+        this.id_canvas = 'timeline-evento';
+        this._nombresBotones = ["restablecer", "play", "velocidad"];
         this._botonW = 28;
         this._botonH = 28;
         this._separacion = 8;
@@ -109,45 +111,58 @@ export default class TimelineCanvas {
     }
 
     inicializar(){
-        this.canvasElem = document.getElementById('lienzo-evento');
+        this.canvasElem = document.getElementById(this.id_canvas);
+        if(!this.canvasElem) return;
         this.ctx = this.canvasElem.getContext('2d');
-        this.canvasElem.width = this.ancho_canvas;
-        this.canvasElem.height = this.alto_canvas;
-        if(!this.eventos_elanzados){
+        // los listeners se enganchan al elemento concreto (si React lo vuelve a montar,
+        // hay que engancharlos de nuevo al elemento nuevo)
+        if(this._elemento_con_eventos !== this.canvasElem){
             this._bindEvents();
-            this._layoutBotones();
+            this._elemento_con_eventos = this.canvasElem;
             this.eventos_elanzados = true;
         }
+        this._ajustarTamano();
     }
 
-    // Modificado para posicionar de forma especial el botón 'cortina'
+    // Ajusta el canvas al tamano de su panel (pixeles CSS) y a devicePixelRatio, y
+    // recalcula la geometria: cabecera de controles arriba (_altoUI) y el cuerpo del
+    // timeline debajo. Devuelve false si el canvas no esta visible.
+    _ajustarTamano(){
+        const c = this.canvasElem;
+        if(!c || c.clientWidth === 0 || c.clientHeight === 0) return false;
+        const dpr = window.devicePixelRatio || 1;
+        const ancho = Math.round(c.clientWidth), alto = Math.round(c.clientHeight);
+        if(c.width !== Math.round(ancho * dpr) || c.height !== Math.round(alto * dpr)){
+            c.width = Math.round(ancho * dpr);
+            c.height = Math.round(alto * dpr);
+        }
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if(ancho !== this.ancho_canvas || alto !== this.alto_canvas || !this.botones){
+            this.ancho_canvas = ancho;
+            this.alto_canvas = alto;
+            this.y_timeline = this._altoUI;
+            this.altura_timeline_original = Math.max(0, alto - this._altoUI);
+            this.altura_timeline = this.altura_timeline_original;
+            this.num_segmentos = Math.ceil(ancho / this.segmento_px) + 1;
+            this._layoutBotones();
+        }
+        return true;
+    }
+
+    // Controles de reproduccion centrados en la cabecera.
     _layoutBotones() {
-        const totalOtros = (this._nombresBotones.length - 1) * this._botonW + (this._nombresBotones.length - 2) * this._separacion;
-        const centroX = (this.ancho_canvas - totalOtros) / 2;
+        const n = this._nombresBotones.length;
+        const total = n * this._botonW + (n - 1) * this._separacion;
+        const x0 = (this.ancho_canvas - total) / 2;
         const posY = this.y_timeline - this._altoUI + (this._altoUI - this._botonH) / 2;
 
-        this.botones = this._nombresBotones.map((nombre, i) => {
-            if (nombre === "cortina") {
-                // Posición fija: arriba a la izquierda del timeline
-                return {
-                    nombre,
-                    x: 15,
-                    y: Math.round(posY),
-                    w: this._botonW,
-                    h: this._botonH
-                };
-            } else {
-                // Los demás botones se mantienen centrados como antes
-                const indiceCentrado = i - 1;
-                return {
-                    nombre,
-                    x: Math.round(centroX + indiceCentrado * (this._botonW + this._separacion)),
-                    y: Math.round(posY),
-                    w: this._botonW,
-                    h: this._botonH
-                };
-            }
-        });
+        this.botones = this._nombresBotones.map((nombre, i) => ({
+            nombre,
+            x: Math.round(x0 + i * (this._botonW + this._separacion)),
+            y: Math.round(posY),
+            w: this._botonW,
+            h: this._botonH
+        }));
     }
 
     // Función para alternar el colapso (Efecto cortina)
@@ -200,11 +215,18 @@ export default class TimelineCanvas {
     }
 
     imprimir() {
+        if(!this.ctx || !this.canvasElem || !this.canvasElem.isConnected){
+            // el canvas pudo montarse despues (o volver a montarse): reintentar
+            this.canvasElem = null;
+            this.inicializar();
+        }
         const ctx = this.ctx;
-        if(!ctx) return;
+        if(!ctx || !this._ajustarTamano()) return;
+        ctx.clearRect(0, 0, this.ancho_canvas, this.alto_canvas);
 
         // 1. Dibujar la barra de herramientas y botones siempre (quedan flotando al borde inferior si se colapsa)
         this.dibujarBotones();
+        this._dibujarTiempo();
 
         // Si está colapsado por completo, saltamos el renderizado del cuerpo del timeline
         if (this.isCollapsed) return;
@@ -476,13 +498,39 @@ export default class TimelineCanvas {
         this.lista_objetos.push({ inicio, fin });
     }
 
+    // Tiempo actual / duracion del evento que se reproduce, a la derecha de la cabecera.
+    _dibujarTiempo() {
+        const ctx = this.ctx;
+        const fmt = (s) => {
+            s = Math.max(0, s || 0);
+            const m = Math.floor(s / 60);
+            return `${String(m).padStart(2, "0")}:${(s - m * 60).toFixed(2).padStart(5, "0")}`;
+        };
+        const actual = this.eventoAnimacion.tiempo_animacion;
+        const total = this.eventoAnimacion.duracionReproduccion ? this.eventoAnimacion.duracionReproduccion() : 0;
+        ctx.save();
+        ctx.font = "12px ui-monospace, SFMono-Regular, Consolas, monospace";
+        ctx.fillStyle = "#d6d9de";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(`${fmt(actual)} / ${fmt(total)}`, this.ancho_canvas - 12, this._altoUI / 2);
+        const evento = this.eventoAnimacion.eventoReproduccion ? this.eventoAnimacion.eventoReproduccion() : null;
+        if (evento) {
+            ctx.textAlign = "left";
+            ctx.fillStyle = "#9aa0a6";
+            ctx.fillText(`Evento: ${evento.nombre}`, 12, this._altoUI / 2);
+        }
+        ctx.restore();
+    }
+
     dibujarBotones() {
         const ctx = this.ctx;
         if(!ctx) return;
         ctx.save();
 
-        // Limpia la franja donde residen los controles
-        ctx.clearRect(0, this.y_timeline - this._altoUI, this.ancho_canvas, this._altoUI);
+        // Fondo de la franja de controles (cabecera del panel)
+        ctx.fillStyle = "#26282c";
+        ctx.fillRect(0, this.y_timeline - this._altoUI, this.ancho_canvas, this._altoUI);
 
         this.botones.forEach(b => {
             ctx.save();
@@ -520,7 +568,8 @@ export default class TimelineCanvas {
 
             if (b.nombre === "velocidad") {
                 ctx.font = "10px sans-serif";
-                ctx.fillText(this._speeds[this._speedIndex] + "x", cx, cy + b.h / 2 + 8);
+                ctx.textAlign = "left";
+                ctx.fillText(this._speeds[this._speedIndex] + "x", b.x + b.w + 6, cy);
             }
 
             ctx.restore();

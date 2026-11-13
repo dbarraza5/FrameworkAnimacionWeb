@@ -1,8 +1,14 @@
 import MenuAnimacion from "../EditorAnimacion/MenuAnimacion";
 import NavEditorAnimacion from "../EditorAnimacion/NavEditorAnimacion";
 import ModalImportarGrupo from "../EditorAnimacion/SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import MenuEvento from "./MenuEvento";
+import OffcanvasAnimaciones, {MIME_ANIMACION} from "./SeccionEventos/OffcanvasAnimaciones";
+import NavEventos from "./SeccionEventos/NavEventos";
+import Lienzo from "../EditorAnimacion/Lienzo";
+import Separador from "./Layout/Separador";
+import BarraEstado from "./Layout/BarraEstado";
+import "./EditorEvento.css";
 import {exportarJSON} from "../../Utils/exportarJSON";
 import NavEditorEvento from "./NavEditorEvento";
 import {GestionAnimacion} from "../../Clases/EditorAnimacion/GestionAnimacion";
@@ -117,6 +123,9 @@ function EditorEvento(props){
     useEffect(() => {
         console.log("Se actualizo El grupos_a_sincronizar");
         console.log(grupos_a_sincronizar);
+        // al montar vale null: no hay nada que sincronizar (antes se asignaba null a
+        // los grupos y el motor fallaba si el primer tick llegaba antes de la descarga)
+        if(!grupos_a_sincronizar) return;
         eventoAnimacion.edicion.gestion_grupos.grupos_figuras = JSON.parse(grupos_a_sincronizar);
         eventoAnimacion.edicion.gestion_grupos_originales.grupos_figuras = JSON.parse(grupos_a_sincronizar);
         //animacion.edicion.grupos_figuras = JSON.parse(grupos_a_sincronizar);
@@ -199,6 +208,78 @@ function EditorEvento(props){
 
         }
     }
+
+    // ---- Biblioteca de animaciones: agregar una animacion como instancia ----
+    // Refs a las instancias actuales (React StrictMode puede reconstruir estos objetos;
+    // los listeners del canvas deben usar siempre los vigentes).
+    const refEvento = useRef(eventoAnimacion);
+    const refLienzo = useRef(gestionEventoLienzo);
+    refEvento.current = eventoAnimacion;
+    refLienzo.current = gestionEventoLienzo;
+
+    const agregarAnimacionEnPunto = (animacion, x_canvas, y_canvas) => {
+        const lienzo = refLienzo.current;
+        const evento = refEvento.current;
+        const {x, y} = lienzo.coordenadasMundo(x_canvas, y_canvas);
+        const contenedor = evento.edicion.agregarInstanciaAnimacion(animacion.grupos_figuras, animacion.nombre, x, y);
+        if(contenedor){
+            setEventoAnimacion({edicion: evento.edicion});
+        }
+        return contenedor;
+    };
+
+    // "Agregar al centro": centro de la vista del lienzo.
+    const agregarAnimacionAlCentro = (animacion) => {
+        const c = refLienzo.current.configuracion_lienzo;
+        agregarAnimacionEnPunto(animacion, c.ancho / 2, c.alto / 2);
+    };
+
+    useEffect(() => {
+        if(!startLoopLienzo) return;
+        const canvas = document.getElementById("lienzo-evento");
+        if(!canvas) return;
+        const esAnimacion = (e) => Array.from(e.dataTransfer?.types || []).includes(MIME_ANIMACION);
+        // pixeles CSS del canvas (el canvas real esta escalado por devicePixelRatio,
+        // pero todo el dibujo y el mouse trabajan en pixeles CSS)
+        const aCanvas = (e) => {
+            const r = canvas.getBoundingClientRect();
+            return {x: e.clientX - r.left, y: e.clientY - r.top};
+        };
+        // Rueda: zoom alrededor del cursor.
+        const alRueda = (e) => {
+            e.preventDefault();
+            const p = aCanvas(e);
+            const factor = Math.exp(-e.deltaY * 0.0015);
+            refLienzo.current.configuracion_lienzo.zoomEnPunto(factor, p.x, p.y);
+        };
+        canvas.addEventListener("wheel", alRueda, {passive: false});
+        const alPasar = (e) => {
+            if(!esAnimacion(e)) return;
+            const p = aCanvas(e);
+            if(refLienzo.current.esZonaTimeline(p.y)) return; // no se suelta sobre el timeline
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "copy";
+        };
+        const alSoltar = (e) => {
+            if(!esAnimacion(e)) return;
+            e.preventDefault();
+            const p = aCanvas(e);
+            if(refLienzo.current.esZonaTimeline(p.y)) return;
+            try{
+                agregarAnimacionEnPunto(JSON.parse(e.dataTransfer.getData(MIME_ANIMACION)), p.x, p.y);
+            }catch(err){
+                console.error("No se pudo agregar la animacion soltada:", err);
+            }
+        };
+        canvas.addEventListener("dragover", alPasar);
+        canvas.addEventListener("drop", alSoltar);
+        return () => {
+            canvas.removeEventListener("wheel", alRueda);
+            canvas.removeEventListener("dragover", alPasar);
+            canvas.removeEventListener("drop", alSoltar);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [startLoopLienzo]);
 
     useEffect(() => {
         console.log("[==============================Evento===========================]")
@@ -346,24 +427,144 @@ function EditorEvento(props){
 
     const edicion_figuras = <EdicionFiguras key={'edicion-figuras'} {...paquete_datos}/>
 
-    return(<div>
-        <div className="row">
-            <MenuEvento  subirAnimacion={subirAnimacion1}
-                         exportarAnimacion={exportarEvento}
-            />
-            <hr/>
-            <NavEditorEvento eventoAnimacion={eventoAnimacion}
-                             setEventoAnimacion = {setEventoAnimacion}
-                             eventoLienzoFigura={eventoLienzoEvento}
-                             setEventLienzoFigura={setEventLienzoEvento}
-                             tipoModalidad={tipo_modalidad}
-                             setTipoModalidad={setTipoModalidadTrabajo}
-                             edicion_figuras = {edicion_figuras}
-            >
-            </NavEditorEvento>
+    // ---- Distribucion del editor (Fase 0): tamanos y visibilidad de paneles ----
+    const [layout, setLayout] = useState(() => {
+        const base = {izq: 320, der: 300, abajo: 230, ver_izq: true, ver_der: true, ver_abajo: true};
+        try{
+            return {...base, ...JSON.parse(localStorage.getItem(CLAVE_LAYOUT) || "{}")};
+        }catch(e){
+            return base;
+        }
+    });
+    const [modo, setModo] = useState("animar"); // "animar" | "dibujo"
+    useEffect(() => {
+        try{ localStorage.setItem(CLAVE_LAYOUT, JSON.stringify(layout)); }catch(e){ /* sin almacenamiento */ }
+    }, [layout]);
+    const redimensionar = (clave, delta, min, max) =>
+        setLayout((l) => ({...l, [clave]: Math.min(max, Math.max(min, l[clave] + delta))}));
+    const alternar = (clave) => setLayout((l) => ({...l, [clave]: !l[clave]}));
+    const lienzoAccion = (accion) => {
+        const c = refLienzo.current.configuracion_lienzo;
+        if(accion === "ajustar") c.ajustarVista();
+        if(accion === "100") c.zoomReal();
+        if(accion === "mas") c.aumentarZoom();
+        if(accion === "menos") c.disminuirZoom();
+    };
 
+    const props_paneles = {
+        eventoAnimacion, setEventoAnimacion,
+        eventoLienzoFigura: eventoLienzoEvento, setEventLienzoFigura: setEventLienzoEvento,
+        tipoModalidad: tipo_modalidad, setTipoModalidad: setTipoModalidadTrabajo,
+        edicion_figuras, manejadorErrores: props.manejadorErrores,
+    };
+
+    const clases = ["editor-pro", `modo-${modo}`,
+        layout.ver_izq ? "" : "sin-izq", layout.ver_der ? "" : "sin-der", layout.ver_abajo ? "" : "sin-abajo"].join(" ");
+
+    return(
+        <div className={clases} data-bs-theme="dark"
+             style={{"--ed-izq": `${layout.izq}px`, "--ed-der": `${layout.der}px`, "--ed-abajo": `${layout.abajo}px`}}>
+
+            {/* ---- barra superior ---- */}
+            <header className="ed-barra">
+                <button className="btn btn-sm btn-outline-secondary border-0" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvas" title="Menu de la aplicacion">
+                    <i className="bi bi-list fs-5"/>
+                </button>
+                <div className="dropdown">
+                    <button className="btn btn-sm btn-outline-secondary border-0 dropdown-toggle" data-bs-toggle="dropdown">
+                        Archivo
+                    </button>
+                    <ul className="dropdown-menu">
+                        <li><button className="dropdown-item" onClick={subirAnimacion1}><i className="bi bi-upload me-2"/>Subir</button></li>
+                        <li><button className="dropdown-item" onClick={exportarEvento}><i className="bi bi-download me-2"/>Exportar</button></li>
+                    </ul>
+                </div>
+                <div className="dropdown">
+                    <button className="btn btn-sm btn-outline-secondary border-0 dropdown-toggle" data-bs-toggle="dropdown">
+                        Ver
+                    </button>
+                    <ul className="dropdown-menu">
+                        <li><button className="dropdown-item" onClick={() => alternar("ver_izq")}>
+                            <i className={`bi ${layout.ver_izq ? "bi-check2" : "bi-dot"} me-2`}/>Panel de escena</button></li>
+                        <li><button className="dropdown-item" onClick={() => alternar("ver_der")}>
+                            <i className={`bi ${layout.ver_der ? "bi-check2" : "bi-dot"} me-2`}/>Panel derecho</button></li>
+                        <li><button className="dropdown-item" onClick={() => alternar("ver_abajo")}>
+                            <i className={`bi ${layout.ver_abajo ? "bi-check2" : "bi-dot"} me-2`}/>Linea de tiempo</button></li>
+                        <li><hr className="dropdown-divider"/></li>
+                        <li><button className="dropdown-item" onClick={() => lienzoAccion("ajustar")}><i className="bi bi-arrows-fullscreen me-2"/>Ajustar a la vista</button></li>
+                        <li><button className="dropdown-item" onClick={() => lienzoAccion("100")}><i className="bi bi-1-square me-2"/>Zoom 100 %</button></li>
+                    </ul>
+                </div>
+
+                <span className="ed-titulo ms-2">Editor de eventos <small>· {props.id_evento}</small></span>
+                <span className="ed-espacio"/>
+
+                <div className="btn-group btn-group-sm" role="group" aria-label="Modo">
+                    <button className={`btn ${modo === "animar" ? "btn-primary" : "btn-outline-secondary"}`}
+                            onClick={() => setModo("animar")}>Animar</button>
+                    <button className={`btn ${modo === "dibujo" ? "btn-primary" : "btn-outline-secondary"}`}
+                            onClick={() => setModo("dibujo")}>Dibujo</button>
+                </div>
+                <span className="ed-espacio"/>
+                <button className="btn btn-sm btn-primary" onClick={subirAnimacion1} title="Guardar en el servidor">
+                    <i className="bi bi-cloud-upload me-1"/>Subir
+                </button>
+            </header>
+
+            {/* ---- panel izquierdo: eventos, movimientos, grupos ---- */}
+            <aside className="ed-panel ed-izq">
+                <div className="ed-cabecera">
+                    <span>Escena</span>
+                    <button className="btn btn-sm p-0 text-secondary" onClick={() => alternar("ver_izq")} title="Ocultar panel">
+                        <i className="bi bi-chevron-double-left"/>
+                    </button>
+                </div>
+                <div className="ed-cuerpo">
+                    <NavEventos {...props_paneles}/>
+                </div>
+                <Separador orientacion="vertical" titulo="Arrastrar para cambiar el ancho"
+                           onArrastrar={(d) => redimensionar("izq", d, 220, 640)}/>
+            </aside>
+
+            {/* ---- lienzo ---- */}
+            <main className="ed-lienzo">
+                <Lienzo lienzo={eventoLienzoEvento} id="lienzo-evento" editar_animacion={() => {}}
+                        setEventLienzoFigura={setEventLienzoEvento}/>
+            </main>
+
+            {/* ---- panel derecho: biblioteca (el inspector llega en la Fase 0.B) ---- */}
+            <aside className="ed-panel ed-der">
+                <div className="ed-cabecera">
+                    <span><i className="bi bi-collection me-1"/>Biblioteca</span>
+                    <button className="btn btn-sm p-0 text-secondary" onClick={() => alternar("ver_der")} title="Ocultar panel">
+                        <i className="bi bi-chevron-double-right"/>
+                    </button>
+                </div>
+                <div className="ed-cuerpo">
+                    <OffcanvasAnimaciones id="bibliotecaAnimaciones" embebido onAgregar={agregarAnimacionAlCentro}/>
+                </div>
+                <Separador orientacion="vertical" titulo="Arrastrar para cambiar el ancho"
+                           onArrastrar={(d) => redimensionar("der", -d, 220, 640)}/>
+            </aside>
+
+            {/* ---- linea de tiempo ---- */}
+            <section className="ed-panel ed-abajo">
+                <canvas id="timeline-evento"/>
+                <Separador orientacion="horizontal" titulo="Arrastrar para cambiar el alto"
+                           onArrastrar={(d) => redimensionar("abajo", -d, 120, 520)}/>
+            </section>
+
+            {/* ---- modo Dibujo: editor de figuras (aun con su aspecto anterior) ---- */}
+            <div className="ed-dibujo">
+                {edicion_figuras}
+            </div>
+
+            <BarraEstado refLienzo={refLienzo}/>
         </div>
-    </div>)
+    )
 }
+
+const CLAVE_LAYOUT = "editor_evento_layout_v1";
 
 export default EditorEvento

@@ -146,10 +146,14 @@ function SectionEdicionAnimacion(props) {
 function SectionEdicionEditor(props) {
     const {id_evento} = useParams();
 
+    // El editor de eventos ocupa toda la ventana (distribucion de editor profesional),
+    // asi que no va dentro del contenedor de Home; el menu de la aplicacion
+    // (MenuLateral, offcanvas "#offcanvas") se abre desde su barra superior.
     return (
-        <Home {...props}>
-            <EditorEvento id_evento={id_evento}/>
-        </Home>
+        <>
+            <MenuLateral {...props}/>
+            <EditorEvento id_evento={id_evento} manejadorErrores={props.manejadorErrores}/>
+        </>
     )
 }
 /*

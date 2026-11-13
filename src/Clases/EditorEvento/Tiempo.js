@@ -23,8 +23,12 @@ class Tiempo {
         this.tiempo_universal=0;
     }
 
-    modPasivo() {
-        this.segmentacion = this.tiempoGuardar = this.tiempoActual = this.tiempo_universal//performance.now();
+    // Reinicia el reloj a 0 "ahora". Antes usaba this.tiempo_universal (el instante del
+    // ultimo cronometroC), que vale 0 si el reloj todavia no se consulto nunca: el reloj
+    // quedaba contando desde que se abrio la pagina (ej. 00:22 en vez de 00:00).
+    modPasivo(tiempo_universal = performance.now()) {
+        this.tiempo_universal = tiempo_universal;
+        this.segmentacion = this.tiempoGuardar = this.tiempoActual = this.tiempo_universal;
         this.contador = 0;
         this.estado = false;
         this.tiempodePausa = 0;

@@ -48,7 +48,9 @@ function Lienzo(props){
         props.lienzo.mouse_sobre_lienzo = true;
         props.setEventLienzoFigura(props.lienzo);
         props.editar_animacion()
-        document.getElementById("lienzo-animacion").focus();
+        // foco al canvas sobre el que entro el mouse (antes siempre "lienzo-animacion",
+        // lo que en el editor de eventos le quitaba el teclado al lienzo de eventos)
+        if(e.target && e.target.focus) e.target.focus({preventScroll: true});
     }
 
     const eventoMouseSalida=(e)=>{
@@ -99,7 +101,7 @@ function Lienzo(props){
                    onMouseOut={(e)=>eventoMouseSalida(e)}
                    tabindex='0'
                    onWheel={manejarRueda}
-                   width="600" height="600" style={style}></canvas>)
+                   width="600" height="600" style={props.style || style}></canvas>)
 }
 
 export default Lienzo

@@ -6,6 +6,7 @@ import ConfiguracionLienzo from "../EditorAnimacion/ConfiguracionLienzo";
 import TimelineCanvas from "./TimelineCanvas";
 import {TIPO_EFECTO_MOV_FIGURAS, TIPO_EFECTO_MOV_OBJETOS} from "./ConstanteEvento";
 import OperacionesGrupo, {origenGrupoX, origenGrupoY} from "../EditorAnimacion/OperacionesGrupo";
+import {limitesGrupos, prepararGrupos} from "../EditorAnimacion/Miniatura";
 
 let tiempo_universal=performance.now();
 
@@ -257,6 +258,79 @@ class GestionEvento{
                 }
             }
         }
+    }
+
+    // Agrega una animacion completa (sus grupos_figuras) a la escena como una
+    // INSTANCIA: todos sus grupos quedan dentro de un grupo contenedor nuevo
+    // ("<nombre>_<n>") ubicado de modo que el centro del dibujo caiga en (x, y), y se
+    // renombran con ese prefijo para no chocar con los grupos existentes (los nombres
+    // deben ser unicos: los eventos referencian grupos por nombre). Los grupos vacios
+    // (sin figuras propias ni en sus descendientes, ej. "default") se omiten.
+    // Devuelve el nombre del contenedor, o null si la animacion no tiene figuras.
+    agregarInstanciaAnimacion(grupos_asset, nombre_animacion, x, y){
+        const asset = structuredClone(grupos_asset || []);
+        const hijos_de = (nombre) => asset.filter((g) => g.nodo_padre === nombre);
+        const util = new Map();
+        const tieneFiguras = (g) => {
+            if(util.has(g.nombre)) return util.get(g.nombre);
+            util.set(g.nombre, false); // proteccion contra ciclos
+            const r = (g.lista_figuras || []).length > 0 || hijos_de(g.nombre).some(tieneFiguras);
+            util.set(g.nombre, r);
+            return r;
+        };
+        const grupos = asset.filter(tieneFiguras);
+        if(grupos.length === 0){
+            return null;
+        }
+
+        const lim = limitesGrupos(prepararGrupos(grupos));
+        const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
+        const base = String(nombre_animacion || "animacion").replace(/[^A-Za-z0-9_-]+/g, "_") || "animacion";
+        let n = 1, contenedor;
+        do {
+            contenedor = `${base}_${n++}`;
+        } while(existentes.has(contenedor) || grupos.some((g) => existentes.has(`${contenedor}_${g.nombre}`)));
+
+        const nombres = new Set(grupos.map((g) => g.nombre));
+        const sinIds = (obj) => {
+            if(Array.isArray(obj)) return obj.map(sinIds);
+            if(obj && typeof obj === "object"){
+                const copia = {};
+                for(const k in obj){ if(k !== "_id") copia[k] = sinIds(obj[k]); }
+                return copia;
+            }
+            return obj;
+        };
+        const nuevos = grupos.map((g) => ({
+            ...sinIds(g),
+            nombre: `${contenedor}_${g.nombre}`,
+            nodo_padre: nombres.has(g.nodo_padre) ? `${contenedor}_${g.nodo_padre}` : contenedor,
+        }));
+        nuevos.forEach((g) => { delete g.cx_solid; delete g.cy_solid; });
+
+        const capa_max = Math.max(0, ...this.gestion_grupos_originales.grupos_figuras
+            .filter((g) => g.nodo_padre === "root").map((g) => Number(g.capa) || 0));
+        const grupo_contenedor = {
+            nombre: contenedor,
+            nodo_padre: "root",
+            visible: true,
+            color: "#000000",
+            cx: Math.round(x - lim.cx),
+            cy: Math.round(y - lim.cy),
+            capa: capa_max + 1,
+            clases: [],
+            lista_figuras: [],
+            lista_pintado: [{color: "#000000", visible: true, elementos: [[]]}],
+        };
+
+        const agregados = [grupo_contenedor, ...nuevos];
+        this.gestion_grupos_originales.grupos_figuras.push(...structuredClone(agregados));
+        this.gestion_grupos.grupos_figuras.push(...structuredClone(agregados));
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        for(const g of agregados){
+            this.movimientos_grupos[g.nombre] = {x: 0, y: 0};
+        }
+        return contenedor;
     }
 
     // Sub-eventos (hijos directos) de un evento, en el orden en que estan guardados.

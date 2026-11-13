@@ -60,14 +60,28 @@ function PanelGrupos(props) {
 
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid d-flex flex-wrap gap-2">
+            {/* Biblioteca (offcanvas a la derecha, se monta en EditorEvento): agrega
+                animaciones como instancias arrastrandolas al lienzo. */}
             <button
                 type="button"
                 className="btn btn-primary"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasAnimaciones"
+                aria-controls="offcanvasAnimaciones"
+            >
+                <i className="bi bi-collection me-1"/> Animaciones
+            </button>
+            {/* Comportamiento anterior: reemplaza TODOS los grupos del lienzo por los de
+                la animacion elegida (sincronizar). */}
+            <button
+                type="button"
+                className="btn btn-outline-secondary"
                 data-bs-toggle="modal"
                 data-bs-target="#dualListModal"
+                title="Reemplaza todos los grupos del lienzo por los de una animacion"
             >
-                Abrir modal
+                Reemplazar grupos…
             </button>
 
             <ModalImportarGrupos

@@ -1,0 +1,160 @@
+/* Armazon del editor de eventos con distribucion de editor profesional
+   (planeacion_escena_objetos.md, Fase 0): barra superior, panel izquierdo,
+   lienzo al centro, panel derecho, timeline abajo y barra de estado. */
+
+.editor-pro {
+    --ed-barra: 40px;
+    --ed-estado: 24px;
+    --ed-izq: 320px;
+    --ed-der: 300px;
+    --ed-abajo: 230px;
+    --ed-fondo: #1e1f22;
+    --ed-panel: #2b2d31;
+    --ed-panel-2: #232428;
+    --ed-borde: #3c3f45;
+    --ed-texto: #d6d9de;
+    --ed-texto-2: #9aa0a6;
+
+    position: fixed;
+    inset: 0;
+    display: grid;
+    grid-template-rows: var(--ed-barra) minmax(0, 1fr) var(--ed-abajo) var(--ed-estado);
+    grid-template-columns: var(--ed-izq) minmax(0, 1fr) var(--ed-der);
+    grid-template-areas:
+        "barra barra barra"
+        "izq   lienzo der"
+        "abajo abajo abajo"
+        "estado estado estado";
+    background: var(--ed-fondo);
+    color: var(--ed-texto);
+    font-size: 13px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.editor-pro.sin-izq { --ed-izq: 0px; }
+.editor-pro.sin-der { --ed-der: 0px; }
+.editor-pro.sin-abajo { --ed-abajo: 0px; }
+
+/* ---- barra superior ---- */
+.editor-pro .ed-barra {
+    grid-area: barra;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 8px;
+    background: var(--ed-panel-2);
+    border-bottom: 1px solid var(--ed-borde);
+    min-width: 0;
+}
+.editor-pro .ed-barra .ed-titulo {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.editor-pro .ed-barra .ed-titulo small { color: var(--ed-texto-2); font-weight: 400; }
+.editor-pro .ed-barra .btn { --bs-btn-padding-y: 2px; --bs-btn-padding-x: 8px; --bs-btn-font-size: 13px; }
+.editor-pro .ed-barra .btn-outline-secondary { --bs-btn-color: var(--ed-texto); --bs-btn-hover-bg: #3a3d42; --bs-btn-hover-color: #fff; }
+.editor-pro .ed-espacio { flex: 1; }
+
+/* ---- paneles ---- */
+.editor-pro .ed-panel {
+    background: var(--ed-panel);
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.editor-pro .ed-izq { grid-area: izq; border-right: 1px solid var(--ed-borde); }
+.editor-pro .ed-der { grid-area: der; border-left: 1px solid var(--ed-borde); }
+.editor-pro .ed-abajo { grid-area: abajo; border-top: 1px solid var(--ed-borde); background: #1b1c1f; }
+.editor-pro.sin-izq .ed-izq, .editor-pro.sin-der .ed-der, .editor-pro.sin-abajo .ed-abajo { display: none; }
+
+.editor-pro .ed-cabecera {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 30px;
+    padding: 0 8px 0 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ed-texto-2);
+    background: var(--ed-panel-2);
+    border-bottom: 1px solid var(--ed-borde);
+}
+.editor-pro .ed-cuerpo { flex: 1 1 auto; min-height: 0; overflow: auto; }
+
+/* contenido existente (formularios Bootstrap) mas compacto dentro de los paneles */
+.editor-pro .ed-cuerpo .form-control,
+.editor-pro .ed-cuerpo .form-select,
+.editor-pro .ed-cuerpo .btn { font-size: 12.5px; }
+.editor-pro .ed-cuerpo .container-fluid { padding-left: 0; padding-right: 0; }
+.editor-pro .ed-cuerpo .nav-tabs { padding: 0 6px; }
+.editor-pro .ed-cuerpo .nav-link { padding: 6px 10px; font-size: 12.5px; }
+
+/* ---- lienzo ---- */
+.editor-pro .ed-lienzo {
+    grid-area: lienzo;
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    background: #3a3d42;
+}
+.editor-pro .ed-lienzo canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    outline: none;
+}
+
+/* ---- timeline ---- */
+.editor-pro .ed-abajo canvas { width: 100%; height: 100%; display: block; }
+
+/* ---- barra de estado ---- */
+.editor-pro .ed-estado {
+    grid-area: estado;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 10px;
+    font-size: 11.5px;
+    color: var(--ed-texto-2);
+    background: var(--ed-panel-2);
+    border-top: 1px solid var(--ed-borde);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* ---- separadores (arrastrar el borde para redimensionar) ---- */
+.editor-pro .ed-separador { position: absolute; z-index: 5; }
+.editor-pro .ed-separador:hover, .editor-pro .ed-separador.activo { background: #4c8dff66; }
+.editor-pro .ed-separador.vertical { top: 0; bottom: 0; width: 6px; cursor: col-resize; }
+.editor-pro .ed-separador.horizontal { left: 0; right: 0; height: 6px; cursor: row-resize; }
+.editor-pro .ed-izq > .ed-separador { right: -3px; }
+.editor-pro .ed-der > .ed-separador { left: -3px; }
+.editor-pro .ed-abajo > .ed-separador { top: -3px; }
+
+/* ---- modos: Animar (distribucion nueva) / Dibujo (editor de figuras) ---- */
+.editor-pro.modo-animar .ed-dibujo { display: none; }
+.editor-pro.modo-dibujo .ed-izq,
+.editor-pro.modo-dibujo .ed-lienzo,
+.editor-pro.modo-dibujo .ed-der,
+.editor-pro.modo-dibujo .ed-abajo { display: none; }
+
+/* ---- modo Dibujo: el editor de figuras ocupa el area principal ---- */
+.editor-pro .ed-dibujo {
+    grid-row: 2 / 5;
+    grid-column: 1 / 4;
+    overflow: auto;
+    padding: 12px;
+    background: var(--ed-fondo);
+}

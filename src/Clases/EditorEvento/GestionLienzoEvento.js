@@ -195,6 +195,41 @@ class GestionLienzoEvento{
         return null;
     }
 
+    // Convierte un punto del canvas (pixeles del canvas, ya sin el borde/escala CSS)
+    // a coordenadas del dibujo, deshaciendo zoom y paneo -- misma formula que usa
+    // procesarEventoLienzo para el mouse (mouse_virtual_x/y).
+    coordenadasMundo(x_canvas, y_canvas){
+        return this.configuracion_lienzo.pantallaAMundo(x_canvas, y_canvas);
+    }
+
+    // El timeline ahora vive en su propio canvas (panel inferior), asi que ningun
+    // punto del lienzo pertenece al timeline. Se mantiene por compatibilidad.
+    esZonaTimeline(y_canvas){
+        return false;
+    }
+
+    // Ajusta el canvas del lienzo al tamano de su contenedor (pixeles CSS) y a la
+    // densidad de la pantalla (devicePixelRatio), y deja el contexto escalado para que
+    // todo el dibujo siga trabajando en pixeles CSS. Devuelve {ctx, ancho, alto}.
+    prepararCanvas(canvas){
+        const dpr = window.devicePixelRatio || 1;
+        const ancho = Math.max(1, Math.round(canvas.clientWidth || canvas.width));
+        const alto = Math.max(1, Math.round(canvas.clientHeight || canvas.height));
+        if(canvas.width !== Math.round(ancho * dpr) || canvas.height !== Math.round(alto * dpr)){
+            canvas.width = Math.round(ancho * dpr);
+            canvas.height = Math.round(alto * dpr);
+        }
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        this.configuracion_lienzo.actualizarTamano(ancho, alto);
+        // primera vez con un tamano real: encuadrar el documento
+        if(!this._vista_inicializada && canvas.clientWidth > 0 && canvas.clientHeight > 0){
+            this.configuracion_lienzo.ajustarVista();
+            this._vista_inicializada = true;
+        }
+        return {ctx, ancho, alto};
+    }
+
     limpiar(){
         this.timelineInstance.dispose();
     }
@@ -292,10 +327,12 @@ class GestionLienzoEvento{
         const configuracion_ = this.configuracion_lienzo.getConfiguracionGeneral();
 
         const canvas = document.getElementById(this.id_canvas);
-        if(canvas === null)
-            return null;
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(canvas === null || canvas.clientWidth === 0)
+            return null;  // no existe o esta oculto (modo Dibujo)
+        const {ctx, ancho, alto} = this.prepararCanvas(canvas);
+        // mesa de trabajo (fondo oscuro); el documento se pinta claro encima
+        ctx.fillStyle = "#3a3d42";
+        ctx.fillRect(0, 0, ancho, alto);
         const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
         // this.animacion_.procesarPosicionFinalFiguras()
         // this.animacion_.listaOrdenadasGrupos(lista_grupo_root)
@@ -320,6 +357,8 @@ class GestionLienzoEvento{
         // `escala` cambiara no tenia ningun efecto visible. El HUD de texto y el
         // timeline quedan afuera a proposito (UI fija, no debe escalarse).
         this.configuracion_lienzo.inicioZoomLienzo(ctx);
+
+        this.configuracion_lienzo.dibujarDocumento(ctx);
 
         // Grilla de referencia (sutil, detras del dibujo) -- ayuda a ubicarse al panear
         // y a notar cuando se volvio exactamente a (0,0).
@@ -367,6 +406,13 @@ class GestionLienzoEvento{
     }
 
     procesarEventoLienzo(setAnimacion, actListaTrabajo) {
+        // cuadros por segundo (promedio suavizado), para la barra de estado
+        const ahora = performance.now();
+        if(this._t_cuadro_anterior){
+            const instantaneo = 1000 / Math.max(1, ahora - this._t_cuadro_anterior);
+            this.fps = this.fps ? this.fps * 0.9 + instantaneo * 0.1 : instantaneo;
+        }
+        this._t_cuadro_anterior = ahora;
 
         this.puntero_real.x= this.eventoLienzoEvento.mouse_x;
         this.puntero_real.y= this.eventoLienzoEvento.mouse_y;
@@ -380,11 +426,10 @@ class GestionLienzoEvento{
             this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y, this.eventoLienzoEvento.mouse_only_click
         );
 
-        const deltax =this.puntero_real.x-(300- (300-this.puntero_real.x)/this.configuracion_lienzo.escala);
-        const deltay =this.puntero_real.y-(300- (300-this.puntero_real.y)/this.configuracion_lienzo.escala);
-
-        this.eventoLienzoEvento.mouse_virtual_x = this.eventoLienzoEvento.mouse_x -this.configuracion_lienzo.x_delta_original-deltax;
-        this.eventoLienzoEvento.mouse_virtual_y = this.eventoLienzoEvento.mouse_y -this.configuracion_lienzo.y_delta_original-deltay;
+        // mouse (pixeles CSS del canvas) -> coordenadas del dibujo (deshace zoom y paneo)
+        const mundo = this.configuracion_lienzo.pantallaAMundo(this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y);
+        this.eventoLienzoEvento.mouse_virtual_x = mundo.x;
+        this.eventoLienzoEvento.mouse_virtual_y = mundo.y;
         this.x_mouse = this.eventoLienzoEvento.mouse_virtual_x;
         this.y_mouse = this.eventoLienzoEvento.mouse_virtual_y;
 
@@ -439,9 +484,7 @@ class GestionLienzoEvento{
                 );
             }else if(!click_en_boton){
                 const interactuo = this.procesoEdicionMovimientos();
-                const y_limite_lienzo = this.timelineInstance.y_timeline - this.timelineInstance._altoUI;
-                const click_en_area_lienzo = this.eventoLienzoEvento.mouse_y < y_limite_lienzo;
-                if(!interactuo && this.eventoLienzoEvento.mouse_only_click && click_en_area_lienzo){
+                if(!interactuo && this.eventoLienzoEvento.mouse_only_click){
                     this.configuracion_lienzo.iniciarArrastreLienzo(
                         this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y
                     );

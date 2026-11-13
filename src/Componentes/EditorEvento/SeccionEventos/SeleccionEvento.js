@@ -93,17 +93,17 @@ function SeleccionEvento(props){
 
     return (
         <div>
-            <div className="container-fluid py-1 bg-light border-bottom mb-2">
+            <div className="container-fluid py-1 bg-body-tertiary border-bottom mb-2">
                 <div className="d-flex justify-content-between align-items-center flex-nowrap overflow-hidden">
 
                     {/* Información del Evento: Reducido a una sola línea */}
                     <div className="d-flex align-items-center flex-shrink-1 text-truncate">
-                        <div className={`me-2 px-2 py-1 rounded border ${evento ? 'border-primary text-primary' : 'border-secondary text-secondary'} bg-white small`}>
+                        <div className={`me-2 px-2 py-1 rounded border ${evento ? 'border-primary text-primary' : 'border-secondary text-secondary'} bg-body small`}>
                             <i className={`bi ${evento ? 'bi-calendar-check' : 'bi-calendar-x'}`}></i>
                         </div>
                         <div className="text-truncate">
                             <span className="text-muted small fw-bold text-uppercase me-2" style={{ fontSize: '0.65rem' }}>Evento:</span>
-                            <span className="small fw-semibold text-dark">
+                            <span className="small fw-semibold text-body">
                     {evento ? evento.nombre : "Ninguno"}
                 </span>
                         </div>

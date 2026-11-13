@@ -69,12 +69,83 @@ class ConfiguracionLienzoEvento{
     escala = 1;
     proporcion_escala = 1.1;
     aplicar_escala = false;
+    escala_min = 0.1;
+    escala_max = 8;
+
+    // Tamano actual del canvas en pixeles CSS (lo fija GestionLienzoEvento en cada
+    // tick a partir del contenedor; antes era 600x600 fijo).
+    ancho = 600;
+    alto = 600;
+
+    // Area del documento (la "escena") en coordenadas del dibujo: se pinta clara
+    // sobre la mesa de trabajo oscura. Ver planeacion_escena_objetos.md, pregunta P6.
+    documento = {x: 0, y: 0, ancho: 1280, alto: 720};
+
+    // Transformacion de vista: pantalla = x_des_zoom + escala * (mundo + x_delta_original).
+    // (x_delta_original es el paneo, que los dibujos suman a mano a cada coordenada;
+    // x_des_zoom/escala se aplican con ctx.translate/scale en inicioZoomLienzo.)
 
     // Botones dibujados en la esquina superior derecha del lienzo (fijos, fuera del
-    // area escalada -- ver dibujarBotones/procesarClickBotones).
+    // area escalada -- ver dibujarBotones/procesarClickBotones). Se reubican segun el
+    // ancho del canvas en actualizarTamano().
     boton_centrar = {x: 492, y: 6, w: 30, h: 22};
     boton_zoom_menos = {x: 528, y: 6, w: 26, h: 22};
     boton_zoom_mas = {x: 560, y: 6, w: 26, h: 22};
+
+    actualizarTamano(ancho, alto){
+        this.ancho = ancho;
+        this.alto = alto;
+        const y = 8, h = 24;
+        this.boton_zoom_mas = {x: ancho - 8 - 28, y, w: 28, h};
+        this.boton_zoom_menos = {x: ancho - 8 - 28 * 2 - 4, y, w: 28, h};
+        this.boton_centrar = {x: ancho - 8 - 28 * 3 - 8, y, w: 28, h};
+    }
+
+    // Punto de pantalla (pixeles CSS del canvas) -> coordenadas del dibujo.
+    pantallaAMundo(x, y){
+        return {
+            x: (x - this.x_des_zoom) / this.escala - this.x_delta_original,
+            y: (y - this.y_des_zoom) / this.escala - this.y_delta_original,
+        };
+    }
+
+    // Zoom multiplicando la escala por `factor`, dejando fijo el punto de pantalla
+    // (sx, sy) -- con la rueda, el punto bajo el cursor.
+    zoomEnPunto(factor, sx, sy){
+        const nueva = Math.min(this.escala_max, Math.max(this.escala_min, this.escala * factor));
+        const f = nueva / this.escala;
+        this.x_des_zoom = sx - f * (sx - this.x_des_zoom);
+        this.y_des_zoom = sy - f * (sy - this.y_des_zoom);
+        this.escala = nueva;
+    }
+
+    // Encuadra el documento completo en el canvas, con un margen.
+    ajustarVista(margen = 24){
+        const d = this.documento;
+        const e = Math.min((this.ancho - 2 * margen) / d.ancho, (this.alto - 2 * margen) / d.alto);
+        if(!(e > 0)) return;
+        this.escala = Math.min(this.escala_max, Math.max(this.escala_min, e));
+        this.x_delta_original = 0;
+        this.y_delta_original = 0;
+        this.x_des_zoom = (this.ancho - this.escala * d.ancho) / 2 - this.escala * d.x;
+        this.y_des_zoom = (this.alto - this.escala * d.alto) / 2 - this.escala * d.y;
+    }
+
+    // Zoom 100 % manteniendo el centro de la vista.
+    zoomReal(){
+        this.zoomEnPunto(1 / this.escala, this.ancho / 2, this.alto / 2);
+    }
+
+    // Mesa de trabajo (fondo) + hoja del documento. Se dibuja dentro del wrap de zoom.
+    dibujarDocumento(ctx){
+        const d = this.documento;
+        ctx.save();
+        ctx.fillStyle = "#ffffff";
+        ctx.shadowColor = "rgba(0,0,0,0.45)";
+        ctx.shadowBlur = 12 / this.escala;
+        ctx.fillRect(d.x + this.x_delta_original, d.y + this.y_delta_original, d.ancho, d.alto);
+        ctx.restore();
+    }
 
     // Paneo del lienzo (arrastrar el fondo para mover la vista).
     arrastrando_lienzo = false;
@@ -146,40 +217,18 @@ class ConfiguracionLienzoEvento{
         }
     }
 
-    // Un paso de zoom in/out, con centro fijo en (300,300) -- misma formula que el
-    // editor de dibujo (ConfiguracionLienzo.js), pero disparada por un click de boton
-    // en vez de tecla+rueda del mouse.
+    // Un paso de zoom in/out (botones +/-), centrado en el medio del canvas.
     aumentarZoom(){
-        if(this.escala === 1){
-            this.x_des_zoom = 0;
-            this.y_des_zoom = 0;
-        }
-        if(this.escala < 3){
-            this.escala *= this.proporcion_escala;
-            this.x_des_zoom = 300 - (300 - this.x_des_zoom) * this.proporcion_escala;
-            this.y_des_zoom = 300 - (300 - this.y_des_zoom) * this.proporcion_escala;
-        }
-        this.aplicar_escala = this.escala !== 1;
+        this.zoomEnPunto(this.proporcion_escala, this.ancho / 2, this.alto / 2);
     }
 
     disminuirZoom(){
-        if(this.escala === 1){
-            this.x_des_zoom = 0;
-            this.y_des_zoom = 0;
-        }
-        if(this.escala > 1){
-            this.escala /= this.proporcion_escala;
-            this.x_des_zoom = 300 - (300 - this.x_des_zoom) / this.proporcion_escala;
-            this.y_des_zoom = 300 - (300 - this.y_des_zoom) / this.proporcion_escala;
-        }
-        this.aplicar_escala = this.escala !== 1;
+        this.zoomEnPunto(1 / this.proporcion_escala, this.ancho / 2, this.alto / 2);
     }
 
-    // Vuelve el paneo a (0,0) de un click -- el zoom (escala/x_des_zoom) no se toca,
-    // solo la posicion.
+    // Boton "centrar": encuadra el documento completo.
     centrarLienzo(){
-        this.x_delta_original = 0;
-        this.y_delta_original = 0;
+        this.ajustarVista();
     }
 
     // Arrastrar el fondo del lienzo (fuera de botones/grupos/controles de movimiento)
@@ -206,8 +255,10 @@ class ConfiguracionLienzoEvento{
             this.arrastrando_lienzo = false;
             return;
         }
-        this.x_delta_original = this.x_original_aux + (mouse_x - this.x_original_mouse);
-        this.y_delta_original = this.y_original_aux + (mouse_y - this.y_original_mouse);
+        // el paneo esta en unidades del dibujo: el desplazamiento del mouse (pantalla)
+        // se divide por la escala para que el contenido siga al cursor con cualquier zoom.
+        this.x_delta_original = this.x_original_aux + (mouse_x - this.x_original_mouse) / this.escala;
+        this.y_delta_original = this.y_original_aux + (mouse_y - this.y_original_mouse) / this.escala;
     }
 
     // Hit-test de los botones del lienzo (zoom y centrar), en coordenadas de pantalla
@@ -256,25 +307,26 @@ class ConfiguracionLienzoEvento{
     // contenido -- debe dibujarse dentro del wrap inicioZoomLienzo/finZoomLienzo). Los
     // ejes por (0,0) se marcan un poco mas oscuros para que sea facil notar cuando el
     // lienzo esta centrado.
+    // (solo dentro del area del documento; el grosor se compensa con la escala para
+    // que la linea mida ~1 px en pantalla con cualquier zoom).
     dibujarGrilla(ctx){
         const paso = 50;
-        const rango = 1500;
+        const d = this.documento;
+        const ox = this.x_delta_original, oy = this.y_delta_original;
         ctx.save();
-        ctx.lineWidth = 1;
-        for(let x = -rango; x <= rango; x += paso){
-            const sx = x + this.x_delta_original;
+        ctx.lineWidth = 1 / this.escala;
+        for(let x = d.x; x <= d.x + d.ancho; x += paso){
             ctx.strokeStyle = x === 0 ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.06)";
             ctx.beginPath();
-            ctx.moveTo(sx, -rango + this.y_delta_original);
-            ctx.lineTo(sx, rango + this.y_delta_original);
+            ctx.moveTo(x + ox, d.y + oy);
+            ctx.lineTo(x + ox, d.y + d.alto + oy);
             ctx.stroke();
         }
-        for(let y = -rango; y <= rango; y += paso){
-            const sy = y + this.y_delta_original;
+        for(let y = d.y; y <= d.y + d.alto; y += paso){
             ctx.strokeStyle = y === 0 ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.06)";
             ctx.beginPath();
-            ctx.moveTo(-rango + this.x_delta_original, sy);
-            ctx.lineTo(rango + this.x_delta_original, sy);
+            ctx.moveTo(d.x + ox, y + oy);
+            ctx.lineTo(d.x + d.ancho + ox, y + oy);
             ctx.stroke();
         }
         ctx.restore();
@@ -332,7 +384,7 @@ class ConfiguracionLienzoEvento{
     imprimirVariablesLienzo(ctx, tipo_trabajo = 0) {
 
         ctx.font = '11px Arial';
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = '#a9b1bb';
 
         if (this.ver_info_lienzo) {
 
@@ -400,16 +452,16 @@ class ConfiguracionLienzoEvento{
         }
     }
 
+    // Siempre se aplica: con "ajustar a la vista" puede haber traslacion aunque la
+    // escala sea 1.
     inicioZoomLienzo(ctx){
-        if(this.aplicar_escala){
-            ctx.save();
-            ctx.translate(this.x_des_zoom, this.y_des_zoom);
-            ctx.scale(this.escala, this.escala);
-        }
+        ctx.save();
+        ctx.translate(this.x_des_zoom, this.y_des_zoom);
+        ctx.scale(this.escala, this.escala);
     }
 
     finZoomLienzo(ctx){
-        if(this.aplicar_escala){
+        {
             ctx.restore();
             // if(this.tipo_trabajo === MOVER_REDUCCION_LIENZO || this.tipo_trabajo === MOVER_AUMENTO_LIENZO)
             // this.tipo_trabajo = MOVER_NADA;
