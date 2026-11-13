@@ -9,6 +9,10 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (cámara y profundidad)**
+- **Cámara:** cada escena tiene una cámara que se puede mover, acercar y animar con claves. Con **Vista de cámara** ves cómo quedará el resultado. Ver [§7e](#7e-cámara-y-profundidad).
+- **Profundidad:** el botón *Profundidad* del panel Objetos hace que lo que está más abajo se dibuje delante. El campo **Plano** del Inspector manda algo siempre al fondo o al frente.
+
 **2026-11-13 (fotogramas clave, 3)**
 - **Camino en el lienzo:** el objeto con claves de posición muestra su recorrido como una línea punteada con un rombo por clave. Arrastra los rombos para acomodar el camino. Ver [El camino en el lienzo](#el-camino-en-el-lienzo).
 - **Selección por rectángulo** de claves en la línea de tiempo.
@@ -78,6 +82,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 7b. [Objetos en la escena: seleccionar, mover, escalar, rotar](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar)
 7c. [Panel Objetos y entrar a un objeto](#7c-panel-objetos-y-entrar-a-un-objeto)
 7d. [Animar con fotogramas clave](#7d-animar-con-fotogramas-clave)
+7e. [Cámara y profundidad](#7e-cámara-y-profundidad)
 8. [Línea de tiempo](#8-línea-de-tiempo)
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
@@ -526,6 +531,39 @@ Se repite el tramo entre la **primera y la última clave del objeto**, contando 
 - **Assets animados:** las claves de la instancia la mueven por la escena mientras el asset anima sus patas. Así se arma un perro que camina **por un camino**.
 - **Opacidad:** se hereda. Un objeto al 50 % deja a todas sus partes al 50 %.
 - **Guardar:** las claves se guardan con **Subir**.
+
+---
+
+## 7e. Cámara y profundidad
+
+### La cámara
+
+Toda escena tiene una **Cámara**: es lo que se verá en el resultado. Aparece en el panel Objetos con el ícono 🎥, y en el lienzo como el **rectángulo punteado**; lo que queda fuera se ve más oscuro.
+
+- **Seleccionarla:** haz clic en el **borde** del rectángulo (el interior es la escena) o en el panel Objetos.
+- **Moverla:** arrástrala por el borde.
+- **Inspector:**
+  - **Centro X / Y:** el punto que mira;
+  - **Zoom:** 2 = se acerca al doble, 0,5 = se aleja;
+  - **Ancho / Alto del cuadro:** el tamaño del resultado, 1280×720 por defecto.
+- **Animarla:** igual que cualquier objeto, con los rombos ◆ ([§7d](#7d-animar-con-fotogramas-clave)). Claves en el centro para recorrer una calle larga, claves de zoom para acercarse a algo. Su recorrido se ve como una línea punteada.
+- **Vista de cámara** (interruptor en su Inspector): el lienzo sigue a la cámara cuadro a cuadro y lo de afuera queda casi negro. Así ves cómo quedará. Apágalo para volver a moverte libremente.
+- La cámara no se puede borrar ni duplicar.
+
+### Profundidad: quién tapa a quién
+
+Por defecto, los objetos se dibujan según su **capa** (flechas ▲▼ del panel Objetos). En una escena vista "desde arriba", como una calle, conviene que **lo que está más abajo en la pantalla se dibuje delante**: una persona que pasa por delante de un auto lo tapa y, al pasar por detrás, queda tapada.
+
+- **Botón Profundidad** (cabecera del panel Objetos): activa ese orden en el nivel donde estás, sea la escena o un objeto en el que entraste. El orden se recalcula en cada cuadro, así que funciona con objetos que se mueven.
+- **Plano** (Inspector): para lo que debe quedar siempre detrás o siempre delante.
+
+  | Plano | Uso |
+  |---|---|
+  | −1 | Fondo: edificios, cielo. Siempre detrás. |
+  | 0 | Por defecto: se ordenan entre sí por altura. |
+  | 1 | Primer plano: un poste delante de la cámara. Siempre delante. |
+
+- La altura que cuenta es la de los **pies** del objeto (su ancla). Los assets agregados desde la Biblioteca ya la tienen en los pies.
 
 ---
 

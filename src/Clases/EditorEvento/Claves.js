@@ -20,6 +20,8 @@ export const PROPIEDADES = {
     escala_x: {etiqueta: "Escala X",   base: (g) => num(g.transformacion?.escala_x, 1)},
     escala_y: {etiqueta: "Escala Y",   base: (g) => num(g.transformacion?.escala_y, 1)},
     opacidad: {etiqueta: "Opacidad",   base: (g) => num(g.opacidad, 1)},
+    // 8A: solo la camara
+    zoom:     {etiqueta: "Zoom",       base: (g) => num(g.camara?.zoom, 1)},
 };
 
 export const INTERPOLACIONES = {

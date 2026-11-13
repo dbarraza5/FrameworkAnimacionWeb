@@ -36,6 +36,7 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                 const g = e.gestion_grupos_originales.getGrupo(n);
                 return {
                     nombre: n,
+                    camara: e.esCamara(n),
                     visible: e.esVisible(n),
                     bloqueado: e.estaBloqueado(n),
                     partes: e.objetosEscena(n).length,
@@ -74,10 +75,22 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
 
     const nivelActual = ruta.length;
 
+    // Fase 8B: orden por profundidad del nivel actual (la escena o el objeto en que se entro)
+    const contexto = ruta.length ? ruta[ruta.length - 1] : "root";
+    const [profundidad, setProfundidad] = useState(false);
+    useEffect(() => {
+        const leer = () => setProfundidad(ev().ordenProfundidad(contexto));
+        leer();
+        const id = setInterval(leer, 500);
+        return () => clearInterval(id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [contexto]);
+
     return (
         <div className="d-flex flex-column h-100">
             {/* migas: Escena › perro › cabeza */}
-            <div className="ed-migas px-2 py-1 small">
+            <div className="ed-migas px-2 py-1 small d-flex align-items-center">
+                <div className="flex-grow-1 text-truncate">
                 <button className={`btn btn-link btn-sm p-0 ${nivelActual === 0 ? "fw-semibold text-body" : ""}`}
                         onClick={() => control().irANivel(0)}>Escena</button>
                 {ruta.map((n, i) => (
@@ -87,6 +100,14 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                                 onClick={() => control().irANivel(i + 1)}>{n}</button>
                     </span>
                 ))}
+                </div>
+                <button className={`btn btn-sm py-0 px-1 ${profundidad ? "btn-warning" : "btn-outline-secondary"}`}
+                        title={profundidad
+                            ? "Profundidad activada: lo que está más abajo se dibuja delante (dentro de cada plano). Clic para usar el orden de capas."
+                            : "Ordenar por profundidad: lo que está más abajo en la pantalla se dibuja delante (como una calle vista desde arriba)."}
+                        onClick={() => { ev().fijarOrdenProfundidad(contexto, !profundidad); setProfundidad(!profundidad); }}>
+                    <i className="bi bi-layers-half me-1"/>Profundidad
+                </button>
             </div>
 
             {items.length === 0 && (
@@ -109,7 +130,9 @@ export default function PanelObjetosEscena({refLienzo, ruta, seleccion}) {
                             }}
                             onDoubleClick={() => { if (it.partes && !it.instancia) control().entrar(it.nombre); }}
                             title={it.instancia ? `Instancia de ${it.instancia}` : it.partes ? "Doble clic para editar sus partes" : it.nombre}>
-                            <Miniatura grupos={it.grupos}/>
+                            {it.camara
+                                ? <span className="ed-obj-mini d-inline-flex align-items-center justify-content-center" style={{width: 44, height: 32}}><i className="bi bi-camera-video text-warning fs-5"/></span>
+                                : <Miniatura grupos={it.grupos}/>}
                             <div className="flex-grow-1 text-truncate">
                                 {editando === it.nombre ? (
                                     <input className="form-control form-control-sm" autoFocus value={texto}

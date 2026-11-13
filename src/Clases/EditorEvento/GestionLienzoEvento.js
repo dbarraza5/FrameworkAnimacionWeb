@@ -399,6 +399,14 @@ class GestionLienzoEvento{
         // llamaban una justo despues de la otra sin nada en el medio, asi que aunque
         // `escala` cambiara no tenia ningun efecto visible. El HUD de texto y el
         // timeline quedan afuera a proposito (UI fija, no debe escalarse).
+        // Fase 8A: el "documento" es lo que ve la camara en este instante (se mueve y
+        // hace zoom con sus claves). En "Vista de camara" la vista sigue a la camara.
+        const rect_camara = this.eventos_.rectCamara ? this.eventos_.rectCamara() : null;
+        if(rect_camara){
+            this.configuracion_lienzo.documento = {x: rect_camara.x0, y: rect_camara.y0, ancho: rect_camara.w, alto: rect_camara.h};
+            if(this.configuracion_lienzo.vista_camara) this.configuracion_lienzo.ajustarVista(0);
+        }
+
         this.configuracion_lienzo.inicioZoomLienzo(ctx);
 
         this.configuracion_lienzo.dibujarDocumento(ctx);
@@ -421,6 +429,10 @@ class GestionLienzoEvento{
         }
 
         this.eventos_.imprimirEventos();
+
+        // 8A: fuera de lo que ve la camara, oscurecido (siempre un poco; en "Vista de
+        // camara", casi negro: se ve como quedara el video)
+        if(rect_camara) this.configuracion_lienzo.dibujarMascaraCamara(ctx);
 
         if(this.tipo_modalidad !== MODALIDAD_MOVIMIENTOS){
             this.control_objetos.dibujar(ctx, this);

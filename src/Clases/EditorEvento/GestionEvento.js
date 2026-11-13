@@ -416,9 +416,157 @@ class GestionEvento{
         // Fase 3)
         const {hijos, con_figuras} = this._indice(this.gestion_grupos.grupos_figuras);
         return (hijos.get(padre) || [])
-            .filter((g) => con_figuras(g.nombre))
+            .filter((g) => con_figuras(g.nombre) || GestionEvento.grupoEsCamara(g))
             .sort((a, b) => (Number(a.capa) || 0) - (Number(b.capa) || 0))
             .map((g) => g.nombre);
+    }
+
+    // ================================================================
+    // Fase 8A: camara
+    // ================================================================
+    // La camara es un objeto mas de la escena (como en After Effects): un grupo sin
+    // figuras con `camara: {ancho, alto, zoom}` y la clase "camara". Su posicion
+    // (cx, cy) es el CENTRO de lo que se ve; lo visible mide ancho/zoom x alto/zoom.
+    // Asi reutiliza seleccion, mover, claves (x, y, zoom), linea de tiempo y
+    // trayectoria. No se dibuja: el lienzo muestra su marco.
+
+    static CLASE_CAMARA = "camara";
+    static CAMARA_DEFECTO = {ancho: 1280, alto: 720, zoom: 1};
+
+    static grupoEsCamara(g){
+        return !!(g && g.camara && (g.clases || []).includes(GestionEvento.CLASE_CAMARA));
+    }
+
+    esCamara(nombre){
+        return GestionEvento.grupoEsCamara(this.gestion_grupos_originales.getGrupo(nombre));
+    }
+
+    nombreCamara(){
+        const g = this.gestion_grupos_originales.grupos_figuras.find((x) => GestionEvento.grupoEsCamara(x));
+        return g ? g.nombre : null;
+    }
+
+    // Garantiza que la escena tenga camara (encuadrando el area de documento por
+    // defecto 1280x720, la misma de antes). Se guarda con Subir.
+    asegurarCamara(){
+        if(this.nombreCamara()) return this.nombreCamara();
+        const existentes = new Set(this.gestion_grupos_originales.grupos_figuras.map((g) => g.nombre));
+        let nombre = "Cámara", n = 2;
+        while(existentes.has(nombre)) nombre = `Cámara ${n++}`;
+        const d = GestionEvento.CAMARA_DEFECTO;
+        const capa = Math.max(0, ...this.gestion_grupos_originales.grupos_figuras
+            .filter((g) => g.nodo_padre === "root").map((g) => Number(g.capa) || 0)) + 1;
+        const g = {
+            nombre, nodo_padre: "root", visible: true, color: "#f0b429",
+            cx: d.ancho / 2, cy: d.alto / 2, capa, clases: [GestionEvento.CLASE_CAMARA],
+            lista_figuras: [], lista_pintado: [{color: "#000000", visible: true, elementos: [[]]}],
+            camara: {...d},
+        };
+        this.gestion_grupos_originales.grupos_figuras.push(structuredClone(g));
+        this.gestion_grupos.grupos_figuras.push(structuredClone(g));
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        this.movimientos_grupos[nombre] = {x: 0, y: 0};
+        return nombre;
+    }
+
+    // ================================================================
+    // Fase 8B: profundidad
+    // ================================================================
+    // En un nivel con "orden por profundidad" (la escena: escena.orden_profundidad;
+    // un objeto: su grupo.orden_profundidad) los hijos se dibujan por `plano` (menor
+    // = mas atras, por defecto 0) y, dentro del mismo plano, por la altura de sus pies
+    // (lo de mas abajo en pantalla queda delante). Como y_sort + z_index de Godot.
+    // Sin profundidad se usa la capa, como siempre.
+
+    escena = {};
+
+    ordenProfundidad(contexto = "root"){
+        if(contexto === "root") return !!(this.escena && this.escena.orden_profundidad);
+        const g = this.gestion_grupos_originales.getGrupo(contexto);
+        return !!(g && g.orden_profundidad);
+    }
+
+    fijarOrdenProfundidad(contexto, activo){
+        if(contexto === "root"){
+            this.escena = {...(this.escena || {}), orden_profundidad: !!activo};
+            return;
+        }
+        this._ambos(contexto).forEach((g) => { if(activo) g.orden_profundidad = true; else delete g.orden_profundidad; });
+    }
+
+    planoObjeto(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return g ? (parseInt(g.plano, 10) || 0) : 0;
+    }
+
+    fijarPlano(nombre, plano){
+        const p = Math.round(Number(plano) || 0);
+        this._ambos(nombre).forEach((g) => { if(p) g.plano = p; else delete g.plano; });
+    }
+
+    // Lista de grupos en orden de dibujo (de atras hacia adelante), con sus partes
+    // a continuacion de cada objeto. Usa la copia en vivo (posiciones del cuadro).
+    ordenDibujo(){
+        const lista = this.gestion_grupos.grupos_figuras;
+        const hijos = new Map();
+        for(const g of lista){
+            const p = g.nodo_padre || "root";
+            if(!hijos.has(p)) hijos.set(p, []);
+            hijos.get(p).push(g);
+        }
+        const originales = new Map(this.gestion_grupos_originales.grupos_figuras.map((g) => [g.nombre, g]));
+        // altura de los pies: origen absoluto + ancla (si tiene transformacion)
+        const pie = (g) => {
+            const t = g.transformacion;
+            const y0 = Number.isFinite(g.cy_solid) ? g.cy_solid : (parseFloat(g.cy) || 0);
+            return y0 + (t && Number.isFinite(parseFloat(t.ancla_y)) ? parseFloat(t.ancla_y) : 0);
+        };
+        const capa = (g) => Number(g.capa) || 0;
+        const resultado = [];
+        const vistos = new Set();
+        const visitar = (padre, profundo) => {
+            const hs = (hijos.get(padre) || []).slice();
+            if(profundo){
+                const plano = (g) => parseInt((originales.get(g.nombre) || g).plano, 10) || 0;
+                hs.sort((a, b) => (plano(a) - plano(b)) || (pie(a) - pie(b)) || (capa(a) - capa(b)));
+            } else {
+                hs.sort((a, b) => capa(a) - capa(b));
+            }
+            for(const g of hs){
+                if(vistos.has(g.nombre)) continue;
+                vistos.add(g.nombre);
+                resultado.push(g);
+                const o = originales.get(g.nombre);
+                visitar(g.nombre, !!(o && o.orden_profundidad));
+            }
+        };
+        visitar("root", this.ordenProfundidad("root"));
+        return resultado;
+    }
+
+    // Lo que ve la camara ahora (con sus claves): rectangulo en coordenadas del dibujo.
+    rectCamara(){
+        const nombre = this.nombreCamara();
+        if(!nombre) return null;
+        const d = this.gestion_grupos.getGrupo(nombre) || this.gestion_grupos_originales.getGrupo(nombre);
+        const cam = {...GestionEvento.CAMARA_DEFECTO, ...(d.camara || {})};
+        const zoom = Math.max(0.01, parseFloat(cam.zoom) || 1);
+        const w = cam.ancho / zoom, h = cam.alto / zoom;
+        const cx = parseFloat(d.cx) || 0, cy = parseFloat(d.cy) || 0;
+        return {nombre, cx, cy, zoom, ancho: cam.ancho, alto: cam.alto, w, h, x0: cx - w / 2, y0: cy - h / 2};
+    }
+
+    // Cambia zoom (con claves si esta animado), ancho o alto de la camara.
+    fijarCamara(nombre, campo, v){
+        if(!this.esCamara(nombre) || !Number.isFinite(v)) return;
+        if(campo === "zoom"){
+            const z = Math.max(0.05, Math.min(20, Math.round(v * 1000) / 1000));
+            if(this.tieneClaves(nombre, "zoom")) { this.ponerClave(nombre, "zoom", z); return; }
+            this._ambos(nombre).forEach((g) => { g.camara = {...g.camara, zoom: z}; });
+        } else if(campo === "ancho" || campo === "alto"){
+            const n = Math.max(16, Math.round(v));
+            this._ambos(nombre).forEach((g) => { g.camara = {...g.camara, [campo]: n}; });
+        }
     }
 
     // Rectangulo del objeto en su espacio propio (sin su transformacion ni la de sus
@@ -426,6 +574,11 @@ class GestionEvento{
     // (cx_solid) que el dibujo calcula en cada cuadro, sin clonar nada; si todavia no
     // existen (primer cuadro), las calcula sobre una copia.
     limitesObjeto(nombre){
+        // 8A: la camara no tiene figuras; sus limites son lo que ve
+        if(this.esCamara(nombre)){
+            const r = this.rectCamara();
+            return r ? {x0: r.x0, y0: r.y0, x1: r.x0 + r.w, y1: r.y0 + r.h, cx: r.cx, cy: r.cy} : null;
+        }
         const sub = this.subarbol(nombre, this.gestion_grupos.grupos_figuras);
         if(!sub.length) return null;
         if(sub.every((g) => Number.isFinite(g.cx_solid) && Number.isFinite(g.cy_solid))){
@@ -613,13 +766,14 @@ class GestionEvento{
         const d = this.gestion_grupos.getGrupo(nombre);
         if(!o || !d) return;
         if(prop === "opacidad") d.opacidad = o.opacidad;
+        else if(prop === "zoom") d.camara = o.camara ? {...o.camara} : o.camara;
         else if(prop !== "x" && prop !== "y") d.transformacion = o.transformacion ? {...o.transformacion} : o.transformacion;
     }
 
     // Pone (o reemplaza) la clave de `prop` en el instante t con el valor v.
     ponerClave(nombre, prop, v, t = this.tiempoActualMs(), interp){
         if(!Claves.PROPIEDADES[prop]) return;
-        if(prop !== "x" && prop !== "y" && prop !== "opacidad") this.asegurarTransformacion(nombre);
+        if(prop !== "x" && prop !== "y" && prop !== "opacidad" && prop !== "zoom") this.asegurarTransformacion(nombre);
         this._cambiarPista(nombre, prop, (p) => Claves.ponerClave(p, t, v, interp));
     }
 
@@ -762,6 +916,7 @@ class GestionEvento{
                 if(con_y) d.cy = Claves.valorObjeto(c, "y", t_ms, o.claves_bucle) + mov.y;
             }
             if(Claves.tienePista(c, "opacidad")) d.opacidad = Math.max(0, Math.min(1, Claves.valorObjeto(c, "opacidad", t_ms, o.claves_bucle)));
+            if(Claves.tienePista(c, "zoom") && o.camara) d.camara = {...o.camara, zoom: Math.max(0.05, Claves.valorObjeto(c, "zoom", t_ms, o.claves_bucle))};
             const props_t = ["rotacion", "escala_x", "escala_y"].filter((p) => Claves.tienePista(c, p));
             if(props_t.length){
                 const t = {...(o.transformacion || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0})};
@@ -779,6 +934,7 @@ class GestionEvento{
     // Borra el objeto y todo su sub-arbol (los movimientos de eventos que lo
     // referencian quedan sin efecto).
     eliminarObjeto(nombre){
+        if(this.esCamara(nombre)) return;          // 8A: la escena siempre tiene camara
         for(const gestion of [this.gestion_grupos_originales, this.gestion_grupos]){
             const quitar = new Set(this.subarbol(nombre, gestion.grupos_figuras).map((g) => g.nombre));
             gestion.grupos_figuras = gestion.grupos_figuras.filter((g) => !quitar.has(g.nombre));
@@ -790,6 +946,7 @@ class GestionEvento{
     // grupos se renombran: el prefijo "<objeto>_" pasa a "<copia>_" y los que no lo
     // tenian lo reciben. Devuelve el nombre de la copia.
     duplicarObjeto(nombre, dx = 20, dy = 20){
+        if(this.esCamara(nombre)) return null;
         // sin las partes virtuales de instancias (Fase 6): las regenera su asset
         const sub = structuredClone(this.subarbol(nombre, this.gestion_grupos_originales.grupos_figuras).filter((g) => !g._virtual));
         if(!sub.length) return null;
@@ -1267,7 +1424,7 @@ class GestionEvento{
             const asset = this._asset(c.instancia.id_eventos, c.instancia.version);
             if(!asset) continue;
             const grupos = asset.motor.gestion_grupos_originales.grupos_figuras
-                .filter((g) => !g.instancia && !g._virtual);      // sin instancias anidadas (6A)
+                .filter((g) => !g.instancia && !g._virtual && !GestionEvento.grupoEsCamara(g));   // sin instancias anidadas (6A) ni la camara del asset (8A)
             const nombres = new Set(grupos.map((g) => g.nombre));
             const virtuales = grupos.map((g) => {
                 const v = {...g, nombre: `${c.nombre}${SEP}${g.nombre}`,
@@ -1443,9 +1600,9 @@ class GestionEvento{
         const ctx = canvas.getContext('2d');
         //ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const lista_grupo_root = []//animacion.grupos_figuras.filter((g) => g.nodo_padre === "root")
         this.gestion_grupos.procesarPosicionFinalFiguras()
-        this.gestion_grupos.listaOrdenadasGrupos(lista_grupo_root)
+        // Fase 8B: orden de dibujo con profundidad (por capa, o por plano y altura)
+        const lista_grupo_root = this.ordenDibujo();
         this.imprimir_animacion.imprimirListaGrupos(lista_grupo_root, [], [], [],
             null, null, null, null, true)
     }

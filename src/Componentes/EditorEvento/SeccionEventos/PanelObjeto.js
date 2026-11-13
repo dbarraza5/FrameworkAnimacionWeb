@@ -5,7 +5,7 @@ import {normalizarTransformacion} from "../../../Clases/EditorAnimacion/Transfor
 import {INTERPOLACIONES, MODOS_BUCLE} from "../../../Clases/EditorEvento/Claves";
 
 // Propiedades que se pueden animar con fotogramas clave (Fase 7).
-const PROPS_CLAVE = ["x", "y", "rotacion", "escala_x", "escala_y", "opacidad"];
+const PROPS_CLAVE = ["x", "y", "rotacion", "escala_x", "escala_y", "opacidad", "zoom"];
 
 // 6C: llamadas a la API de versiones de un documento de eventos.
 const configApi = (method, url) => ({
@@ -41,6 +41,11 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         }
         return {x: val("x"), y: val("y"), rotacion: val("rotacion"), escala_x: val("escala_x"), escala_y: val("escala_y"),
             opacidad: val("opacidad"), rombos, t_ms: e.tiempoActualMs(),
+            // Fase 8A: camara
+            es_camara: e.esCamara(unico), zoom: val("zoom"),
+            plano: e.planoObjeto(unico),
+            cam_ancho: g.camara ? g.camara.ancho : null, cam_alto: g.camara ? g.camara.alto : null,
+            vista_camara: !!refLienzo.current.configuracion_lienzo.vista_camara,
             bucle_claves: e.bucleClaves(unico), tramo: e.tramoClaves(unico),
             ancla_x: t.ancla_x, ancla_y: t.ancla_y, capa: g.capa, tiene_t: !!g.transformacion,
             // Fase 6: datos de la instancia por referencia
@@ -102,6 +107,10 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         if (campo === "x" || campo === "y") {
             const p = ev().posicionObjeto(unico);
             ev().fijarPosicionObjeto(unico, campo === "x" ? v : p.x, campo === "y" ? v : p.y);
+        } else if (campo === "zoom" || campo === "cam_ancho" || campo === "cam_alto") {
+            ev().fijarCamara(unico, campo.replace("cam_", ""), v);
+        } else if (campo === "plano") {
+            ev().fijarPlano(unico, v);
         } else if (campo === "opacidad") {
             ev().fijarOpacidad(unico, v);
         } else if (campo === "desfase") {
@@ -179,6 +188,30 @@ export default function PanelObjeto({refLienzo, seleccion}) {
 
             {unico && valores && (
                 <div className="ed-objeto-campos">
+                    {valores.es_camara ? (
+                        // Fase 8A: la camara -- centro de lo que ve, zoom y tamano del cuadro
+                        <>
+                            <div className="row g-2">
+                                {campo("x", "Centro X")}
+                                {campo("y", "Centro Y")}
+                                {campo("zoom", "Zoom", 0.1, "×")}
+                                <div className="col-6 d-flex align-items-end">
+                                    <div className="form-check form-switch small mb-1">
+                                        <input className="form-check-input" type="checkbox" id="vista-camara"
+                                               checked={valores.vista_camara}
+                                               onChange={(e) => { refLienzo.current.configuracion_lienzo.vista_camara = e.target.checked; }}/>
+                                        <label className="form-check-label" htmlFor="vista-camara">Vista de cámara</label>
+                                    </div>
+                                </div>
+                                {campo("cam_ancho", "Ancho del cuadro", 10, "px")}
+                                {campo("cam_alto", "Alto del cuadro", 10, "px")}
+                            </div>
+                            <div className="small text-body-secondary mt-1">
+                                Ve {Math.round(valores.cam_ancho / (valores.zoom || 1))} × {Math.round(valores.cam_alto / (valores.zoom || 1))} del dibujo.
+                                Arrástrala por su borde; anima su centro y su zoom con los rombos para recorrer la escena.
+                            </div>
+                        </>
+                    ) : (
                     <div className="row g-2">
                         {campo("x", "Posición X")}
                         {campo("y", "Posición Y")}
@@ -189,7 +222,9 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                         {campo("ancla_x", "Ancla X")}
                         {campo("ancla_y", "Ancla Y")}
                         {campo("opacidad", "Opacidad", 0.1)}
+                        {campo("plano", "Plano (profundidad)")}
                     </div>
+                    )}
                     {/* Fase 7: interpolacion de las claves que hay en este instante */}
                     {valores.rombos && PROPS_CLAVE.some((p) => valores.rombos[p].estado === "clave") && (
                         <div className="d-flex align-items-center gap-2 mt-2 small">
@@ -295,7 +330,7 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                 </div>
             )}
 
-            <div className="d-flex flex-wrap gap-1">
+            {!(valores && valores.es_camara) && <div className="d-flex flex-wrap gap-1">
                 <button className="btn btn-sm btn-outline-secondary" onClick={() => espejo("x")} title="Reflejar horizontalmente">
                     <i className="bi bi-symmetry-vertical me-1"/>Espejo H
                 </button>
@@ -311,7 +346,7 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                 <button className="btn btn-sm btn-outline-danger" onClick={borrar} title="Borrar (Supr)">
                     <i className="bi bi-trash me-1"/>Borrar
                 </button>
-            </div>
+            </div>}
 
             <div className="small text-body-secondary">
                 Arrastra el objeto para moverlo; las manijas de las esquinas escalan (Shift: libre),

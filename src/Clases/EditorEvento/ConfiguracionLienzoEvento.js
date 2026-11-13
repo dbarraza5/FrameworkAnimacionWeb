@@ -150,6 +150,25 @@ class ConfiguracionLienzoEvento{
         ctx.restore();
     }
 
+    // Fase 8A: "Vista de camara": la vista se ajusta en cada cuadro a lo que ve la
+    // camara (como se vera el resultado).
+    vista_camara = false;
+
+    // Oscurece todo lo que queda fuera del documento (lo que ve la camara).
+    dibujarMascaraCamara(ctx){
+        const d = this.documento;
+        const dx = this.x_delta_original, dy = this.y_delta_original;
+        // rectangulo enorme con un hueco (regla par-impar)
+        const g = 1e6;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(-g, -g, 2 * g, 2 * g);
+        ctx.rect(d.x + dx, d.y + dy, d.ancho, d.alto);
+        ctx.fillStyle = this.vista_camara ? "rgba(10,11,14,0.92)" : "rgba(10,11,14,0.28)";
+        ctx.fill("evenodd");
+        ctx.restore();
+    }
+
     // Paneo del lienzo (arrastrar el fondo para mover la vista).
     arrastrando_lienzo = false;
 

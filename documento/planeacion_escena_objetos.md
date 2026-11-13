@@ -41,6 +41,7 @@ Cada decisión registra de dónde salió, para no volver a discutirla sin un dat
 | D7 | La animación de un personaje es **en el lugar** (caminar sin avanzar); el desplazamiento por la escena lo da la escena, con velocidad proporcional a la escala. | Si el asset avanza por su cuenta, un perro escalado al 60 % avanza los mismos píxeles que el grande y "patina". |
 | D12 | **Bucle:** la ventana inicio–fin define cuánto dura; con `bucle`, el contenido se repite cada `tiempo_bucle` ms dentro de ella y al terminar se congela. Los desplazamientos se acumulan entre vueltas. La raíz (`EventoGeneral`) no hace bucle. | Separa "cuánto dura" de "cada cuánto se repite" y conserva el encadenamiento (D1). Acumular evita que un personaje que camina en bucle vuelva al punto de partida. |
 | D13 | **Fotogramas clave en vez de recorridos (Fase 7):** el movimiento por la escena se hace con claves genéricas de propiedades de objeto (posición, rotación, escala, opacidad), no con una herramienta de caminos. | Es el mecanismo de todos los editores de animación y sirve para cualquier escenario, no solo para la ciudad. Un recorrido es un caso particular (claves de posición). |
+| D14 | **Cámara como objeto y profundidad por plano + altura (Fase 8):** la cámara es un objeto de la escena con claves (x, y, zoom). El orden de dibujo, cuando se pide, es plano y luego altura de los pies, por nivel. No hay capas fijas de ciudad. | Mismo criterio que D13: mecanismos generales (After Effects; `y_sort` + `z_index` de Godot). La "capa" existente no servía para ordenar por altura porque cada objeto nuevo recibe una distinta. |
 | D10 | La selección y manipulación de objetos vive en la modalidad **Evento** (la que se abre por defecto), sin modalidad nueva; la modalidad Movimiento conserva sus controles (ex pregunta P3). | En la modalidad Evento el lienzo no hacía nada salvo panear; agregar un modo "Escena" separado sumaba un concepto sin necesidad. Se puede revisar en la Fase 3. |
 | D11 | El desplazamiento propio de un grupo con transformación (sus movimientos "Objeto") se interpreta **en su marco**: escala y rotación se aplican también al vector de desplazamiento. | Sin esto, un perro reflejado miraba a la izquierda pero avanzaba a la derecha ("moonwalk"), y uno escalado al 60 % avanzaba lo mismo que el grande ("patinaba"). Encaja con D7. |
 | D9 | El ancla de la transformación es, por defecto, el **centro inferior** del objeto ("los pies"); se guarda por instancia y se puede cambiar (ex pregunta P4). | Al escalar, un personaje sigue apoyado en el suelo. Propuesto en el plan y aceptado por el usuario al iniciar la Fase 1. |
@@ -675,15 +676,55 @@ Diferencias con el plan: no se creó una lista `objetos` aparte. La instancia es
 
 ---
 
-## Fase 8 — Mundo, cámara y capas de escena
+## Fase 8 — Cámara y profundidad — 8A y 8B IMPLEMENTADAS (8C pendiente)
 
 **Objetivo:** escenas más grandes que el lienzo, con profundidad creíble.
 
-**Alcance:** mundo de tamaño configurable y vista (cámara) que se desplaza sobre él; capas de escena fijas (fondo, edificios, calle, vereda, primer plano) y orden por Y dentro de las capas con objetos en movimiento; objetos estáticos (casas, edificios) dibujados una vez en un canvas oculto y luego copiados como imagen.
+**Enfoque general (D14):** en vez de "capas de escena fijas" (fondo, edificios, calle, vereda…), propias de la ciudad, se usan los mecanismos genéricos de los editores:
+- **cámara como objeto de la escena**, como las capas de cámara de After Effects;
+- **orden por profundidad + plano**, como `y_sort` + `z_index` de Godot.
 
-**Verificación:**
-- [ ] Una calle 3 veces más ancha que el lienzo se recorre con la cámara.
-- [ ] Una persona que pasa por delante de un auto lo tapa, y al pasar por detrás queda tapada.
+Las capas de la ciudad salen de ahí: fondo = plano −1, calle = plano 0 con profundidad, primer plano = plano 1.
+
+**Partes:**
+- **8A:** cámara. *Hecha.*
+- **8B:** profundidad. *Hecha.*
+- **8C:** rendimiento de escenas grandes: objetos estáticos dibujados una vez en un canvas oculto y dibujar solo lo que ve la cámara. *Pendiente; hacerla cuando una escena real lo necesite.*
+
+### Alcance realizado — 8A: cámara (2026-11-13)
+- **Modelo:** la cámara es un grupo sin figuras con la clase `camara` y `camara: {ancho, alto, zoom}`. Su `cx, cy` es el **centro** de lo que ve; ve `ancho/zoom × alto/zoom`. Toda escena tiene una: `asegurarCamara()` la crea al cargar si falta, encuadrando el 1280×720 de antes, y se guarda con Subir. Responde la pregunta P6: el tamaño se configura **por escena**, en la cámara.
+- **Reutiliza todo lo existente:**
+  - claves de x, y y **zoom** (propiedad nueva en `Claves.PROPIEDADES`);
+  - línea de tiempo, trayectoria (en el centro), bucle de claves y panel Objetos (ícono 🎥).
+- **Motor:** `esCamara`, `nombreCamara`, `asegurarCamara`, `rectCamara` (con sus claves), `fijarCamara`. `limitesObjeto` devuelve lo que ve. No se puede borrar ni duplicar. Las cámaras de un asset no se inyectan en sus instancias.
+- **Lienzo:**
+  - el contorno punteado del "documento" es ahora el cuadro de la cámara en el instante actual, y lo de afuera se ve oscurecido;
+  - **Vista de cámara** (interruptor en el Inspector de la cámara): la vista sigue a la cámara cuadro a cuadro y lo de afuera queda casi negro, es decir, como se verá el resultado.
+- **Selección:** la cámara se toma **solo por su borde**, porque su interior es la escena. No tiene manijas de escala ni de rotación: el zoom se cambia en el Inspector (Centro X/Y, Zoom con rombo, ancho y alto del cuadro).
+
+### Alcance realizado — 8B: profundidad (2026-11-13)
+- **`ordenDibujo()`** reemplaza a `listaOrdenadasGrupos` en el editor de eventos.
+  - En un nivel con **orden por profundidad** (la escena: `escena.orden_profundidad`; un objeto: `grupo.orden_profundidad`), los hijos se ordenan por **plano**, luego por **altura de los pies** (origen + ancla; lo de más abajo, delante) y luego por capa.
+  - Sin profundidad, el orden es por capa, como siempre.
+- **`plano`** por objeto (por defecto 0): menor = siempre detrás, mayor = siempre delante.
+- **Backend:**
+  - `escena` (Mixed) en `Eventos`; se guarda y se exporta con el documento;
+  - `camara`, `orden_profundidad` y `plano` en `grupoFigurasSchema`.
+- **Interfaz:**
+  - botón **Profundidad** en la cabecera del panel Objetos, que actúa sobre el nivel actual (la escena o el objeto en que se entró);
+  - campo **Plano (profundidad)** en el Inspector.
+
+**Verificado en el navegador** (en memoria; guardado en una copia temporal, borrada):
+- [x] La cámara aparece en el panel Objetos, su marco coincide con el documento anterior y se selecciona por el borde.
+- [x] Con claves de cámara (x 640 → 1000, zoom 1 → 2 en 3 s) y Vista de cámara: en 1,5 s la vista va de 400 a 1250 (x = 820, zoom 1,5); en 3 s, de 700 a 1300.
+- [x] Dos perros superpuestos. Por capa, la copia (más arriba) tapa al original; con Profundidad, el original (más abajo) queda delante.
+- [x] Con plano 1 la copia queda delante. Con claves que la bajan de −45 a +45, el orden se invierte entre 0 y 2 s.
+- [x] Subir y recargar conserva cámara (1920×1080, claves de zoom), `escena.orden_profundidad` y `plano`, sin crear una segunda cámara.
+- [ ] Pendiente: la selección por clic no considera el orden por profundidad (toma el de capa mayor si dos se superponen).
+
+**Verificación original de la fase:**
+- [x] "Una persona que pasa por delante de un auto lo tapa…": comprobado con dos perros.
+- [ ] "Una calle 3 veces más ancha que el lienzo se recorre con la cámara": el mecanismo está, pero falta una escena real.
 
 ---
 
@@ -728,7 +769,7 @@ Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (
 | P1 | ~~¿Versión congelada o la última?~~ **Respondida:** por defecto la última; cada instancia se puede fijar a una versión (6C). | Fase 6 |
 | P2 | ~~¿Dónde viven los eventos de un asset?~~ **Respondida:** en el documento `Eventos` del proyecto (opción A). | Fase 6 |
 | P5 | ¿Se unifican el editor de dibujo (`/animacion`) y el de eventos (`/evento`) en un solo editor con modos **Diseño / Animar** (como Rive o Spine), o siguen siendo dos páginas con la misma distribución? | Fase 0 y siguientes |
-| P6 | Tamaño del documento o escena por defecto (ej. 1280×720) y si se configura por proyecto o por escena. | Fases 0 y 8 |
+| P6 | ~~Tamaño del documento y dónde se configura.~~ **Respondida (8A):** por escena, en la cámara (ancho y alto del cuadro; 1280×720 por defecto). | Fases 0 y 8 |
 
 ---
 

@@ -154,6 +154,10 @@ function EditorEvento(props){
                     console.log(response.data);
                     eventoAnimacion.edicion.inicializar(response.data.eventos,
                         response.data.grupos_figuras, response.data._id);
+                    // Fase 8A: toda escena tiene camara (se crea si falta; se guarda con Subir)
+                    eventoAnimacion.edicion.asegurarCamara();
+                    // Fase 8B: configuracion de la escena (orden por profundidad...)
+                    eventoAnimacion.edicion.escena = response.data.escena || {};
                     setEventoAnimacion(eventoAnimacion)
 
                     animacion.edicion.meta_figuras = response.data.meta_figuras
@@ -432,7 +436,8 @@ function EditorEvento(props){
             });
             const datos = {
                 "eventos": eventos_,
-                "grupos_figuras": eventoAnimacion.edicion.gruposParaGuardar()  // sin partes virtuales de instancias
+                "grupos_figuras": eventoAnimacion.edicion.gruposParaGuardar(),  // sin partes virtuales de instancias
+                "escena": eventoAnimacion.edicion.escena || {}                  // Fase 8B: configuracion de la escena
             };
 
             const url = "/api/evento/id/" + eventoAnimacion.edicion._id;
@@ -470,7 +475,8 @@ function EditorEvento(props){
             const edicion = eventoAnimacion.edicion;
             const datos = {
                 "eventos": edicion.eventos.map((evento) => evento.evento),
-                "grupos_figuras": edicion.gruposParaGuardar()
+                "grupos_figuras": edicion.gruposParaGuardar(),
+                "escena": edicion.escena || {}
             };
             await exportarJSON(datos, "evento_" + edicion._id);
         } catch (error) {

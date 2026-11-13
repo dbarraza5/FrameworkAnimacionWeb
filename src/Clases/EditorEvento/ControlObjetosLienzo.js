@@ -97,7 +97,9 @@ export default class ControlObjetosLienzo {
         const aMundo = (p) => transformarPunto(cadena, p);
         const t = normalizarTransformacion(grupo.transformacion) || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0};
         const ox = parseFloat(grupo.cx_solid ?? grupo.cx) || 0, oy = parseFloat(grupo.cy_solid ?? grupo.cy) || 0;
+        const camara = !!(ev.esCamara && ev.esCamara(nombre));
         return {lim, grupo, cadena, local, aMundo, t,
+            camara,
             ancla: grupo.transformacion ? {x: ox + t.ancla_x, y: oy + t.ancla_y} : {x: (lim.x0 + lim.x1) / 2, y: lim.y1}};
     }
 
@@ -122,6 +124,7 @@ export default class ControlObjetosLienzo {
 
     // Desplazamiento del ancla respecto del origen del objeto.
     _offsetAncla(ev, nombre) {
+        if (ev.esCamara && ev.esCamara(nombre)) return {x: 0, y: 0};   // 8A: el centro de lo que ve
         const g = ev.gestion_grupos.getGrupo(nombre);
         const t = g && normalizarTransformacion(g.transformacion);
         if (g && g.transformacion && t) return {x: t.ancla_x, y: t.ancla_y};
@@ -157,7 +160,11 @@ export default class ControlObjetosLienzo {
     contiene(geo, p) {
         const q = destransformarPunto(geo.cadena, p);
         const m = 2;
-        return q.x >= geo.lim.x0 - m && q.x <= geo.lim.x1 + m && q.y >= geo.lim.y0 - m && q.y <= geo.lim.y1 + m;
+        const dentro = q.x >= geo.lim.x0 - m && q.x <= geo.lim.x1 + m && q.y >= geo.lim.y0 - m && q.y <= geo.lim.y1 + m;
+        if (!geo.camara || !dentro) return dentro;
+        // 8A: la camara se toma solo por su borde (su interior es la escena)
+        const b = 7 / (this._escala_vista || 1);
+        return q.x <= geo.lim.x0 + b || q.x >= geo.lim.x1 - b || q.y <= geo.lim.y0 + b || q.y >= geo.lim.y1 - b;
     }
 
     // Posiciones (dibujo) de las manijas y de la manija de rotacion.
@@ -225,6 +232,7 @@ export default class ControlObjetosLienzo {
 
     _procesarRaton(lienzo, ev, io) {
         const escala_vista = lienzo.configuracion_lienzo.escala || 1;
+        this._escala_vista = escala_vista;
         const m = {x: lienzo.x_mouse, y: lienzo.y_mouse};
         const shift = io.stack_event_teclado.includes("ShiftLeft") || io.stack_event_teclado.includes("ShiftRight");
 
@@ -277,7 +285,7 @@ export default class ControlObjetosLienzo {
         }
 
         // --- nuevo clic: manijas del objeto seleccionado ---
-        if (this.seleccion.length === 1) {
+        if (this.seleccion.length === 1 && !(ev.esCamara && ev.esCamara(this.seleccion[0]))) {
             const nombre = this.seleccion[0];
             const geo = this.geometria(ev, nombre);
             if (geo) {
@@ -474,6 +482,14 @@ export default class ControlObjetosLienzo {
             ctx.closePath();
             ctx.stroke();
             if (this.seleccion.length !== 1) continue;
+            if (geo.camara) {
+                // 8A: la camara no escala ni rota con manijas (su zoom va en el Inspector)
+                ctx.font = `${11 * px}px sans-serif`;
+                ctx.fillStyle = COLOR;
+                ctx.fillText(`🎥 ${nombre}`, esquinas[0].x, esquinas[0].y - 6 * px);
+                this._dibujarTrayectoria(ctx, ev, nombre, P, px);
+                continue;
+            }
 
             const {lista, rot, arriba} = this.manijas(geo, c.escala || 1);
             // linea y circulo de rotacion
