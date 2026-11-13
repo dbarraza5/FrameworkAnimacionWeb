@@ -8,6 +8,7 @@ import {TIPO_EFECTO_MOV_FIGURAS, TIPO_EFECTO_MOV_OBJETOS} from "./ConstanteEvent
 import OperacionesGrupo, {origenGrupoX, origenGrupoY} from "../EditorAnimacion/OperacionesGrupo";
 import {limitesGrupos, prepararGrupos} from "../EditorAnimacion/Miniatura";
 import {normalizarTransformacion, transformarVector} from "../EditorAnimacion/TransformacionInstancia";
+import * as Claves from "./Claves";
 
 let tiempo_universal=performance.now();
 
@@ -528,23 +529,246 @@ class GestionEvento{
     }
 
     // Cambia campos de la transformacion de un objeto (en original y en vivo).
+    // Fase 7: una propiedad con pista de claves no cambia su valor base: pone una
+    // clave en el instante actual (como el cronometro de After Effects).
     cambiarTransformacion(nombre, cambios){
         this.asegurarTransformacion(nombre);
-        this._ambos(nombre).forEach((g) => { g.transformacion = {...g.transformacion, ...cambios}; });
+        const base = {};
+        for(const prop in cambios){
+            if(this.tieneClaves(nombre, prop)) this.ponerClave(nombre, prop, cambios[prop]);
+            else base[prop] = cambios[prop];
+        }
+        if(Object.keys(base).length){
+            this._ambos(nombre).forEach((g) => { g.transformacion = {...g.transformacion, ...base}; });
+        }
     }
 
-    // Posicion (cx, cy) del objeto.
+    // Posicion (cx, cy) del objeto (con claves: la del instante actual).
     posicionObjeto(nombre){
         const g = this.gestion_grupos_originales.getGrupo(nombre);
-        return g ? {x: parseFloat(g.cx) || 0, y: parseFloat(g.cy) || 0} : null;
+        if(!g) return null;
+        return {x: this.valorPropiedad(nombre, "x"), y: this.valorPropiedad(nombre, "y")};
     }
 
     fijarPosicionObjeto(nombre, x, y){
+        const r = (v) => Math.round(v * 100) / 100;
+        const con_x = this.tieneClaves(nombre, "x"), con_y = this.tieneClaves(nombre, "y");
+        if(con_x) this.ponerClave(nombre, "x", r(x));
+        if(con_y) this.ponerClave(nombre, "y", r(y));
+        if(!con_x || !con_y){
+            this._ambos(nombre).forEach((g) => {
+                if(!con_x) g.cx = r(x);
+                if(!con_y) g.cy = r(y);
+            });
+            this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        }
+    }
+
+    // ================================================================
+    // Fase 7: fotogramas clave (ver Claves.js)
+    // ================================================================
+    // Las claves viven en el grupo original (`claves`, se guardan con el documento);
+    // en cada cuadro _aplicarClaves escribe los valores interpolados en la copia en
+    // vivo, encima de los desplazamientos de los movimientos.
+
+    // Opacidad base del objeto (0..1), o clave si la propiedad esta animada.
+    fijarOpacidad(nombre, v){
+        const a = Math.max(0, Math.min(1, Math.round(v * 1000) / 1000));
+        if(this.tieneClaves(nombre, "opacidad")) this.ponerClave(nombre, "opacidad", a);
+        else this._ambos(nombre).forEach((g) => { g.opacidad = a; });
+    }
+
+    // Instante actual de la escena en ms (el que marca la linea de tiempo).
+    tiempoActualMs(){
+        return Math.round((this._t_escena || 0) * 1000);
+    }
+
+    tieneClaves(nombre, prop){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return !!(g && Claves.tienePista(g.claves, prop));
+    }
+
+    // Valor de una propiedad en el instante t (ms; por defecto el actual).
+    valorPropiedad(nombre, prop, t = this.tiempoActualMs()){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!g || !Claves.PROPIEDADES[prop]) return null;
+        const v = Claves.tienePista(g.claves, prop) ? Claves.valorObjeto(g.claves, prop, t, g.claves_bucle) : null;
+        return v !== null ? v : Claves.PROPIEDADES[prop].base(g);
+    }
+
+    _cambiarPista(nombre, prop, fn){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!g) return;
+        const claves = {...(g.claves || {})};
+        const pista = fn(claves[prop] || []);
+        if(pista && pista.length) claves[prop] = pista; else delete claves[prop];
+        const final = Object.keys(claves).length ? claves : undefined;
+        this._ambos(nombre).forEach((x) => { if(final) x.claves = final; else delete x.claves; });
+        // sin pista: la copia en vivo vuelve al valor base
+        if(!final || !final[prop]) this._restaurarBase(nombre, prop);
+    }
+
+    _restaurarBase(nombre, prop){
+        const o = this.gestion_grupos_originales.getGrupo(nombre);
+        const d = this.gestion_grupos.getGrupo(nombre);
+        if(!o || !d) return;
+        if(prop === "opacidad") d.opacidad = o.opacidad;
+        else if(prop !== "x" && prop !== "y") d.transformacion = o.transformacion ? {...o.transformacion} : o.transformacion;
+    }
+
+    // Pone (o reemplaza) la clave de `prop` en el instante t con el valor v.
+    ponerClave(nombre, prop, v, t = this.tiempoActualMs(), interp){
+        if(!Claves.PROPIEDADES[prop]) return;
+        if(prop !== "x" && prop !== "y" && prop !== "opacidad") this.asegurarTransformacion(nombre);
+        this._cambiarPista(nombre, prop, (p) => Claves.ponerClave(p, t, v, interp));
+    }
+
+    quitarClave(nombre, prop, t = this.tiempoActualMs()){
+        this._cambiarPista(nombre, prop, (p) => Claves.quitarClave(p, t));
+    }
+
+    // Boton ◆ del Inspector: si hay clave en el instante la quita; si no, la crea
+    // con el valor que tiene ahora (la primera clave "enciende" la pista).
+    alternarClave(nombre, prop, t = this.tiempoActualMs()){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!g) return;
+        if(Claves.indiceClave(g.claves && g.claves[prop], t) >= 0) this.quitarClave(nombre, prop, t);
+        else this.ponerClave(nombre, prop, this.valorPropiedad(nombre, prop, t), t);
+    }
+
+    // Quita toda la pista (la propiedad vuelve a su valor base).
+    quitarPista(nombre, prop){
+        this._cambiarPista(nombre, prop, () => []);
+    }
+
+    claveEn(nombre, prop, t = this.tiempoActualMs()){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        const p = g && g.claves && g.claves[prop];
+        const i = Claves.indiceClave(p, t);
+        return i >= 0 ? p[i] : null;
+    }
+
+    // Todas las claves de un objeto: [{prop, t, v, interp}] (para la linea de tiempo).
+    clavesDe(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        const r = [];
+        for(const prop in (g && g.claves) || {}){
+            for(const c of g.claves[prop]) r.push({prop, ...c});
+        }
+        return r.sort((a, b) => a.t - b.t);
+    }
+
+    // Mueve en el tiempo las claves de un objeto que estan en t_desde (todas sus
+    // propiedades, o solo `props`).
+    moverClaves(nombre, t_desde, t_hasta, props){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        for(const prop of props || Object.keys((g && g.claves) || {})){
+            this._cambiarPista(nombre, prop, (p) => Claves.moverClave(p, t_desde, t_hasta));
+        }
+    }
+
+    cambiarInterpolacion(nombre, prop, t, interp){
+        this._cambiarPista(nombre, prop, (p) => p.map((c) =>
+            (Math.abs(c.t - t) <= Claves.TOLERANCIA_MS ? {...c, interp} : c)));
+    }
+
+    // ---- Fase 7B: bucle y edicion de varias claves ----
+
+    bucleClaves(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return (g && g.claves_bucle) || "mantener";
+    }
+
+    fijarBucleClaves(nombre, modo){
         this._ambos(nombre).forEach((g) => {
-            g.cx = Math.round(x * 100) / 100;
-            g.cy = Math.round(y * 100) / 100;
+            if(!modo || modo === "mantener") delete g.claves_bucle; else g.claves_bucle = modo;
         });
-        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+    }
+
+    // Tramo que se repite (primera a ultima clave del objeto) o null.
+    tramoClaves(nombre){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        return g ? Claves.tramoClaves(g.claves) : null;
+    }
+
+    // Reescribe todas las pistas del objeto con fn(prop, pista) -> pista.
+    _cambiarTodas(nombre, fn){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!g || !g.claves) return;
+        for(const prop of Object.keys(g.claves)) this._cambiarPista(nombre, prop, (p) => fn(prop, p));
+    }
+
+    // Borra las claves (de todas las propiedades) en esos instantes.
+    eliminarClavesEn(nombre, instantes){
+        const en = (t) => instantes.some((x) => Math.abs(x - t) <= Claves.TOLERANCIA_MS);
+        this._cambiarTodas(nombre, (prop, p) => p.filter((c) => !en(c.t)));
+    }
+
+    // Corre en el tiempo las claves de esos instantes (todas juntas). Una clave no
+    // seleccionada que quede en el mismo instante que una movida se reemplaza.
+    desplazarInstantes(nombre, instantes, delta_ms){
+        const en = (t) => instantes.some((x) => Math.abs(x - t) <= Claves.TOLERANCIA_MS);
+        const minimo = Math.min(...instantes);
+        const d = Math.round(Math.max(delta_ms, -minimo));          // no antes de 0
+        this._cambiarTodas(nombre, (prop, p) => {
+            const movidas = p.filter((c) => en(c.t)).map((c) => ({...c, t: c.t + d}));
+            const quietas = p.filter((c) => !en(c.t) &&
+                !movidas.some((m) => Math.abs(m.t - c.t) <= Claves.TOLERANCIA_MS));
+            return quietas.concat(movidas).sort((a, b) => a.t - b.t);
+        });
+        return instantes.map((t) => t + d);
+    }
+
+    // Copia las claves de esos instantes: {claves: [{prop, dt, v, interp}]} con dt
+    // relativo al primer instante (se pegan a partir del cursor).
+    copiarClaves(nombre, instantes){
+        const g = this.gestion_grupos_originales.getGrupo(nombre);
+        if(!g || !g.claves || !instantes.length) return null;
+        const base = Math.min(...instantes);
+        const en = (t) => instantes.some((x) => Math.abs(x - t) <= Claves.TOLERANCIA_MS);
+        const claves = [];
+        for(const prop in g.claves){
+            for(const c of g.claves[prop]) if(en(c.t)) claves.push({prop, dt: c.t - base, v: c.v, interp: c.interp});
+        }
+        return claves.length ? {claves} : null;
+    }
+
+    // Pega lo copiado en el objeto (puede ser otro) a partir del instante t.
+    // Devuelve los instantes donde quedaron claves.
+    pegarClaves(nombre, copia, t = this.tiempoActualMs()){
+        if(!copia || !copia.claves) return [];
+        const ts = new Set();
+        for(const c of copia.claves){
+            this.ponerClave(nombre, c.prop, c.v, t + c.dt, c.interp);
+            ts.add(t + c.dt);
+        }
+        return [...ts];
+    }
+
+    // En cada cuadro: valores interpolados -> copia en vivo. Posicion: reemplaza la
+    // base y conserva el desplazamiento de los movimientos del cuadro.
+    _aplicarClaves(t_ms){
+        const dinamicos = new Map(this.gestion_grupos.grupos_figuras.map((g) => [g.nombre, g]));
+        for(const o of this.gestion_grupos_originales.grupos_figuras){
+            if(!o.claves) continue;
+            const d = dinamicos.get(o.nombre);
+            if(!d) continue;
+            const c = o.claves;
+            const con_x = Claves.tienePista(c, "x"), con_y = Claves.tienePista(c, "y");
+            if(con_x || con_y){
+                // desplazamiento de los movimientos de este cuadro (en el marco del objeto, D11)
+                const mov = transformarVector(o.transformacion, this.movimientos_grupos[o.nombre] || {x: 0, y: 0});
+                if(con_x) d.cx = Claves.valorObjeto(c, "x", t_ms, o.claves_bucle) + mov.x;
+                if(con_y) d.cy = Claves.valorObjeto(c, "y", t_ms, o.claves_bucle) + mov.y;
+            }
+            if(Claves.tienePista(c, "opacidad")) d.opacidad = Math.max(0, Math.min(1, Claves.valorObjeto(c, "opacidad", t_ms, o.claves_bucle)));
+            const props_t = ["rotacion", "escala_x", "escala_y"].filter((p) => Claves.tienePista(c, p));
+            if(props_t.length){
+                const t = {...(o.transformacion || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0})};
+                for(const p of props_t) t[p] = Claves.valorObjeto(c, p, t_ms, o.claves_bucle);
+                d.transformacion = t;
+            }
+        }
     }
 
     moverObjeto(nombre, dx, dy){
@@ -843,6 +1067,9 @@ class GestionEvento{
 
             this._volcarCuadro();
 
+            // Fase 7: fotogramas clave de propiedades de objeto
+            this._aplicarClaves((this._t_escena || 0) * 1000);
+
             // Fase 6: instancias por referencia (sus partes las anima el motor de su asset)
             this.aplicarInstancias(this._t_escena || 0);
         }
@@ -947,8 +1174,10 @@ class GestionEvento{
         }
         this.procesarNodoEvento(raiz, this.inicioAbsoluto(elegido) + t_evento - raiz.tiempo_inicio / 1000, new Set());
         this._volcarCuadro();
+        this._aplicarClaves((this.inicioAbsoluto(elegido) + t_evento) * 1000);
         return this.gestion_grupos.grupos_figuras.map((g) => ({
             nombre: g.nombre, cx: g.cx, cy: g.cy, visible: g.visible, lista_figuras: g.lista_figuras,
+            transformacion: g.transformacion, opacidad: g.opacidad,
         }));
     }
 
@@ -1100,6 +1329,9 @@ class GestionEvento{
                 v.cy = p.cy;
                 v.visible = p.visible;
                 v.lista_figuras = p.lista_figuras;
+                // Fase 7: claves del asset (rotacion, escala, opacidad de sus partes)
+                if(p.transformacion !== undefined) v.transformacion = p.transformacion;
+                if(p.opacidad !== undefined) v.opacidad = p.opacidad;
             }
         }
     }

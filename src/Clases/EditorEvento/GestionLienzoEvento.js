@@ -469,6 +469,9 @@ class GestionLienzoEvento{
 
         this.configuracion_lienzo.imprimirVariablesLienzo(ctx);
         this.configuracion_lienzo.dibujarBotones(ctx);
+        // Fase 7: el timeline muestra las claves del objeto seleccionado (si es uno)
+        const sel = this.control_objetos.seleccion;
+        this.timelineInstance.objeto_claves = sel.length === 1 ? sel[0] : null;
         this.timelineInstance.imprimir();
     }
 

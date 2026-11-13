@@ -286,3 +286,19 @@
     padding: 12px;
     background: var(--ed-fondo);
 }
+
+/* Fase 7: rombo de fotograma clave junto a cada propiedad animable */
+.ed-rombo {
+    border: 0;
+    background: transparent;
+    padding: 0 2px;
+    line-height: 1;
+    font-size: 0.75rem;
+    color: var(--bs-secondary-color);
+    opacity: 0.55;
+    cursor: pointer;
+}
+.ed-rombo:hover { opacity: 1; }
+.ed-rombo.pista { color: #f0b429; opacity: 1; }
+.ed-rombo.clave { color: #f0b429; opacity: 1; }
+.ed-rombo-color { color: #f0b429; }

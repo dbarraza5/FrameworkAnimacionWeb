@@ -9,6 +9,17 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (fotogramas clave, 3)**
+- **Camino en el lienzo:** el objeto con claves de posición muestra su recorrido como una línea punteada con un rombo por clave. Arrastra los rombos para acomodar el camino. Ver [El camino en el lienzo](#el-camino-en-el-lienzo).
+- **Selección por rectángulo** de claves en la línea de tiempo.
+
+**2026-11-13 (fotogramas clave, 2)**
+- **Repetir las claves:** después de la última clave, un objeto puede quedarse, repetir, ir y volver o continuar acumulando, por ejemplo un auto que da vueltas o alguien que sigue caminando. Ver [Repetir](#repetir-qué-pasa-después-de-la-última-clave).
+- **Editar varias claves** en la línea de tiempo: Shift + clic para seleccionar, arrastrar para moverlas juntas, Supr para borrarlas y Ctrl + C / Ctrl + V para copiarlas, incluso a otro objeto.
+
+**2026-11-13 (fotogramas clave)**
+- **Animar cualquier propiedad con fotogramas clave:** posición, rotación, escala y la nueva **opacidad**. Usa el rombo ◆ del Inspector, mueve el cursor de tiempo y cambia el objeto. Las claves se ven y se arrastran en la línea de tiempo. Ver [§7d](#7d-animar-con-fotogramas-clave).
+
 **2026-11-13 (assets animados, 3)**
 - **Versiones:** una instancia puede quedar **fijada** a una versión del asset y ya no cambia aunque se edite el original. Botón *Fijar actual* en el Inspector.
 - **Abrir para editar** el proyecto de un asset desde la escena. Al volver, la escena se actualiza sola.
@@ -66,6 +77,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 7. [Biblioteca: agregar objetos a la escena](#7-biblioteca-agregar-objetos-a-la-escena)
 7b. [Objetos en la escena: seleccionar, mover, escalar, rotar](#7b-objetos-en-la-escena-seleccionar-mover-escalar-rotar)
 7c. [Panel Objetos y entrar a un objeto](#7c-panel-objetos-y-entrar-a-un-objeto)
+7d. [Animar con fotogramas clave](#7d-animar-con-fotogramas-clave)
 8. [Línea de tiempo](#8-línea-de-tiempo)
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
@@ -413,6 +425,107 @@ Cada fila muestra la miniatura del objeto, su nombre y cuántas partes tiene. **
 - **Dónde estás:** la ruta aparece arriba del lienzo y de la lista ("Escena › perro"). Haz clic en un nivel para volver a él.
 - **Salir:** **Esc** primero deselecciona y, sin selección, sale un nivel.
 - **Movimientos:** en Inspector → Movimiento, el árbol de grupos muestra solo las partes del objeto activo.
+
+---
+
+## 7d. Animar con fotogramas clave
+
+Un **fotograma clave** (clave) guarda cómo está un objeto en un instante: dónde está, cuánto está rotado, su tamaño o su opacidad. Pones claves en distintos instantes y el editor calcula lo de en medio. Sirve para cualquier cosa:
+- un perro que va por la vereda y dobla en la esquina (claves de posición);
+- una puerta que se abre (rotación);
+- algo que crece (escala);
+- algo que aparece o se desvanece (opacidad).
+
+### Animar una propiedad paso a paso
+
+1. **Selecciona el objeto** en el lienzo o en el panel Objetos.
+2. **Lleva el cursor rojo de la línea de tiempo** al instante donde empieza la animación, por ejemplo 0 s.
+3. En **Inspector → Objeto**, haz clic en el **rombo ◆** junto a la propiedad (Posición X/Y, Rotación, Escala X/Y, Opacidad). Se crea la primera clave con el valor actual.
+4. **Lleva el cursor a otro instante,** por ejemplo 2 s.
+5. **Cambia la propiedad** como siempre: arrastra el objeto, usa las manijas o escribe el número. Como esa propiedad ya está animada, el cambio crea una clave en ese instante.
+6. Dale **▶** para verlo.
+
+### El rombo de cada propiedad
+
+| Rombo | Significa | Clic |
+|---|---|---|
+| ◇ gris | La propiedad no está animada. Los cambios modifican su valor fijo. | Crea la primera clave en este instante. |
+| ◇ amarillo | Está animada, pero no hay clave en este instante. Un cambio crea una. | Agrega una clave con el valor actual. |
+| ◆ amarillo relleno | Hay una clave en este instante. Un cambio la ajusta. | Quita esa clave. |
+
+Si quitas todas las claves de una propiedad, vuelve a su valor fijo.
+
+### Cómo pasa de una clave a la siguiente
+
+Cuando el cursor está sobre una clave, el Inspector muestra **"Clave en N s · hacia la siguiente:"** y un selector:
+
+| Opción | Efecto |
+|---|---|
+| Suave | Arranca y termina despacio. Es la opción por defecto y la más natural. |
+| Lineal | Velocidad constante. |
+| Acelera | Arranca despacio y termina rápido. |
+| Frena | Arranca rápido y termina despacio. |
+| Mantener | Se queda quieto y salta al valor siguiente al llegar a la otra clave. |
+
+Antes de la primera clave y después de la última, la propiedad se queda en el valor de esa clave.
+
+### Las claves en la línea de tiempo
+
+Con un objeto seleccionado, la línea de tiempo muestra al pie una fila **◆ nombre** con sus claves. El rombo blanco es el del instante actual; los seleccionados tienen borde azul.
+
+| Acción | Efecto |
+|---|---|
+| Clic en un rombo | Lo selecciona y lleva el cursor de tiempo a ese instante. |
+| Shift + clic | Agrega o quita el rombo de la selección. |
+| Arrastrar un rombo | Mueve en el tiempo todos los seleccionados juntos, de a 10 ms. |
+| Arrastrar desde un espacio vacío de la fila | Selecciona los rombos que abarca el rectángulo. Con Shift los agrega a la selección. |
+| Clic en la fila vacía | Deselecciona. |
+
+Después de hacer clic en la línea de tiempo, estos atajos actúan sobre las claves, no sobre el objeto:
+
+| Tecla | Efecto |
+|---|---|
+| Supr | Borra las claves seleccionadas. El objeto no se borra. |
+| Ctrl + C | Copia las claves seleccionadas. |
+| Ctrl + V | Pega a partir del cursor de tiempo en el objeto seleccionado, que **puede ser otro**: así copias un movimiento de un perro a otro. |
+| Ctrl + A | Selecciona todas las claves del objeto. |
+| Esc | Deselecciona. |
+
+### El camino en el lienzo
+
+Si el objeto seleccionado tiene claves de **posición**, el lienzo dibuja su **camino**:
+- una línea punteada amarilla por donde pasan sus pies (el ancla);
+- un rombo en cada clave, con su instante ("1.5s"); el del instante actual, en blanco.
+
+**Arrastra un rombo del camino** para cambiar dónde está el objeto en ese instante, sin mover el cursor de tiempo. Es la forma más rápida de dibujar un recorrido: crea las claves en distintos instantes y luego acomoda los puntos.
+
+El camino muestra solo las claves. Si el objeto además tiene movimientos de eventos (por ejemplo "Caminar"), avanza un poco más allá de la línea.
+
+### Animar partes de un objeto
+
+Las claves también funcionan en las **partes**. Entra al objeto con doble clic ([§7c](#7c-panel-objetos-y-entrar-a-un-objeto)), selecciona la parte (por ejemplo la cabeza) y anímala igual: rombo, mover el cursor, cambiar.
+
+Las claves que trae un **asset animado** (las de su propio proyecto) se reproducen también en sus instancias.
+
+### Repetir: qué pasa después de la última clave
+
+Con al menos dos instantes con claves, el Inspector muestra **"Después de la última clave:"**:
+
+| Opción | Efecto | Ejemplo |
+|---|---|---|
+| Quedarse en la última | Se queda como en la última clave (por defecto). | Una puerta que se abre y queda abierta. |
+| Repetir | Vuelve a empezar desde la primera clave, sin fin. | Un auto que da vueltas a la manzana: la primera y la última clave en el mismo lugar. |
+| Ir y volver | Recorre las claves hacia adelante y luego hacia atrás. | Alguien que pasea de un lado a otro. |
+| Continuar (acumula) | Repite, pero cada vuelta empieza donde terminó la anterior (posición y rotación). | Una persona que sigue caminando por la calle, o una rueda que no deja de girar. |
+
+Se repite el tramo entre la **primera y la última clave del objeto**, contando todas sus propiedades. En la línea de tiempo, las repeticiones se ven como rombos tenues.
+
+### Cómo se combina con lo demás
+
+- **Movimientos de eventos:** se suman. Si el perro tiene claves de posición y además su evento "Caminar" lo hace avanzar, avanza **desde** la posición que marcan las claves.
+- **Assets animados:** las claves de la instancia la mueven por la escena mientras el asset anima sus patas. Así se arma un perro que camina **por un camino**.
+- **Opacidad:** se hereda. Un objeto al 50 % deja a todas sus partes al 50 %.
+- **Guardar:** las claves se guardan con **Subir**.
 
 ---
 

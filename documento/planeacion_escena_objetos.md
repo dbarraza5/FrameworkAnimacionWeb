@@ -40,6 +40,7 @@ Cada decisión registra de dónde salió, para no volver a discutirla sin un dat
 | D6 | Edición en **dos niveles**: en la escena, un clic selecciona el objeto completo; con doble clic se entra al objeto (los demás se atenúan) y Esc sale. | Patrón estándar (símbolos de Flash, aislamiento de Illustrator, componentes de Figma). El lienzo ya tiene un antecedente: el modo de selección de grupos baja a los hijos del grupo seleccionado. |
 | D7 | La animación de un personaje es **en el lugar** (caminar sin avanzar); el desplazamiento por la escena lo da la escena, con velocidad proporcional a la escala. | Si el asset avanza por su cuenta, un perro escalado al 60 % avanza los mismos píxeles que el grande y "patina". |
 | D12 | **Bucle:** la ventana inicio–fin define cuánto dura; con `bucle`, el contenido se repite cada `tiempo_bucle` ms dentro de ella y al terminar se congela. Los desplazamientos se acumulan entre vueltas. La raíz (`EventoGeneral`) no hace bucle. | Separa "cuánto dura" de "cada cuánto se repite" y conserva el encadenamiento (D1). Acumular evita que un personaje que camina en bucle vuelva al punto de partida. |
+| D13 | **Fotogramas clave en vez de recorridos (Fase 7):** el movimiento por la escena se hace con claves genéricas de propiedades de objeto (posición, rotación, escala, opacidad), no con una herramienta de caminos. | Es el mecanismo de todos los editores de animación y sirve para cualquier escenario, no solo para la ciudad. Un recorrido es un caso particular (claves de posición). |
 | D10 | La selección y manipulación de objetos vive en la modalidad **Evento** (la que se abre por defecto), sin modalidad nueva; la modalidad Movimiento conserva sus controles (ex pregunta P3). | En la modalidad Evento el lienzo no hacía nada salvo panear; agregar un modo "Escena" separado sumaba un concepto sin necesidad. Se puede revisar en la Fase 3. |
 | D11 | El desplazamiento propio de un grupo con transformación (sus movimientos "Objeto") se interpreta **en su marco**: escala y rotación se aplican también al vector de desplazamiento. | Sin esto, un perro reflejado miraba a la izquierda pero avanzaba a la derecha ("moonwalk"), y uno escalado al 60 % avanzaba lo mismo que el grande ("patinaba"). Encaja con D7. |
 | D9 | El ancla de la transformación es, por defecto, el **centro inferior** del objeto ("los pies"); se guarda por instancia y se puede cambiar (ex pregunta P4). | Al escalar, un personaje sigue apoyado en el suelo. Propuesto en el plan y aceptado por el usuario al iniciar la Fase 1. |
@@ -586,15 +587,91 @@ Diferencias con el plan: no se creó una lista `objetos` aparte. La instancia es
 
 ---
 
-## Fase 7 — Desplazamiento por la escena
+## Fase 7 — Fotogramas clave (keyframes) de propiedades de objeto — IMPLEMENTADA (7A, 7B y 7C)
 
-**Objetivo:** personas, perros y autos que recorren la escena (D7).
+**Cambio de enfoque (2026-11-13, D13):** el plan original era "recorridos" (caminos para que personajes y autos recorran la escena). Se descartó por demasiado específico. En su lugar va el mecanismo general de todos los editores de animación (After Effects, Rive, Spine, Flash): **fotogramas clave** sobre propiedades de cualquier objeto. Un recorrido es solo claves de posición; una puerta que se abre, claves de rotación; algo que aparece, claves de opacidad.
 
-**Alcance:** recorridos (segmentos o polilíneas) asignables a un objeto; velocidad proporcional a la escala; al llegar al final, opción de volver a empezar (salir por un borde y entrar por el otro), ir y volver, o detenerse; el espejo se ajusta solo según el sentido de avance.
+**Objetivo:** animar cualquier propiedad de cualquier objeto (posición, rotación, escala, opacidad) marcando su valor en instantes de la línea de tiempo; el editor calcula lo de en medio.
 
-**Verificación:**
-- [ ] Un perro chico y uno grande recorren la misma vereda sin "patinar".
-- [ ] Un auto da la vuelta a la calle en bucle; sus ruedas giran (rotación continua).
+**Modelo:**
+- `grupo.claves = {x:[{t, v, interp}], y, rotacion, escala_x, escala_y, opacidad}`, con `t` en ms de escena (reloj de EventoGeneral);
+- `grupo.opacidad` es el valor base (0..1);
+- interpolaciones: lineal, suave, acelera, frena, mantener (salto).
+
+**Edición (estilo cronómetro de After Effects):**
+- la propiedad sin claves se edita como siempre;
+- el rombo ◆ crea su primera clave;
+- desde ahí, cualquier cambio de esa propiedad (campo numérico, arrastrar, manijas, espejo) crea o ajusta la clave del instante actual.
+
+**Partes:**
+- **7A:** modelo, motor, Inspector con rombos, fila de claves en la línea de tiempo (ver, ir a, mover). *Hecha.*
+- **7B:** bucle de claves por objeto (repetir cada N ms, para el auto que da vueltas) y selección múltiple, copiar y pegar y borrar claves en la línea de tiempo.
+- **7C:** claves en las partes de un objeto al "entrar" (cabeza que gira); hoy funciona por motor pero falta revisarlo con la interfaz. Y una curva de trayectoria visible en el lienzo para las claves de posición.
+
+### Alcance realizado — 7A (2026-11-13)
+- **`Clases/EditorEvento/Claves.js`** (nuevo, funciones puras): `PROPIEDADES`, `INTERPOLACIONES`, `valorEn` (búsqueda binaria + curva), `ponerClave`, `quitarClave`, `moverClave`, `indiceClave`, `instantesConClaves`.
+- **Motor (`GestionEvento`):**
+  - `_aplicarClaves(t_ms)` en cada cuadro, después de `_volcarCuadro`, sobre la copia en vivo. La posición con claves reemplaza la base y conserva el desplazamiento de los movimientos del cuadro (en el marco del objeto, D11).
+  - API: `valorPropiedad`, `tieneClaves`, `ponerClave`, `quitarClave`, `alternarClave`, `quitarPista`, `claveEn`, `clavesDe`, `moverClaves`, `cambiarInterpolacion`, `fijarOpacidad`, `tiempoActualMs`.
+  - `posicionObjeto`, `fijarPosicionObjeto` y `cambiarTransformacion` respetan las claves. Por eso el arrastre, las manijas, las flechas y el espejo funcionan sin cambios.
+  - Las instancias aplican también las claves de su asset (`evaluarEn` devuelve transformación y opacidad).
+- **Render:** opacidad heredada (producto con los ancestros) en `ImprimirAnimacion`; con opacidad ≈ 0 el grupo no se dibuja.
+- **Inspector → Objeto:**
+  - rombo por propiedad: gris sin claves, contorno con pista, relleno con clave en el instante;
+  - campo Opacidad nuevo;
+  - fila "Clave en N s · hacia la siguiente: [interpolación]";
+  - los campos muestran el valor del instante actual.
+- **Línea de tiempo:** fila "◆ objeto" al pie con las claves del objeto seleccionado (en tiempo de escena convertido al eje del evento que se reproduce). Clic en un rombo lleva el cursor a ese instante; arrastrarlo mueve las claves de ese instante (pasos de 10 ms).
+- **Backend:** `claves` (Mixed) y `opacidad` en `grupoFigurasSchema`.
+
+**Verificado en el navegador** (en memoria sobre el original; guardado en una copia temporal, borrada):
+- [x] Interpolación: y 300→100→300 y opacidad 1→0 en los instantes esperados.
+- [x] Rombo de "Posición Y" en 0 s; en 2 s, arrastrar el perro en el lienzo crea sola la clave `y@2000` y no toca la base.
+- [x] Arrastrar el rombo de 2 s a 3 s en la línea de tiempo.
+- [x] En 0,75 s el perro está a medio camino (y = 210, rotación −12,5°) y las manijas siguen la rotación. En 1,5 s aparecen los rombos llenos y la fila de interpolación.
+- [x] Subir + recargar conserva claves e interpolaciones.
+- [ ] No probado con la interfaz: claves en una parte de un objeto ("entrar") y en instancias de assets con claves propias.
+
+### Alcance realizado — 7B (2026-11-13)
+- **Bucle de claves por objeto** (`grupo.claves_bucle`, también en el backend). Define qué hace el objeto después de su última clave:
+  - **quedarse** (por defecto);
+  - **repetir**;
+  - **ir y volver**;
+  - **continuar**: repite sumando lo avanzado en posición y rotación por vuelta, para alguien que sigue caminando.
+
+  El tramo que se repite va de la primera a la última clave del objeto, contando todas sus propiedades, para que se mantengan sincronizadas.
+  - Funciones puras en `Claves.js`: `MODOS_BUCLE`, `tramoClaves`, `tiempoEnBucle`, `valorObjeto`.
+  - El motor las usa en `valorPropiedad` y `_aplicarClaves`.
+- **Inspector:** selector "Después de la última clave" (aparece cuando el objeto tiene al menos dos instantes con claves).
+- **Línea de tiempo:**
+  - rombos "fantasma" (contorno tenue) donde se repiten las claves, y fondo tenue después del tramo;
+  - **clic** selecciona el instante y lleva el cursor; **Shift + clic** agrega o quita de la selección; **arrastrar** mueve todos los seleccionados juntos (`desplazarInstantes`, sin pasar de 0);
+  - el timeline toma el foco al hacer clic y tiene atajos propios, que no chocan con los del lienzo: **Supr** borra las claves seleccionadas (no el objeto), **Ctrl + C / Ctrl + V** copian y pegan en el cursor, también en **otro** objeto (`copiarClaves` / `pegarClaves`), **Ctrl + A** selecciona todas y **Esc** deselecciona.
+
+**Verificado en el navegador** (en memoria; guardado en una copia temporal, borrada):
+- [x] Los cuatro modos dan los valores esperados en varias vueltas. Con x 300 → 600 en 0–2 s, a los 4,5 s: quedarse 600, repetir 375, ir y volver 375, continuar 975.
+- [x] Rombos fantasma cada vuelta; en 2,5 s el perro está en la segunda vuelta.
+- [x] Shift + clic en dos claves y arrastre: las dos se mueven 1 s juntas.
+- [x] Ctrl + C en "perro", Ctrl + V en "perro_1" con el cursor en 4 s: quedan las claves en 4 y 5 s. Supr las borra y el objeto sigue existiendo.
+- [x] `claves_bucle` se guarda con Subir.
+
+### Alcance realizado — 7C (2026-11-13)
+- **Trayectoria en el lienzo** (`ControlObjetosLienzo.trayectoria` / `_dibujarTrayectoria`). Con un objeto seleccionado que tiene claves de posición se dibuja:
+  - la línea punteada del camino del **ancla** (los pies) entre su primera y su última clave de posición, muestreada cada 25 ms;
+  - un rombo por clave con su instante ("1.5s"); el del instante actual, en blanco.
+
+  Se calcula en el espacio del padre (origen del padre + posición + ancla) y se lleva al dibujo con la cadena del padre, así que funciona también con partes de un objeto transformado. No incluye el desplazamiento de los movimientos de eventos, que se suma encima.
+- **Editar el camino en el lienzo:** arrastrar un rombo de la trayectoria cambia las claves x e y de **ese** instante (arrastre `clave_pos`), sin mover el cursor de tiempo. Tiene prioridad sobre las manijas.
+- **Selección por rectángulo** en la fila de claves: arrastrar desde un espacio vacío selecciona los rombos abarcados; con Shift los agrega. Un clic en vacío deselecciona.
+
+**Verificado en el navegador** (en memoria, sin guardar):
+- [x] La trayectoria se dibuja con los rombos 0,0 / 1,5 / 3,0 s.
+- [x] Arrastrar el rombo de 3,0 s cambia `y@3000` (350 → 538) con el cursor quieto en 0,8 s.
+- [x] El rectángulo de 200 a 470 px selecciona las claves de 1,5 y 3 s.
+- [x] **Partes:** entrar al perro, seleccionar "cabeza", rombo de Rotación en 0 s, ir a 1 s y escribir 30 → clave `rotacion@1000 = 30`, cabeza girada, fila "◆ cabeza" en la línea de tiempo.
+- [x] **Assets con claves propias:** con claves de rotación y opacidad en el motor del asset, la instancia las reproduce (rotación 0 / −20 / −40, opacidad 1 / 0,65 / 0,3 en 0, 1 y 2 s).
+
+**Verificación original de la fase** ("un perro chico y uno grande recorren la misma vereda", "un auto da vueltas"): ya se puede armar con claves de posición en instancias escaladas y "Repetir". Falta un asset de auto para probar lo segundo.
 
 ---
 

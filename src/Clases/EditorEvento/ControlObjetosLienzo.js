@@ -101,6 +101,58 @@ export default class ControlObjetosLienzo {
             ancla: grupo.transformacion ? {x: ox + t.ancla_x, y: oy + t.ancla_y} : {x: (lim.x0 + lim.x1) / 2, y: lim.y1}};
     }
 
+    // ---- Fase 7C: trayectoria de las claves de posicion ----
+    // El camino del ancla (los pies) segun las claves de x/y: en el espacio del padre
+    // (origen absoluto del padre + posicion + ancla) y llevado al dibujo con la
+    // cadena del padre. No incluye el desplazamiento de los movimientos de eventos.
+
+    _origenPadre(ev, nombre) {
+        let x = 0, y = 0;
+        const vistos = new Set();
+        let g = ev.gestion_grupos.getGrupo(nombre);
+        while (g && g.nodo_padre && g.nodo_padre !== "root" && !vistos.has(g.nodo_padre)) {
+            vistos.add(g.nodo_padre);
+            g = ev.gestion_grupos.getGrupo(g.nodo_padre);
+            if (!g) break;
+            x += parseFloat(g.cx) || 0;
+            y += parseFloat(g.cy) || 0;
+        }
+        return {x, y};
+    }
+
+    // Desplazamiento del ancla respecto del origen del objeto.
+    _offsetAncla(ev, nombre) {
+        const g = ev.gestion_grupos.getGrupo(nombre);
+        const t = g && normalizarTransformacion(g.transformacion);
+        if (g && g.transformacion && t) return {x: t.ancla_x, y: t.ancla_y};
+        const lim = ev.limitesObjeto(nombre);
+        if (!lim || !g) return {x: 0, y: 0};
+        const ox = parseFloat(g.cx_solid ?? g.cx) || 0, oy = parseFloat(g.cy_solid ?? g.cy) || 0;
+        return {x: (lim.x0 + lim.x1) / 2 - ox, y: lim.y1 - oy};
+    }
+
+    // Punto del dibujo del ancla si el objeto estuviera en (x, y).
+    _puntoTrayectoria(ev, nombre, x, y, base, off, cadena) {
+        return transformarPunto(cadena, {x: base.x + x + off.x, y: base.y + y + off.y});
+    }
+
+    // {puntos: [{t, p}] de las claves de posicion, linea: [p]} o null.
+    trayectoria(ev, nombre) {
+        if (!ev.tieneClaves || !(ev.tieneClaves(nombre, "x") || ev.tieneClaves(nombre, "y"))) return null;
+        const ts = ev.clavesDe(nombre).filter((c) => c.prop === "x" || c.prop === "y").map((c) => c.t);
+        const instantes = [...new Set(ts)].sort((a, b) => a - b);
+        if (!instantes.length) return null;
+        const base = this._origenPadre(ev, nombre), off = this._offsetAncla(ev, nombre);
+        const cadena = this.cadenaPadre(ev, nombre);
+        const punto = (t) => this._puntoTrayectoria(ev, nombre,
+            ev.valorPropiedad(nombre, "x", t), ev.valorPropiedad(nombre, "y", t), base, off, cadena);
+        const t0 = instantes[0], t1 = instantes[instantes.length - 1];
+        const linea = [];
+        const pasos = Math.min(400, Math.max(2, Math.ceil((t1 - t0) / 25)));
+        for (let i = 0; i <= pasos; i++) linea.push(punto(t0 + (t1 - t0) * i / pasos));
+        return {puntos: instantes.map((t) => ({t, p: punto(t)})), linea, base, off, cadena};
+    }
+
     // ¿El punto del dibujo `p` cae dentro del objeto (su rectangulo transformado)?
     contiene(geo, p) {
         const q = destransformarPunto(geo.cadena, p);
@@ -208,6 +260,22 @@ export default class ControlObjetosLienzo {
     // Clic nuevo en el punto `m` del dibujo: manijas, objetos o vacio.
     _clic(lienzo, ev, m, shift, escala_vista) {
 
+        // --- 7C: puntos de la trayectoria (claves de posicion) del seleccionado ---
+        if (this.seleccion.length === 1) {
+            const nombre = this.seleccion[0];
+            const tr = this.trayectoria(ev, nombre);
+            const radio = 7 / escala_vista;
+            const hit = tr && tr.puntos.find((k) => len(sub(m, k.p)) <= radio);
+            if (hit) {
+                this.arrastre = {
+                    tipo: "clave_pos", nombre, t: hit.t,
+                    inicio: destransformarPunto(tr.cadena, m), cadena_padre: tr.cadena,
+                    v0: {x: ev.valorPropiedad(nombre, "x", hit.t), y: ev.valorPropiedad(nombre, "y", hit.t)},
+                };
+                return true;
+            }
+        }
+
         // --- nuevo clic: manijas del objeto seleccionado ---
         if (this.seleccion.length === 1) {
             const nombre = this.seleccion[0];
@@ -285,6 +353,14 @@ export default class ControlObjetosLienzo {
     _arrastrar(ev, m_dibujo, shift) {
         const a = this.arrastre;
         const m = destransformarPunto(a.cadena_padre || [], m_dibujo);
+        if (a.tipo === "clave_pos") {
+            // mover un punto de la trayectoria: cambia la clave de posicion de ese
+            // instante (x e y; si una no estaba animada, la empieza a animar)
+            const r = (v) => Math.round(v * 100) / 100;
+            ev.ponerClave(a.nombre, "x", r(a.v0.x + m.x - a.inicio.x), a.t);
+            ev.ponerClave(a.nombre, "y", r(a.v0.y + m.y - a.inicio.y), a.t);
+            return;
+        }
         if (a.tipo === "mover") {
             const dx = m.x - a.inicio.x, dy = m.y - a.inicio.y;
             for (const [n, p] of Object.entries(a.posiciones)) {
@@ -426,6 +502,39 @@ export default class ControlObjetosLienzo {
             ctx.fillStyle = COLOR;
             const e0 = esquinas[0];
             ctx.fillText(nombre, e0.x, e0.y - 6 * px);
+            this._dibujarTrayectoria(ctx, ev, nombre, P, px);
+        }
+        ctx.restore();
+    }
+
+    // 7C: linea punteada del camino y un punto por clave de posicion (el del
+    // instante actual en blanco). Los puntos se arrastran para cambiar la clave.
+    _dibujarTrayectoria(ctx, ev, nombre, P, px) {
+        const tr = this.trayectoria(ev, nombre);
+        if (!tr) return;
+        const ahora = ev.tiempoActualMs();
+        ctx.save();
+        ctx.setLineDash([5 * px, 4 * px]);
+        ctx.lineWidth = 1.5 * px;
+        ctx.strokeStyle = "rgba(240,180,41,0.9)";
+        ctx.beginPath();
+        tr.linea.forEach((p, i) => { const q = P(p); i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); });
+        ctx.stroke();
+        ctx.setLineDash([]);
+        const r = 5 * px;
+        for (const k of tr.puntos) {
+            const q = P(k.p);
+            ctx.beginPath();
+            ctx.moveTo(q.x, q.y - r); ctx.lineTo(q.x + r, q.y); ctx.lineTo(q.x, q.y + r); ctx.lineTo(q.x - r, q.y);
+            ctx.closePath();
+            ctx.fillStyle = Math.abs(k.t - ahora) <= 1 ? "#ffffff" : "#f0b429";
+            ctx.fill();
+            ctx.strokeStyle = "#1e1e2f";
+            ctx.lineWidth = 1 * px;
+            ctx.stroke();
+            ctx.fillStyle = "#f0b429";
+            ctx.font = `${10 * px}px sans-serif`;
+            ctx.fillText(`${(k.t / 1000).toFixed(1)}s`, q.x + 7 * px, q.y - 6 * px);
         }
         ctx.restore();
     }

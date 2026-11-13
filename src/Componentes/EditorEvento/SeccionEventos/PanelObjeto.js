@@ -2,6 +2,10 @@ import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {Cookies} from "react-cookie";
 import {normalizarTransformacion} from "../../../Clases/EditorAnimacion/TransformacionInstancia";
+import {INTERPOLACIONES, MODOS_BUCLE} from "../../../Clases/EditorEvento/Claves";
+
+// Propiedades que se pueden animar con fotogramas clave (Fase 7).
+const PROPS_CLAVE = ["x", "y", "rotacion", "escala_x", "escala_y", "opacidad"];
 
 // 6C: llamadas a la API de versiones de un documento de eventos.
 const configApi = (method, url) => ({
@@ -27,7 +31,17 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         const t = normalizarTransformacion(g.transformacion) || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0};
         const inst = g.instancia && g.instancia.id_eventos ? g.instancia : null;
         const asset = inst ? ev().infoAsset(inst.id_eventos, inst.version) : null;
-        return {x: g.cx, y: g.cy, rotacion: t.rotacion, escala_x: t.escala_x, escala_y: t.escala_y,
+        // Fase 7: valores en el instante actual (con claves) y estado de cada rombo
+        const e = ev();
+        const val = (p) => Math.round(e.valorPropiedad(unico, p) * 1000) / 1000;
+        const rombos = {};
+        for (const p of PROPS_CLAVE) {
+            const c = e.claveEn(unico, p);
+            rombos[p] = c ? {estado: "clave", interp: c.interp} : {estado: e.tieneClaves(unico, p) ? "pista" : "no"};
+        }
+        return {x: val("x"), y: val("y"), rotacion: val("rotacion"), escala_x: val("escala_x"), escala_y: val("escala_y"),
+            opacidad: val("opacidad"), rombos, t_ms: e.tiempoActualMs(),
+            bucle_claves: e.bucleClaves(unico), tramo: e.tramoClaves(unico),
             ancla_x: t.ancla_x, ancla_y: t.ancla_y, capa: g.capa, tiene_t: !!g.transformacion,
             // Fase 6: datos de la instancia por referencia
             inst_evento: inst ? (inst.evento || "EventoGeneral") : null,
@@ -88,6 +102,8 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         if (campo === "x" || campo === "y") {
             const p = ev().posicionObjeto(unico);
             ev().fijarPosicionObjeto(unico, campo === "x" ? v : p.x, campo === "y" ? v : p.y);
+        } else if (campo === "opacidad") {
+            ev().fijarOpacidad(unico, v);
         } else if (campo === "desfase") {
             ev().cambiarInstancia(unico, {desfase: Math.round(v)});
         } else if (campo === "capa") {
@@ -101,8 +117,9 @@ export default function PanelObjeto({refLienzo, seleccion}) {
 
     const espejo = (eje) => {
         for (const n of seleccion) {
-            const t = ev().asegurarTransformacion(n);
-            ev().cambiarTransformacion(n, eje === "x" ? {escala_x: -t.escala_x} : {escala_y: -t.escala_y});
+            ev().asegurarTransformacion(n);
+            const p = eje === "x" ? "escala_x" : "escala_y";
+            ev().cambiarTransformacion(n, {[p]: -ev().valorPropiedad(n, p)});
         }
     };
     const restablecer = () => seleccion.forEach((n) => ev().cambiarTransformacion(n, {rotacion: 0, escala_x: 1, escala_y: 1}));
@@ -115,9 +132,26 @@ export default function PanelObjeto({refLienzo, seleccion}) {
         control().seleccionar([]);
     };
 
+    // Rombo de fotograma clave (Fase 7) junto a la etiqueta de una propiedad animable.
+    const rombo = (nombre) => {
+        const r = valores && valores.rombos && valores.rombos[nombre];
+        if (!r) return null;
+        const titulo = r.estado === "clave" ? "Quitar la clave de este instante"
+            : r.estado === "pista" ? "Agregar una clave en este instante (la propiedad ya está animada)"
+                : "Animar: crea la primera clave en este instante. Desde ahí, cada cambio crea o ajusta una clave.";
+        return (
+            <button type="button" className={`ed-rombo ${r.estado}`} title={titulo}
+                    onClick={() => ev().alternarClave(unico, nombre)}>
+                <i className={`bi ${r.estado === "clave" ? "bi-diamond-fill" : "bi-diamond"}`}/>
+            </button>
+        );
+    };
+
     const campo = (nombre, etiqueta, paso = 1, sufijo = "") => (
         <div className="col-6">
-            <label className="form-label small mb-0 text-body-secondary">{etiqueta}</label>
+            <label className="form-label small mb-0 text-body-secondary d-flex align-items-center gap-1">
+                {PROPS_CLAVE.includes(nombre) && rombo(nombre)}{etiqueta}
+            </label>
             <div className="input-group input-group-sm">
                 <input type="number" step={paso} className="form-control form-control-sm"
                        value={valores ? (valores[nombre] ?? "") : ""}
@@ -154,7 +188,35 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                         {campo("escala_y", "Escala Y", 0.05)}
                         {campo("ancla_x", "Ancla X")}
                         {campo("ancla_y", "Ancla Y")}
+                        {campo("opacidad", "Opacidad", 0.1)}
                     </div>
+                    {/* Fase 7: interpolacion de las claves que hay en este instante */}
+                    {valores.rombos && PROPS_CLAVE.some((p) => valores.rombos[p].estado === "clave") && (
+                        <div className="d-flex align-items-center gap-2 mt-2 small">
+                            <i className="bi bi-diamond-fill ed-rombo-color"/>
+                            <span className="text-body-secondary text-nowrap">Clave en {(valores.t_ms / 1000).toFixed(2)} s · hacia la siguiente:</span>
+                            <select className="form-select form-select-sm"
+                                    value={PROPS_CLAVE.map((p) => valores.rombos[p]).find((r) => r.estado === "clave").interp || "suave"}
+                                    onChange={(e) => PROPS_CLAVE.filter((p) => valores.rombos[p].estado === "clave")
+                                        .forEach((p) => ev().cambiarInterpolacion(unico, p, valores.t_ms, e.target.value))}>
+                                {Object.entries(INTERPOLACIONES).map(([k, v]) => <option key={k} value={k}>{v.etiqueta}</option>)}
+                            </select>
+                        </div>
+                    )}
+                    {/* Fase 7B: que hace despues de la ultima clave */}
+                    {valores.tramo && (
+                        <div className="d-flex align-items-center gap-2 mt-2 small">
+                            <i className="bi bi-repeat ed-rombo-color"/>
+                            <span className="text-body-secondary text-nowrap"
+                                  title={`Tramo con claves: ${(valores.tramo.t0 / 1000).toFixed(2)} s – ${(valores.tramo.t1 / 1000).toFixed(2)} s`}>
+                                Después de la última clave:
+                            </span>
+                            <select className="form-select form-select-sm" value={valores.bucle_claves}
+                                    onChange={(e) => ev().fijarBucleClaves(unico, e.target.value)}>
+                                {Object.entries(MODOS_BUCLE).map(([k, v]) => <option key={k} value={k}>{v.etiqueta}</option>)}
+                            </select>
+                        </div>
+                    )}
                 </div>
             )}
 

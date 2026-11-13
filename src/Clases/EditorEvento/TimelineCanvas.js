@@ -190,6 +190,10 @@ export default class TimelineCanvas {
         this.canvasElem.addEventListener('mousedown', this._onMouseDown.bind(this));
         this.canvasElem.addEventListener('mousemove', this._onMouseMove.bind(this));
         this.canvasElem.addEventListener('mouseup', this._onMouseUp.bind(this));
+        // Fase 7B: el timeline toma el foco al hacer clic, para sus atajos de claves
+        if (this.canvasElem.tabIndex < 0) this.canvasElem.tabIndex = 0;
+        this.canvasElem.style.outline = 'none';
+        this.canvasElem.addEventListener('keydown', this._onKeyDown.bind(this));
     }
 
     dibujarLineaTiempo(){
@@ -265,11 +269,240 @@ export default class TimelineCanvas {
             this._dibujarEvento(ev, idx);
         });
 
+        this._dibujarClaves();
         this.dibujarLineaTiempo();
         ctx.restore();
 
         this._dibujarPistas();
+        this._dibujarEtiquetaClaves();
     }
+
+    // ---------------- Fase 7: fila de fotogramas clave ----------------
+    // Muestra las claves del objeto seleccionado (`objeto_claves`, lo fija
+    // GestionLienzoEvento) en una fila al pie. Las claves estan en tiempo de escena;
+    // el eje del timeline es relativo al evento que se reproduce, por eso se
+    // convierten con la diferencia entre ambos relojes.
+
+    static ALTO_FILA_CLAVES = 24;
+
+    _hayFilaClaves() {
+        return !!(this.objeto_claves && this.eventoAnimacion.clavesDe &&
+            this.eventoAnimacion.gestion_grupos_originales.getGrupo(this.objeto_claves));
+    }
+
+    _yFilaClaves() {
+        return this.alto_canvas - TimelineCanvas.ALTO_FILA_CLAVES;
+    }
+
+    // segundos de escena en que empieza el eje del timeline
+    _origenEscena() {
+        const ev = this.eventoAnimacion;
+        return (ev._t_escena || 0) - (ev.tiempo_animacion || 0);
+    }
+
+    _xDeClave(t_ms) {   // en coordenadas del area de barras
+        const x = (t_ms / 1000 - this._origenEscena()) * 100 - this.desplazamiento_x;
+        // una clave en el borde izquierdo se corre un poco para verse entera
+        return x > -2 && x < 7 ? 7 : x;
+    }
+
+    _instantesClaves() {
+        const ev = this.eventoAnimacion;
+        const ts = [];
+        for (const c of ev.clavesDe(this.objeto_claves)) {
+            if (!ts.some((t) => Math.abs(t - c.t) <= 1)) ts.push(c.t);
+        }
+        return ts;
+    }
+
+    _dibujarClaves() {
+        if (!this._hayFilaClaves()) return;
+        const ctx = this.ctx;
+        const y = this._yFilaClaves(), h = TimelineCanvas.ALTO_FILA_CLAVES;
+        ctx.save();
+        ctx.fillStyle = '#26283a';
+        ctx.fillRect(-1000, y, this.ancho_canvas + 2000, h);
+        ctx.strokeStyle = '#3c3f55';
+        ctx.beginPath();
+        ctx.moveTo(-1000, y + 0.5);
+        ctx.lineTo(this.ancho_canvas + 2000, y + 0.5);
+        ctx.stroke();
+        const ev = this.eventoAnimacion;
+        const ahora = ev.tiempoActualMs ? ev.tiempoActualMs() : -1;
+        const yc = y + h / 2, r = 6;
+        const rombo = (x) => {
+            ctx.beginPath();
+            ctx.moveTo(x, yc - r); ctx.lineTo(x + r, yc); ctx.lineTo(x, yc + r); ctx.lineTo(x - r, yc);
+            ctx.closePath();
+        };
+        const instantes = this._instantesClaves();
+        const sel = this._seleccionClaves();
+
+        // 7B: repeticiones del bucle (rombos "fantasma", sin interaccion)
+        const modo = ev.bucleClaves ? ev.bucleClaves(this.objeto_claves) : "mantener";
+        const tramo = ev.tramoClaves ? ev.tramoClaves(this.objeto_claves) : null;
+        if (tramo && modo !== "mantener") {
+            const span = tramo.t1 - tramo.t0;
+            const x_fin = this._xDeClave(tramo.t1);
+            ctx.fillStyle = 'rgba(240,180,41,0.06)';
+            ctx.fillRect(x_fin, y + 1, this.ancho_canvas + 2000, h - 1);
+            ctx.globalAlpha = 0.35;
+            ctx.strokeStyle = '#f0b429';
+            for (let k = 1; k < 500; k++) {
+                const S = tramo.t1 + (k - 1) * span;
+                if (this._xDeClave(S) > this.ancho_canvas) break;
+                for (const t of instantes) {
+                    if (Math.abs(t - tramo.t0) <= 1) continue;          // coincide con el fin de la vuelta anterior
+                    const tk = modo === "ida_vuelta" && k % 2 === 1 ? S + (tramo.t1 - t) : S + (t - tramo.t0);
+                    if (Math.abs(tk - S) <= 1) continue;
+                    rombo(this._xDeClave(tk));
+                    ctx.stroke();
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        const a = this._arrastreClave;
+        for (const t of instantes) {
+            const elegida = sel.some((s) => Math.abs(s - t) <= 1);
+            let x = this._xDeClave(t);
+            if (a && a.movido && elegida) x += a.dx;
+            rombo(x);
+            ctx.fillStyle = Math.abs(t - ahora) <= 1 ? '#ffffff' : '#f0b429';
+            ctx.fill();
+            ctx.lineWidth = elegida ? 2.5 : 1;
+            ctx.strokeStyle = elegida ? '#4FA3FF' : '#1e1e2f';
+            ctx.stroke();
+        }
+        ctx.lineWidth = 1;
+        // 7C: rectangulo de seleccion en curso
+        if (this._cajaClaves) {
+            const c = this._cajaClaves;
+            ctx.fillStyle = 'rgba(79,163,255,0.18)';
+            ctx.strokeStyle = '#4FA3FF';
+            ctx.fillRect(Math.min(c.x0, c.x1), y + 2, Math.abs(c.x1 - c.x0), h - 4);
+            ctx.strokeRect(Math.min(c.x0, c.x1) + 0.5, y + 2.5, Math.abs(c.x1 - c.x0), h - 5);
+        }
+        ctx.restore();
+    }
+
+    // Instantes seleccionados del objeto que se muestra (se vacia al cambiar de objeto).
+    _seleccionClaves() {
+        if (!this._sel_claves || this._sel_claves.objeto !== this.objeto_claves) {
+            this._sel_claves = {objeto: this.objeto_claves, instantes: []};
+        }
+        return this._sel_claves.instantes;
+    }
+
+    _fijarSeleccionClaves(instantes) {
+        this._sel_claves = {objeto: this.objeto_claves, instantes: instantes.slice()};
+    }
+
+    _dibujarEtiquetaClaves() {
+        const x0 = this._x0();
+        if (!x0 || !this._hayFilaClaves()) return;
+        const ctx = this.ctx;
+        const y = this._yFilaClaves(), h = TimelineCanvas.ALTO_FILA_CLAVES;
+        ctx.save();
+        ctx.fillStyle = '#26283a';
+        ctx.fillRect(0, y, x0 - 1, h);
+        ctx.fillStyle = '#f0b429';
+        ctx.font = '11px sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`◆ ${this.objeto_claves}`, 10, y + h / 2, x0 - 18);
+        ctx.restore();
+    }
+
+    // mousedown en la fila de claves: devuelve true si la fila lo usa.
+    // Clic: selecciona el instante (y lleva el cursor ahi al soltar); Shift+clic:
+    // agrega/quita de la seleccion; arrastrar: mueve todos los seleccionados.
+    _tomarClave(mx, my, shift) {
+        if (!this._hayFilaClaves()) return false;
+        const y = this._yFilaClaves();
+        if (my < y || my > y + TimelineCanvas.ALTO_FILA_CLAVES) return false;
+        let mejor = null;
+        for (const t of this._instantesClaves()) {
+            const d = Math.abs(this._xDeClave(t) - mx);
+            if (d <= 8 && (!mejor || d < mejor.d)) mejor = {t, d};
+        }
+        const sel = this._seleccionClaves();
+        if (!mejor) {                              // fila vacia: seleccion por rectangulo
+            this._cajaClaves = {x0: mx, x1: mx, shift};
+            return true;
+        }
+        const ya = sel.some((s) => Math.abs(s - mejor.t) <= 1);
+        if (shift) {
+            this._fijarSeleccionClaves(ya ? sel.filter((s) => Math.abs(s - mejor.t) > 1) : [...sel, mejor.t]);
+            return true;
+        }
+        if (!ya) this._fijarSeleccionClaves([mejor.t]);
+        this._arrastreClave = {t: mejor.t, x_inicio: mx, dx: 0, movido: false};
+        return true;
+    }
+
+    // 7C: soltar el rectangulo de seleccion (un clic sin arrastrar deselecciona)
+    _soltarCajaClaves() {
+        const c = this._cajaClaves;
+        this._cajaClaves = null;
+        const a = Math.min(c.x0, c.x1), b = Math.max(c.x0, c.x1);
+        const dentro = b - a < 3 ? [] : this._instantesClaves().filter((t) => {
+            const x = this._xDeClave(t);
+            return x >= a - 6 && x <= b + 6;
+        });
+        const previa = c.shift ? this._seleccionClaves() : [];
+        this._fijarSeleccionClaves([...previa, ...dentro.filter((t) => !previa.some((s) => Math.abs(s - t) <= 1))]);
+    }
+
+    _moverClaveArrastrada(mx) {
+        const a = this._arrastreClave;
+        a.dx = mx - a.x_inicio;
+        if (Math.abs(a.dx) > 3) a.movido = true;
+    }
+
+    _soltarClave() {
+        const a = this._arrastreClave;
+        this._arrastreClave = null;
+        const ev = this.eventoAnimacion;
+        if (a.movido) {
+            // distancia arrastrada -> ms (100 px = 1 s), redondeado a 10 ms
+            const delta = Math.round(a.dx * 10 / 10) * 10;
+            const nuevos = ev.desplazarInstantes(this.objeto_claves, this._seleccionClaves(), delta);
+            this._fijarSeleccionClaves(nuevos);
+        } else {
+            // clic: llevar el cursor de tiempo a la clave
+            ev.pausarEventos();
+            this.play = false;
+            ev.buscarTiempo(Math.max(0, a.t / 1000 - this._origenEscena()));
+        }
+    }
+
+    // Teclado con el timeline enfocado: Supr borra, Ctrl+C / Ctrl+V copian y pegan
+    // (en el cursor, en el objeto seleccionado: puede ser otro), Esc deselecciona.
+    _onKeyDown(e) {
+        if (!this._hayFilaClaves()) return;
+        const ev = this.eventoAnimacion;
+        const nombre = this.objeto_claves;
+        const sel = this._seleccionClaves();
+        const ctrl = e.ctrlKey || e.metaKey;
+        if ((e.key === "Delete" || e.key === "Backspace") && sel.length) {
+            ev.eliminarClavesEn(nombre, sel);
+            this._fijarSeleccionClaves([]);
+        } else if (ctrl && e.code === "KeyC" && sel.length) {
+            TimelineCanvas.portapapeles_claves = ev.copiarClaves(nombre, sel);
+        } else if (ctrl && e.code === "KeyV" && TimelineCanvas.portapapeles_claves) {
+            this._fijarSeleccionClaves(ev.pegarClaves(nombre, TimelineCanvas.portapapeles_claves));
+        } else if (ctrl && e.code === "KeyA") {
+            this._fijarSeleccionClaves(this._instantesClaves());
+        } else if (e.key === "Escape") {
+            this._fijarSeleccionClaves([]);
+        } else {
+            return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    static portapapeles_claves = null;
 
     // Ancho de la columna de pistas (0 si el panel es muy angosto).
     _x0() {
@@ -378,12 +611,12 @@ export default class TimelineCanvas {
         if(idx <= 3){
             const alto_rectangulo = num_elementos * this.alto_evento + (num_elementos - 1) * this.sep_entre_even;
             const segmento = alto_rectangulo / num_elementos;
-            return segmento * idx + (this.altura_timeline - alto_rectangulo) / 2;
+            return segmento * idx + (this.altura_timeline - (this._hayFilaClaves() ? TimelineCanvas.ALTO_FILA_CLAVES : 0) - alto_rectangulo) / 2;
         } else {
             num_elementos = 4;
             const alto_rectangulo = num_elementos * this.alto_evento + (num_elementos - 1) * this.sep_entre_even;
             const segmento = alto_rectangulo / num_elementos;
-            const y_evento = segmento * 3 + (this.altura_timeline - alto_rectangulo) / 2;
+            const y_evento = segmento * 3 + (this.altura_timeline - (this._hayFilaClaves() ? TimelineCanvas.ALTO_FILA_CLAVES : 0) - alto_rectangulo) / 2;
             return y_evento + (this.alto_evento + this.sep_entre_even) * (idx - 3);
         }
     }
@@ -412,6 +645,10 @@ export default class TimelineCanvas {
         const mx = mx_canvas - this._x0();
 
         const dentro_area = my >= this.y_timeline && my <= this.alto_canvas;
+
+        // Fase 7: los rombos de claves tienen prioridad (pueden estar bajo el cursor rojo)
+        this.canvasElem.focus({preventScroll: true});
+        if (this._tomarClave(mx, my, e.shiftKey)) return;
 
         // La linea de tiempo (playhead) tiene prioridad sobre el arrastre de fondo,
         // asi que se detecta primero. Arrastrarla pausa la reproduccion -- si no, el
@@ -470,6 +707,15 @@ export default class TimelineCanvas {
         const mx = e.offsetX - this._x0();   // coordenadas del area de barras
         const mx_delta = mx - - this.desplazamiento_x;
 
+        if (this._arrastreClave) {
+            this._moverClaveArrastrada(mx);
+            return;
+        }
+        if (this._cajaClaves) {
+            this._cajaClaves.x1 = mx;
+            return;
+        }
+
         if (this.isDraggingTimelineX) {
             const delta = mx - this.dragStartX;
             this.dragStartX = mx;
@@ -521,6 +767,14 @@ export default class TimelineCanvas {
     }
 
     _onMouseUp() {
+        if (this._arrastreClave) {
+            this._soltarClave();
+            return;
+        }
+        if (this._cajaClaves) {
+            this._soltarCajaClaves();
+            return;
+        }
         if (this.isCollapsed) {
             this.isDraggingTimelineX = false;
             this.isDraggingTimelineY = false;

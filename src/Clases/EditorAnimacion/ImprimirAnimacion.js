@@ -13,6 +13,18 @@ function visibleEfectivo(grupo, mapa) {
     return true;
 }
 
+// Fase 7: opacidad heredada (0..1), producto de la del grupo y sus ancestros.
+function opacidadEfectiva(grupo, mapa) {
+    const vistos = new Set();
+    let g = grupo, a = 1;
+    while (g && !vistos.has(g.nombre)) {
+        if (g.opacidad !== undefined && g.opacidad !== null) a *= Math.max(0, Math.min(1, Number(g.opacidad)));
+        vistos.add(g.nombre);
+        g = g.nodo_padre && g.nodo_padre !== "root" ? mapa.get(g.nodo_padre) : null;
+    }
+    return Number.isFinite(a) ? a : 1;
+}
+
 
 class ImprimirAnimacion{
   animacion_=null;
@@ -79,11 +91,15 @@ class ImprimirAnimacion{
             const cadena = cadenaTransformaciones(grupo, mapa);
             // Fase 3: al "entrar" a un objeto, lo que queda fuera se dibuja atenuado
             const atenuado = !!(this.atenuados && this.atenuados.has(grupo.nombre));
-            const con_estado = cadena.length > 0 || atenuado;
+            const alfa = opacidadEfectiva(grupo, mapa) * (atenuado ? 0.25 : 1);
+            if(alfa <= 0.001){
+                continue;
+            }
+            const con_estado = cadena.length > 0 || alfa < 1;
             if(con_estado){
                 this.ctx.save();
                 if(cadena.length) aplicarEnCanvas(this.ctx, cadena, ox, oy);
-                if(atenuado) this.ctx.globalAlpha = 0.25;
+                if(alfa < 1) this.ctx.globalAlpha = alfa;
             }
 
             if(pintado){
