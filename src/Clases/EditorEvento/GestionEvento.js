@@ -137,6 +137,44 @@ class GestionEvento{
         }
     }
 
+    // ---- Historial (deshacer / rehacer, ver Historial.js) ----
+
+    // Lo que el usuario edita y se guarda: eventos, objetos (sin las partes virtuales
+    // de las instancias) y la configuracion de la escena.
+    estadoEditable(){
+        return {
+            eventos: this.eventos.map((e) => e.evento),
+            grupos: this.gruposParaGuardar(),
+            escena: this.escena || {},
+        };
+    }
+
+    // Vuelve a un estado guardado por el historial (o leido del servidor / de un
+    // archivo). No reinicia el reloj: si la lista de eventos es la misma, solo se
+    // reemplazan sus datos.
+    restaurarEstado(estado){
+        const copia = (x) => JSON.parse(JSON.stringify(x));
+        const eventos = copia(estado.eventos || []);
+        const mismos = this.eventos.length === eventos.length &&
+            this.eventos.every((e, i) => e.evento.nombre === eventos[i].nombre);
+        if(mismos){
+            this.eventos.forEach((e, i) => { e.evento = eventos[i]; });
+        }else{
+            this.lista_raw_evento = eventos;
+            this.eventos = eventos.map((e) => new Evento(e));
+            this.pausarEventos();
+        }
+        const grupos = (estado.grupos || []).filter((g) => !g._virtual);
+        this.gestion_grupos_originales.grupos_figuras = copia(grupos);
+        this.gestion_grupos.grupos_figuras = copia(grupos);
+        this.escena = copia(estado.escena || {});
+        this.movimientos_grupos = {};
+        this.reseteoMovGrupos();
+        this._firma_instancias = null;            // reinyectar las partes de las instancias
+        this.gestion_grupos_originales.procesarPosicionFinalFiguras();
+        this.asegurarCamara();
+    }
+
     inicializar(lista_evento, grupos, id){
         //this.grupos = grupos;
         this._id =id;

@@ -302,3 +302,25 @@
 .ed-rombo.pista { color: #f0b429; opacity: 1; }
 .ed-rombo.clave { color: #f0b429; opacity: 1; }
 .ed-rombo-color { color: #f0b429; }
+
+/* Historial: lista de cambios */
+.ed-hist-fila {
+    display: flex;
+    align-items: center;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+}
+.ed-hist-fila:hover { background: rgba(255, 255, 255, 0.05); }
+.ed-hist-fila.actual { background: rgba(76, 141, 255, 0.18); border-left-color: #4c8dff; font-weight: 600; }
+.ed-hist-fila.futuro { opacity: 0.45; }
+
+/* indicador "sin guardar" junto a Subir */
+.ed-sin-guardar { font-size: 0.75rem; color: #f0b429; white-space: nowrap; }
+
+/* aviso para recuperar el autoguardado */
+.ed-recuperar {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 20;
+    background: #2b2f36; border: 1px solid #f0b429; border-radius: 6px; padding: 6px 10px;
+    font-size: 0.8rem; display: flex; gap: 8px; align-items: center; box-shadow: 0 4px 16px rgba(0,0,0,.4);
+}

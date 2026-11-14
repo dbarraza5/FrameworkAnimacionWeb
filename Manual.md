@@ -9,6 +9,9 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-13 (deshacer e historial)**
+- **Deshacer / Rehacer** (Ctrl + Z / Ctrl + Y), panel **Historial**, indicador **Sin guardar** con aviso al cerrar, **autoguardado** que se puede recuperar, y en el menú Archivo **Restaurar lo guardado**, **Guardar como** e **Importar**. Ver [§7g](#7g-deshacer-historial-y-guardar).
+
 **2026-11-13 (efectos y física)**
 - **Efectos:** explosión, tornado, disparo, viento y partículas (fuego, humo, polvo). Los objetos pueden ser fijos, rígidos o **desarmarse en sus partes**, y el editor calcula cómo vuelan, caen y quedan. Ver [§7f](#7f-efectos-y-física-explosiones-tornados-disparos).
 - **Tres escenas de ejemplo:** un meteorito que cae y explota, un tornado que cruza la calle y un disparo.
@@ -88,6 +91,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 7d. [Animar con fotogramas clave](#7d-animar-con-fotogramas-clave)
 7e. [Cámara y profundidad](#7e-cámara-y-profundidad)
 7f. [Efectos y física: explosiones, tornados, disparos](#7f-efectos-y-física-explosiones-tornados-disparos)
+7g. [Deshacer, historial y guardar](#7g-deshacer-historial-y-guardar)
 8. [Línea de tiempo](#8-línea-de-tiempo)
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
@@ -607,6 +611,36 @@ Abre desde la lista de eventos del proyecto **Meteorito (escena)**, **Tornado (e
 
 ---
 
+## 7g. Deshacer, historial y guardar
+
+### Deshacer y rehacer
+- **Ctrl + Z** deshace y **Ctrl + Y** (o Ctrl + Shift + Z) rehace. También están los botones ↶ ↷ junto a **Subir** y el menú **Archivo**.
+- Cubre todo lo que se edita: mover, escalar, rotar, claves, efectos, física, eventos, instancias, visibilidad, orden…
+- Un arrastre completo o un número que escribes cuentan como **un solo paso**.
+- Dentro de un campo de texto, Ctrl + Z deshace lo que escribiste en el campo, como siempre.
+
+### Historial
+Pestaña **Historial** del panel izquierdo (o **Archivo → Historial**): la lista de cambios de esta sesión con su hora, por ejemplo "Mover casa_azul", "Agregar Explosión", "Claves de auto_2".
+- **Clic en una entrada** para volver a ese punto. Lo que está debajo queda atenuado y se puede rehacer.
+- Si haces un cambio nuevo después de volver atrás, lo de debajo se descarta, como en cualquier editor.
+- Guarda hasta 150 pasos por sesión.
+
+### Sin guardar y autoguardado
+- Junto a **Subir** aparece **● Sin guardar** mientras haya cambios que no subiste. Si deshaces hasta lo guardado, desaparece.
+- Si intentas **cerrar o recargar** la pestaña con cambios sin subir, el navegador te avisa.
+- El editor guarda **una copia en este navegador** de lo que no subiste. Si se cerró la pestaña o se cortó la luz, al volver a abrir la escena aparece **"Hay cambios sin subir de… [Recuperar] [Descartar]"**.
+
+### Restaurar, guardar como, importar (menú Archivo)
+
+| Opción | Qué hace |
+|---|---|
+| Restaurar lo guardado | Descarta lo que no subiste y vuelve a lo guardado en el servidor. Pide confirmación y se puede deshacer. |
+| Guardar como… | Crea una **escena nueva** en el proyecto con el estado actual y otro nombre. La escena actual queda como estaba, sin subir. |
+| Importar… | Carga un archivo `.json` hecho con **Exportar**. Reemplaza la escena en el editor, se puede deshacer, y se guarda recién con Subir. |
+| Exportar | Descarga la escena como `.json`. |
+
+---
+
 ## 8. Línea de tiempo
 
 **Cabecera:** a la izquierda, el evento que se reproduce; al centro, los controles; a la derecha, el tiempo `actual / duración` y **⌄** para plegar el panel.
@@ -795,8 +829,6 @@ El proyecto del perro trae una escena de ejemplo, **"Calle (escena)"**. Ábrela 
   - un asset dentro de otro asset no se dibuja;
   - las versiones no se pueden borrar ni describir desde el editor.
 - **Selección de objetos:** todavía no hay selección arrastrando un rectángulo en el vacío (usa Shift+clic). Escalar o rotar varios objetos a la vez no está disponible (sí moverlos y borrarlos).
-- **Sin deshacer:** las operaciones sobre objetos (mover, borrar, duplicar…) no se pueden deshacer. Recargar la página sin "Subir" descarta todos los cambios.
 - **Movimientos de Figuras:** afectan a los hijos directos, no a los nietos.
 - **Sin sesión:** el editor muestra un error en vez de ir al inicio de sesión.
-- **Menú Archivo:** todavía no tiene Importar, Guardar como ni Deshacer/Rehacer en el editor de eventos (el editor de dibujo sí tiene deshacer).
 - **Script y Macro:** en desarrollo.

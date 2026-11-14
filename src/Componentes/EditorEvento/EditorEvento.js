@@ -7,6 +7,8 @@ import OffcanvasAnimaciones, {MIME_ANIMACION} from "./SeccionEventos/OffcanvasAn
 import NavEventos from "./SeccionEventos/NavEventos";
 import Inspector from "./SeccionEventos/Inspector";
 import PanelObjetosEscena from "./SeccionEventos/PanelObjetosEscena";
+import PanelHistorial from "./SeccionEventos/PanelHistorial";
+import Historial from "../../Clases/EditorEvento/Historial";
 import Lienzo from "../EditorAnimacion/Lienzo";
 import Separador from "./Layout/Separador";
 import BarraEstado from "./Layout/BarraEstado";
@@ -56,6 +58,9 @@ const useCustomAnimacion=(valor_inicial=null)=>{
     return [animacion_, setCustomAnimacion]
 }
 
+// Autoguardado local (por si se cierra el navegador sin subir): una copia por escena.
+const claveAutoguardado = (id) => `autoguardado_evento_${id}`;
+
 
 function EditorEvento(props){
 
@@ -89,6 +94,10 @@ function EditorEvento(props){
     const datos_usuario = cookie.get("usuario")
 
     const [startLoopLienzo, setStartLoopLienzo] = useState(false);
+    // Historial (deshacer / rehacer / sin guardar / autoguardado)
+    const refHistorial = useRef(null);
+    const [versionHist, setVersionHist] = useState(0);
+    const [recuperable, setRecuperable] = useState(null);   // autoguardado local para ofrecer recuperar
     const dispatch = useDispatch();
 
     const [tipoModalidadTrabajo, setTipoModalidadTrabajo] = useState(tipo_modalidad_trabajo);
@@ -158,6 +167,23 @@ function EditorEvento(props){
                     eventoAnimacion.edicion.asegurarCamara();
                     // Fase 8B: configuracion de la escena (orden por profundidad...)
                     eventoAnimacion.edicion.escena = response.data.escena || {};
+                    // datos para "Guardar como"
+                    eventoAnimacion.edicion.id_proyecto = response.data.id_proyecto;
+                    eventoAnimacion.edicion.meta_figuras_doc = response.data.meta_figuras || [];
+                    eventoAnimacion.edicion.nombre_doc = response.data.nombre;
+                    // Historial: la foto inicial es lo guardado en el servidor
+                    const hist = new Historial(eventoAnimacion.edicion);
+                    hist.alCambiar = () => setVersionHist((v) => v + 1);
+                    hist.iniciar("Abrir escena");
+                    refHistorial.current = hist;
+                    // autoguardado local de una sesion anterior que no se subio
+                    try {
+                        const crudo = localStorage.getItem(claveAutoguardado(response.data._id));
+                        const guardado = crudo ? JSON.parse(crudo) : null;
+                        if (guardado && guardado.estado && JSON.stringify(guardado.estado) !== JSON.stringify(hist.estadoActual())) {
+                            setRecuperable(guardado);
+                        }
+                    } catch (e) { /* sin almacenamiento local: no se ofrece recuperar */ }
                     setEventoAnimacion(eventoAnimacion)
 
                     animacion.edicion.meta_figuras = response.data.meta_figuras
@@ -462,7 +488,9 @@ function EditorEvento(props){
             let res = await axios(config)
                 .then(function (response) {
                     console.log("SUBIENDO evento")
-                    console.log(response.data);
+                    // lo subido pasa a ser "lo guardado"; ya no hace falta el autoguardado
+                    if(refHistorial.current) refHistorial.current.marcarGuardado();
+                    try { localStorage.removeItem(claveAutoguardado(eventoAnimacion.edicion._id)); } catch (e) { /* nada */ }
                 })
                 .catch(function (response) {
                     console.log("error subir evento")
@@ -475,6 +503,130 @@ function EditorEvento(props){
     };
 
     // Exporta el mismo contenido que se sube al backend (eventos + grupos de figuras).
+    // ---------------- Historial, restaurar, importar, guardar como ----------------
+
+    // Revisa cada 250 ms si el estado cambio (el historial registra solo los cambios
+    // ya terminados) y mantiene la copia local de lo que no se subio.
+    useEffect(() => {
+        const id = setInterval(() => {
+            const h = refHistorial.current;
+            if (!h || !h.listo()) return;
+            const io = refLienzo.current && refLienzo.current.eventoLienzoEvento;
+            const ocupado = !!(io && io.mouse_click_down);
+            const antes = h.sinGuardar();
+            const registro = h.revisar(ocupado);
+            if (registro || antes !== h.sinGuardar()) {
+                try {
+                    const clave = claveAutoguardado(refEvento.current.edicion._id);
+                    if (h.sinGuardar()) localStorage.setItem(clave, JSON.stringify({fecha: Date.now(), estado: h.estadoActual()}));
+                    else localStorage.removeItem(clave);
+                } catch (e) { /* almacenamiento lleno o bloqueado: se sigue sin copia */ }
+            }
+        }, 250);
+        return () => clearInterval(id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const refrescarPaneles = () => setEventoAnimacion({edicion: refEvento.current.edicion});
+    const deshacer = () => { if (refHistorial.current) { refHistorial.current.deshacer(); refrescarPaneles(); } };
+    const rehacer = () => { if (refHistorial.current) { refHistorial.current.rehacer(); refrescarPaneles(); } };
+
+    // Ctrl+Z / Ctrl+Y (y Ctrl+Shift+Z). En un campo de texto se deja el deshacer del navegador.
+    useEffect(() => {
+        const alTeclear = (e) => {
+            if (!(e.ctrlKey || e.metaKey)) return;
+            const t = e.target;
+            if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
+            const k = e.key.toLowerCase();
+            if (k === "z" && !e.shiftKey) { e.preventDefault(); deshacer(); }
+            else if (k === "y" || (k === "z" && e.shiftKey)) { e.preventDefault(); rehacer(); }
+        };
+        window.addEventListener("keydown", alTeclear);
+        return () => window.removeEventListener("keydown", alTeclear);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Aviso del navegador al cerrar o recargar con cambios sin subir.
+    useEffect(() => {
+        const alSalir = (e) => {
+            if (refHistorial.current && refHistorial.current.sinGuardar()) { e.preventDefault(); e.returnValue = ""; }
+        };
+        window.addEventListener("beforeunload", alSalir);
+        return () => window.removeEventListener("beforeunload", alSalir);
+    }, []);
+
+    const configApi = (method, url, data) => ({
+        method, url, data, withCredentials: true,
+        headers: {"Content-Type": "application/json", Authorization: "Bearer " + datos_usuario?.token},
+    });
+
+    // Vuelve a lo guardado en el servidor (queda en el historial: se puede deshacer).
+    const restaurarGuardado = async () => {
+        const h = refHistorial.current;
+        if (!h) return;
+        if (h.sinGuardar() && !window.confirm("¿Descartar los cambios sin subir y volver a lo guardado en el servidor? (Se puede deshacer con Ctrl+Z)")) return;
+        try {
+            const r = await axios(configApi("get", "/api/evento/id/" + refEvento.current.edicion._id));
+            refEvento.current.edicion.restaurarEstado({eventos: r.data.eventos, grupos: r.data.grupos_figuras, escena: r.data.escena});
+            h.registrarAhora("Restaurar lo guardado");
+            h.marcarGuardado();
+            refrescarPaneles();
+        } catch (e) {
+            alert("No se pudo leer lo guardado: " + (e?.response?.data?.error || e?.message || e));
+        }
+    };
+
+    // Recuperar el autoguardado local de una sesion anterior.
+    const recuperarAutoguardado = () => {
+        if (!recuperable || !refHistorial.current) return;
+        refEvento.current.edicion.restaurarEstado(recuperable.estado);
+        refHistorial.current.registrarAhora("Recuperar autoguardado");
+        setRecuperable(null);
+        refrescarPaneles();
+    };
+    const descartarAutoguardado = () => {
+        try { localStorage.removeItem(claveAutoguardado(refEvento.current.edicion._id)); } catch (e) { /* nada */ }
+        setRecuperable(null);
+    };
+
+    // Importar una escena exportada (JSON con eventos y grupos_figuras).
+    const refArchivo = useRef(null);
+    const importarArchivo = (archivo) => {
+        if (!archivo) return;
+        const lector = new FileReader();
+        lector.onload = () => {
+            try {
+                const d = JSON.parse(lector.result);
+                if (!Array.isArray(d.grupos_figuras) || !Array.isArray(d.eventos)) throw new Error("el archivo no tiene eventos y grupos_figuras");
+                refEvento.current.edicion.restaurarEstado({eventos: d.eventos, grupos: d.grupos_figuras, escena: d.escena || {}});
+                refHistorial.current && refHistorial.current.registrarAhora(`Importar ${archivo.name}`);
+                refrescarPaneles();
+            } catch (e) {
+                alert("No se pudo importar: " + e.message);
+            }
+        };
+        lector.readAsText(archivo);
+    };
+
+    // Guardar como: crea un documento de eventos nuevo en el proyecto y lo abre.
+    const guardarComo = async () => {
+        const ed = refEvento.current.edicion;
+        const nombre = window.prompt("Nombre de la copia:", `${ed.nombre_doc || "Escena"} (copia)`);
+        if (!nombre || !nombre.trim()) return;
+        try {
+            const est = ed.estadoEditable();
+            const r = await axios(configApi("post", "/api/eventos", {
+                id_proyecto: ed.id_proyecto, nombre: nombre.trim(), eventos: est.eventos,
+                grupos_figuras: est.grupos, escena: est.escena, meta_figuras: ed.meta_figuras_doc || [],
+            }));
+            if (window.confirm(`Se guardó "${r.data.nombre}". ¿Abrirla ahora? (esta escena queda como estaba)`)) {
+                window.location.assign("/evento/" + r.data._id);
+            }
+        } catch (e) {
+            alert("No se pudo guardar la copia: " + (e?.response?.data?.error || e?.message || e));
+        }
+    };
+
     const exportarEvento = async () => {
         try {
             const edicion = eventoAnimacion.edicion;
@@ -583,9 +735,25 @@ function EditorEvento(props){
                         Archivo
                     </button>
                     <ul className="dropdown-menu">
+                        <li><button className="dropdown-item" onClick={deshacer}
+                                    disabled={!(refHistorial.current && refHistorial.current.puedeDeshacer())}>
+                            <i className="bi bi-arrow-counterclockwise me-2"/>Deshacer<small className="ms-3 text-body-secondary">Ctrl+Z</small></button></li>
+                        <li><button className="dropdown-item" onClick={rehacer}
+                                    disabled={!(refHistorial.current && refHistorial.current.puedeRehacer())}>
+                            <i className="bi bi-arrow-clockwise me-2"/>Rehacer<small className="ms-3 text-body-secondary">Ctrl+Y</small></button></li>
+                        <li><button className="dropdown-item" onClick={() => setLayout((l) => ({...l, ver_izq: true, pestana_izq: "historial"}))}>
+                            <i className="bi bi-clock-history me-2"/>Historial</button></li>
+                        <li><hr className="dropdown-divider"/></li>
                         <li><button className="dropdown-item" onClick={subirAnimacion1}><i className="bi bi-upload me-2"/>Subir</button></li>
+                        <li><button className="dropdown-item" onClick={guardarComo}><i className="bi bi-files me-2"/>Guardar como…</button></li>
+                        <li><button className="dropdown-item" onClick={restaurarGuardado}><i className="bi bi-cloud-arrow-down me-2"/>Restaurar lo guardado</button></li>
+                        <li><hr className="dropdown-divider"/></li>
+                        <li><button className="dropdown-item" onClick={() => refArchivo.current && refArchivo.current.click()}>
+                            <i className="bi bi-box-arrow-in-down me-2"/>Importar…</button></li>
                         <li><button className="dropdown-item" onClick={exportarEvento}><i className="bi bi-download me-2"/>Exportar</button></li>
                     </ul>
+                    <input ref={refArchivo} type="file" accept=".json,application/json" className="d-none"
+                           onChange={(e) => { importarArchivo(e.target.files && e.target.files[0]); e.target.value = ""; }}/>
                 </div>
                 <div className="dropdown">
                     <button className="btn btn-sm btn-outline-secondary border-0 dropdown-toggle" data-bs-toggle="dropdown">
@@ -632,6 +800,21 @@ function EditorEvento(props){
                         </button>
                     ))}
                 </div>
+                <div className="btn-group btn-group-sm me-2" role="group" aria-label="Historial" data-version={versionHist}>
+                    <button type="button" className="btn btn-outline-secondary" onClick={deshacer}
+                            disabled={!(refHistorial.current && refHistorial.current.puedeDeshacer())} title="Deshacer (Ctrl+Z)">
+                        <i className="bi bi-arrow-counterclockwise"/>
+                    </button>
+                    <button type="button" className="btn btn-outline-secondary" onClick={rehacer}
+                            disabled={!(refHistorial.current && refHistorial.current.puedeRehacer())} title="Rehacer (Ctrl+Y)">
+                        <i className="bi bi-arrow-clockwise"/>
+                    </button>
+                </div>
+                {refHistorial.current && refHistorial.current.sinGuardar() && (
+                    <span className="ed-sin-guardar me-2" title="Hay cambios que todavía no se subieron al servidor">
+                        <i className="bi bi-circle-fill me-1" style={{fontSize: "0.5rem"}}/>Sin guardar
+                    </span>
+                )}
                 <button className="btn btn-sm btn-primary" onClick={subirAnimacion1} title="Guardar en el servidor">
                     <i className="bi bi-cloud-upload me-1"/>Subir
                 </button>
@@ -641,7 +824,8 @@ function EditorEvento(props){
             <aside className="ed-panel ed-izq">
                 <div className="ed-cabecera ed-pestanas">
                     <div className="d-flex h-100">
-                        {[["objetos", "bi-boxes", "Objetos"], ["eventos", "bi-calendar-event", "Eventos"]].map(([clave, icono, texto]) => (
+                        {[["objetos", "bi-boxes", "Objetos"], ["eventos", "bi-calendar-event", "Eventos"],
+                          ["historial", "bi-clock-history", "Historial"]].map(([clave, icono, texto]) => (
                             <button key={clave} type="button"
                                     className={`ed-pestana ${(layout.pestana_izq || "objetos") === clave ? "activa" : ""}`}
                                     onClick={() => setLayout((l) => ({...l, pestana_izq: clave}))}>
@@ -660,6 +844,10 @@ function EditorEvento(props){
                 <div className={`ed-cuerpo ${layout.pestana_izq === "eventos" ? "" : "d-none"}`}>
                     <NavEventos {...props_paneles}/>
                 </div>
+                <div className={`ed-cuerpo ${layout.pestana_izq === "historial" ? "" : "d-none"}`}>
+                    <PanelHistorial historial={refHistorial.current} version={versionHist}
+                                    onDeshacer={deshacer} onRehacer={rehacer} onRestaurar={restaurarGuardado}/>
+                </div>
                 <Separador orientacion="vertical" titulo="Arrastrar para cambiar el ancho"
                            onArrastrar={(d) => redimensionar("izq", d, 220, 640)}/>
             </aside>
@@ -668,6 +856,15 @@ function EditorEvento(props){
             <main className="ed-lienzo">
                 <Lienzo lienzo={eventoLienzoEvento} id="lienzo-evento" editar_animacion={() => {}}
                         setEventLienzoFigura={setEventLienzoEvento}/>
+                {/* autoguardado de una sesion anterior que no se subio */}
+                {recuperable && (
+                    <div className="ed-recuperar">
+                        <i className="bi bi-life-preserver text-warning"/>
+                        <span>Hay cambios sin subir de {new Date(recuperable.fecha).toLocaleString()}.</span>
+                        <button className="btn btn-sm btn-warning py-0" onClick={recuperarAutoguardado}>Recuperar</button>
+                        <button className="btn btn-sm btn-outline-secondary py-0" onClick={descartarAutoguardado}>Descartar</button>
+                    </div>
+                )}
                 {/* Fase 3: migas del objeto en el que se entro (clic = volver a ese nivel) */}
                 {rutaObjetos.length > 0 && (
                     <div className="ed-migas-lienzo">
