@@ -821,6 +821,8 @@ Se implementó más que la 9A prevista: también **disparo, tornado, viento y pa
 
 ## Pendientes (backlog)
 
+> **Autoría asistida y exportar video:** se planifican aparte en [`planeacion_autoria_asistida.md`](planeacion_autoria_asistida.md), que cubre el formato de escena simple, la API de autoría, el render sin navegador, exportar a GIF o video y la guía para el asistente.
+
 Ideas y tareas que todavía no tienen fase. Al tomar una, se convierte en fase (o se suma a una) y se borra de aquí.
 
 **Interfaz (restos de la Fase 0)**

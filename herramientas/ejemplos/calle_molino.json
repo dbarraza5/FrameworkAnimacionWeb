@@ -1,0 +1,17 @@
+{
+  "tipo": "escena",
+  "nombre": "Calle con molino",
+  "duracion": 8000,
+  "profundidad": true,
+  "camara": {"centro": [900, 380], "zoom": 1},
+  "objetos": [
+    {"instancia": "Calle", "en": [1500, 720], "ancla": [1500, 720], "plano": -3},
+    {"instancia": "Sol", "en": [1350, 200], "plano": -2},
+    {"instancia": "Nube", "en": [500, 130], "plano": -2, "claves": {"x": [[0, 500], [8000, 700]]}},
+    {"instancia": "Molino", "nombre": "molino", "en": [1150, 432], "plano": -1, "escala": 1.2},
+    {"instancia": "Casa amarilla", "en": [700, 430], "plano": -1},
+    {"instancia": "Árbol", "en": [420, 432], "plano": -1},
+    {"instancia": "Auto", "en": [200, 598], "claves": {"x": [[0, 200], [8000, 1700]]}},
+    {"instancia": "Persona", "en": [1500, 668], "espejo": true, "claves": {"x": [[0, 1500], [8000, 650]]}}
+  ]
+}

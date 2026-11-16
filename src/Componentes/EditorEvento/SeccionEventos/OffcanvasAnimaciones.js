@@ -3,6 +3,7 @@ import {Cookies} from "react-cookie";
 import axios from "axios";
 import {dibujarMiniatura, limitesGrupos, prepararGrupos} from "../../../Clases/EditorAnimacion/Miniatura";
 import {GestionEvento} from "../../../Clases/EditorEvento/GestionEvento";
+import ModalGenerarAsset from "./ModalGenerarAsset";
 
 // Tipo MIME propio para el arrastre: el lienzo de eventos solo acepta este tipo.
 export const MIME_ANIMACION = "application/x-framework-animacion";
@@ -31,7 +32,7 @@ function Miniatura({grupos}) {
 
 // Fase 6B: miniatura de un asset animado. Quieta muestra el dibujo; con `animar`
 // (mouse encima) reproduce en bucle el evento elegido con un motor propio.
-function MiniaturaAnimada({doc, evento, animar}) {
+export function MiniaturaAnimada({doc, evento, animar}) {
     const ref = useRef(null);
     const motor = useRef(null);
     useEffect(() => {
@@ -91,6 +92,7 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
     const [docsAsset, setDocsAsset] = useState({});      // id_eventos -> documento completo (dibujo + eventos)
     const [eventoAsset, setEventoAsset] = useState({});  // id_eventos -> evento elegido para agregar
     const [hover, setHover] = useState(null);            // id_eventos con el mouse encima (se anima)
+    const [verGenerar, setVerGenerar] = useState(false);  // Fase A5: Biblioteca -> Generar...
 
     const configAxios = (method, url, data) => ({
         method, url, data,
@@ -249,7 +251,21 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                             disabled={cargando} title="Recargar">
                         <i className="bi bi-arrow-clockwise"/>
                     </button>
+                    <button className="btn btn-sm btn-outline-primary text-nowrap" onClick={() => setVerGenerar(true)}
+                            disabled={!proyecto} title="Crear un asset (casa, árbol, auto, persona…) a partir de parámetros">
+                        <i className="bi bi-magic me-1"/>Generar…
+                    </button>
                 </div>
+                {verGenerar && proyecto && (
+                    <ModalGenerarAsset idProyecto={proyecto.id} nombreProyecto={proyecto.nombre}
+                                       onCerrar={() => setVerGenerar(false)}
+                                       onCreado={(r) => {
+                                           // volver a pedir la lista de assets y dibujos del proyecto, y dejar el nuevo seleccionado
+                                           setDocsEventos((prev) => { const n = {...prev}; delete n[proyecto.id]; return n; });
+                                           void cargarProyectos();
+                                           if (r && r.id_eventos) setSeleccion("ev:" + r.id_eventos);
+                                       }}/>
+                )}
                 <input type="search" className="form-control form-control-sm" placeholder="Buscar animacion…"
                        value={filtro} onChange={(e) => setFiltro(e.target.value)}/>
 

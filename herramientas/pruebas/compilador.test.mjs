@@ -1,0 +1,153 @@
+// Pruebas del formato simple (Fase A1): compilador, descompilador y generadores.
+// No usan la base de datos.   npm run pruebas   (dentro del contenedor del frontend)
+import {test} from "node:test";
+import assert from "node:assert/strict";
+import fs from "fs";
+import {cargarMotor} from "../lib/motor.mjs";
+import {diferencias} from "../lib/comparar.mjs";
+
+const {Compilador, Descompilador, Generadores, Fisica} = await cargarMotor();
+const opciones = {efectoDefecto: Fisica.efectoDefecto};
+
+// catalogo de mentira para las escenas
+const ASSETS = new Map([
+    ["Casa", {id: "a00000000000000000000001", eventos: ["EventoGeneral"]}],
+    ["Persona", {id: "a00000000000000000000002", eventos: ["EventoGeneral", "Caminar"]}],
+]);
+const buscar = (n) => ASSETS.get(n) || null;
+const porId = (id) => [...ASSETS].find(([, v]) => v.id === id)?.[0] || null;
+
+const grupo = (r, nombre) => r.resultado.grupos_figuras.find((g) => g.nombre === nombre);
+const contiene = (lista, texto) => assert.ok(lista.some((e) => e.includes(texto)), `se esperaba "${texto}" en:\n  ${lista.join("\n  ")}`);
+
+// compilar -> descompilar -> compilar da lo mismo, y descompilar es estable
+function idaYVuelta(def) {
+    const r1 = Compilador.compilar(def, buscar);
+    assert.deepEqual(r1.errores, []);
+    const {def: d1, avisos} = Descompilador.descompilar(r1.resultado, porId);
+    assert.deepEqual(avisos, []);
+    const r2 = Compilador.compilar(d1, buscar);
+    assert.deepEqual(r2.errores, []);
+    assert.deepEqual(diferencias(r1.resultado, r2.resultado, opciones), []);
+    assert.deepEqual(Descompilador.descompilar(r2.resultado, porId).def, d1);
+    return d1;
+}
+
+test("rect: 4 rectas encadenadas y un contorno cerrado", () => {
+    const r = Compilador.compilar({tipo: "asset", nombre: "x", partes: [{nombre: "a", rect: [0, 0, 10, 20], color: "#ff0000"}]});
+    assert.equal(r.ok, true);
+    const g = grupo(r, "a");
+    assert.equal(g.lista_figuras.length, 4);
+    assert.ok(g.lista_figuras.every((f) => f.tipo_figura === "RECTA"));
+    assert.equal(g.lista_pintado[0].color, "#ff0000");
+    assert.equal(g.lista_pintado[0].elementos[0].length, 4);
+    const a = g.lista_figuras[0].atributos;
+    assert.deepEqual([a.cx + a.x1, a.cy + a.y1], [0, 0]);
+});
+
+test("circulo: lados por defecto y configurables", () => {
+    const r = Compilador.compilar({tipo: "asset", nombre: "x", partes: [
+        {nombre: "a", circulo: 10}, {nombre: "b", circulo: {r: 10, ry: 5, lados: 8}}, {nombre: "c", elipse: [4, 2]}]});
+    assert.equal(r.ok, true);
+    assert.equal(grupo(r, "a").lista_figuras.length, 14);
+    assert.equal(grupo(r, "b").lista_figuras.length, 8);
+    assert.equal(grupo(r, "c").lista_figuras.length, 16);
+});
+
+test("errores con mensajes que dicen que hacer", () => {
+    const r = Compilador.compilar({tipo: "asset", nombre: "x", partes: [
+        {nombre: "a", rect: [0, 0, 1, 1], circulo: 3},
+        {nombre: "a", rect: [0, 0, 1, 1]},
+        {nombre: "b", rect: [0, 0, 1, 1], claves: {altura: [[0, 1]]}},
+        {nombre: "c", rect: [0, 0, 1, 1], claves: {x: [[0, 1, "rapido"]]}},
+        {nombre: "d", poligono: [[0, 0], [1, 1]]},
+    ]});
+    assert.equal(r.ok, false);
+    contiene(r.errores, "una sola forma");
+    contiene(r.errores, 'nombre repetido "a"');
+    contiene(r.errores, 'propiedad animable desconocida "altura"');
+    contiene(r.errores, 'interpolacion "rapido" desconocida');
+    contiene(r.errores, "al menos 3 puntos");
+
+    const e = Compilador.compilar({tipo: "escena", nombre: "e", objetos: [
+        {instancia: "No existe", en: [0, 0]}, {instancia: "Persona", en: [0, 0], evento: "Volar"}, {instancia: "Casa", en: [0, 0], fisica: "flotar"}],
+        efectos: [{tipo: "rayo", en: [0, 0]}, {tipo: "explosion", en: [0, 0], potencia: 3}]}, buscar);
+    contiene(e.errores, "falta duracion");
+    contiene(e.errores, 'no existe el asset "No existe"');
+    contiene(e.errores, 'no tiene el evento "Volar"');
+    contiene(e.errores, 'fisica "flotar" desconocida');
+    contiene(e.errores, 'tipo de efecto desconocido "rayo"');
+    contiene(e.avisos, 'parametro "potencia" no existe en explosion');
+    assert.equal(Compilador.compilar({tipo: "otro"}).ok, false);
+});
+
+test("los ejemplos de herramientas/ejemplos compilan", () => {
+    const molino = JSON.parse(fs.readFileSync(new URL("../ejemplos/molino.json", import.meta.url)));
+    const r = Compilador.compilar(molino);
+    assert.deepEqual(r.errores, []);
+    const calle = JSON.parse(fs.readFileSync(new URL("../ejemplos/calle_molino.json", import.meta.url)));
+    const nombres = new Set(calle.objetos.map((o) => o.instancia));
+    const e = Compilador.compilar(calle, (n) => (nombres.has(n) ? {id: "b".repeat(24)} : null));
+    assert.deepEqual(e.errores, []);
+});
+
+test("cada generador compila con sus valores por defecto y con parametros", () => {
+    for (const [nombre, g] of Object.entries(Generadores.GENERADORES)) {
+        const r = Compilador.compilar({tipo: "asset", nombre: "g", generador: nombre});
+        assert.deepEqual(r.errores, [], nombre);
+        assert.deepEqual(r.avisos, [], nombre);
+        assert.ok(r.resultado.grupos_figuras.length > 1, nombre);
+        idaYVuelta({tipo: "asset", nombre: "g", generador: nombre});
+        assert.ok(Object.keys(g.parametros).length >= 0);
+    }
+    const r = Compilador.compilar({tipo: "asset", nombre: "g", generador: "casa", parametros: {pisos: 2, inventado: 1}});
+    contiene(r.avisos, 'parametro "inventado" no existe en el generador casa');
+    contiene(Compilador.compilar({tipo: "asset", nombre: "g", generador: "dragon"}).errores, 'generador "dragon" desconocido');
+});
+
+test("ida y vuelta: asset con todo", () => {
+    const d = idaYVuelta({tipo: "asset", nombre: "Todo", duracion: 2400, partes: [
+        {nombre: "cuerpo", en: [10, 20], rect: [-20, -40, 20, 0], color: "#3366ff", borde: "#111111", capa: 5, partes: [
+            {nombre: "brazo", en: [18, -30], poligono: [[0, 0], [4, 0], [4, 25], [0, 25]], pivote: [2, 0],
+                claves: {rotacion: [[0, -30, "suave"], [1200, 30, "suave"]]}, bucle: "ida_vuelta"},
+            {nombre: "ojo", circulo: {r: 3, lados: 8}, opacidad: 0.5, visible: false, clases: ["cara"]},
+        ]},
+        {nombre: "aspa", elipse: [30, 6], giro: {desde: 0, hasta: 360, ms: 1000}},
+        {nombre: "estirado", rect: [0, 0, 5, 5], escala: [2, 0.5], rotacion: 15},
+        {nombre: "raro", crudo: {lista_figuras: [{nombre: "c1", tipo_figura: "CIRCULO", atributos: {cx: 0, cy: 0, radio: 7}}],
+            lista_pintado: [{color: "#00ff00", visible: true, elementos: []}]}},
+        {nombre: "vacio", borde: "#abcdef"},
+    ]});
+    const cuerpo = d.partes.find((p) => p.nombre === "cuerpo");
+    assert.equal(cuerpo.borde, "#111111");
+    assert.equal(cuerpo.capa, 5);
+    assert.ok(d.partes.find((p) => p.nombre === "raro").crudo);
+});
+
+test("ida y vuelta: escena con todo", () => {
+    idaYVuelta({tipo: "escena", nombre: "E", duracion: 6000, profundidad: true, gravedad: 900,
+        camara: {nombre: "Cam", centro: [500, 300], zoom: 1.5, tamano: [800, 600], temblor: {desde: 1000, hasta: 1600, amplitud: 8}},
+        objetos: [
+            {instancia: "Casa", nombre: "casa", en: [300, 400], ancla: [0, 50], escala: [1.2, 0.9], espejo: true, plano: -1,
+                fisica: {modo: "desarmar", nivel: 2}, borde: "#000000", capa: 7},
+            {instancia: "Persona", en: [100, 500], evento: "Caminar", desfase: 300, bucle: false, version: "c00000000000000000000003",
+                claves: {x: [[0, 100], [6000, 900, "entrar"]], opacidad: [[0, 0], [500, 1]]}, repetir: "repetir", fisica: "rigido"},
+            {nombre: "cartel", en: [700, 450], ancla: [0, 40], rect: [-30, -40, 30, 0], color: "#ffffff", rotacion: 5,
+                partes: [{nombre: "letra", en: [0, -20], rect: [-5, -5, 5, 5]}]},
+        ],
+        efectos: [
+            {tipo: "explosion", nombre: "Bum", en: [300, 380], t: 2000, fuerza: 1150},
+            {tipo: "particulas", en: [300, 380], inicio: 2000, fin: 2500, claves: {x: [[0, 300], [3000, 500]]}, repetir: "ida_vuelta"},
+        ],
+        eventos: [{nombre: "EventoGeneral", nodo_padre: "Nodo_Default", visible: true, bucle: false, tiempo_bucle: 0,
+            tiempo_inicio: 0, tiempo_final: 6000, x: 0, y: 0, reposicionar: true, tiempo_relativo: 0,
+            objetos: [{nombre: "casa", movimientos: []}], macros: [], script: null}],
+    });
+});
+
+test("un parametro de efecto que falta vale su valor por defecto", () => {
+    const a = {grupos_figuras: [{nombre: "e", clases: ["efecto"], efecto: {tipo: "disparo", t: 100}}], eventos: []};
+    const b = {grupos_figuras: [{nombre: "e", clases: ["efecto"], efecto: {...Fisica.efectoDefecto("disparo"), t: 100}}], eventos: []};
+    assert.deepEqual(diferencias(a, b, opciones), []);
+    assert.notDeepEqual(diferencias(a, b), []);
+});

@@ -130,6 +130,19 @@ Hay dos editores:
 
 > Si entras al editor sin haber iniciado sesión, la página muestra un error en vez de mandarte al inicio de sesión (limitación conocida). Vuelve a http://localhost:3000 e inicia sesión.
 
+### Trabajar con el asistente (llaves)
+Para que el asistente (Claude) arme assets y escenas en un proyecto **sin usar tu sesión ni tu contraseña**:
+
+1. Abre el proyecto y entra a la pestaña **Asistente**.
+2. Escribe un nombre para la llave (por ejemplo, "Claude, noviembre") y aprieta **Crear llave**.
+3. **Copia la llave** y dásela al asistente. Solo se muestra esta vez.
+
+**Qué puede hacer** con la llave: leer, crear y actualizar assets y escenas de **ese proyecto**.
+- **Solo puede borrar lo que ella misma creó** (por ejemplo, sus pruebas). Nunca borra tus documentos.
+- Antes de modificar algo existente guarda un **respaldo**, que aparece como una versión del asset y se puede recuperar.
+
+**Revocar:** cuando ya no la necesites, aprieta **Revocar** en la lista y deja de funcionar al instante. La lista muestra cuándo se usó por última vez cada llave.
+
 ---
 
 ## 3. La pantalla del editor de eventos
@@ -310,6 +323,16 @@ En la pestaña **Biblioteca** del panel derecho:
 2. **Agrega lo que quieras,** de una de dos formas:
    - **arrastra la miniatura** al lienzo y queda donde la sueltas;
    - o **selecciónala** y usa **Agregar al centro**.
+
+### Generar un asset (casa, árbol, auto, persona…)
+
+El botón **Generar…** (arriba en la Biblioteca) crea un asset nuevo sin dibujarlo a mano:
+1. Elige el **tipo**: árbol, casa, auto, persona, farol, nube, pájaro, sol, meteorito, molino o calle.
+2. Ponle un **nombre** y ajusta sus **parámetros**: colores, tamaño, si la persona camina, cuánto tarda en girar el molino…
+3. La **vista previa** se mueve tal como quedará.
+4. **Crear asset**: se guarda en el proyecto elegido, como dibujo y como asset animado, y queda seleccionado para agregarlo a la escena.
+
+Son los mismos generadores que usa el asistente, así que lo que hace él lo puedes hacer tú desde aquí.
 
 ### Assets animados (instancias por referencia)
 
@@ -638,6 +661,7 @@ Pestaña **Historial** del panel izquierdo (o **Archivo → Historial**): la lis
 | Guardar como… | Crea una **escena nueva** en el proyecto con el estado actual y otro nombre. La escena actual queda como estaba, sin subir. |
 | Importar… | Carga un archivo `.json` hecho con **Exportar**. Reemplaza la escena en el editor, se puede deshacer, y se guarda recién con Subir. |
 | Exportar | Descarga la escena como `.json`. |
+| Exportar video… | Descarga **lo que ve la cámara** como **video MP4** (en Chrome o Edge), como **GIF animado**, como **secuencia de PNG en un .zip** (para montarla en un editor de video; eliges desde y hasta, cuadros por segundo y ancho) o un **PNG del cuadro actual**. Incluye física, partículas y profundidad. Muestra el avance, se puede cancelar, y al terminar el editor vuelve al instante en que estaba. |
 
 ---
 

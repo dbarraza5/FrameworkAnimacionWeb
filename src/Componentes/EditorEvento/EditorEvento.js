@@ -8,6 +8,7 @@ import NavEventos from "./SeccionEventos/NavEventos";
 import Inspector from "./SeccionEventos/Inspector";
 import PanelObjetosEscena from "./SeccionEventos/PanelObjetosEscena";
 import PanelHistorial from "./SeccionEventos/PanelHistorial";
+import ModalExportarVideo from "./ModalExportarVideo";
 import Historial from "../../Clases/EditorEvento/Historial";
 import Lienzo from "../EditorAnimacion/Lienzo";
 import Separador from "./Layout/Separador";
@@ -98,6 +99,7 @@ function EditorEvento(props){
     const refHistorial = useRef(null);
     const [versionHist, setVersionHist] = useState(0);
     const [recuperable, setRecuperable] = useState(null);   // autoguardado local para ofrecer recuperar
+    const [verExportar, setVerExportar] = useState(false);  // Archivo -> Exportar video (A7)
     const dispatch = useDispatch();
 
     const [tipoModalidadTrabajo, setTipoModalidadTrabajo] = useState(tipo_modalidad_trabajo);
@@ -515,7 +517,10 @@ function EditorEvento(props){
             const ocupado = !!(io && io.mouse_click_down);
             const antes = h.sinGuardar();
             const registro = h.revisar(ocupado);
-            if (registro || antes !== h.sinGuardar()) {
+            // en modo prueba (?prueba=1) no se deja copia local: las pruebas no deben dejar
+            // un aviso de "cambios sin subir" para cuando el usuario abra la escena
+            const en_prueba = process.env.NODE_ENV === "development" && new URLSearchParams(window.location.search).has("prueba");
+            if (!en_prueba && (registro || antes !== h.sinGuardar())) {
                 try {
                     const clave = claveAutoguardado(refEvento.current.edicion._id);
                     if (h.sinGuardar()) localStorage.setItem(clave, JSON.stringify({fecha: Date.now(), estado: h.estadoActual()}));
@@ -546,9 +551,60 @@ function EditorEvento(props){
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Fase A6: MODO PRUEBA (solo desarrollo, /evento/<id>?prueba=1), para probar el
+    // editor con herramientas automaticas sin que los dialogos congelen la pestana:
+    // sin aviso al cerrar, alert/confirm/prompt van a la consola, y window.__editor
+    // da una API estable: listo(), irA(s), estado(), capturar(ancho).
+    const modoPrueba = process.env.NODE_ENV === "development" &&
+        new URLSearchParams(window.location.search).has("prueba");
+    useEffect(() => {
+        if (process.env.NODE_ENV !== "development") return;
+        if (modoPrueba) {
+            window.alert = (m) => console.warn("[prueba] alert:", m);
+            window.confirm = (m) => { console.warn("[prueba] confirm (sí):", m); return true; };
+            window.prompt = (m, d) => { console.warn("[prueba] prompt:", m); return d ?? ""; };
+        }
+        const ed = () => refEvento.current.edicion;
+        window.__editor = {
+            modoPrueba,
+            // espera a que la escena y sus assets esten cargados (y el historial listo)
+            listo: async (limite_ms = 20000) => {
+                const t0 = performance.now();
+                while (performance.now() - t0 < limite_ms) {
+                    const e = ed(), h = refHistorial.current;
+                    // cada instancia de la escena con su asset cargado (o con error)
+                    const instancias = e && e.contenedoresInstancia ? e.contenedoresInstancia() : [];
+                    const cargados = instancias.every((c) => {
+                        const i = e.infoAsset(c.instancia.id_eventos, c.instancia.version);
+                        return i && (i.estado === "listo" || i.estado === "error");
+                    });
+                    if (h && h.listo() && cargados) return true;
+                    await new Promise((r) => setTimeout(r, 100));
+                }
+                return false;
+            },
+            // (sin pausarEventos: pisaria el tiempo buscado). Se fija tiempo_animacion al
+            // tiro: con la pestaña en segundo plano el ciclo de dibujo no corre y capturar()
+            // leeria el instante anterior.
+            irA: (segundos) => { ed().buscarTiempo(segundos); ed().tiempo_animacion = segundos; },
+            estado: () => JSON.parse(JSON.stringify(ed().estadoEditable())),
+            capturar: async (ancho = 640) => {
+                const {dibujarCuadro, tamanoSalida} = await import("../../Clases/Autoria/Render");
+                const e = ed(), {w, h} = tamanoSalida(e, ancho);
+                const c = document.createElement("canvas"); c.width = w; c.height = h;
+                dibujarCuadro(e, c.getContext("2d"), w, h, (e.tiempo_animacion || 0) * 1000);
+                return c.toDataURL("image/png");
+            },
+            historial: () => refHistorial.current,
+        };
+        return () => { delete window.__editor; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     // Aviso del navegador al cerrar o recargar con cambios sin subir.
     useEffect(() => {
         const alSalir = (e) => {
+            if (modoPrueba) return;
             if (refHistorial.current && refHistorial.current.sinGuardar()) { e.preventDefault(); e.returnValue = ""; }
         };
         window.addEventListener("beforeunload", alSalir);
@@ -751,6 +807,7 @@ function EditorEvento(props){
                         <li><button className="dropdown-item" onClick={() => refArchivo.current && refArchivo.current.click()}>
                             <i className="bi bi-box-arrow-in-down me-2"/>Importar…</button></li>
                         <li><button className="dropdown-item" onClick={exportarEvento}><i className="bi bi-download me-2"/>Exportar</button></li>
+                        <li><button className="dropdown-item" onClick={() => setVerExportar(true)}><i className="bi bi-film me-2"/>Exportar video…</button></li>
                     </ul>
                     <input ref={refArchivo} type="file" accept=".json,application/json" className="d-none"
                            onChange={(e) => { importarArchivo(e.target.files && e.target.files[0]); e.target.value = ""; }}/>
@@ -856,6 +913,10 @@ function EditorEvento(props){
             <main className="ed-lienzo">
                 <Lienzo lienzo={eventoLienzoEvento} id="lienzo-evento" editar_animacion={() => {}}
                         setEventLienzoFigura={setEventLienzoEvento}/>
+                {verExportar && (
+                    <ModalExportarVideo refEvento={refEvento} nombre={refEvento.current.edicion.nombre_doc}
+                                        onCerrar={() => setVerExportar(false)}/>
+                )}
                 {/* autoguardado de una sesion anterior que no se subio */}
                 {recuperable && (
                     <div className="ed-recuperar">

@@ -1,0 +1,20 @@
+{
+  "tipo": "asset",
+  "nombre": "Molino",
+  "duracion": 4000,
+  "partes": [
+    {"nombre": "molino", "partes": [
+      {"nombre": "torre", "poligono": [[-38, 0], [38, 0], [22, -190], [-22, -190]], "color": "#e8dcc4", "borde": "#8a7d63"},
+      {"nombre": "techo", "en": [0, -190], "poligono": [[-30, 0], [0, -40], [30, 0]], "color": "#9b3d2e", "borde": "#5e2117"},
+      {"nombre": "puerta", "rect": [-12, -40, 12, 0], "color": "#6b4423", "borde": "#3b2414"},
+      {"nombre": "ventana", "en": [0, -120], "circulo": 9, "color": "#bfe3f5", "borde": "#8a7d63"},
+      {"nombre": "aspas", "en": [0, -175], "giro": {"desde": 0, "hasta": 360, "ms": 4000}, "partes": [
+        {"nombre": "aspa_1", "poligono": [[-6, 0], [6, 0], [10, -95], [-10, -95]], "color": "#f4f1e8", "borde": "#6b6b6b"},
+        {"nombre": "aspa_2", "rotacion": 90, "poligono": [[-6, 0], [6, 0], [10, -95], [-10, -95]], "color": "#f4f1e8", "borde": "#6b6b6b"},
+        {"nombre": "aspa_3", "rotacion": 180, "poligono": [[-6, 0], [6, 0], [10, -95], [-10, -95]], "color": "#f4f1e8", "borde": "#6b6b6b"},
+        {"nombre": "aspa_4", "rotacion": 270, "poligono": [[-6, 0], [6, 0], [10, -95], [-10, -95]], "color": "#f4f1e8", "borde": "#6b6b6b"},
+        {"nombre": "eje", "circulo": 9, "color": "#4a4a4a", "borde": "#222222"}
+      ]}
+    ]}
+  ]
+}

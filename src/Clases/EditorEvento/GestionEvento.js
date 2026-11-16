@@ -1329,7 +1329,7 @@ class GestionEvento{
 
     procesandoEventos(){
         tiempo_universal=performance.now();
-        const tiempo = this.tiempo.cronometroC(tiempo_universal);
+        const tiempo = this._t_forzado != null ? this._t_forzado : this.tiempo.cronometroC(tiempo_universal);
         if(true)//(this.reproducir)
         {
             this.tiempo_animacion = tiempo;
@@ -1343,7 +1343,8 @@ class GestionEvento{
             this._prepararCuadro();
 
             const evento_ = this.obtenerEvento("EventoGeneral");
-            const tiempo_evento = evento_.tiempo.cronometroC(tiempo_universal);
+            // tiempo forzado (render / exportar, Fases A3 y A7): no depende de los relojes
+            const tiempo_evento = this._t_forzado != null ? this._t_forzado : evento_.tiempo.cronometroC(tiempo_universal);
             // Se procesa siempre (reproduciendo, pausado o recien buscado con
             // buscarTiempo), no solo mientras this.reproducir es true -- asi el
             // lienzo siempre refleja la posicion real del grupo en el instante que

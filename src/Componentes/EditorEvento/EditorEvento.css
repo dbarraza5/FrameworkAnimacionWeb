@@ -324,3 +324,13 @@
     background: #2b2f36; border: 1px solid #f0b429; border-radius: 6px; padding: 6px 10px;
     font-size: 0.8rem; display: flex; gap: 8px; align-items: center; box-shadow: 0 4px 16px rgba(0,0,0,.4);
 }
+
+/* ventana modal propia del editor (Exportar video) */
+.ed-modal-fondo {
+    position: fixed; inset: 0; z-index: 1080; background: rgba(0, 0, 0, 0.55);
+    display: flex; align-items: center; justify-content: center;
+}
+.ed-modal {
+    width: min(420px, calc(100vw - 32px)); background: #2b2f36; color: #e6e6e6;
+    border: 1px solid #444; border-radius: 8px; padding: 14px 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
