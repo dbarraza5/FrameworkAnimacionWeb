@@ -1,7 +1,9 @@
 // MP4 (H.264) en el navegador, cuadro a cuadro (Fase A7): WebCodecs (el codificador de
 // video del propio navegador) + mp4-muxer (empaqueta los cuadros en el archivo .mp4).
 //   const v = await Mp4.crear(w, h, fps);  for (...) await v.cuadro(canvas);  const blob = await v.terminar();
-/* global VideoEncoder, VideoFrame */
+// Con sonido: Mp4.crear(w, h, fps, {audio: {canales, muestreo}}) y antes de terminar,
+// await v.audio(audioBuffer)  (la mezcla de Clases/Sonido/Mezcla.js).
+/* global VideoEncoder, VideoFrame, AudioEncoder, AudioData */
 import {Muxer, ArrayBufferTarget} from "mp4-muxer";
 
 // H.264 pide ancho y alto pares
@@ -13,7 +15,7 @@ export const mp4Disponible = () => typeof window !== "undefined" && "VideoEncode
 const CODECS = ["avc1.42001f", "avc1.4d0028", "avc1.640028", "avc1.640033"];
 
 export class Mp4 {
-    static async crear(w, h, fps, {bitrate} = {}) {
+    static async crear(w, h, fps, {bitrate, audio} = {}) {
         if (!mp4Disponible()) throw new Error("este navegador no puede codificar video (falta WebCodecs); usa Chrome o Edge");
         if (w % 2 || h % 2) throw new Error("ancho y alto deben ser pares");
         const tasa = bitrate || Math.round(w * h * fps * 0.15);     // ~2,5 Mbit/s a 640x360x30
@@ -24,14 +26,25 @@ export class Mp4 {
             if (s && s.supported) { config = c; break; }
         }
         if (!config) throw new Error(`el navegador no codifica H.264 a ${w}×${h}`);
-        return new Mp4(w, h, fps, config);
+        let config_audio = null;
+        if (audio && "AudioEncoder" in window) {
+            for (const [codec, contenedor] of [["mp4a.40.2", "aac"], ["opus", "opus"]]) {
+                const c = {codec, sampleRate: audio.muestreo, numberOfChannels: audio.canales, bitrate: 128000};
+                const s = await AudioEncoder.isConfigSupported(c).catch(() => null);
+                if (s && s.supported) { config_audio = {...c, contenedor}; break; }
+            }
+            if (!config_audio) throw new Error("el navegador no codifica audio (AAC ni Opus); exporta sin sonido");
+        }
+        return new Mp4(w, h, fps, config, config_audio);
     }
 
-    constructor(w, h, fps, config) {
+    constructor(w, h, fps, config, config_audio = null) {
         this.fps = fps;
         this.n = 0;
         this.error = null;
+        this.config_audio = config_audio;
         this.muxer = new Muxer({target: new ArrayBufferTarget(), video: {codec: "avc", width: w, height: h, frameRate: fps},
+            ...(config_audio ? {audio: {codec: config_audio.contenedor, numberOfChannels: config_audio.numberOfChannels, sampleRate: config_audio.sampleRate}} : {}),
             fastStart: "in-memory"});
         this.enc = new VideoEncoder({
             output: (chunk, meta) => this.muxer.addVideoChunk(chunk, meta),
@@ -50,6 +63,28 @@ export class Mp4 {
         this.n++;
         // no acumular demasiados cuadros sin codificar (memoria)
         while (this.enc.encodeQueueSize > 8) await new Promise((r) => setTimeout(r, 5));
+    }
+
+    // Pista de audio completa (AudioBuffer con la mezcla desde el primer cuadro)
+    async audio(buf) {
+        if (!this.config_audio) throw new Error("el video se creo sin audio");
+        const {sampleRate, numberOfChannels, codec, bitrate} = this.config_audio;
+        const enc = new AudioEncoder({output: (chunk, meta) => this.muxer.addAudioChunk(chunk, meta), error: (e) => { this.error = e; }});
+        enc.configure({codec, sampleRate, numberOfChannels, bitrate});
+        const N = 4096, canales = [...Array(numberOfChannels)].map((_, k) => buf.getChannelData(Math.min(k, buf.numberOfChannels - 1)));
+        for (let i = 0; i < buf.length; i += N) {
+            const n = Math.min(N, buf.length - i);
+            const data = new Float32Array(n * numberOfChannels);
+            canales.forEach((c, k) => data.set(c.subarray(i, i + n), k * n));
+            const ad = new AudioData({format: "f32-planar", sampleRate, numberOfFrames: n, numberOfChannels,
+                timestamp: Math.round(i / sampleRate * 1e6), data});
+            enc.encode(ad);
+            ad.close();
+            while (enc.encodeQueueSize > 16) await new Promise((r) => setTimeout(r, 5));
+        }
+        await enc.flush();
+        enc.close();
+        if (this.error) throw this.error;
     }
 
     async terminar() {

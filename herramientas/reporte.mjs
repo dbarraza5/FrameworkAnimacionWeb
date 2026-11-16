@@ -8,7 +8,15 @@
 // de la fisica que terminan fuera de cuadro, efectos que no afectan a nada, claves
 // despues del final, assets que no cargan. Cada aviso trae una sugerencia.
 import {cargarMotor} from "./lib/motor.mjs";
-import {cerrar} from "./lib/datos.mjs";
+import {cerrar, db, pedirApi, usaApi} from "./lib/datos.mjs";
+
+// sonidos del proyecto (por la API con llave, o de la base en desarrollo)
+async function sonidosDelProyecto(id_proyecto) {
+    try {
+        if (usaApi()) return await pedirApi("/sonidos");
+        return (await (await db()).collection("sonidos").find({id_proyecto}).toArray()).map((x) => ({...x, _id: String(x._id)}));
+    } catch (e) { return []; }
+}
 import {prepararEscena} from "./render.mjs";
 
 process.stdout.on("error", (e) => { if (e.code === "EPIPE") process.exit(0); });
@@ -35,7 +43,7 @@ const relacion = (c, r) => {
 const red = (c) => c && {x0: Math.round(c.x0), y0: Math.round(c.y0), x1: Math.round(c.x1), y1: Math.round(c.y1)};
 
 export async function reportar(idONombre, {proyecto, tiempos} = {}) {
-    const {Render, Fisica} = await cargarMotor();
+    const {Render, Fisica, Seguimiento} = await cargarMotor();
     const {m, doc, errores} = await prepararEscena(idONombre, {proyecto});
     const dur = Math.round((m.duracionReproduccion ? m.duracionReproduccion() : 0) * 1000);
     const ts = tiempos || [...Array(Math.floor(dur / 1000) + 1).keys()].map((s) => s * 1000).concat(dur % 1000 ? [dur] : []);
@@ -97,7 +105,18 @@ export async function reportar(idONombre, {proyecto, tiempos} = {}) {
         }
         if (g.opacidad === 0 || g.visible === false) aviso("visibilidad", `"${g.nombre}" está oculto (visible=false u opacidad 0)`, "es intencional?");
     }
-    return {escena: doc.nombre, id: String(doc._id), duracion_ms: dur, avisos, instantes};
+    // sonido (planeacion_sonido.md): que suena y que falta
+    const sonidos = await sonidosDelProyecto(doc.id_proyecto);
+    const nombre = new Map(sonidos.map((x) => [String(x._id), x.nombre]));
+    const clips = m.clipsAudio(m.duracionEscenaMs());
+    const segui = Seguimiento.seguimiento({escena: doc.escena || {}, eventos: doc.eventos || [], grupos: doc.grupos_figuras || []}, sonidos);
+    for (const v of segui.avisos.filter((x) => x.nivel !== "sin_decidir")) {
+        aviso("sonido", v.mensaje, v.nivel === "falta_subir" ? "subir el archivo en Proyecto → Sonido (o en el editor, pestaña Sonido)"
+            : v.nivel === "sonido_borrado" ? "elegir otro sonido o quitar el clip" : 'ponerle un sonido o marcarlo "no lleva"');
+    }
+    const sonido = {clips: clips.map((c) => ({t: Math.round(c.t), sonido: nombre.get(c.sonido) || c.sonido,
+        origen: [c.origen.tipo, c.origen.nombre, c.origen.detalle].filter(Boolean).join(" · ")})), resumen: segui.resumen};
+    return {escena: doc.nombre, id: String(doc._id), duracion_ms: dur, avisos, instantes, sonido};
 }
 
 // contexto 2D vacio (para mover el motor sin dibujar de verdad)
@@ -115,6 +134,9 @@ async function principal() {
     salida(`Escena "${r.escena}" (${r.id}), ${r.duracion_ms} ms, ${r.instantes.length} instantes revisados`);
     salida(r.avisos.length ? `\nAVISOS (${r.avisos.length}):` : "\nSin avisos.");
     for (const v of r.avisos) salida(`  [${v.tipo}] ${v.msj}\n      → ${v.sugerencia}`);
+    const rs = r.sonido.resumen;
+    salida(`\nSonido: ${r.sonido.clips.length} clip(s) · falta subir ${rs.falta_subir} · borrados ${rs.sonido_borrado} · falta sonido ${rs.falta_sonido} · sin decidir ${rs.sin_decidir}`);
+    for (const c of r.sonido.clips.slice(0, 30)) salida(`  ${String(c.t).padStart(6)} ms  ${c.sonido}  (${c.origen})`);
     salida("\nPor instante (dentro / parcial / fuera de la cámara):");
     for (const i of r.instantes) {
         const cuenta = (rel) => i.objetos.filter((o) => o.relacion === rel).length;

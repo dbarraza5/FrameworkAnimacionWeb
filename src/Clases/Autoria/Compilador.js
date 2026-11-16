@@ -200,8 +200,86 @@ const eventoGeneral = (fin) => ({nombre: "EventoGeneral", nodo_padre: "Nodo_Defa
     tiempo_bucle: 0, tiempo_inicio: 0, tiempo_final: fin, x: 0, y: 0, reposicionar: true, tiempo_relativo: 0,
     objetos: [], macros: [], script: null});
 
+// ---------------- sonido (planeacion_sonido.md) ----------------
+// Por NOMBRE de sonido del proyecto; buscarSonido(nombre) -> {id} | null.
+//   sonidos: [{sonido, t?, volumen?, pan?, recorte?, bucle?, fundido?, evento?}]   (clips)
+//   reacciones: {al_disparar: "Bang" | {sonido, volumen?, pan?, max?}, ...}
+//   sonido: "lleva" | "no_lleva" (marca)          marcas: {<evento>: "lleva" | "no_lleva"}
+//   audio: {volumen?, silencio?}  (instancias: ajuste del sonido heredado de su asset)
+export const REACCIONES_VALIDAS = {explosion: ["al_detonar"], disparo: ["al_disparar", "al_impactar"], objeto: ["al_soltarse", "al_tocar_suelo"]};
+const MARCAS_SONIDO = ["lleva", "no_lleva"];
+const CAMPOS_CLIP = ["sonido", "t", "volumen", "pan", "recorte", "bucle", "fundido", "evento"];
+
+class Sonidos {
+    constructor(buscar, E) { this.buscar = buscar; this.E = E; this.n = 0; }
+    id(nombre, donde) {
+        if (!this.buscar) { this.E.error(donde, "hay sonidos pero no hay catalogo de sonidos (compilar con buscarSonido)"); return null; }
+        const s = typeof nombre === "string" ? this.buscar(nombre) : null;
+        if (!s) this.E.error(donde, `no existe el sonido "${nombre}" en el proyecto (subelo, o crealo pendiente: autoria.mjs sonido-pendiente "${nombre}")`);
+        return s ? String(s.id) : null;
+    }
+    clips(lista, donde, dur) {
+        if (lista === undefined) return [];
+        if (!Array.isArray(lista)) { this.E.error(donde, "sonidos es una lista de clips [{sonido, t, ...}]"); return []; }
+        const r = [];
+        lista.forEach((c, i) => {
+            const d = `${donde} › sonido #${i}`;
+            if (!c || typeof c !== "object") { this.E.error(d, "cada clip es {sonido: <nombre>, t: <ms>, ...}"); return; }
+            for (const k of Object.keys(c)) if (!CAMPOS_CLIP.includes(k)) this.E.aviso(d, `campo "${k}" desconocido (validos: ${CAMPOS_CLIP.join(", ")})`);
+            const id = this.id(c.sonido, d);
+            if (!id) return;
+            const t = num(c.t) ? Math.round(c.t) : 0;
+            if (dur && t > dur) this.E.aviso(d, `empieza en ${t} ms, despues del final (${dur} ms): no va a sonar`);
+            const clip = {id: "s" + ++this.n, sonido: id, t};
+            for (const k of ["volumen", "pan", "recorte", "bucle", "fundido"]) if (c[k] !== undefined) clip[k] = c[k];
+            r.push({clip, evento: c.evento});
+        });
+        return r;
+    }
+    reacciones(obj, validas, donde) {
+        if (!obj) return null;
+        const r = {};
+        for (const [k, v] of Object.entries(obj)) {
+            if (!validas.includes(k)) { this.E.error(donde, `reaccion "${k}" no aplica aqui (validas: ${validas.join(", ") || "ninguna"})`); continue; }
+            const x = typeof v === "string" ? {sonido: v} : v;
+            const id = this.id(x && x.sonido, `${donde} › ${k}`);
+            if (!id) continue;
+            r[k] = {...x, sonido: id};
+        }
+        return Object.keys(r).length ? r : null;
+    }
+    marca(v, donde) {
+        if (v === undefined) return null;
+        if (!MARCAS_SONIDO.includes(v)) { this.E.error(donde, `sonido (marca) es "lleva" o "no_lleva", no "${v}"`); return null; }
+        return v;
+    }
+    // clips a los eventos (clip.evento o el evento por defecto) y marcas por evento
+    aEventos(eventos, clips, marcas, porDefecto, donde) {
+        const ev = (n) => eventos.find((e) => e.nombre === n);
+        for (const {clip, evento} of clips) {
+            const e = ev(evento || porDefecto);
+            if (!e) { this.E.error(donde, `no existe el evento "${evento}" (hay: ${eventos.map((x) => x.nombre).join(", ")})`); continue; }
+            e.sonidos = [...(e.sonidos || []), clip];
+        }
+        for (const [n, m] of Object.entries(marcas || {})) {
+            const e = ev(n);
+            if (!e) { this.E.error(donde, `marcas: no existe el evento "${n}"`); continue; }
+            const v = this.marca(m, donde);
+            if (v) e.sonido_marca = v;
+        }
+    }
+    // sonidos, reacciones y marca de un objeto o efecto
+    grupo(g, o, validas, donde, dur) {
+        const clips = this.clips(o.sonidos, donde, dur).map((x) => x.clip);
+        const rx = this.reacciones(o.reacciones, validas, donde);
+        if (clips.length || rx) g.sonidos = {...(clips.length ? {clips} : {}), ...(rx ? {reacciones: rx} : {})};
+        const m = this.marca(o.sonido, donde);
+        if (m) g.sonido_marca = m;
+    }
+}
+
 // ---------------- asset ----------------
-export function compilarAsset(def) {
+export function compilarAsset(def, buscarSonido) {
     const E = new Errores();
     // Fase A5: {generador: "casa", parametros: {...}} -> partes del generador
     if (def && def.generador) {
@@ -212,7 +290,13 @@ export function compilarAsset(def) {
         }
         const desconocidos = Object.keys(def.parametros || {}).filter((k) => !(k in GENERADORES[def.generador].parametros));
         for (const k of desconocidos) E.aviso("asset", `parametro "${k}" no existe en el generador ${def.generador} (validos: ${Object.keys(GENERADORES[def.generador].parametros).join(", ")})`);
-        const r = compilarAsset({...def, generador: undefined, partes: [...ex.partes, ...(def.partes || [])], duracion: ex.duracion});
+        // parametros con valores fijos (opciones del generador)
+        for (const [k, lista] of Object.entries(GENERADORES[def.generador].opciones || {})) {
+            const v = (def.parametros || {})[k];
+            if (v !== undefined && !lista.includes(v)) E.error("asset", `parametro "${k}" = "${v}" no es valido en el generador ${def.generador} (validos: ${lista.join(", ")})`);
+        }
+        if (E.errores.length) return {ok: false, errores: E.errores, avisos: E.avisos, resultado: null};
+        const r = compilarAsset({...def, generador: undefined, partes: [...ex.partes, ...(def.partes || [])], duracion: ex.duracion}, buscarSonido);
         return {...r, avisos: [...E.avisos, ...r.avisos]};
     }
     if (!def || def.tipo !== "asset") E.error("asset", 'tipo debe ser "asset"');
@@ -222,14 +306,23 @@ export function compilarAsset(def) {
     compilarPartes(def && def.partes, "root", E, nombres, grupos, "");
     if (grupos.length === 1) E.error("asset", "no tiene partes");
     const dur = def && num(def.duracion) ? def.duracion : 1000;
+    const eventos = def && def.eventos ? JSON.parse(JSON.stringify(def.eventos)) : [eventoGeneral(dur)];
+    const escena = {};
+    if (def && (def.sonidos || def.marcas || def.reacciones)) {
+        const S = new Sonidos(buscarSonido, E);
+        S.aEventos(eventos, S.clips(def.sonidos, "asset", null), def.marcas, "EventoGeneral", "asset");
+        const rx = S.reacciones(def.reacciones, REACCIONES_VALIDAS.objeto, "asset › reacciones");
+        if (rx) escena.reacciones = rx;
+    }
     return {ok: !E.errores.length, errores: E.errores, avisos: E.avisos,
-        resultado: {nombre: def && def.nombre, grupos_figuras: grupos, eventos: def && def.eventos ? def.eventos : [eventoGeneral(dur)], escena: {}}};
+        resultado: {nombre: def && def.nombre, grupos_figuras: grupos, eventos, escena}};
 }
 
 // ---------------- escena ----------------
 // buscarAsset(nombre) -> {id} | null  (lo da quien llama: la API o la herramienta)
-export function compilarEscena(def, buscarAsset) {
+export function compilarEscena(def, buscarAsset, buscarSonido) {
     const E = new Errores();
+    const S = new Sonidos(buscarSonido, E);
     if (!def || def.tipo !== "escena") E.error("escena", 'tipo debe ser "escena"');
     if (!def || !def.nombre) E.error("escena", "falta nombre");
     const dur = def && num(def.duracion) ? def.duracion : null;
@@ -313,6 +406,11 @@ export function compilarEscena(def, buscarAsset) {
             if (!MODOS_BUCLE[o.repetir]) E.error(donde, `repetir "${o.repetir}" desconocido`);
             else if (o.repetir !== "mantener") g.claves_bucle = o.repetir;
         }
+        S.grupo(g, o, REACCIONES_VALIDAS.objeto, donde, dur);
+        if (o.audio) {
+            if (!o.instancia) E.aviso(donde, "audio (ajuste del sonido heredado) solo sirve en instancias");
+            else g.instancia.audio = {...(num(o.audio.volumen) ? {volumen: o.audio.volumen} : {}), ...(o.audio.silencio ? {silencio: true} : {})};
+        }
         if (o.instancia) grupos.push(g);
     });
 
@@ -324,7 +422,7 @@ export function compilarEscena(def, buscarAsset) {
         const params = {...efectoDefecto(ef.tipo)};
         const validos = new Set(TIPOS_EFECTO[ef.tipo].params.map((p) => p[0]));
         for (const k of Object.keys(ef)) {
-            if (["tipo", "nombre", "en", "claves", "repetir", "capa"].includes(k)) continue;
+            if (["tipo", "nombre", "en", "claves", "repetir", "capa", "sonidos", "reacciones", "sonido"].includes(k)) continue;
             if (!validos.has(k)) E.aviso(donde, `parametro "${k}" no existe en ${ef.tipo} (se ignora); validos: ${[...validos].join(", ")}`);
             else params[k] = ef[k];
         }
@@ -333,6 +431,7 @@ export function compilarEscena(def, buscarAsset) {
         const cl = compilarClaves(ef.claves, E, donde);
         if (cl) g.claves = cl;
         if (ef.repetir && ef.repetir !== "mantener") g.claves_bucle = ef.repetir;
+        S.grupo(g, ef, REACCIONES_VALIDAS[ef.tipo] || [], donde, dur);
         capa++;
         grupos.push(g);
     });
@@ -340,13 +439,23 @@ export function compilarEscena(def, buscarAsset) {
     const escena = {};
     if (def && def.profundidad) escena.orden_profundidad = true;
     if (def && num(def.gravedad)) escena.fisica = {gravedad: def.gravedad};
+    const eventos = def && Array.isArray(def.eventos) ? JSON.parse(JSON.stringify(def.eventos)) : [eventoGeneral(dur || 1000)];
+    // sonido: clips sin "evento" van a la pista de la escena; con "evento", a ese evento
+    const clips = S.clips(def && def.sonidos, "escena", dur);
+    const deEscena = clips.filter((c) => !c.evento).map((c) => c.clip);
+    if (deEscena.length) escena.sonidos = deEscena;
+    S.aEventos(eventos, clips.filter((c) => c.evento), def && def.marcas, "EventoGeneral", "escena");
+    const m = S.marca(def && def.sonido, "escena");
+    if (m) escena.sonido_marca = m;
+    const rxa = S.reacciones(def && def.reacciones, REACCIONES_VALIDAS.objeto, "escena › reacciones");
+    if (rxa) escena.reacciones = rxa;
     return {ok: !E.errores.length, errores: E.errores, avisos: E.avisos,
-        resultado: {nombre: def && def.nombre, grupos_figuras: grupos,
-            eventos: def && Array.isArray(def.eventos) ? def.eventos : [eventoGeneral(dur || 1000)], escena}};
+        resultado: {nombre: def && def.nombre, grupos_figuras: grupos, eventos, escena}};
 }
 
-export function compilar(def, buscarAsset) {
-    if (def && def.tipo === "asset") return compilarAsset(def);
-    if (def && def.tipo === "escena") return compilarEscena(def, buscarAsset);
+// buscarSonido(nombre) -> {id} | null: solo hace falta si el documento usa sonidos
+export function compilar(def, buscarAsset, buscarSonido) {
+    if (def && def.tipo === "asset") return compilarAsset(def, buscarSonido);
+    if (def && def.tipo === "escena") return compilarEscena(def, buscarAsset, buscarSonido);
     return {ok: false, errores: ['tipo debe ser "asset" o "escena"'], avisos: [], resultado: null};
 }

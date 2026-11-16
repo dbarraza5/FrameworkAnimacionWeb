@@ -3,13 +3,14 @@ import {GIFEncoder, quantize, applyPalette} from "gifenc";
 import {dibujarCuadro, tamanoSalida} from "../../Clases/Autoria/Render";
 import {Zip} from "../../Clases/Autoria/Zip";
 import {Mp4, mp4Disponible, par} from "../../Clases/Autoria/Mp4";
+import {mezclar, wav} from "../../Clases/Sonido/Mezcla";
 
 // Archivo -> Exportar video (Fase A7 de documento/planeacion_autoria_asistida.md).
 // Dibuja la escena "como se vera" (lo que ve la camara) cuadro a cuadro con el mismo
 // motor y el mismo codigo de dibujo que la herramienta de Node (Clases/Autoria/Render.js)
 // y arma un MP4 (H.264, con el codificador del navegador), un GIF animado, una secuencia de PNG en un .zip (para montarla en un editor de
 // video) o un PNG del cuadro actual. Todo en el navegador.
-export default function ModalExportarVideo({refEvento, nombre, onCerrar}) {
+export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio}) {
     const motor = () => refEvento.current.edicion;
     const duracion = Math.round((motor().duracionReproduccion ? motor().duracionReproduccion() : 8) * 10) / 10;
     const [desde, setDesde] = useState(0);
@@ -20,6 +21,13 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar}) {
     const [progreso, setProgreso] = useState(null);     // 0..1 mientras exporta
     const [mensaje, setMensaje] = useState("");
     const cancelar = useRef(false);
+    // sonido (planeacion_sonido.md): la mezcla de la escena va como pista del MP4 o audio.wav en el .zip
+    const clips = (() => { try { return motor().clipsAudio(); } catch (e) { return []; } })();
+    const [conSonido, setConSonido] = useState(clips.length > 0);
+    const mezcla = async (t0, t1) => {
+        const r = await mezclar(clips, (id) => (audio ? audio.bufferListo(id) : null), t0, t1);
+        return r.usados ? r.audio : null;
+    };
 
     const descargar = (blob, archivo) => {
         const url = URL.createObjectURL(blob);
@@ -52,7 +60,8 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar}) {
             const t0 = Math.max(0, desde * 1000), t1 = Math.max(t0, hasta * 1000), paso = 1000 / Math.max(1, fps);
             const total = Math.floor((t1 - t0) / paso) + 1;
             if (formato === "mp4") {
-                const video = await Mp4.crear(w, h, fps);
+                const pista = conSonido ? await mezcla(t0, t0 + total * paso) : null;
+                const video = await Mp4.crear(w, h, fps, pista ? {audio: {canales: pista.numberOfChannels, muestreo: pista.sampleRate}} : {});
                 for (let i = 0; i < total; i++) {
                     if (cancelar.current) { video.cancelar(); setMensaje("Cancelado."); return; }
                     dibujarCuadro(m, ctx, w, h, t0 + i * paso);
@@ -60,9 +69,10 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar}) {
                     setProgreso((i + 1) / total);
                     if (i % 3 === 2) await new Promise((r) => setTimeout(r, 0));
                 }
+                if (pista) await video.audio(pista);
                 const blob = await video.terminar();
                 descargar(blob, `${base}.mp4`);
-                setMensaje(`Listo: MP4 de ${total} cuadros, ${w}×${h} a ${fps} cuadros por segundo (${Math.round(blob.size / 1024)} KB).`);
+                setMensaje(`Listo: MP4 de ${total} cuadros, ${w}×${h} a ${fps} cuadros por segundo${pista ? ", con sonido" : ""} (${Math.round(blob.size / 1024)} KB).`);
                 return;
             }
             if (formato === "zip") {
@@ -75,8 +85,10 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar}) {
                     zip.agregar(`${base}_${String(i + 1).padStart(cifras, "0")}.png`, new Uint8Array(await b.arrayBuffer()));
                     setProgreso((i + 1) / total);
                 }
+                const pista = conSonido ? await mezcla(t0, t0 + total * paso) : null;
+                if (pista) zip.agregar("audio.wav", wav(pista));
                 descargar(zip.blob(), `${base}_${fps}fps.zip`);
-                setMensaje(`Listo: ${total} PNG de ${w}×${h} a ${fps} cuadros por segundo.`);
+                setMensaje(`Listo: ${total} PNG de ${w}×${h} a ${fps} cuadros por segundo${pista ? " + audio.wav" : ""}.`);
                 return;
             }
             const gif = GIFEncoder();
@@ -122,6 +134,15 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar}) {
                             <option value="png">PNG del cuadro actual</option>
                         </select>
                     </div>
+                    {(formato === "mp4" || formato === "zip") && (
+                        <div style={{gridColumn: "span 2"}} className="form-check">
+                            <input className="form-check-input" type="checkbox" id="exp-sonido" checked={conSonido} disabled={exportando || !clips.length}
+                                   onChange={(e) => setConSonido(e.target.checked)}/>
+                            <label className="form-check-label" htmlFor="exp-sonido">
+                                Con sonido {clips.length ? `(${clips.length} clip(s); ${formato === "mp4" ? "pista de audio del video" : "audio.wav en el .zip"})` : "(la escena no tiene sonido)"}
+                            </label>
+                        </div>
+                    )}
                     {formato !== "png" && <>
                         <div><label className="form-label mb-0">Desde (s)</label>
                             <input type="number" step="0.5" min="0" className="form-control form-control-sm" value={desde} disabled={exportando}

@@ -92,6 +92,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 7e. [Cámara y profundidad](#7e-cámara-y-profundidad)
 7f. [Efectos y física: explosiones, tornados, disparos](#7f-efectos-y-física-explosiones-tornados-disparos)
 7g. [Deshacer, historial y guardar](#7g-deshacer-historial-y-guardar)
+7h. [Sonido](#7h-sonido)
 8. [Línea de tiempo](#8-línea-de-tiempo)
 9. [Para desarrolladores](#9-para-desarrolladores)
 10. [Editor de dibujo y sus atajos](#10-editor-de-dibujo-y-sus-atajos)
@@ -327,7 +328,7 @@ En la pestaña **Biblioteca** del panel derecho:
 ### Generar un asset (casa, árbol, auto, persona…)
 
 El botón **Generar…** (arriba en la Biblioteca) crea un asset nuevo sin dibujarlo a mano:
-1. Elige el **tipo**: árbol, casa, auto, persona, farol, nube, pájaro, sol, meteorito, molino o calle.
+1. Elige el **tipo**: árbol, casa, edificio (clásico o moderno), auto (sedán, camioneta o deportivo), autobús, parada, persona (pelo corto, largo o gorra; con vestido), farol, nube, pájaro, sol, meteorito, molino o calle.
 2. Ponle un **nombre** y ajusta sus **parámetros**: colores, tamaño, si la persona camina, cuánto tarda en girar el molino…
 3. La **vista previa** se mueve tal como quedará.
 4. **Crear asset**: se guarda en el proyecto elegido, como dibujo y como asset animado, y queda seleccionado para agregarlo a la escena.
@@ -661,7 +662,43 @@ Pestaña **Historial** del panel izquierdo (o **Archivo → Historial**): la lis
 | Guardar como… | Crea una **escena nueva** en el proyecto con el estado actual y otro nombre. La escena actual queda como estaba, sin subir. |
 | Importar… | Carga un archivo `.json` hecho con **Exportar**. Reemplaza la escena en el editor, se puede deshacer, y se guarda recién con Subir. |
 | Exportar | Descarga la escena como `.json`. |
-| Exportar video… | Descarga **lo que ve la cámara** como **video MP4** (en Chrome o Edge), como **GIF animado**, como **secuencia de PNG en un .zip** (para montarla en un editor de video; eliges desde y hasta, cuadros por segundo y ancho) o un **PNG del cuadro actual**. Incluye física, partículas y profundidad. Muestra el avance, se puede cancelar, y al terminar el editor vuelve al instante en que estaba. |
+| Exportar video… | Descarga **lo que ve la cámara** como **video MP4** (en Chrome o Edge), como **GIF animado**, como **secuencia de PNG en un .zip** (para montarla en un editor de video; eliges desde y hasta, cuadros por segundo y ancho) o un **PNG del cuadro actual**. Incluye física, partículas y profundidad. Muestra el avance, se puede cancelar, y al terminar el editor vuelve al instante en que estaba. Con **Con sonido**, el MP4 lleva la pista de audio de la escena y el `.zip` un `audio.wav`. |
+
+---
+
+## 7h. Sonido
+
+Los sonidos son del **proyecto**: se suben una vez y se usan en cualquier escena o asset, como las instancias. Si cambias el archivo de un sonido, cambia en todos lados.
+
+**Subir y preparar** (página del proyecto → pestaña **Sonido**, o en el editor, pestaña **Sonido** del panel derecho):
+- **Subir sonidos…**: uno o varios archivos de audio (MP3, OGG, WAV…, hasta 15 MB).
+- **Pendiente**: crea un sonido solo con el nombre (por ejemplo "Ladrido"), sin archivo. Ya lo puedes colocar en la escena, y el seguimiento te recuerda subirlo. Su botón **Subir** lo completa.
+- ▶ para escuchar, ⟳ para reemplazar el archivo, 🗑 para borrar (te avisa si alguna escena lo usa).
+
+**Colocar** (editor → pestaña **Sonido** → *Sonido de*). Puedes elegir:
+- **la escena**: música o ambiente;
+- **un evento**: el sonido se repite en cada instancia del asset. Por ejemplo, los pasos de "Caminar";
+- **un efecto o un objeto**: el seleccionado en el lienzo aparece solo.
+
+Ahí puedes:
+- **Clip en el instante actual**: suena en ese momento. Se le ajusta el tiempo, el volumen y si se repite (bucle). Con ⊕ se lleva al instante actual.
+- **Reacciones a la física**: el sonido suena cuando *pasa algo*, en el momento que calcula la simulación. Si mueves algo o cambias la fuerza, el sonido se mueve solo.
+  - Explosión: al detonar.
+  - Disparo: al disparar y al impactar.
+  - Objeto con física: al soltarse o romperse, y al tocar el suelo (con un máximo de piezas).
+  - En un asset, sus reacciones las heredan todas sus instancias.
+- **Instancias**: el volumen del sonido heredado, o silenciarlo, sin tocar el asset.
+
+**¿Lleva sonido o no?** Cada evento, efecto y objeto con física, y la escena, se marca como **Lleva sonido**, **No lleva sonido** o **Sin decidir**. El **seguimiento** (abajo en la misma pestaña, y para todo el proyecto en su página) avisa:
+
+| Aviso | Qué significa | Cómo se resuelve |
+|---|---|---|
+| Falta subir | se usa un sonido pendiente | subir su archivo |
+| Sonido borrado | se usa un sonido que ya no existe | elegir otro o quitarlo |
+| Falta sonido | está marcado "lleva" pero no tiene ninguno | ponerle uno |
+| Sin decidir | todavía no se decidió | ponerle sonido, o **No lleva** (deja de avisar) |
+
+El sonido sigue a **▶** y a la línea de tiempo: si saltas a otro momento, suena desde ahí. El botón 🔊 de la pestaña silencia el editor.
 
 ---
 

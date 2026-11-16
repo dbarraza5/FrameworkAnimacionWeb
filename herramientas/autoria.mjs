@@ -10,6 +10,9 @@
 //   AUTORIA_LLAVE=...       node herramientas/autoria.mjs compilar escena.json [--salida x.json]
 //   AUTORIA_LLAVE=...       node herramientas/autoria.mjs descompilar "<nombre>" | --id <id> [--salida x.json]   (editor -> formato simple)
 //   AUTORIA_LLAVE=...       node herramientas/autoria.mjs borrar --id <id_eventos> [--forzar]   (solo lo que creo esa llave)
+//   AUTORIA_LLAVE=...       node herramientas/autoria.mjs sonidos                 (sonidos del proyecto: listos y pendientes)
+//   AUTORIA_LLAVE=...       node herramientas/autoria.mjs sonido-pendiente "<nombre>" [--nota "como debe sonar"]
+//   crear / actualizar ... --crear-pendientes: los sonidos que usa el archivo y no existen se crean PENDIENTES
 //   node herramientas/autoria.mjs generadores                           (lista de generadores y parametros)
 // Sin llave, solo desarrollo: --directo --proyecto <id> (lee y escribe Mongo directo).
 // Opciones: --llave <llave> (en vez de la variable), AUTORIA_URL (por defecto http://backend_container:5000/autoria).
@@ -67,6 +70,8 @@ class ViaApi {
         return this.pedir("POST", tipo === "asset" ? "/assets" : "/escenas", resultado);
     }
     async documento(id) { return this.pedir("GET", `/eventos/${id}`); }
+    async sonidos() { return this.pedir("GET", "/sonidos"); }
+    async crearPendiente(nombre, nota) { return this.pedir("POST", "/sonidos", {nombre, nota}); }
     async actualizar(id, resultado) {
         const {grupos_figuras, eventos, escena} = resultado;
         return this.pedir("PUT", `/eventos/${id}`, {grupos_figuras, eventos, escena});
@@ -80,6 +85,10 @@ class ViaMongo {
         if (!d) throw new Error(`no existe el documento ${id} en el proyecto`);
         return d;
     }
+    async sonidos() {
+        return (await (await db()).collection("sonidos").find({id_proyecto: this.id_proyecto}).toArray()).map((s) => ({...s, _id: String(s._id)}));
+    }
+    async crearPendiente() { throw new Error("crear sonidos pendientes solo con llave"); }
     async catalogo() {
         const docs = await (await db()).collection("eventos")
             .find({id_proyecto: this.id_proyecto}, {projection: {nombre: 1, "eventos.nombre": 1}}).toArray();
@@ -114,13 +123,22 @@ class ViaMongo {
 }
 
 // ---------------- comandos ----------------
-async function compilarArchivo(archivo, cat) {
+// sonidos del proyecto por nombre (o por id)
+const buscadorSonidos = (lista) => (n) => {
+    const s = lista.find((x) => x.nombre === n || String(x._id) === n);
+    return s ? {id: String(s._id)} : null;
+};
+
+async function compilarArchivo(archivo, cat, sonidos) {
     const {Compilador} = await cargarMotor();
     let def;
     try { def = JSON.parse(fs.readFileSync(archivo, "utf8")); }
     catch (e) { return {ok: false, errores: [`no se pudo leer ${archivo}: ${e.message}`], avisos: []}; }
-    return {...Compilador.compilar(def, (nombre) => cat.get(nombre) || null), def};
+    return {...Compilador.compilar(def, (nombre) => cat.get(nombre) || null, buscadorSonidos(sonidos)), def};
 }
+
+// nombres de sonidos que faltan, sacados de los errores del compilador
+const sonidosQueFaltan = (errores) => [...new Set(errores.map((e) => (e.match(/no existe el sonido "([^"]+)"/) || [])[1]).filter(Boolean))];
 
 function informar(r) {
     for (const e of r.errores) salida(`ERROR  ${e}`);
@@ -134,7 +152,7 @@ function informar(r) {
 async function principal() {
     const a = argumentos(process.argv.slice(2));
     const [cmd, archivo] = a._;
-    const comandos = ["catalogo", "generadores", "validar", "compilar", "descompilar", "crear", "actualizar", "borrar"];
+    const comandos = ["catalogo", "generadores", "validar", "compilar", "descompilar", "crear", "actualizar", "borrar", "sonidos", "sonido-pendiente"];
     if (cmd === "generadores") {
         const {Generadores} = await cargarMotor();
         for (const [n, g] of Object.entries(Generadores.GENERADORES)) salida(`${n.padEnd(10)} ${g.descripcion}
@@ -148,6 +166,19 @@ async function principal() {
     }
     const c = conexion(a);
     const cat = await c.catalogo();
+    let sonidos = await c.sonidos();
+    if (cmd === "sonidos") {
+        for (const s of sonidos) salida(`${s.estado === "listo" ? "listo    " : "PENDIENTE"} ${s.nombre}  ${s._id}${s.duracion_ms ? `  ${s.duracion_ms} ms` : ""}${s.nota ? `  (${s.nota})` : ""}`);
+        if (!sonidos.length) salida("(el proyecto no tiene sonidos)");
+        return;
+    }
+    if (cmd === "sonido-pendiente") {
+        // el asistente no sube audio: deja el sonido con nombre (y una nota de como debe sonar) para que lo suba el usuario
+        if (!archivo) throw new Error('uso: autoria.mjs sonido-pendiente "<nombre>" [--nota "como debe sonar"]');
+        const s = await c.crearPendiente(archivo, typeof a.nota === "string" ? a.nota : "");
+        salida(`PENDIENTE "${s.nombre}" ${s._id}`);
+        return;
+    }
     if (cmd === "catalogo") {
         salida(`proyecto ${c.id_proyecto}`);
         for (const [n, v] of cat) salida(`${v.tipo ? v.tipo.padEnd(7) : ""}${n}  ${v.id}  eventos: ${v.eventos.join(", ")}`);
@@ -170,11 +201,12 @@ async function principal() {
         if (!fila) throw new Error(`no existe "${ref}" en el proyecto`);
         const doc = await c.documento(fila.id);
         const porId = new Map([...cat].map(([n, v]) => [v.id, n]));
-        const {def, avisos} = Descompilador.descompilar(doc, (id) => porId.get(String(id)) || null);
+        const sonPorId = new Map(sonidos.map((x) => [String(x._id), x.nombre]));
+        const {def, avisos} = Descompilador.descompilar(doc, (id) => porId.get(String(id)) || null, (id) => sonPorId.get(String(id)) || null);
         for (const x of avisos) process.stderr.write(`aviso  ${x}\n`);
         // comprobacion: compilar lo descompilado da lo mismo
         const {diferencias} = await import("./lib/comparar.mjs");
-        const r = Compilador.compilar(def, (n) => cat.get(n) || null);
+        const r = Compilador.compilar(def, (n) => cat.get(n) || null, buscadorSonidos(sonidos));
         const {Fisica} = await cargarMotor();
         const dif = r.ok ? diferencias(doc, r.resultado, {efectoDefecto: Fisica.efectoDefecto}) : r.errores;
         if (dif.length) process.stderr.write(`ATENCION: la vuelta no es exacta:\n  ${dif.slice(0, 10).join("\n  ")}\n`);
@@ -184,7 +216,15 @@ async function principal() {
         return;
     }
     if (!archivo) throw new Error(`uso: autoria.mjs ${cmd} <archivo.json>`);
-    const r = await compilarArchivo(archivo, cat);
+    let r = await compilarArchivo(archivo, cat, sonidos);
+    // --crear-pendientes: los sonidos que faltan se crean PENDIENTES (el seguimiento del editor
+    // le recuerda al usuario subirlos) y se vuelve a compilar
+    const faltan = sonidosQueFaltan(r.errores || []);
+    if (faltan.length && a["crear-pendientes"] && (cmd === "crear" || cmd === "actualizar")) {
+        for (const n of faltan) { await c.crearPendiente(n, ""); salida(`PENDIENTE "${n}" (creado; falta subir el audio)`); }
+        sonidos = await c.sonidos();
+        r = await compilarArchivo(archivo, cat, sonidos);
+    } else if (faltan.length) salida(`(sonidos que faltan: ${faltan.join(", ")}. Con --crear-pendientes en crear/actualizar se crean pendientes)`);
     informar(r);
     if (!r.ok) { process.exitCode = 1; return; }
     if (cmd === "compilar") {

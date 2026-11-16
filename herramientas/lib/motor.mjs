@@ -19,6 +19,8 @@ export * as Compilador from "./src/Clases/Autoria/Compilador.js";
 export * as Render from "./src/Clases/Autoria/Render.js";
 export * as Generadores from "./src/Clases/Autoria/Generadores.js";
 export * as Descompilador from "./src/Clases/Autoria/Descompilador.js";
+export * as Pista from "./src/Clases/Sonido/Pista.js";
+export * as Seguimiento from "./src/Clases/Sonido/Seguimiento.js";
 `;
 
 function ultimaModificacion(dir) {

@@ -16,7 +16,40 @@ import {efectoDefecto} from "../EditorEvento/Fisica";
 
 const CONOCIDOS = new Set(["_id", "nombre", "nodo_padre", "visible", "color", "cx", "cy", "capa", "clases",
     "lista_figuras", "lista_pintado", "transformacion", "claves", "claves_bucle", "camara", "instancia",
-    "plano", "fisica", "efecto", "opacidad"]);
+    "plano", "fisica", "efecto", "opacidad", "sonidos", "sonido_marca"]);
+
+// ---- sonido (planeacion_sonido.md): ids de sonido -> nombres del formato simple ----
+let NOMBRE_SONIDO = (id) => null;
+const nomSon = (id, avisos) => {
+    const n = NOMBRE_SONIDO(id);
+    if (!n) avisos.push(`sonido ${id}: no se encontro su nombre (queda el id)`);
+    return n || String(id);
+};
+function clipSimple(c, avisos, evento) {
+    const r = {sonido: nomSon(c.sonido, avisos)};
+    if (c.t) r.t = c.t;
+    for (const k of ["volumen", "pan", "recorte", "bucle", "fundido"]) if (c[k] !== undefined) r[k] = c[k];
+    if (evento) r.evento = evento;
+    return r;
+}
+function reaccionesSimple(rx, avisos) {
+    const r = {};
+    for (const [k, v] of Object.entries(rx || {})) {
+        if (!v || !v.sonido) continue;
+        const resto = {...v};
+        delete resto.sonido;
+        r[k] = Object.keys(resto).length ? {sonido: nomSon(v.sonido, avisos), ...resto} : nomSon(v.sonido, avisos);
+    }
+    return Object.keys(r).length ? r : null;
+}
+// sonidos, reacciones y marca de un objeto o efecto
+function sonidoDeGrupo(g, o, avisos) {
+    const s = g.sonidos || {};
+    if ((s.clips || []).length) o.sonidos = s.clips.map((c) => clipSimple(c, avisos));
+    const rx = reaccionesSimple(s.reacciones, avisos);
+    if (rx) o.reacciones = rx;
+    if (g.sonido_marca) o.sonido = g.sonido_marca;
+}
 const CLASES_PROPIAS = new Set(["root", "camara", "efecto"]);
 const r4 = (v) => Math.round(v * 10000) / 10000;
 const igual = (a, b) => Math.abs(a - b) < 1e-6;
@@ -127,42 +160,57 @@ function mapaHijos(grupos) {
     return m;
 }
 
-// duracion + eventos (solo si no son el EventoGeneral vacio que genera el compilador)
-function eventosDe(doc, def) {
+// duracion + eventos (solo si no son el EventoGeneral vacio que genera el compilador).
+// Si es el vacio, sus sonidos y su marca salen como `sonidos` (con evento) y `marcas`.
+function eventosDe(doc, def, avisos, esEsc) {
     const ev = doc.eventos || [];
     const g = ev.find((e) => e.nombre === "EventoGeneral");
     def.duracion = g ? g.tiempo_final : 1000;
     const vacio = ev.length === 1 && g && !(g.objetos || []).length && !(g.macros || []).length && !g.script &&
         g.tiempo_inicio === 0 && !g.bucle && g.nodo_padre === "Nodo_Default";
-    if (!vacio) def.eventos = sinIds(ev);
+    if (!vacio) { def.eventos = sinIds(ev); return; }
+    // en un asset un clip sin evento va al EventoGeneral; en una escena, a la pista de la escena
+    const clips = (g.sonidos || []).map((c) => clipSimple(c, avisos, esEsc ? "EventoGeneral" : undefined));
+    if (clips.length) def.sonidos = [...(def.sonidos || []), ...clips];
+    if (g.sonido_marca) def.marcas = {EventoGeneral: g.sonido_marca};
 }
 
 export function esEscena(doc) {
     const gs = doc.grupos_figuras || [];
+    // (un asset puede tener escena.reacciones: los sonidos que heredan sus instancias)
     return gs.some((g) => g.instancia || g.efecto || (g.clases || []).includes("camara")) ||
-        Object.keys(doc.escena || {}).length > 0;
+        Object.keys(doc.escena || {}).filter((k) => k !== "reacciones").length > 0;
 }
 
-export function descompilar(doc, nombreAsset = () => null) {
+// nombreSonido(id) -> nombre del sonido (para el formato simple); sin el, queda el id
+export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => null) {
+    NOMBRE_SONIDO = nombreSonido;
     const avisos = [];
     const grupos = (doc.grupos_figuras || []).filter((g) => g.nombre !== "default");
     const def_ = (doc.grupos_figuras || []).find((g) => g.nombre === "default");
     if (def_ && (def_.lista_figuras || []).length) avisos.push("default: tiene figuras propias (se pierden)");
+    for (const g of grupos) if (g.nodo_padre !== "root" && (g.sonidos || g.sonido_marca)) avisos.push(`${g.nombre}: los sonidos de partes internas no se guardan en el formato simple`);
     const hijos = mapaHijos(grupos);
 
     if (!esEscena(doc)) {
         const def = {tipo: "asset", nombre: doc.nombre};
-        eventosDe(doc, def);
+        eventosDe(doc, def, avisos, false);
+        const rx = reaccionesSimple((doc.escena || {}).reacciones, avisos);
+        if (rx) def.reacciones = rx;
         def.partes = partesDe("root", hijos, avisos);
         return {def, avisos};
     }
 
     const def = {tipo: "escena", nombre: doc.nombre};
-    eventosDe(doc, def);
     const esc = doc.escena || {};
+    if ((esc.sonidos || []).length) def.sonidos = esc.sonidos.map((c) => clipSimple(c, avisos));
+    eventosDe(doc, def, avisos, true);
+    if (esc.sonido_marca) def.sonido = esc.sonido_marca;
+    const rxa = reaccionesSimple(esc.reacciones, avisos);
+    if (rxa) def.reacciones = rxa;
     if (esc.orden_profundidad) def.profundidad = true;
     if (esc.fisica && typeof esc.fisica.gravedad === "number") def.gravedad = esc.fisica.gravedad;
-    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica"].includes(k));
+    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica", "sonidos", "sonido_marca", "reacciones"].includes(k));
     if (otros.length) avisos.push(`escena: campos que el formato simple no guarda: ${otros.join(", ")}`);
 
     const raiz = hijos.get("root") || [];
@@ -192,6 +240,7 @@ export function descompilar(doc, nombreAsset = () => null) {
             const cl = clavesSimple(g.claves);
             if (cl) e.claves = cl;
             if (g.claves_bucle) e.repetir = g.claves_bucle;
+            sonidoDeGrupo(g, e, avisos);
             def.efectos.push(e);
             capa++;
             continue;
@@ -236,6 +285,10 @@ export function descompilar(doc, nombreAsset = () => null) {
         const cl = clavesSimple(g.claves, (prop, v) => (prop === "x" ? v + ax : prop === "y" ? v + ay : v));
         if (cl) o.claves = cl;
         if (g.claves_bucle) o.repetir = g.claves_bucle;
+        sonidoDeGrupo(g, o, avisos);
+        if (g.instancia && g.instancia.audio && (g.instancia.audio.volumen !== undefined || g.instancia.audio.silencio)) {
+            o.audio = {...(g.instancia.audio.volumen !== undefined ? {volumen: g.instancia.audio.volumen} : {}), ...(g.instancia.audio.silencio ? {silencio: true} : {})};
+        }
         const sub = partesDe(g.nombre, hijos, avisos);
         if (sub.length) {
             if (g.instancia) avisos.push(`${g.nombre}: la instancia tiene hijos guardados (se pierden)`);

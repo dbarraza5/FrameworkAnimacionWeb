@@ -5,6 +5,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import ModalAddAnimacionEvento from "./ModalAddAnimacionEvento";
 import LlavesAutoria from "./LlavesAutoria";
+import SonidoProyecto from "../Sonido/SonidoProyecto";
 
 function Animacion(props) {
     const cookie = new Cookies();
@@ -162,6 +163,10 @@ function Animacion(props) {
                             type="button" role="tab" aria-controls="nav-asistente" aria-selected="false">
                         <i className="bi bi-robot me-1"/>Asistente
                     </button>
+                    <button className="nav-link" id="nav-sonido-tab" data-bs-toggle="tab" data-bs-target="#nav-sonido"
+                            type="button" role="tab" aria-controls="nav-sonido" aria-selected="false">
+                        <i className="bi bi-volume-up me-1"/>Sonido
+                    </button>
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
@@ -308,6 +313,9 @@ function Animacion(props) {
                 </div>
                 <div className="tab-pane fade" id="nav-asistente" role="tabpanel" aria-labelledby="nav-asistente-tab">
                     <LlavesAutoria id_proyecto={props.id_proyecto}/>
+                </div>
+                <div className="tab-pane fade" id="nav-sonido" role="tabpanel" aria-labelledby="nav-sonido-tab">
+                    <SonidoProyecto id_proyecto={props.id_proyecto}/>
                 </div>
             </div>
 

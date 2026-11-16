@@ -16,20 +16,24 @@ const ASSETS = new Map([
 ]);
 const buscar = (n) => ASSETS.get(n) || null;
 const porId = (id) => [...ASSETS].find(([, v]) => v.id === id)?.[0] || null;
+// sonidos de mentira (planeacion_sonido.md)
+const SONIDOS = new Map([["Bang", "b0000000000000000000000a"], ["Golpe", "b0000000000000000000000b"], ["Musica", "b0000000000000000000000c"], ["Pasos", "b0000000000000000000000d"]]);
+const buscarSon = (n) => (SONIDOS.has(n) ? {id: SONIDOS.get(n)} : null);
+const nombreSon = (id) => [...SONIDOS].find(([, v]) => v === id)?.[0] || null;
 
 const grupo = (r, nombre) => r.resultado.grupos_figuras.find((g) => g.nombre === nombre);
 const contiene = (lista, texto) => assert.ok(lista.some((e) => e.includes(texto)), `se esperaba "${texto}" en:\n  ${lista.join("\n  ")}`);
 
 // compilar -> descompilar -> compilar da lo mismo, y descompilar es estable
 function idaYVuelta(def) {
-    const r1 = Compilador.compilar(def, buscar);
+    const r1 = Compilador.compilar(def, buscar, buscarSon);
     assert.deepEqual(r1.errores, []);
-    const {def: d1, avisos} = Descompilador.descompilar(r1.resultado, porId);
+    const {def: d1, avisos} = Descompilador.descompilar(r1.resultado, porId, nombreSon);
     assert.deepEqual(avisos, []);
-    const r2 = Compilador.compilar(d1, buscar);
+    const r2 = Compilador.compilar(d1, buscar, buscarSon);
     assert.deepEqual(r2.errores, []);
     assert.deepEqual(diferencias(r1.resultado, r2.resultado, opciones), []);
-    assert.deepEqual(Descompilador.descompilar(r2.resultado, porId).def, d1);
+    assert.deepEqual(Descompilador.descompilar(r2.resultado, porId, nombreSon).def, d1);
     return d1;
 }
 
@@ -105,6 +109,26 @@ test("cada generador compila con sus valores por defecto y con parametros", () =
     contiene(Compilador.compilar({tipo: "asset", nombre: "g", generador: "dragon"}).errores, 'generador "dragon" desconocido');
 });
 
+test("cada opcion de cada generador compila y vuelve exacta; una opcion invalida es error", () => {
+    for (const [nombre, g] of Object.entries(Generadores.GENERADORES)) {
+        for (const [k, lista] of Object.entries(g.opciones || {})) {
+            for (const v of lista) {
+                const def = {tipo: "asset", nombre: "g", generador: nombre, parametros: {[k]: v}};
+                assert.deepEqual(Compilador.compilar(def).errores, [], `${nombre} ${k}=${v}`);
+                idaYVuelta(def);
+            }
+        }
+    }
+    contiene(Compilador.compilar({tipo: "asset", nombre: "g", generador: "auto", parametros: {modelo: "tractor"}}).errores,
+        'parametro "modelo" = "tractor" no es valido');
+    // variantes que cambian el dibujo
+    const partes = (p) => Compilador.compilar({tipo: "asset", nombre: "g", generador: "persona", parametros: p}).resultado.grupos_figuras.map((x) => x.nombre);
+    assert.ok(partes({peinado: "largo"}).includes("melena"));
+    assert.ok(!partes({}).includes("melena"));
+    const edificio = (p) => Compilador.compilar({tipo: "asset", nombre: "g", generador: "edificio", parametros: p}).resultado.grupos_figuras.length;
+    assert.ok(edificio({pisos: 8, columnas: 4}) > edificio({pisos: 3, columnas: 2}));
+});
+
 test("ida y vuelta: asset con todo", () => {
     const d = idaYVuelta({tipo: "asset", nombre: "Todo", duracion: 2400, partes: [
         {nombre: "cuerpo", en: [10, 20], rect: [-20, -40, 20, 0], color: "#3366ff", borde: "#111111", capa: 5, partes: [
@@ -150,4 +174,34 @@ test("un parametro de efecto que falta vale su valor por defecto", () => {
     const b = {grupos_figuras: [{nombre: "e", clases: ["efecto"], efecto: {...Fisica.efectoDefecto("disparo"), t: 100}}], eventos: []};
     assert.deepEqual(diferencias(a, b, opciones), []);
     assert.notDeepEqual(diferencias(a, b), []);
+});
+
+test("sonido en el formato simple: clips, reacciones, marcas y ajuste de instancia (ida y vuelta)", () => {
+    const d = idaYVuelta({tipo: "escena", nombre: "Con sonido", duracion: 5000, sonido: "lleva",
+        sonidos: [{sonido: "Musica", t: 0, bucle: true, volumen: 0.5}, {sonido: "Pasos", t: 1000, evento: "EventoGeneral"}],
+        marcas: {EventoGeneral: "lleva"}, reacciones: {al_soltarse: "Golpe"},
+        objetos: [{instancia: "Casa", nombre: "casa", en: [0, 0], fisica: "desarmar", sonido: "lleva",
+            reacciones: {al_soltarse: "Golpe", al_tocar_suelo: {sonido: "Golpe", max: 2}}, audio: {volumen: 0.3}},
+            {instancia: "Persona", nombre: "p", en: [10, 0], sonido: "no_lleva", audio: {silencio: true}}],
+        efectos: [{tipo: "disparo", nombre: "Tiro", en: [0, 0], reacciones: {al_disparar: "Bang", al_impactar: {sonido: "Golpe", volumen: 0.9}},
+            sonidos: [{sonido: "Bang", t: 100}]}]});
+    assert.equal(d.efectos[0].reacciones.al_disparar, "Bang");
+    const r = Compilador.compilar(d, buscar, buscarSon).resultado;
+    assert.equal(r.escena.sonidos[0].sonido, SONIDOS.get("Musica"));
+    assert.equal(r.eventos[0].sonidos[0].t, 1000);
+    assert.equal(r.grupos_figuras.find((g) => g.nombre === "casa").instancia.audio.volumen, 0.3);
+    // asset: clips por evento y reacciones que heredan sus instancias
+    idaYVuelta({tipo: "asset", nombre: "Perro", generador: "persona", sonidos: [{sonido: "Pasos", t: 250}], reacciones: {al_soltarse: "Golpe"}, marcas: {EventoGeneral: "lleva"}});
+});
+
+test("sonido: errores claros (sonido inexistente, reaccion que no aplica, marca invalida)", () => {
+    const r = Compilador.compilar({tipo: "escena", nombre: "e", duracion: 1000, sonido: "quizas", sonidos: [{sonido: "Ladrido", t: 0}],
+        objetos: [{instancia: "Casa", en: [0, 0], reacciones: {al_disparar: "Bang"}}],
+        efectos: [{tipo: "explosion", en: [0, 0], reacciones: {al_impactar: "Golpe"}}]}, buscar, buscarSon);
+    contiene(r.errores, 'no existe el sonido "Ladrido"');
+    contiene(r.errores, 'reaccion "al_disparar" no aplica aqui');
+    contiene(r.errores, 'reaccion "al_impactar" no aplica aqui (validas: al_detonar)');
+    contiene(r.errores, 'sonido (marca) es "lleva" o "no_lleva"');
+    // sin catalogo de sonidos
+    contiene(Compilador.compilar({tipo: "escena", nombre: "e", duracion: 1000, sonidos: [{sonido: "Bang"}], objetos: []}, buscar).errores, "no hay catalogo de sonidos");
 });

@@ -1,0 +1,33 @@
+[
+ {"tipo": "asset", "nombre": "Calle", "generador": "calle", "parametros": {"largo": 3600}},
+
+ {"tipo": "asset", "nombre": "Edificio clásico crema", "generador": "edificio", "parametros": {"pisos": 5}},
+ {"tipo": "asset", "nombre": "Edificio de ladrillo", "generador": "edificio", "parametros": {"ancho": 280, "pisos": 4, "columnas": 4,
+   "fachada": "#b5654a", "base": "#6e3b2c", "marco": "#4a2a20", "toldo": "#2a6e4a"}},
+ {"tipo": "asset", "nombre": "Edificio moderno azul", "generador": "edificio", "parametros": {"estilo": "moderno", "ancho": 260, "pisos": 7, "columnas": 4,
+   "fachada": "#8fa3b5", "ventana": "#cfe6f5", "marco": "#4a5866"}},
+ {"tipo": "asset", "nombre": "Edificio verde", "generador": "edificio", "parametros": {"ancho": 200, "pisos": 3, "columnas": 2,
+   "fachada": "#a9c4a0", "base": "#5e7356", "marco": "#3f4f3a", "toldo": "#c08a2a"}},
+ {"tipo": "asset", "nombre": "Torre lejana", "generador": "edificio", "parametros": {"estilo": "moderno", "ancho": 200, "pisos": 12, "columnas": 3,
+   "fachada": "#b9c6d3", "ventana": "#d9e6f0", "marco": "#9aa8b6", "base": "#a7b3bf", "luces": false}},
+ {"tipo": "asset", "nombre": "Edificio lejano", "generador": "edificio", "parametros": {"pisos": 8, "columnas": 3,
+   "fachada": "#c9c4bd", "base": "#aaa49c", "marco": "#a39d95", "ventana": "#d6e2ea", "toldo": "#b9a9a0", "luces": false}},
+
+ {"tipo": "asset", "nombre": "Autobús", "generador": "autobus"},
+ {"tipo": "asset", "nombre": "Parada", "generador": "parada"},
+ {"tipo": "asset", "nombre": "Auto deportivo", "generador": "auto", "parametros": {"modelo": "deportivo", "color": "#f1c40f", "borde": "#8a6d00"}},
+ {"tipo": "asset", "nombre": "Camioneta", "generador": "auto", "parametros": {"modelo": "camioneta", "color": "#2e6fb8", "borde": "#173b63"}},
+
+ {"tipo": "asset", "nombre": "Persona azul", "generador": "persona"},
+ {"tipo": "asset", "nombre": "Mujer de rojo", "generador": "persona", "parametros": {"peinado": "largo", "vestido": true, "ropa": "#c0392b", "pelo": "#6b3e1f"}},
+ {"tipo": "asset", "nombre": "Joven de gorra", "generador": "persona", "parametros": {"peinado": "gorra", "ropa": "#27ae60", "pantalon": "#34495e", "piel": "#e0ac69"}},
+ {"tipo": "asset", "nombre": "Señor de gris", "generador": "persona", "parametros": {"ropa": "#7f8c8d", "pantalon": "#2c3e50", "pelo": "#d0d0d0", "piel": "#e8b98a"}},
+ {"tipo": "asset", "nombre": "Mujer esperando", "generador": "persona", "parametros": {"camina": false, "peinado": "largo", "ropa": "#8e44ad", "pantalon": "#2c2c3c", "piel": "#c68642", "pelo": "#1b120c"}},
+ {"tipo": "asset", "nombre": "Hombre esperando", "generador": "persona", "parametros": {"camina": false, "ropa": "#e67e22", "pantalon": "#3b3b3b", "piel": "#8d5524", "pelo": "#111111"}},
+
+ {"tipo": "asset", "nombre": "Árbol", "generador": "arbol"},
+ {"tipo": "asset", "nombre": "Farol", "generador": "farol"},
+ {"tipo": "asset", "nombre": "Nube", "generador": "nube"},
+ {"tipo": "asset", "nombre": "Sol", "generador": "sol"},
+ {"tipo": "asset", "nombre": "Pájaro", "generador": "pajaro"}
+]

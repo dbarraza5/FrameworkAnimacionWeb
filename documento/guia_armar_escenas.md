@@ -51,6 +51,8 @@ Proyecto `6af48d71b2479cd1dfc94dea`. Caja = extremos del dibujo, en coordenadas 
 | Meteorito | `6af7861edd92b55526caf86b` | ±62 · −107..17 | 1000 | roca con resplandor; centro en y −45 |
 | Calle | `6af77bc04e21473e9f7592ac` | 0..3000 · 0..720 | 1000 | cielo 0–425, vereda del fondo 425–475, asfalto 482–610, vereda del frente 617–680, pasto 680–720 |
 
+**Proyecto "Ciudad"** `6afb111e2a252769672eb496` ([`planeacion_ciudad.md`](planeacion_ciudad.md)): 22 assets hechos con generadores (edificios cercanos y lejanos, autobús, parada, auto deportivo, camioneta, 6 personas, calle de 3600) y **Ciudad (escena)** `6afb122d2a252769672edde2`. Sus fuentes en formato simple están en `herramientas/ejemplos/ciudad/` (para cambiarlas: editar, `validar` y `actualizar --id`). Pies en la vereda del fondo: y 428 para los edificios y 458–468 para las personas; autobús y 540, camioneta y 602; capas: edificios lejanos −2 a escala 0,7–0,85, cercanos −1. **Ojo:** con ~1200 grupos, dibujar un cuadro cuesta 60–90 ms.
+
 **Escenas de ejemplo:** Calle `…92de`, Meteorito `…caf8aa`, Tornado `…caf8e2`, Disparo `…caf912`, Disparo 2 `6af78db341d4694769b31303`.
 
 **Alturas útiles en la calle:** pies en la vereda del fondo y 430–476; carril del fondo y ≈ 535; carril del frente y ≈ 598; vereda del frente y 668–676.
@@ -84,6 +86,13 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
   - asset: `{tipo: "asset", nombre, duracion, partes: [{nombre, en, poligono | rect | circulo | elipse, color, borde, pivote, rotacion, escala, claves, bucle, giro, partes}]}`;
   - escena: `{tipo: "escena", nombre, duracion, profundidad, camara: {centro, zoom, claves}, objetos: [{instancia, en (pies), ancla, escala, espejo, plano, fisica, evento, claves (x/y en coordenadas de los pies), repetir} | {nombre, en, partes}], efectos: [{tipo, en, ...parámetros, claves}]}`.
 - **Para modificar algo existente:** `descompilar` → editar el JSON → `validar` → `actualizar --id` (con respaldo automático). Lo que no es un polígono simple sale como `crudo` (figuras tal cual): se puede dejar como está.
+- **Sonido** ([`planeacion_sonido.md`](planeacion_sonido.md)): por nombre de sonido del proyecto (`autoria sonidos` los lista).
+  - Escena: `sonidos: [{sonido, t, volumen?, bucle?, evento?}]` (sin `evento`, a la pista de la escena) y `sonido: "lleva" | "no_lleva"`.
+  - Objetos y efectos: `sonidos`, `reacciones` (`"al_disparar": "Bang"`; disparo: `al_disparar` y `al_impactar`; explosión: `al_detonar`; objetos con física: `al_soltarse` y `al_tocar_suelo` con `max`) y `sonido` (marca).
+  - Instancias: `audio: {volumen, silencio}`. Asset: `sonidos` (con `evento`), `reacciones` (las heredan sus instancias) y `marcas: {evento: marca}`.
+  - **No subo audio:** si falta un sonido, `crear` o `actualizar` con `--crear-pendientes` lo deja **pendiente** (o `autoria sonido-pendiente "Ladrido" --nota "corto y seco"`), y el seguimiento le avisa al usuario que lo suba.
+  - Marcar `"no_lleva"` lo que no debe sonar, para que el seguimiento no avise.
+  - `reporte.mjs` lista los clips con sus instantes, incluidos los de la física.
 - **Validar siempre antes de crear:** los errores dicen qué parte falla y qué valores son válidos.
 - `crear` **nunca sobrescribe**: aborta si el nombre ya existe en el proyecto.
 - **Revisar el resultado con el render**, que usa el motor real, igual que el editor. Después, abrir el editor una vez para confirmar.

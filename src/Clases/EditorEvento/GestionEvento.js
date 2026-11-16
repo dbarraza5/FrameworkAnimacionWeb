@@ -9,6 +9,7 @@ import OperacionesGrupo, {origenGrupoX, origenGrupoY} from "../EditorAnimacion/O
 import {limitesGrupos, prepararGrupos} from "../EditorAnimacion/Miniatura";
 import {normalizarTransformacion, transformarVector} from "../EditorAnimacion/TransformacionInstancia";
 import * as Claves from "./Claves";
+import {clipsEscena} from "../Sonido/Pista";
 import {SimFisica, grupoEsEfecto, particulasEn, TIPOS_EFECTO, efectoDefecto} from "./Fisica";
 
 let tiempo_universal=performance.now();
@@ -310,6 +311,7 @@ class GestionEvento{
                     const raiz = evento_.evento;
                     const tiempo_absoluto = this.inicioAbsoluto(seleccionado) + tiempo_evento;
                     this._t_escena = tiempo_absoluto;   // Fase 6: reloj de las instancias
+                    this._t_escena_en = performance.now();   // sonido: cuando se midio (para estimar entre cuadros)
                     this.procesarNodoEvento(raiz, tiempo_absoluto - raiz.tiempo_inicio/1000, new Set());
                 }else{
                     console.log("SE TERMINO EL TIEMPO: ", tiempo_evento)
@@ -1505,6 +1507,8 @@ class GestionEvento{
             a.nombre = doc.nombre;
             a.eventos = (doc.eventos || []).map((e) => e.nombre);
             a.numero_version = doc.version ? doc.version.numero : null;
+            // sonido: clips de sus eventos y reacciones que heredan las instancias
+            a.audio = {nombre: doc.nombre, eventos: doc.eventos || [], reacciones: (doc.escena || {}).reacciones || {}};
             a.estado = "listo";
             a.error = "";
             a.rev++;                       // cambia la firma -> se reinyectan las partes
@@ -1742,6 +1746,23 @@ class GestionEvento{
         const lista_grupo_root = this.ordenDibujo();
         this.imprimir_animacion.imprimirListaGrupos(lista_grupo_root, [], [], [],
             null, null, null, null, true)
+    }
+
+    // Sonido (planeacion_sonido.md): lo que suena en la escena, en ms absolutos de la escena
+    // (el reloj de _t_escena). Incluye lo heredado por las instancias y las reacciones a
+    // los sucesos de la fisica.
+    duracionEscenaMs(){
+        const g = this.obtenerEvento("EventoGeneral");
+        return g ? Math.max(0, g.evento.tiempo_final - g.evento.tiempo_inicio) : 0;
+    }
+
+    clipsAudio(duracion = this.duracionEscenaMs()){
+        const sucesos = this.fisica ? this.fisica.sucesos(duracion) : [];
+        return clipsEscena({
+            escena: this.escena || {}, eventos: this.eventos.map((e) => e.evento), duracion, sucesos,
+            grupos: this.gestion_grupos_originales.grupos_figuras,
+            assetDe: (id, version) => { const a = this._asset(id, version); return a && a.audio ? a.audio : null; },
+        });
     }
 
     reproducirProceso(){

@@ -13,10 +13,11 @@ import {prepararEscena, dibujarCuadro} from "../render.mjs";
 const PROYECTO = process.env.PRUEBAS_PROYECTO || "6af48d71b2479cd1dfc94dea";
 const {Compilador, Descompilador, Fisica} = await cargarMotor();
 
-let docs = null;
+let docs = null, sonidosBase = [];
 try {
     const base = await Promise.race([db(), new Promise((_, no) => setTimeout(() => no(new Error("sin respuesta")), 3000))]);
     docs = await base.collection("eventos").find({id_proyecto: PROYECTO}).toArray();
+    sonidosBase = await base.collection("sonidos").find({id_proyecto: PROYECTO}).toArray();
 } catch (e) {
     docs = null;
 }
@@ -26,8 +27,9 @@ const catalogo = new Map((docs || []).map((d) => [d.nombre, {id: String(d._id), 
 const nombrePorId = new Map((docs || []).map((d) => [String(d._id), d.nombre]));
 
 function vuelta(doc) {
-    const {def} = Descompilador.descompilar(doc, (id) => nombrePorId.get(String(id)) || null);
-    const r = Compilador.compilar(def, (n) => catalogo.get(n) || null);
+    const sonNombre = new Map(sonidosBase.map((s) => [String(s._id), s.nombre]));
+    const {def} = Descompilador.descompilar(doc, (id) => nombrePorId.get(String(id)) || null, (id) => sonNombre.get(String(id)) || null);
+    const r = Compilador.compilar(def, (n) => catalogo.get(n) || null, (n) => { const s = sonidosBase.find((x) => x.nombre === n); return s ? {id: String(s._id)} : null; });
     assert.deepEqual(r.errores, [], doc.nombre);
     return {def, resultado: {...r.resultado, _id: doc._id}};
 }
@@ -58,6 +60,44 @@ test("escenas: el render del original y el de la vuelta son identicos", {skip: s
             assert.equal(distintos, 0, `${doc.nombre} en t=${t}: ${distintos} pixeles distintos`);
         }
     }
+});
+
+test("los generadores con sus valores por defecto dibujan lo mismo que los assets de ejemplo", {skip: sinBase}, () => {
+    const pares = [["auto", "Auto"], ["persona", "Persona"], ["casa", "Casa roja"], ["arbol", "Árbol"], ["farol", "Farol"]];
+    for (const [gen, nombre] of pares) {
+        const doc = docs.find((d) => d.nombre === nombre);
+        if (!doc) continue;
+        const r = Compilador.compilar({tipo: "asset", nombre, generador: gen});
+        // los assets de ejemplo se hicieron con scripts anteriores (puntos redondeados, otro
+        // orden de capas): se comparan las partes, su posicion y la caja de cada una (±1,5 px)
+        const caja = (g) => {
+            const xs = [], ys = [];
+            for (const f of g.lista_figuras || []) { const a = f.atributos; xs.push(a.cx + a.x1, a.cx + a.x2); ys.push(a.cy + a.y1, a.cy + a.y2); }
+            return xs.length ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null;
+        };
+        const mapa = (gs) => new Map(gs.filter((g) => g.nombre !== "default").map((g) => [g.nombre, g]));
+        const a = mapa(doc.grupos_figuras), b = mapa(r.resultado.grupos_figuras);
+        assert.deepEqual([...b.keys()].sort(), [...a.keys()].sort(), `${gen} vs ${nombre}: partes`);
+        for (const [n, g] of a) {
+            const h = b.get(n), ca = caja(g), cb = caja(h);
+            const cerca = (x, y) => Math.abs(x - y) <= 1.5;
+            assert.ok(cerca(g.cx, h.cx) && cerca(g.cy, h.cy) && g.nodo_padre === h.nodo_padre, `${gen}.${n}: posicion`);
+            assert.ok((!ca && !cb) || (ca && cb && ca.every((v, i) => cerca(v, cb[i]))), `${gen}.${n}: caja ${ca} != ${cb}`);
+        }
+    }
+});
+
+test("sonido: los sucesos de la fisica de una escena con disparo son deterministas", {skip: sinBase}, async () => {
+    const doc = docs.find((d) => d.nombre === "Disparo (escena)");
+    if (!doc) return;
+    const dur = (doc.eventos.find((e) => e.nombre === "EventoGeneral") || {}).tiempo_final || 8000;
+    const a = (await prepararEscena(doc)).m.fisica.sucesos(dur);
+    const b = (await prepararEscena(doc)).m.fisica.sucesos(dur);
+    const tipos = new Set(a.map((s) => s.tipo));
+    assert.ok(tipos.has("disparar") && tipos.has("impactar") && tipos.has("soltarse") && tipos.has("tocar_suelo"), [...tipos].join(","));
+    assert.deepEqual(a.map((s) => [s.tipo, s.objeto || s.efecto, s.t]), b.map((s) => [s.tipo, s.objeto || s.efecto, s.t]));
+    const disparo = a.find((s) => s.tipo === "disparar"), impacto = a.find((s) => s.tipo === "impactar");
+    assert.equal(impacto.t, disparo.t);                      // el disparo es instantaneo
 });
 
 test.after(() => cerrar());

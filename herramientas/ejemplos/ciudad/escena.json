@@ -1,0 +1,92 @@
+{
+ "tipo": "escena", "nombre": "Ciudad (escena)", "duracion": 16000, "profundidad": true,
+ "sonido": "lleva", "marcas": {"EventoGeneral": "no_lleva"},
+ "sonidos": [
+  {"sonido": "Ambiente de ciudad", "t": 0, "volumen": 0.45, "bucle": true, "fundido": {"entrada": 1500, "salida": 1500}},
+  {"sonido": "Auto pasando", "t": 0, "volumen": 0.8, "pan": 0.2},
+  {"sonido": "Pájaros", "t": 1500, "volumen": 0.35, "pan": -0.5},
+  {"sonido": "Motor de autobús", "t": 0, "volumen": 0.6, "pan": -0.3, "recorte": [0, 5000], "fundido": {"entrada": 1500, "salida": 400}},
+  {"sonido": "Freno de aire", "t": 4700, "volumen": 0.7},
+  {"sonido": "Motor de autobús", "t": 5000, "volumen": 0.3, "recorte": [5000, 8600], "fundido": {"entrada": 300, "salida": 300}},
+  {"sonido": "Puertas del autobús", "t": 5400, "volumen": 0.7},
+  {"sonido": "Motor de camioneta", "t": 6500, "volumen": 0.45, "pan": 0.4, "fundido": {"entrada": 2000, "salida": 2500}},
+  {"sonido": "Puertas del autobús", "t": 7900, "volumen": 0.7},
+  {"sonido": "Bocina", "t": 8200, "volumen": 0.6, "pan": 0.3},
+  {"sonido": "Acelerar autobús", "t": 8500, "volumen": 0.75},
+  {"sonido": "Motor de autobús", "t": 11400, "volumen": 0.55, "pan": 0.3, "recorte": [0, 4600], "fundido": {"entrada": 300, "salida": 2500}},
+  {"sonido": "Pájaros", "t": 9500, "volumen": 0.3, "pan": 0.2},
+  {"sonido": "Pájaros", "t": 13500, "volumen": 0.3, "pan": 0.5}
+ ],
+ "camara": {"centro": [640, 360], "zoom": 1,
+   "claves": {"x": [[0, 640, "suave"], [5200, 1750], [8600, 1750, "suave"], [16000, 2960]]}},
+ "objetos": [
+  {"instancia": "Calle", "nombre": "calle", "en": [1800, 720], "ancla": [1800, 720], "plano": -3},
+  {"instancia": "Sol", "nombre": "sol", "en": [2600, 230], "plano": -2},
+  {"instancia": "Nube", "nombre": "nube_1", "en": [300, 120], "plano": -2, "claves": {"x": [[0, 300], [16000, 520]]}},
+  {"instancia": "Nube", "nombre": "nube_2", "en": [1500, 90], "escala": 0.8, "plano": -2, "claves": {"x": [[0, 1500], [16000, 1680]]}},
+  {"instancia": "Nube", "nombre": "nube_3", "en": [2700, 130], "escala": 1.2, "plano": -2, "claves": {"x": [[0, 2700], [16000, 2950]]}},
+
+  {"instancia": "Torre lejana", "nombre": "lejos_1", "en": [620, 428], "escala": 0.8, "plano": -2},
+  {"instancia": "Edificio lejano", "nombre": "lejos_2", "en": [920, 428], "escala": 0.8, "plano": -2, "espejo": true},
+  {"instancia": "Torre lejana", "nombre": "lejos_3", "en": [1250, 428], "escala": 0.7, "plano": -2},
+  {"instancia": "Edificio lejano", "nombre": "lejos_4", "en": [1560, 428], "escala": 0.8, "plano": -2},
+  {"instancia": "Torre lejana", "nombre": "lejos_5", "en": [1840, 428], "escala": 0.85, "plano": -2},
+  {"instancia": "Edificio lejano", "nombre": "lejos_6", "en": [2200, 428], "escala": 0.75, "plano": -2, "espejo": true},
+  {"instancia": "Torre lejana", "nombre": "lejos_7", "en": [2560, 428], "escala": 0.8, "plano": -2},
+  {"instancia": "Edificio lejano", "nombre": "lejos_8", "en": [2860, 428], "escala": 0.8, "plano": -2},
+  {"instancia": "Torre lejana", "nombre": "lejos_9", "en": [3200, 428], "escala": 0.75, "plano": -2},
+  {"instancia": "Edificio lejano", "nombre": "lejos_10", "en": [3480, 428], "escala": 0.8, "plano": -2, "espejo": true},
+
+  {"instancia": "Edificio clásico crema", "nombre": "edificio_1", "en": [160, 428], "plano": -1},
+  {"instancia": "Edificio de ladrillo", "nombre": "edificio_2", "en": [470, 428], "plano": -1},
+  {"instancia": "Edificio verde", "nombre": "edificio_3", "en": [780, 428], "plano": -1},
+  {"instancia": "Edificio moderno azul", "nombre": "edificio_4", "en": [1080, 428], "plano": -1},
+  {"instancia": "Edificio clásico crema", "nombre": "edificio_5", "en": [1400, 428], "plano": -1, "espejo": true},
+  {"instancia": "Edificio verde", "nombre": "edificio_6", "en": [1660, 428], "plano": -1},
+  {"instancia": "Edificio de ladrillo", "nombre": "edificio_7", "en": [1990, 428], "plano": -1, "espejo": true},
+  {"instancia": "Edificio moderno azul", "nombre": "edificio_8", "en": [2380, 428], "plano": -1},
+  {"instancia": "Edificio clásico crema", "nombre": "edificio_9", "en": [2700, 428], "plano": -1},
+  {"instancia": "Edificio de ladrillo", "nombre": "edificio_10", "en": [3030, 428], "plano": -1},
+  {"instancia": "Edificio verde", "nombre": "edificio_11", "en": [3330, 428], "plano": -1, "espejo": true},
+  {"instancia": "Edificio moderno azul", "nombre": "edificio_12", "en": [3560, 428], "plano": -1},
+
+  {"instancia": "Farol", "nombre": "farol_fondo_1", "en": [300, 474], "plano": -1},
+  {"instancia": "Árbol", "nombre": "arbol_1", "en": [1000, 474], "plano": -1, "escala": 0.9},
+  {"instancia": "Farol", "nombre": "farol_fondo_2", "en": [1300, 474], "plano": -1},
+  {"instancia": "Parada", "nombre": "parada", "en": [1900, 472], "plano": -1},
+  {"instancia": "Árbol", "nombre": "arbol_2", "en": [2250, 474], "plano": -1},
+  {"instancia": "Farol", "nombre": "farol_fondo_3", "en": [2600, 474], "plano": -1},
+  {"instancia": "Árbol", "nombre": "arbol_3", "en": [3100, 474], "plano": -1, "escala": 1.1},
+  {"instancia": "Farol", "nombre": "farol_fondo_4", "en": [3400, 474], "plano": -1},
+
+  {"instancia": "Mujer esperando", "nombre": "mujer_parada", "en": [1860, 466],
+   "claves": {"x": [[0, 1860], [6100, 1860, "suave"], [6600, 1872]], "opacidad": [[0, 1], [6300, 1], [6900, 0]]}},
+  {"instancia": "Hombre esperando", "nombre": "hombre_parada", "en": [1960, 468], "espejo": true},
+  {"instancia": "Joven de gorra", "nombre": "joven_fondo", "en": [1000, 462], "claves": {"x": [[0, 1000], [16000, 2440]]}},
+  {"instancia": "Señor de gris", "nombre": "senor", "en": [3500, 458], "espejo": true, "claves": {"x": [[0, 3500], [16000, 2700]]}},
+
+  {"instancia": "Auto deportivo", "nombre": "deportivo", "en": [300, 538], "claves": {"x": [[0, 300], [6000, 4000]]}},
+  {"instancia": "Autobús", "nombre": "autobus", "en": [-350, 540],
+   "claves": {"x": [[0, -350, "salir"], [5000, 1700], [8500, 1700, "entrar"], [15000, 4300]]}},
+  {"instancia": "Camioneta", "nombre": "camioneta", "en": [3900, 602], "espejo": true,
+   "claves": {"x": [[0, 3900], [2000, 3900], [16000, -300]]}},
+
+  {"instancia": "Persona azul", "nombre": "persona_1", "en": [400, 674], "claves": {"x": [[0, 400], [16000, 1840]]}},
+  {"instancia": "Mujer de rojo", "nombre": "mujer_rojo", "en": [2300, 670], "espejo": true, "claves": {"x": [[0, 2300], [16000, 860]]}},
+  {"instancia": "Persona azul", "nombre": "nino", "en": [2255, 676], "espejo": true, "escala": 0.68, "claves": {"x": [[0, 2255], [16000, 815]]}},
+  {"instancia": "Joven de gorra", "nombre": "joven_frente", "en": [3500, 672], "espejo": true, "claves": {"x": [[0, 3500], [16000, 2400]]}},
+
+  {"instancia": "Farol", "nombre": "farol_frente_1", "en": [600, 680]},
+  {"instancia": "Farol", "nombre": "farol_frente_2", "en": [1800, 680]},
+  {"instancia": "Farol", "nombre": "farol_frente_3", "en": [3000, 680]},
+
+  {"instancia": "Pájaro", "nombre": "pajaro_1", "en": [-100, 150], "plano": 1, "claves": {"x": [[0, -100], [16000, 3600]], "y": [[0, 150, "suave"], [8000, 110, "suave"], [16000, 160]]}},
+  {"instancia": "Pájaro", "nombre": "pajaro_2", "en": [100, 185], "plano": 1, "escala": 0.8, "claves": {"x": [[0, 100], [16000, 3750]], "y": [[0, 185, "suave"], [8000, 150, "suave"], [16000, 190]]}}
+ ],
+ "efectos": [
+  {"tipo": "particulas", "nombre": "Escape del autobús", "en": [-620, 516],
+   "inicio": 8300, "fin": 11500, "tasa": 25, "vida": 900, "velocidad": 40, "angulo": -160, "dispersion": 30, "gravedad": -15,
+   "tam_ini": 8, "tam_fin": 26, "color_ini": "#8a8a8a", "color_fin": "#e2e2e2", "modo": "chorro", "sonido": "no_lleva",
+   "claves": {"x": [[0, -620, "salir"], [5000, 1430], [8500, 1430, "entrar"], [15000, 4030]]}}
+ ]
+}

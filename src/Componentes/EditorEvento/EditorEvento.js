@@ -1,7 +1,7 @@
 import MenuAnimacion from "../EditorAnimacion/MenuAnimacion";
 import NavEditorAnimacion from "../EditorAnimacion/NavEditorAnimacion";
 import ModalImportarGrupo from "../EditorAnimacion/SeccionFiguras/GestionGrupos/ImportarGrupos/ModalImportarGrupo";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import MenuEvento from "./MenuEvento";
 import OffcanvasAnimaciones, {MIME_ANIMACION} from "./SeccionEventos/OffcanvasAnimaciones";
 import NavEventos from "./SeccionEventos/NavEventos";
@@ -9,6 +9,9 @@ import Inspector from "./SeccionEventos/Inspector";
 import PanelObjetosEscena from "./SeccionEventos/PanelObjetosEscena";
 import PanelHistorial from "./SeccionEventos/PanelHistorial";
 import ModalExportarVideo from "./ModalExportarVideo";
+import PanelSonido from "../Sonido/PanelSonido";
+import {listarSonidos, cargarArchivo} from "../Sonido/apiSonido";
+import {MotorAudio} from "../../Clases/Sonido/MotorAudio";
 import Historial from "../../Clases/EditorEvento/Historial";
 import Lienzo from "../EditorAnimacion/Lienzo";
 import Separador from "./Layout/Separador";
@@ -171,6 +174,7 @@ function EditorEvento(props){
                     eventoAnimacion.edicion.escena = response.data.escena || {};
                     // datos para "Guardar como"
                     eventoAnimacion.edicion.id_proyecto = response.data.id_proyecto;
+                    setIdProyecto(response.data.id_proyecto);
                     eventoAnimacion.edicion.meta_figuras_doc = response.data.meta_figuras || [];
                     eventoAnimacion.edicion.nombre_doc = response.data.nombre;
                     // Historial: la foto inicial es lo guardado en el servidor
@@ -283,6 +287,23 @@ function EditorEvento(props){
     // Fase 3: ruta de objetos en los que se "entro" (doble clic)
     const [rutaObjetos, setRutaObjetos] = useState([]);
     refLienzo.current.control_objetos.alCambiarRuta = setRutaObjetos;
+
+    // ---- Sonido (planeacion_sonido.md): sonidos del proyecto y reproduccion sincronizada ----
+    const [idProyecto, setIdProyecto] = useState(null);
+    const [sonidos, setSonidos] = useState([]);
+    const refAudio = useRef(null);
+    if (!refAudio.current) refAudio.current = new MotorAudio({cargar: cargarArchivo});
+    const recargarSonidos = useCallback(async () => {
+        if (!idProyecto) return;
+        try { setSonidos(await listarSonidos(idProyecto)); } catch (e) { console.warn("No se pudieron cargar los sonidos:", e.message); }
+    }, [idProyecto]);
+    useEffect(() => { void recargarSonidos(); }, [recargarSonidos]);
+    useEffect(() => { refAudio.current.ponerSonidos(sonidos); }, [sonidos]);
+    useEffect(() => {
+        // el audio sigue al reloj de la escena (no tiene reloj propio)
+        const id = setInterval(() => refAudio.current.sincronizar(refEvento.current && refEvento.current.edicion), 100);
+        return () => { clearInterval(id); refAudio.current.detener(); };
+    }, []);
 
     // Solo en desarrollo: acceso desde la consola del navegador para pruebas
     // (ej. cambiar la transformacion de una instancia antes de que existan las
@@ -596,6 +617,7 @@ function EditorEvento(props){
                 return c.toDataURL("image/png");
             },
             historial: () => refHistorial.current,
+            audio: () => refAudio.current,          // sonido: lo programado (audio().ultimo), clips (motor.clipsAudio())
         };
         return () => { delete window.__editor; };
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -914,7 +936,7 @@ function EditorEvento(props){
                 <Lienzo lienzo={eventoLienzoEvento} id="lienzo-evento" editar_animacion={() => {}}
                         setEventLienzoFigura={setEventLienzoEvento}/>
                 {verExportar && (
-                    <ModalExportarVideo refEvento={refEvento} nombre={refEvento.current.edicion.nombre_doc}
+                    <ModalExportarVideo refEvento={refEvento} nombre={refEvento.current.edicion.nombre_doc} audio={refAudio.current}
                                         onCerrar={() => setVerExportar(false)}/>
                 )}
                 {/* autoguardado de una sesion anterior que no se subio */}
@@ -967,7 +989,7 @@ function EditorEvento(props){
             <aside className="ed-panel ed-der">
                 <div className="ed-cabecera ed-pestanas">
                     <div className="d-flex h-100">
-                        {[["inspector", "bi-sliders", "Inspector"], ["biblioteca", "bi-collection", "Biblioteca"]].map(([clave, icono, texto]) => (
+                        {[["inspector", "bi-sliders", "Inspector"], ["biblioteca", "bi-collection", "Biblioteca"], ["sonido", "bi-volume-up", "Sonido"]].map(([clave, icono, texto]) => (
                             <button key={clave} type="button"
                                     className={`ed-pestana ${layout.pestana_der === clave ? "activa" : ""}`}
                                     onClick={() => setLayout((l) => ({...l, pestana_der: clave}))}>
@@ -985,6 +1007,10 @@ function EditorEvento(props){
                 </div>
                 <div className={`ed-cuerpo ${layout.pestana_der === "biblioteca" ? "" : "d-none"}`}>
                     <OffcanvasAnimaciones id="bibliotecaAnimaciones" embebido onAgregar={agregarAnimacionAlCentro}/>
+                </div>
+                <div className={`ed-cuerpo ${layout.pestana_der === "sonido" ? "" : "d-none"}`}>
+                    <PanelSonido refEvento={refEvento} idProyecto={idProyecto} sonidos={sonidos} recargarSonidos={recargarSonidos}
+                                 objetosSeleccionados={objetosSeleccionados} audio={refAudio.current} activo={layout.pestana_der === "sonido"}/>
                 </div>
                 <Separador orientacion="vertical" titulo="Arrastrar para cambiar el ancho"
                            onArrastrar={(d) => redimensionar("der", -d, 220, 640)}/>

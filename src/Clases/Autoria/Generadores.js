@@ -7,6 +7,12 @@
 
 const rect = (x0, y0, x1, y1) => ({rect: [x0, y0, x1, y1]});
 const oscila = (desde, hasta, ms) => ({claves: {rotacion: [[0, desde, "suave"], [ms, hasta]]}, bucle: "ida_vuelta"});
+// rueda que gira (1 vuelta por segundo), con los pies en y = 0
+const rueda = (nombre, x, r = 24) => ({nombre, en: [x, -r], circulo: {r, lados: 16}, color: "#222222", borde: "#111111",
+    giro: {desde: 0, hasta: 360, ms: 1000}, partes: [
+        {nombre: nombre + "_taza", circulo: {r: Math.round(r * 11 / 24), lados: 12}, color: "#b8bcc2", borde: "#6b6f75"},
+        {nombre: nombre + "_rayo", ...rect(-2, -(r - 4), 2, r - 4), color: "#8d9196", borde: "#555555"},
+    ]});
 
 export const GENERADORES = {
     arbol: {
@@ -36,18 +42,38 @@ export const GENERADORES = {
         },
     },
     auto: {
-        descripcion: "Auto (mira a la derecha) con ruedas que giran (1 vuelta por segundo)",
-        parametros: {color: "#d63a3a", borde: "#7a1f1f", vidrio: "#cfe9f7"},
+        descripcion: "Auto (mira a la derecha) con ruedas que giran (1 vuelta por segundo); modelo sedan, camioneta o deportivo",
+        parametros: {color: "#d63a3a", borde: "#7a1f1f", vidrio: "#cfe9f7", modelo: "sedan"},
+        opciones: {modelo: ["sedan", "camioneta", "deportivo"]},
         crear: (p) => {
-            const rueda = (nombre, x) => ({nombre, en: [x, -24], circulo: {r: 24, lados: 16}, color: "#222222", borde: "#111111",
-                giro: {desde: 0, hasta: 360, ms: 1000}, partes: [
-                    {nombre: nombre + "_taza", circulo: {r: 11, lados: 12}, color: "#b8bcc2", borde: "#6b6f75"},
-                    {nombre: nombre + "_rayo", ...rect(-2, -20, 2, 20), color: "#8d9196", borde: "#555555"},
-                ]});
+            const v = (nombre, poligono) => ({nombre, poligono, color: p.vidrio, borde: "#5b6b75"});
+            const luz = (nombre, x, y, color, borde) => ({nombre, en: [x, y], ...rect(-6, -6, 7, 6), color, borde});
+            if (p.modelo === "camioneta") {
+                return [{nombre: "auto", partes: [
+                    {nombre: "carroceria", poligono: [[-132, -28], [-132, -118], [-120, -132], [58, -132], [96, -90], [132, -80], [136, -28]], color: p.color, borde: p.borde},
+                    {nombre: "parrilla", en: [127, -46], ...rect(-4, -11, 4, 11), color: "#3a3d42", borde: "#222222"},
+                    v("ventana_tras", [[-120, -92], [-120, -122], [-44, -122], [-44, -92]]),
+                    v("ventana_med", [[-36, -92], [-36, -122], [18, -122], [18, -92]]),
+                    v("ventana_del", [[26, -92], [26, -122], [54, -122], [84, -92]]),
+                    {nombre: "manilla", en: [-10, -84], ...rect(-8, -2, 8, 2), color: "#2b2b2b", borde: "#2b2b2b"},
+                    luz("faro", 126, -66, "#fff3b0", "#a08a2a"), luz("luz_tras", -127, -74, "#ff6a3d", "#7a1f1f"),
+                    rueda("rueda_tras", -82, 27), rueda("rueda_del", 86, 27),
+                ]}];
+            }
+            if (p.modelo === "deportivo") {
+                return [{nombre: "auto", partes: [
+                    {nombre: "aleron", poligono: [[-122, -54], [-128, -66], [-102, -66], [-98, -57]], color: p.borde, borde: "#1b1b1b"},
+                    {nombre: "carroceria", poligono: [[-130, -22], [-126, -54], [-62, -64], [-30, -90], [38, -90], [80, -62], [134, -50], [138, -22]], color: p.color, borde: p.borde},
+                    v("ventana", [[-48, -64], [-24, -84], [34, -84], [64, -64]]),
+                    {nombre: "toma_aire", poligono: [[-8, -40], [22, -40], [30, -30], [-2, -30]], color: "#2b2b2b", borde: "#111111"},
+                    luz("faro", 128, -44, "#fff3b0", "#a08a2a"), luz("luz_tras", -126, -46, "#ff6a3d", "#7a1f1f"),
+                    rueda("rueda_tras", -76, 22), rueda("rueda_del", 82, 22),
+                ]}];
+            }
             return [{nombre: "auto", partes: [
                 {nombre: "carroceria", poligono: [[-125, -28], [-120, -72], [-75, -78], [-48, -118], [55, -118], [85, -78], [122, -70], [128, -28]], color: p.color, borde: p.borde},
-                {nombre: "ventana_tras", poligono: [[-62, -80], [-42, -110], [0, -110], [0, -80]], color: p.vidrio, borde: "#5b6b75"},
-                {nombre: "ventana_del", poligono: [[8, -80], [8, -110], [50, -110], [72, -80]], color: p.vidrio, borde: "#5b6b75"},
+                v("ventana_tras", [[-62, -80], [-42, -110], [0, -110], [0, -80]]),
+                v("ventana_del", [[8, -80], [8, -110], [50, -110], [72, -80]]),
                 {nombre: "faro", en: [118, -60], ...rect(-6, -6, 8, 6), color: "#fff3b0", borde: "#a08a2a"},
                 {nombre: "luz_tras", en: [-121, -60], ...rect(-5, -6, 6, 6), color: "#ff6a3d", borde: "#7a1f1f"},
                 rueda("rueda_tras", -72), rueda("rueda_del", 78),
@@ -55,19 +81,28 @@ export const GENERADORES = {
         },
     },
     persona: {
-        descripcion: "Persona (mira a la derecha) que camina en el lugar: un paso cada 0,5 s",
-        parametros: {ropa: "#2e86de", pantalon: "#2c3e66", piel: "#f1c27d", pelo: "#3b2414", camina: true},
+        descripcion: "Persona (mira a la derecha) que camina en el lugar: un paso cada 0,5 s; peinado corto, largo o gorra, y vestido",
+        parametros: {ropa: "#2e86de", pantalon: "#2c3e66", piel: "#f1c27d", pelo: "#3b2414", camina: true,
+            peinado: "corto", vestido: false, gorra: "#c0392b"},
+        opciones: {peinado: ["corto", "largo", "gorra"]},
         crear: (p) => {
             const pierna = [[-7, 0], [7, 0], [6, 66], [14, 70], [-7, 70]];
             const brazo = [[-5, 0], [5, 0], [4, 58], [-4, 58]];
             const mov = (a, b) => (p.camina ? oscila(a, b, 500) : {});
+            // con vestido, las piernas son de piel y el torso baja como falda
+            const piernas = p.vestido ? p.piel : p.pantalon, borde_piernas = p.vestido ? "#7a5236" : "#1d2a44";
+            const torso = p.vestido ? [[-15, -150], [15, -150], [17, -104], [27, -56], [-27, -56]] : [[-15, -150], [15, -150], [17, -68], [-17, -68]];
+            const pelo = p.peinado === "gorra"
+                ? {nombre: "pelo", poligono: [[-17, -3], [-15, -15], [-3, -20], [11, -17], [16, -8], [29, -6], [29, -2], [15, -3]], color: p.gorra, borde: "#5e1a14"}
+                : {nombre: "pelo", poligono: [[-17, -2], [-14, -14], [-2, -19], [12, -16], [17, -6], [4, -9], [-10, -6]], color: p.pelo, borde: "#1b120c"};
             return [{nombre: "persona", partes: [
                 {nombre: "brazo_tras", en: [0, -142], poligono: brazo, color: p.piel, borde: "#7a5236", ...mov(22, -22)},
-                {nombre: "pierna_tras", en: [0, -70], poligono: pierna, color: p.pantalon, borde: "#1d2a44", ...mov(-25, 25)},
-                {nombre: "torso", poligono: [[-15, -150], [15, -150], [17, -68], [-17, -68]], color: p.ropa, borde: "#2b2b2b"},
-                {nombre: "pierna_del", en: [0, -70], poligono: pierna, color: p.pantalon, borde: "#1d2a44", ...mov(25, -25)},
+                {nombre: "pierna_tras", en: [0, -70], poligono: pierna, color: piernas, borde: borde_piernas, ...mov(-25, 25)},
+                ...(p.peinado === "largo" ? [{nombre: "melena", en: [2, -170], poligono: [[-18, -4], [-15, -16], [-3, -21], [11, -18], [15, -8], [-2, -6], [-6, 16], [-12, 34], [-21, 30]], color: p.pelo, borde: "#1b120c"}] : []),
+                {nombre: "torso", poligono: torso, color: p.ropa, borde: "#2b2b2b"},
+                {nombre: "pierna_del", en: [0, -70], poligono: pierna, color: piernas, borde: borde_piernas, ...mov(25, -25)},
                 {nombre: "cabeza", en: [2, -170], circulo: 17, color: p.piel, borde: "#7a5236", partes: [
-                    {nombre: "pelo", poligono: [[-17, -2], [-14, -14], [-2, -19], [12, -16], [17, -6], [4, -9], [-10, -6]], color: p.pelo, borde: "#1b120c"},
+                    pelo,
                     {nombre: "ojo", en: [9, -2], circulo: {r: 2, lados: 6}, color: "#111111", borde: "#111111"},
                 ]},
                 {nombre: "brazo_del", en: [0, -142], poligono: brazo, color: p.piel, borde: "#7a5236", ...mov(-22, 22)},
@@ -148,6 +183,112 @@ export const GENERADORES = {
             ]}];
         },
         duracion: (p) => p.vuelta_ms,
+    },
+    edificio: {
+        descripcion: "Edificio de varios pisos: clásico (ventanas, cornisa, toldo, tanque) o moderno (bandas de vidrio)",
+        parametros: {ancho: 240, pisos: 6, alto_piso: 64, columnas: 3, estilo: "clasico", fachada: "#d9c7a7", base: "#8c7b6b",
+            ventana: "#a9cfe8", marco: "#6d5f52", toldo: "#b8433a", luces: true},
+        opciones: {estilo: ["clasico", "moderno"]},
+        crear: (p) => {
+            const w = Math.round(p.ancho / 2), pb = 90, ap = p.alto_piso;
+            const pisos = Math.max(1, Math.round(p.pisos)), cols = Math.max(1, Math.round(p.columnas));
+            const H = pb + pisos * ap;
+            const luz = "#ffe9a3";
+            const encendida = (i, j) => p.luces && (i * 7 + j * 3) % 5 === 0;
+            const partes = [
+                {nombre: "cuerpo", ...rect(-w, -H, w, -pb), color: p.fachada, borde: p.marco},
+                {nombre: "planta_baja", ...rect(-w, -pb, w, 0), color: p.base, borde: p.marco},
+                {nombre: "moldura", ...rect(-w - 4, -pb - 6, w + 4, -pb), color: p.marco, borde: p.marco},
+            ];
+            if (p.estilo === "moderno") {
+                for (let i = 0; i < pisos; i++) {
+                    const y = -pb - (i + 1) * ap;
+                    partes.push({nombre: `banda_${i}`, ...rect(-w + 8, y + 8, w - 8, y + ap - 6),
+                        color: encendida(i, 0) ? luz : p.ventana, borde: p.marco});
+                }
+                for (let j = 1; j < cols; j++) {
+                    const x = Math.round(-w + j * (2 * w / cols));
+                    partes.push({nombre: `parteluz_${j}`, ...rect(x - 3, -H + 4, x + 3, -pb - 4), color: p.fachada, borde: p.marco});
+                }
+                partes.push({nombre: "parapeto", en: [0, -H], ...rect(-w, -14, w, 0), color: p.marco, borde: p.marco});
+                partes.push({nombre: "vitrina", ...rect(-w + 10, -78, w - 10, -6), color: p.ventana, borde: p.marco});
+                partes.push({nombre: "puerta", ...rect(-20, -72, 20, 0), color: "#3f4a54", borde: "#22282e"});
+            } else {
+                const ancho_col = 2 * w / cols;
+                const vw = Math.min(Math.round(ancho_col * 0.5), 46), vh = Math.round(ap * 0.55);
+                for (let i = 0; i < pisos; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        const x = Math.round(-w + (j + 0.5) * ancho_col), y = Math.round(-pb - i * ap - ap / 2);
+                        partes.push({nombre: `ventana_${i}_${j}`, en: [x, y], ...rect(-vw / 2, -vh / 2, vw / 2, vh / 2),
+                            color: encendida(i, j) ? luz : p.ventana, borde: p.marco});
+                        partes.push({nombre: `alfeizar_${i}_${j}`, en: [x, y + vh / 2], ...rect(-vw / 2 - 4, 0, vw / 2 + 4, 5), color: p.marco, borde: p.marco});
+                    }
+                }
+                partes.push({nombre: "cornisa", en: [0, -H], poligono: [[-w - 10, 0], [w + 10, 0], [w + 10, -8], [w + 4, -16], [-w - 4, -16], [-w - 10, -8]],
+                    color: p.marco, borde: "#3a332c"});
+                if (w > 80) {
+                    partes.push({nombre: "vitrina_izq", ...rect(-w + 12, -70, -34, -14), color: p.ventana, borde: p.marco});
+                    partes.push({nombre: "vitrina_der", ...rect(34, -70, w - 12, -14), color: p.ventana, borde: p.marco});
+                }
+                partes.push({nombre: "puerta", ...rect(-22, -70, 22, 0), color: "#4a3a2c", borde: "#2a2018", partes: [
+                    {nombre: "puerta_division", ...rect(-1, -70, 1, 0), color: "#2a2018", borde: "#2a2018"}]});
+                partes.push({nombre: "toldo", en: [0, -72], poligono: [[-42, 0], [42, 0], [36, -16], [-36, -16]], color: p.toldo, borde: "#5e1f1a"});
+                partes.push({nombre: "tanque", en: [Math.round(w * 0.45), -H - 16], partes: [
+                    {nombre: "tanque_patas", ...rect(-16, -10, 16, 0), color: "#5a5048", borde: "#3a332c"},
+                    {nombre: "tanque_cuerpo", ...rect(-20, -46, 20, -10), color: "#7b6a58", borde: "#3a332c"},
+                    {nombre: "tanque_tapa", en: [0, -46], poligono: [[-22, 0], [22, 0], [0, -14]], color: "#5a5048", borde: "#3a332c"},
+                ]});
+            }
+            partes.push({nombre: "antena", en: [-Math.round(w * 0.5), -H - (p.estilo === "moderno" ? 14 : 16)], partes: [
+                {nombre: "antena_mastil", ...rect(-2, -56, 2, 0), color: "#4a4a4a", borde: "#2b2b2b"},
+                {nombre: "antena_barra", en: [0, -44], ...rect(-14, -2, 14, 2), color: "#4a4a4a", borde: "#2b2b2b"},
+            ]});
+            return [{nombre: "edificio", partes}];
+        },
+    },
+    autobus: {
+        descripcion: "Autobús (mira a la derecha) con franja, ventanas, puerta delantera y ruedas que giran",
+        parametros: {color: "#f2b632", franja: "#2a5ea8", vidrio: "#bfe0f2", largo: 520, letrero: "#ffb347"},
+        crear: (p) => {
+            const w = Math.round(p.largo / 2), H = 180;
+            const partes = [
+                {nombre: "carroceria", poligono: [[-w, -26], [-w, -H + 8], [-w + 8, -H], [w - 40, -H], [w - 8, -H + 30], [w, -70], [w, -26]], color: p.color, borde: "#7a5a12"},
+                {nombre: "franja", ...rect(-w, -82, w - 1, -64), color: p.franja, borde: p.franja},
+            ];
+            let n = 0;
+            for (let x = -w + 22; x + 56 < w - 122; x += 70, n++) {
+                partes.push({nombre: `ventana_${n}`, ...rect(x, -H + 22, x + 56, -96), color: p.vidrio, borde: "#5b6b75"});
+            }
+            partes.push(
+                {nombre: "parabrisas", poligono: [[w - 52, -H + 18], [w - 36, -H + 18], [w - 12, -H + 40], [w - 6, -96], [w - 52, -96]], color: p.vidrio, borde: "#5b6b75"},
+                {nombre: "puerta", ...rect(w - 114, -156, w - 62, -30), color: "#8fb8cf", borde: "#3a4a55", partes: [
+                    {nombre: "puerta_division", ...rect(w - 89, -156, w - 87, -30), color: "#3a4a55", borde: "#3a4a55"}]},
+                {nombre: "letrero", ...rect(w - 120, -H + 4, w - 46, -H + 16), color: p.letrero, borde: "#5e3a00"},
+                {nombre: "parachoques", ...rect(-w - 4, -34, w + 4, -22), color: "#3a3a3a", borde: "#1e1e1e"},
+                {nombre: "faro", en: [w - 6, -50], ...rect(-6, -7, 6, 7), color: "#fff3b0", borde: "#a08a2a"},
+                {nombre: "luz_tras", en: [-w + 4, -56], ...rect(-4, -8, 6, 8), color: "#ff6a3d", borde: "#7a1f1f"},
+                rueda("rueda_tras", -w + 92, 30), rueda("rueda_del", w - 104, 30),
+            );
+            return [{nombre: "autobus", partes}];
+        },
+    },
+    parada: {
+        descripcion: "Parada de autobús: refugio con techo, vidrio, banco y cartel",
+        parametros: {techo: "#2f4f6f", vidrio: "#cfe8f5", cartel: "#2a5ea8"},
+        crear: (p) => [{nombre: "parada", partes: [
+            {nombre: "vidrio", ...rect(-80, -190, 80, -40), color: p.vidrio, borde: "#7f9fb3", opacidad: 0.6},
+            {nombre: "poste_izq", ...rect(-86, -200, -80, 0), color: "#4a5560", borde: "#2b3138"},
+            {nombre: "poste_der", ...rect(80, -200, 86, 0), color: "#4a5560", borde: "#2b3138"},
+            {nombre: "techo", en: [0, -200], poligono: [[-100, 0], [100, 0], [94, -14], [-94, -14]], color: p.techo, borde: "#1c3044"},
+            {nombre: "banco", ...rect(-60, -50, 60, -42), color: "#8a5a32", borde: "#4d3018", partes: [
+                {nombre: "banco_pata_izq", ...rect(-54, -42, -48, 0), color: "#4a5560", borde: "#2b3138"},
+                {nombre: "banco_pata_der", ...rect(48, -42, 54, 0), color: "#4a5560", borde: "#2b3138"}]},
+            {nombre: "cartel", en: [118, 0], partes: [
+                {nombre: "cartel_poste", ...rect(-2, -230, 2, 0), color: "#4a5560", borde: "#2b3138"},
+                {nombre: "cartel_disco", en: [0, -244], circulo: {r: 18, lados: 16}, color: p.cartel, borde: "#1c3044", partes: [
+                    {nombre: "cartel_bus", ...rect(-9, -6, 9, 6), color: "#ffffff", borde: "#ffffff"}]},
+            ]},
+        ]}],
     },
     calle: {
         descripcion: "Calle larga con cielo, veredas, asfalto y líneas (origen arriba a la izquierda; base en y = 720)",

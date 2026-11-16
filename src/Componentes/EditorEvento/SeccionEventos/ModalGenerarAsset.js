@@ -54,6 +54,13 @@ export default function ModalGenerarAsset({idProyecto, nombreProyecto, onCerrar,
     const campo = (k, defecto) => {
         const v = parametros[k];
         const cambiar = (x) => setParametros((p) => ({...p, [k]: x}));
+        const opciones = (GENERADORES[generador].opciones || {})[k];
+        if (opciones) {
+            return <><label className="form-label mb-0">{etiqueta(k)}</label>
+                <select className="form-select form-select-sm" value={v} onChange={(e) => cambiar(e.target.value)}>
+                    {opciones.map((o) => <option key={o} value={o}>{etiqueta(o)}</option>)}
+                </select></>;
+        }
         if (typeof defecto === "boolean") {
             return <div className="form-check mt-1">
                 <input className="form-check-input" type="checkbox" id={`gen-${k}`} checked={!!v} onChange={(e) => cambiar(e.target.checked)}/>

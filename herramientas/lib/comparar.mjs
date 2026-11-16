@@ -50,12 +50,22 @@ function claves(c) {
     return Object.keys(r).length ? r : null;
 }
 
+// sonido: los ids de los clips son internos (como los nombres de figuras); se ignoran
+const sinIdClip = (o) => JSON.parse(JSON.stringify(o ?? null, (k, v) => (k === "_id" ? undefined : v &&
+    typeof v === "object" && !Array.isArray(v) && typeof v.sonido === "string" && "t" in v ? {...v, id: undefined} : v)));
+const audioInstancia = (i) => {
+    if (!i) return null;
+    const a = i.audio && Object.keys(sinIds(i.audio)).length ? sinIds(i.audio) : undefined;
+    return sinIds({...i, nombre: undefined, audio: a});
+};
+
 export function canonico(g, {efectoDefecto} = {}) {
     return {
         padre: g.nodo_padre, visible: g.visible !== false, color: g.color, cx: r3(g.cx), cy: r3(g.cy), capa: g.capa,
         clases: [...(g.clases || [])].sort(), dibujo: dibujo(g), transformacion: transformacion(g.transformacion),
         claves: claves(g.claves), claves_bucle: g.claves_bucle || null, camara: sinIds(g.camara),
-        instancia: g.instancia ? sinIds({...g.instancia, nombre: undefined}) : null,
+        instancia: audioInstancia(g.instancia),
+        sonidos: g.sonidos ? sinIdClip(g.sonidos) : null, sonido_marca: g.sonido_marca || null,
         plano: g.plano || 0, fisica: g.fisica ? {nivel: 1, ...sinIds(g.fisica)} : null,
         // un parametro de efecto que falta vale su valor por defecto (asi lo lee el motor)
         efecto: g.efecto && efectoDefecto ? sinIds({...efectoDefecto(g.efecto.tipo), ...g.efecto}) : sinIds(g.efecto),
@@ -77,9 +87,9 @@ export function diferencias(a, b, opciones = {}) {
             if (x !== y) d.push(`${n}.${k}: ${x.slice(0, 120)} != ${y.slice(0, 120)}`);
         }
     }
-    const ea = estable(sinIds(a.eventos)), eb = estable(sinIds(b.eventos));
+    const ea = estable(sinIdClip(a.eventos)), eb = estable(sinIdClip(b.eventos));
     if (ea !== eb) d.push(`eventos distintos: ${ea.slice(0, 160)} != ${eb.slice(0, 160)}`);
-    const sa = estable(sinIds(a.escena || {})), sb = estable(sinIds(b.escena || {}));
+    const sa = estable(sinIdClip(a.escena || {})), sb = estable(sinIdClip(b.escena || {}));
     if (sa !== sb) d.push(`escena distinta: ${sa} != ${sb}`);
     return d;
 }

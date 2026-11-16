@@ -278,6 +278,7 @@ export class SimFisica {
         this.internos = new Map();
         this.cacheInterno = new Map();
         this.soltadoObj = new Map();     // objeto -> primer instante (ms) en que se solto una pieza
+        this.sucesosSim = [];            // sonido: sucesos que salen de la simulacion (ver sucesos())
         this._preparar();
         this.pasos = [];          // pasos[k] = estados (null = sin soltar) en t = k * PASO
         this.estado = this.cuerpos.map(() => null);
@@ -286,7 +287,10 @@ export class SimFisica {
 
     _soltar(b, t) {
         const p = this._previo(b, t);
-        if (!this.soltadoObj.has(b.objeto)) this.soltadoObj.set(b.objeto, t);
+        if (!this.soltadoObj.has(b.objeto)) {
+            this.soltadoObj.set(b.objeto, t);
+            this.sucesosSim.push({tipo: "soltarse", objeto: b.objeto, t, en: {x: p.x, y: p.y}});
+        }
         return {x: p.x, y: p.y, vx: 0, vy: 0, ang: 0, w: 0, suelo: p.suelo, quieto: false, ts: t};
     }
 
@@ -336,6 +340,8 @@ export class SimFisica {
                     if (perp > Math.max(b.hx, b.hy) * 0.9) continue;
                     if (!mejor || proy < mejor.proy) mejor = {b, proy, c};
                 }
+                if (mejor) this.sucesosSim.push({tipo: "impactar", efecto: nombre, objeto: mejor.b.objeto, t: td,
+                    en: {x: P.x + ux * mejor.proy, y: P.y + uy * mejor.proy}});
                 if (mejor && ef.impacto === "objeto") {
                     // "Desarma el objeto": todas las partes del objeto alcanzado se sueltan y
                     // salen hacia atras (en la direccion del disparo), mas fuerte cerca del
@@ -398,6 +404,10 @@ export class SimFisica {
             // suelo propio: la altura de los pies del objeto al soltarse
             const ext = Math.abs(b.hy * Math.cos(s.ang)) + Math.abs(b.hx * Math.sin(s.ang));
             if (s.y + ext >= s.suelo && !acc) {
+                if (!s.toco && s.vy > 90) {       // primera vez que la pieza golpea el suelo
+                    s.toco = true;
+                    this.sucesosSim.push({tipo: "tocar_suelo", objeto: b.objeto, pieza: b.nombre, t, en: {x: s.x, y: s.suelo}});
+                }
                 s.y = s.suelo - ext;
                 if (s.vy > 0) s.vy = s.vy > 90 ? -s.vy * b.rebote : 0;
                 s.vx *= 0.7 - (1 - b.friccion) * 0.3;
@@ -436,6 +446,26 @@ export class SimFisica {
         const k = Math.max(0, Math.min(Math.floor(Math.min(t, T_MAX_MS) / PASO_MS), T_MAX_MS / PASO_MS));
         while (this.k <= k) this._paso();
         return this.pasos[k];
+    }
+
+    // Sucesos hasta `hasta` ms, para los sonidos de reaccion (planeacion_sonido.md):
+    // {tipo: detonar|disparar (efecto, a su tiempo), impactar (efecto -> objeto),
+    //  soltarse (primera pieza de un objeto), tocar_suelo (cada pieza, la primera vez),
+    //  efecto?, objeto?, pieza?, t (ms), en: {x, y}}. Determinista: siempre los mismos.
+    sucesos(hasta) {
+        const f = this._firmaEscena();
+        if (f !== this.firma) { this.firma = f; this._reiniciar(); }
+        const r = [];
+        for (const {nombre, ef} of this.efs || []) {
+            if (ef.tipo !== "explosion" && ef.tipo !== "disparo") continue;
+            const td = num(ef.t, 0);
+            if (td <= hasta) r.push({tipo: ef.tipo === "explosion" ? "detonar" : "disparar", efecto: nombre, t: td, en: this._pos(nombre, td)});
+        }
+        if (this.cuerpos.length) {
+            this.estadosEn(hasta);
+            for (const s of this.sucesosSim) if (s.t <= hasta) r.push(s);
+        }
+        return r.sort((a, b) => a.t - b.t);
     }
 
     // En cada cuadro (despues de claves e instancias): coloca las piezas sueltas.
