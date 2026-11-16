@@ -1,5 +1,6 @@
 import { Cookies } from 'react-cookie';
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
+import {exportarProyecto, exportarTodos, importarProyectos} from "./apiRespaldo";
 import axios from "axios";
 import config from "../../config";
 import ModalProyecto from "./ModalProyecto";
@@ -115,6 +116,28 @@ function Proyectos(props){
         obtenerListaProyectos();
     },[])
 
+    // Respaldo: exportar a .zip / importar (apiRespaldo.js)
+    const [respaldo, setRespaldo] = useState(null);     // {ocupado, tipo: "info"|"success"|"danger", texto}
+    const refImportar = useRef(null);
+    const conRespaldo = async (inicio, accion) => {
+        setRespaldo({ocupado: true, tipo: "info", texto: inicio});
+        try { setRespaldo({ocupado: false, ...(await accion())}); }
+        catch (e) { setRespaldo({ocupado: false, tipo: "danger", texto: e.message}); }
+    };
+    const exportar = (p) => conRespaldo(`Exportando "${p.nombre}"…`, async () =>
+        ({tipo: "success", texto: `Descargado ${await exportarProyecto(p._id)}`}));
+    const exportarTodo = () => conRespaldo("Exportando todos los proyectos…", async () =>
+        ({tipo: "success", texto: `Descargado ${await exportarTodos()}`}));
+    const importar = (archivo) => conRespaldo(`Importando ${archivo.name}…`, async () => {
+        const r = await importarProyectos(archivo);
+        await obtenerListaProyectos();
+        const bien = r.filter((x) => !x.error), mal = r.filter((x) => x.error);
+        const linea = (x) => `"${x.nombre}"${x.renombrado ? " (el nombre ya existía)" : ""}: ${x.conteos.eventos} assets/escenas, ` +
+            `${x.conteos.animaciones} dibujos, ${x.conteos.sonidos} sonidos, ${x.archivos} archivos` + (x.avisos.length ? ` — ${x.avisos.join("; ")}` : "");
+        return {tipo: mal.length ? (bien.length ? "warning" : "danger") : "success",
+            texto: [`Importado(s) ${bien.length} proyecto(s)`, ...bien.map(linea), ...mal.map((x) => `${x.archivo}: ${x.error}`)].join("\n")};
+    });
+
     const navigate = useNavigate();
 
     return(
@@ -125,16 +148,36 @@ function Proyectos(props){
                     <div className="container-fluid">
 
                         <div className="row">
-                            <div className="col-sm-10">
+                            <div className="col-sm-6">
                                 <h2>Proyecto <b>Animación</b></h2>
                             </div>
-                            <div className="col-sm-2">
+                            <div className="col-sm-6 d-flex justify-content-end gap-2 flex-wrap">
                                 <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
                                         data-bs-target={"#modal-crear-proyecto"}>
                                     <i className="bi bi-plus-circle"></i> <span>Agregar</span>
                                 </button>
+                                <button type="button" className="btn btn-outline-secondary" disabled={respaldo && respaldo.ocupado}
+                                        title="Recuperar un proyecto (o varios) desde un .zip exportado"
+                                        onClick={() => refImportar.current && refImportar.current.click()}>
+                                    <i className="bi bi-upload"></i> <span>Importar</span>
+                                </button>
+                                <button type="button" className="btn btn-outline-secondary" disabled={(respaldo && respaldo.ocupado) || !proyectos.length}
+                                        title="Un .zip con todos tus proyectos: datos, imágenes y sonidos"
+                                        onClick={exportarTodo}>
+                                    <i className="bi bi-download"></i> <span>Exportar todos</span>
+                                </button>
+                                <input type="file" accept=".zip,application/zip" ref={refImportar} style={{display: "none"}}
+                                       data-prueba="importar-proyecto"
+                                       onChange={(e) => { const f = e.target.files[0]; e.target.value = ""; if (f) importar(f); }}/>
                             </div>
                         </div>
+                        {respaldo && (
+                            <div className={`alert alert-${respaldo.tipo} py-2 mt-2 mb-0 d-flex align-items-start`} style={{whiteSpace: "pre-line"}}>
+                                {respaldo.ocupado && <span className="spinner-border spinner-border-sm me-2 mt-1"></span>}
+                                <div className="flex-grow-1">{respaldo.texto}</div>
+                                {!respaldo.ocupado && <button type="button" className="btn-close" onClick={() => setRespaldo(null)}></button>}
+                            </div>
+                        )}
 
                     </div>
                 </div>
@@ -171,6 +214,10 @@ function Proyectos(props){
                                         <button type="button" className="btn btn-outline-primary"
                                         onClick={()=>navigate("list-animaciones/"+p._id)}>
                                             <i className="bi bi-eye"></i>
+                                        </button>
+                                        <button type="button" className="btn btn-outline-primary" title="Exportar a .zip (respaldo completo)"
+                                                disabled={respaldo && respaldo.ocupado} onClick={() => exportar(p)}>
+                                            <i className="bi bi-download"></i>
                                         </button>
                                         <button type="button" className="btn btn-outline-primary" onClick={()=>eliminarProyecto(p._id)}>
                                             <i className="bi bi-eraser"></i>

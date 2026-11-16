@@ -879,6 +879,24 @@ El proyecto del perro trae una escena de ejemplo, **"Calle (escena)"**. Ábrela 
 
 ---
 
+## 11c. Respaldo: exportar e importar proyectos
+
+En la página de **Proyectos**:
+- **⬇ en la fila de un proyecto:** descarga un `.zip` con **todo** el proyecto:
+  - dibujos, assets y escenas;
+  - versiones congeladas;
+  - sonidos con sus archivos de audio;
+  - imágenes.
+- **Exportar todos:** un solo `.zip` con un `.zip` por proyecto.
+- **Importar:** elige uno de esos `.zip` (de un proyecto o de varios):
+  - se crea un proyecto **nuevo**, con las referencias entre documentos corregidas;
+  - sirve para recuperar todo si se pierde la base, para pasar un proyecto a otra cuenta o para duplicarlo;
+  - si ya hay un proyecto con ese nombre, el nuevo se llama "… (importado)".
+
+Dentro del `.zip`, `LEEME.txt` explica cada parte. Los datos son JSON legibles. Las llaves de autoría no se exportan: hay que crearlas de nuevo.
+
+---
+
 ## 12. Limitaciones conocidas
 
 - **Velocidad de reproducción (⏩):** no implementada; muestra un aviso del navegador.
