@@ -6,13 +6,19 @@ import {useNavigate} from "react-router-dom";
 import ModalAddAnimacionEvento from "./ModalAddAnimacionEvento";
 import LlavesAutoria from "./LlavesAutoria";
 import SonidoProyecto from "../Sonido/SonidoProyecto";
+import ListaDocumentos from "./ListaDocumentos";
+import HistoriaEscenas from "./HistoriaEscenas";
 
 function Animacion(props) {
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario")
 
     const [animaciones, setAnimaciones] = useState([]);
-    const [eventos, setEventos] = useState([]);
+    // organizacion (documento/planeacion_organizacion.md): escenas y assets del proyecto
+    const [documentos, setDocumentos] = useState([]);
+    const [proyecto, setProyecto] = useState(null);
+    const [capitulos, setCapitulos] = useState([]);
+    const [ocupado, setOcupado] = useState(false);
     const [animacionSelect, setAnimacionSelect] = useState( null);
 
     const navigate = useNavigate();
@@ -49,35 +55,49 @@ function Animacion(props) {
         }
     }
 
-    const obtenerListaEventos = async () => {
+    const configApi = (method, url, data) => ({
+        method, url, data,
+        headers: {"Content-Type": "application/json", 'Accept': 'application/json', 'Authorization': 'Bearer ' + datos_usuario.token},
+        withCredentials: true,
+    });
+
+    // escenas y assets (con su tipo automatico o elegido a mano) y el nombre del proyecto
+    const obtenerDocumentos = async () => {
         try {
-            const url = "/api/eventos/proyecto-slim/" + props.id_proyecto;
+            const r = await axios(configApi("get", "/api/proyecto/" + props.id_proyecto + "/documentos"));
+            setDocumentos(r.data.documentos || []);
+            setProyecto(r.data.proyecto || null);
+            setCapitulos(r.data.capitulos || []);
+        } catch (e) {
+            console.log("error obtener documentos", e);
+            if (e.response) props.manejadorErrores(e.response.data);
+        }
+    }
 
-            const token = datos_usuario.token
-            const config = {
-                method: 'get',
-                url: url,
-                headers: {
-                    "Content-Type": "application/json",
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-                withCredentials: true
-            };
+    // capitulos (fase 2): llamada a la API que devuelve los datos; las filas que vuelven reemplazan a las de la lista
+    const peticion = async (method, url, data) => (await axios(configApi(method, url, data))).data;
+    const actualizarFilas = (filas) => setDocumentos((lista) => {
+        const nuevas = new Map(filas.map((f) => [f._id, f]));
+        return lista.map((d) => nuevas.get(d._id) || d);
+    });
+    const agregarFila = (fila) => setDocumentos((lista) => lista.concat([fila]));
 
-            let res = await axios(config)
-                .then(function (response) {
-                    console.log("funciono")
-                    console.log(response.data);
-                    setEventos(response.data)
-                })
-                .catch(function (response) {
-                    console.log("error obtener proyectos")
-                    console.log(response.response.data);
-                    props.manejadorErrores(response.response.data)
-                });
-        } catch (err) {
-            //console.log(err);
+    // {tipo?: "escena" | "asset" | null, principal?: bool}
+    const cambiarOrganizacion = async (doc, cambios) => {
+        setOcupado(true);
+        try {
+            const r = await axios(configApi("patch", "/api/eventos/" + doc._id + "/organizacion", cambios));
+            setDocumentos((lista) => lista.map((d) => {
+                if (d._id === r.data._id) return r.data;
+                // solo una escena principal por proyecto
+                if (cambios.principal === true && d.principal) return {...d, principal: false};
+                return d;
+            }));
+        } catch (e) {
+            console.log("error organizacion", e);
+            alert((e.response && e.response.data && e.response.data.error) || "No se pudo guardar el cambio");
+        } finally {
+            setOcupado(false);
         }
     }
 
@@ -110,7 +130,7 @@ function Animacion(props) {
 
     useEffect(()=>{
         obtenerListaAnimaciones();
-        obtenerListaEventos();
+        obtenerDocumentos();
     }, [])
 
     const editarDatosBasicos=(id_animacion)=>{
@@ -145,16 +165,22 @@ function Animacion(props) {
 
     return (
         <div>
-            <h2>Proyecto <b>{props.nombre_proyecto}</b></h2>
+            <h2>Proyecto <b>{proyecto ? proyecto.nombre : ""}</b></h2>
             <br/>
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button className="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
-                            data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
-                            aria-selected="true">Objetos
+                    <button className="nav-link active" id="nav-escenas-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-escenas" type="button" role="tab" aria-controls="nav-escenas"
+                            aria-selected="true">
+                        <i className="bi bi-film me-1"/>Escenas <span className="badge bg-secondary">{documentos.filter((d) => d.tipo === "escena").length}</span>
                     </button>
-                    <button className="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
-                            type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Eventos
+                    <button className="nav-link" id="nav-assets-tab" data-bs-toggle="tab" data-bs-target="#nav-assets"
+                            type="button" role="tab" aria-controls="nav-assets" aria-selected="false">
+                        <i className="bi bi-box-seam me-1"/>Assets <span className="badge bg-secondary">{documentos.filter((d) => d.tipo === "asset" && !(d.nombre === "evento_default" && !d.manual)).length}</span>
+                    </button>
+                    <button className="nav-link" id="nav-home-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
+                            aria-selected="false"><i className="bi bi-brush me-1"/>Dibujos
                     </button>
                     <button className="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
                             type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Movimientos
@@ -171,7 +197,15 @@ function Animacion(props) {
             </nav>
             <div className="tab-content" id="nav-tabContent">
                 <hr/>
-                <div className="tab-pane fade show active" id="nav-home" role="tabpanel"
+                <div className="tab-pane fade show active" id="nav-escenas" role="tabpanel" aria-labelledby="nav-escenas-tab">
+                    <HistoriaEscenas id_proyecto={props.id_proyecto} capitulos={capitulos} setCapitulos={setCapitulos}
+                                     documentos={documentos} actualizarFilas={actualizarFilas} agregarFila={agregarFila}
+                                     abrir={irEdicionEdicion} cambiar={cambiarOrganizacion} peticion={peticion}/>
+                </div>
+                <div className="tab-pane fade" id="nav-assets" role="tabpanel" aria-labelledby="nav-assets-tab">
+                    <ListaDocumentos tipo="asset" documentos={documentos} abrir={irEdicionEdicion} cambiar={cambiarOrganizacion} ocupado={ocupado}/>
+                </div>
+                <div className="tab-pane fade" id="nav-home" role="tabpanel"
                      aria-labelledby="nav-home-tab">
 
                     <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
@@ -250,64 +284,6 @@ function Animacion(props) {
                             </table>
                         </div>
                     </div>
-                </div>
-                <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-
-                    <br/>
-                    <div className="table-responsive">
-                        <div className="table-wrapper">
-                            <div className="table-title">
-
-                                <div className="container-fluid">
-                                </div>
-                            </div>
-                            <table className="table">
-                                <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">Fecha Creación</th>
-                                    <th scope="col">Fecha Actualización</th>
-                                    <th scope="col">Opciones</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {eventos.map((evento, index) => {
-                                    const fecha_creacion = new Date(evento.fecha_creacion).toLocaleString();
-                                    const fecha_actualizacion = new Date(evento.fecha_actualizacion).toLocaleString();
-
-                                    return (
-                                        <tr>
-                                            <th scope="row">{index + 1}</th>
-                                            <td>{evento.nombre}</td>
-                                            <td>{fecha_creacion}</td>
-                                            <td>{fecha_actualizacion}</td>
-                                            <td>
-                                                <div className="btn-group btn-group-sm" role="group"
-                                                     aria-label="Basic outlined example">
-                                                    <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal"
-                                                            data-bs-target={"#modal-actualizar-proyecto"}
-                                                            onClick={(e) => console.log("editar")}>
-                                                        <i className="bi bi-pencil"></i></button>
-                                                    <button type="button" className="btn btn-outline-primary" onClick={()=>irEdicionEdicion(evento._id)}>
-                                                        <i className="bi bi-eye"></i>
-                                                    </button>
-                                                    <button type="button" className="btn btn-outline-primary"
-                                                            onClick={() => console.log("eliminar")}>
-                                                        <i className="bi bi-eraser"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-
-                                        </tr>
-
-                                    )
-                                })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
                 </div>
                 <div className="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...
                 </div>
