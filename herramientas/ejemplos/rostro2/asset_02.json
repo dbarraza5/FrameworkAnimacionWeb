@@ -1,0 +1,416 @@
+{
+ "tipo": "asset",
+ "nombre": "Torso de Lía 2",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "cuello",
+   "poligono": [
+    [
+     -58,
+     -230
+    ],
+    [
+     58,
+     -230
+    ],
+    [
+     64,
+     -90
+    ],
+    [
+     -64,
+     -90
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     -60,
+     0
+    ],
+    "a": [
+     60,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#b88464"
+     ],
+     [
+      0.45,
+      "#e7b896"
+     ],
+     [
+      1,
+      "#cf9874"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "sombra_menton",
+   "en": [
+    0,
+    -200
+   ],
+   "circulo": {
+    "r": 70,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 70,
+    "colores": [
+     [
+      0,
+      "rgba(122,74,52,1)"
+     ],
+     [
+      0.5,
+      "rgba(122,74,52,0.5)"
+     ],
+     [
+      1,
+      "rgba(122,74,52,0)"
+     ]
+    ]
+   },
+   "mezcla": "multiplicar",
+   "opacidad": 0.6,
+   "escala": [
+    1,
+    0.55
+   ]
+  },
+  {
+   "nombre": "hombros",
+   "poligono": [
+    [
+     -360,
+     20
+    ],
+    [
+     -330,
+     -60
+    ],
+    [
+     -210,
+     -108
+    ],
+    [
+     -70,
+     -128
+    ],
+    [
+     70,
+     -128
+    ],
+    [
+     210,
+     -108
+    ],
+    [
+     330,
+     -60
+    ],
+    [
+     360,
+     20
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     -300,
+     -120
+    ],
+    "a": [
+     300,
+     20
+    ],
+    "colores": [
+     [
+      0,
+      "#3f7a7e"
+     ],
+     [
+      0.5,
+      "#2f5d62"
+     ],
+     [
+      1,
+      "#1a3a3e"
+     ]
+    ]
+   },
+   "borde": "#1a3a3e"
+  },
+  {
+   "nombre": "pliegue_1",
+   "poligono": [
+    [
+     -210,
+     -60
+    ],
+    [
+     -150,
+     -96
+    ],
+    [
+     -140,
+     -90
+    ],
+    [
+     -200,
+     -52
+    ]
+   ],
+   "color": "#1a3a3e",
+   "desenfoque": 4,
+   "opacidad": 0.25
+  },
+  {
+   "nombre": "pliegue_2",
+   "poligono": [
+    [
+     200,
+     -40
+    ],
+    [
+     140,
+     -90
+    ],
+    [
+     130,
+     -84
+    ],
+    [
+     190,
+     -32
+    ]
+   ],
+   "color": "#1a3a3e",
+   "desenfoque": 4,
+   "opacidad": 0.25
+  },
+  {
+   "nombre": "escote",
+   "poligono": [
+    [
+     -66,
+     -128
+    ],
+    [
+     66,
+     -128
+    ],
+    [
+     0,
+     -40
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -128
+    ],
+    "a": [
+     0,
+     -40
+    ],
+    "colores": [
+     [
+      0,
+      "#b88464"
+     ],
+     [
+      1,
+      "#cf9874"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "cuello_sueter",
+   "poligono": [
+    [
+     -74,
+     -130
+    ],
+    [
+     -60,
+     -132
+    ],
+    [
+     0,
+     -50
+    ],
+    [
+     60,
+     -132
+    ],
+    [
+     74,
+     -130
+    ],
+    [
+     0,
+     -34
+    ]
+   ],
+   "color": "#1a3a3e"
+  },
+  {
+   "nombre": "clavicula_izq",
+   "poligono": [
+    [
+     -58,
+     -113
+    ],
+    [
+     -24,
+     -111
+    ],
+    [
+     -24,
+     -108
+    ],
+    [
+     -58,
+     -109
+    ]
+   ],
+   "color": "#b88464",
+   "desenfoque": 1.5,
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "clavicula_der",
+   "poligono": [
+    [
+     24,
+     -111
+    ],
+    [
+     58,
+     -113
+    ],
+    [
+     58,
+     -109
+    ],
+    [
+     24,
+     -108
+    ]
+   ],
+   "color": "#b88464",
+   "desenfoque": 1.5,
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "cadena",
+   "poligono": [
+    [
+     -42,
+     -124
+    ],
+    [
+     0,
+     -80
+    ],
+    [
+     42,
+     -124
+    ],
+    [
+     42,
+     -121
+    ],
+    [
+     0,
+     -77
+    ],
+    [
+     -42,
+     -121
+    ]
+   ],
+   "color": "#e0bb62",
+   "opacidad": 0.85
+  },
+  {
+   "nombre": "dije",
+   "en": [
+    0,
+    -76
+   ],
+   "circulo": {
+    "r": 5,
+    "lados": 12
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     -2,
+     -2
+    ],
+    "radio": 6,
+    "colores": [
+     [
+      0,
+      "#fff3c4"
+     ],
+     [
+      1,
+      "#e0bb62"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "dije_brillo",
+   "en": [
+    -1,
+    -78
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 7,
+    "colores": [
+     [
+      0,
+      "rgba(255,240,176,1)"
+     ],
+     [
+      0.5,
+      "rgba(255,240,176,0.5)"
+     ],
+     [
+      1,
+      "rgba(255,240,176,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "opacidad": 0.8
+  }
+ ]
+}

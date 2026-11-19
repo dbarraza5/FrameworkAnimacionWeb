@@ -1,5 +1,5 @@
-import {getCoorPunto, getCoorRecta} from "./GestionAnimacion";
-import {aplicarEnCanvas, cadenaTransformaciones, mapaGrupos} from "./TransformacionInstancia";
+import {getCoorPunto, getCoorRecta, numPos} from "./GestionAnimacion";
+import {aplicarEnCanvas, cadenaTransformaciones, mapaGrupos, transformarPunto} from "./TransformacionInstancia";
 
 // Un grupo se dibuja solo si el y todos sus ancestros estan visibles.
 function visibleEfectivo(grupo, mapa) {
@@ -23,6 +23,88 @@ function opacidadEfectiva(grupo, mapa) {
         g = g.nodo_padre && g.nodo_padre !== "root" ? mapa.get(g.nodo_padre) : null;
     }
     return Number.isFinite(a) ? a : 1;
+}
+
+// Estilo de dibujo heredado: el valor del grupo o del ancestro mas cercano que lo tenga.
+// Lo usan "mezcla" (modo de fusion) y "desenfoque" (px). Sin el campo, no cambia nada.
+function heredado(grupo, mapa, campo) {
+    const vistos = new Set();
+    let g = grupo;
+    while (g && !vistos.has(g.nombre)) {
+        if (g[campo] !== undefined && g[campo] !== null) return g[campo];
+        vistos.add(g.nombre);
+        g = g.nodo_padre && g.nodo_padre !== "root" ? mapa.get(g.nodo_padre) : null;
+    }
+    return null;
+}
+
+// ---------------- Fase 4 de planeacion_capacidades.md: sombras proyectadas ----------------
+// Un objeto con `sombra: [{luz?, angulo?, piso, largo?, aplastar?, opacidad?, desenfoque?, color?}]`
+// proyecta su silueta (todas sus partes) sobre el piso y = piso:
+//   - luz: [x, y] (punto fijo) o "<nombre de un grupo>" (su origen, cada cuadro: luces que se
+//     mueven); sin luz, `angulo` (grados desde la vertical; 0 = luz justo arriba).
+//   - alcance (con luz): a esa distancia horizontal de la luz la sombra ya no se ve.
+//   - aplastar: alto de la sombra respecto del objeto (0.3); negativo = la sombra cae hacia
+//     adelante (luz detras del objeto). largo multiplica la inclinacion.
+//   - si el objeto se despega del piso (salta), la sombra se aclara y se desenfoca.
+// La silueta se arma en un lienzo aparte (asi las partes superpuestas no oscurecen el doble)
+// y se pega con su opacidad. Se dibuja justo antes del primer objeto de su plano.
+const numS = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
+
+function lienzoAparte(ctx) {
+    const c = ctx && ctx.canvas;
+    if (!c || !c.width || !c.height) return null;
+    try {
+        if (typeof document !== "undefined" && document.createElement) {
+            const o = document.createElement("canvas");
+            o.width = c.width; o.height = c.height;
+            return o;
+        }
+        return new c.constructor(c.width, c.height);
+    } catch (e) {
+        return null;
+    }
+}
+
+function esDescendiente(g, raiz, mapa) {
+    const vistos = new Set();
+    for (let x = g; x && !vistos.has(x.nombre); x = x.nodo_padre && x.nodo_padre !== "root" ? mapa.get(x.nodo_padre) : null) {
+        if (x.nombre === raiz) return true;
+        vistos.add(x.nombre);
+    }
+    return false;
+}
+
+function origenVisto(g, mapa, ax = 0, ay = 0) {
+    return transformarPunto(cadenaTransformaciones(g, mapa), {x: numS(g.cx_solid, numS(g.cx, 0)) + ax, y: numS(g.cy_solid, numS(g.cy, 0)) + ay});
+}
+
+// Modos de mezcla (nombres del formato simple -> canvas).
+export const MODOS_MEZCLA = {
+    normal: "source-over", suma: "lighter", pantalla: "screen", multiplicar: "multiply",
+    superponer: "overlay", aclarar: "lighten", oscurecer: "darken",
+};
+
+// Relleno de un pintado: color plano, o degradado (lineal / radial) en coordenadas del
+// grupo. degradado: {tipo: "lineal", de: [x,y], a: [x,y], colores: [[pos, color]...]}
+//              o    {tipo: "radial", centro: [x,y], radio, radio_ini?, colores}
+function rellenoDe(ctx, pintura, ox, oy) {
+    const d = pintura.degradado;
+    if (!d || !Array.isArray(d.colores) || d.colores.length < 2) return pintura.color;
+    let gr;
+    try {
+        if (d.tipo === "radial") {
+            const c = d.centro || [0, 0];
+            gr = ctx.createRadialGradient(ox + c[0], oy + c[1], Math.max(0, Number(d.radio_ini) || 0), ox + c[0], oy + c[1], Math.max(1, Number(d.radio) || 1));
+        } else {
+            const a = d.de || [0, 0], b = d.a || [0, 1];
+            gr = ctx.createLinearGradient(ox + a[0], oy + a[1], ox + b[0], oy + b[1]);
+        }
+        for (const [p, col] of d.colores) gr.addColorStop(Math.max(0, Math.min(1, Number(p) || 0)), col);
+    } catch (e) {
+        return pintura.color;
+    }
+    return gr;
 }
 
 
@@ -77,8 +159,29 @@ class ImprimirAnimacion{
         const ox = !this.seccion_pintar ? this.configuracion_lienzo.x_delta_original : 0;
         const oy = !this.seccion_pintar ? this.configuracion_lienzo.y_delta_original : 0;
 
+        // fase 4 de capacidades: objetos que proyectan sombra (se dibujan antes que su plano)
+        // Cada sombra va justo despues del ultimo objeto de un plano mas atras (el piso, el fondo),
+        // y nunca despues del propio objeto.
+        const plano = (g) => parseInt(g.plano, 10) || 0;
+        const raiz = (g) => !g.nodo_padre || g.nodo_padre === "root";
+        const turno_sombras = new Map();                    // indice -> objetos cuya sombra va antes de el
+        if(pintado){
+            lista_grupo_root.forEach((c, i_c) => {
+                if(!raiz(c) || !Array.isArray(c.sombra) || !c.sombra.length) return;
+                let ultimo_atras = -1;
+                lista_grupo_root.forEach((g, i) => { if(raiz(g) && plano(g) < plano(c)) ultimo_atras = i; });
+                let pos = Math.min(i_c, ultimo_atras + 1);
+                while(pos < i_c && !raiz(lista_grupo_root[pos])) pos++;          // no en medio de las partes de otro
+                if(!turno_sombras.has(pos)) turno_sombras.set(pos, []);
+                turno_sombras.get(pos).push(c);
+            });
+        }
+
         for (let i = 0; i < lista_grupo_root.length; i++) {
             const grupo = lista_grupo_root[i]
+            if(turno_sombras.has(i)){
+                for(const c of turno_sombras.get(i)) this.dibujarSombras(c, lista_grupo_root, mapa, ox, oy);
+            }
             // visibilidad heredada: un grupo oculto oculta tambien a sus descendientes
             if(!visibleEfectivo(grupo, mapa)){
                 continue;
@@ -95,12 +198,17 @@ class ImprimirAnimacion{
             if(alfa <= 0.001){
                 continue;
             }
-            const con_estado = cadena.length > 0 || alfa < 1;
+            const mezcla = heredado(grupo, mapa, "mezcla");
+            const modo = mezcla && mezcla !== "normal" && MODOS_MEZCLA[mezcla] ? MODOS_MEZCLA[mezcla] : null;
+            const desenfoque = Math.max(0, Number(heredado(grupo, mapa, "desenfoque")) || 0);
+            const con_estado = cadena.length > 0 || alfa < 1 || !!modo || desenfoque > 0;
             if(con_estado){
                 this.ctx.save();
                 if(cadena.length) aplicarEnCanvas(this.ctx, cadena, ox, oy);
                 if(alfa < 1) this.ctx.globalAlpha = alfa;
+                if(modo) this.ctx.globalCompositeOperation = modo;
             }
+            this._desenfoque = desenfoque;
 
             if(pintado){
                 for(let j = 0; j<grupo.lista_pintado.length; j++){
@@ -109,7 +217,9 @@ class ImprimirAnimacion{
                 }
             }
 
-            for (let j = 0; j < grupo.lista_figuras.length; j++) {
+            // desenfocado: sin las lineas nitidas del contorno
+            const n_figuras = desenfoque > 0 && pintado ? 0 : grupo.lista_figuras.length;
+            for (let j = 0; j < n_figuras; j++) {
                 const figura = grupo.lista_figuras[j];
                 let seleccion = null;
                 let color_figura = grupo.color;
@@ -133,6 +243,7 @@ class ImprimirAnimacion{
 
             }
 
+            this._desenfoque = 0;
             if(con_estado){
                 this.ctx.restore();
             }
@@ -178,10 +289,10 @@ class ImprimirAnimacion{
         const x_delta_original_ = !this.seccion_pintar? this.configuracion_lienzo.x_delta_original : 0;
         const y_delta_original_ = !this.seccion_pintar? this.configuracion_lienzo.y_delta_original : 0;
 
-        const x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid) + x_delta_original_;
-        const y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid) + y_delta_original_;
-        const rx = parseInt(figura.atributos.radiox);
-        const ry = parseInt(figura.atributos.radioy);
+        const x = numPos(figura.atributos.cx, grupo) + numPos(grupo.cx_solid, grupo) + x_delta_original_;
+        const y = numPos(figura.atributos.cy, grupo) + numPos(grupo.cy_solid, grupo) + y_delta_original_;
+        const rx = numPos(figura.atributos.radiox, grupo);
+        const ry = numPos(figura.atributos.radioy, grupo);
         dibujar_circulo(this.ctx, color_, x, y, rx, ry);
 
         if (seleccion) {
@@ -212,8 +323,101 @@ class ImprimirAnimacion{
         }
     }
 
+    // Sombras proyectadas de un objeto (ver arriba "Fase 4"). `lista`: todos los grupos en
+    // orden de dibujo; `mapa`: nombre -> grupo.
+    dibujarSombras(objeto, lista, mapa, ox, oy){
+        const ctx = this.ctx;
+        if(!ctx || typeof ctx.getTransform !== "function" || !visibleEfectivo(objeto, mapa)) return;
+        const alfa_objeto = opacidadEfectiva(objeto, mapa);
+        if(alfa_objeto <= 0.001) return;
+        const partes = lista.filter((g) => esDescendiente(g, objeto.nombre, mapa) && visibleEfectivo(g, mapa) && (g.lista_pintado || []).length);
+        if(!partes.length) return;
+        const base = ctx.getTransform();
+        if(!base || !Number.isFinite(base.a)) return;          // (contextos de prueba, como el del reporte)
+        const esc_vista = Math.sqrt(Math.abs(base.a * base.d - base.b * base.c)) || 1;
+        const t = objeto.transformacion || {};
+        const pie = origenVisto(objeto, mapa, numS(t.ancla_x, 0), numS(t.ancla_y, 0));
+        for(const s of objeto.sombra){
+            if(!s) continue;
+            const P = numS(s.piso, pie.y);
+            // inclinacion: desde la luz (punto o grupo) o con un angulo fijo
+            let k, lejania = 1;
+            if(typeof s.luz === "string" || Array.isArray(s.luz)){
+                let L = null;
+                if(Array.isArray(s.luz)) L = {x: numS(s.luz[0], 0), y: numS(s.luz[1], 0)};
+                else { const gl = mapa.get(s.luz); if(gl) L = origenVisto(gl, mapa); }
+                if(!L || P - L.y < 1) continue;                  // luz perdida o por debajo del piso
+                k = (pie.x - L.x) / (P - L.y);
+                // alcance: lejos de la luz la sombra se desvanece (farolas)
+                const alcance = numS(s.alcance, 0);
+                if(alcance > 0) lejania = Math.max(0, 1 - Math.abs(pie.x - L.x) / alcance);
+            } else {
+                k = Math.tan(numS(s.angulo, 0) * Math.PI / 180);
+            }
+            k *= numS(s.largo, 1);
+            const aplastar = numS(s.aplastar, 0.3);
+            const altura = Math.max(0, P - pie.y);              // se despego del piso (salto)
+            const opacidad = Math.max(0, Math.min(1, numS(s.opacidad, 0.35))) * alfa_objeto * Math.max(0.15, 1 - altura / 300) * lejania;
+            const blur = Math.max(0, numS(s.desenfoque, 4)) + altura * 0.06;
+            if(opacidad <= 0.002) continue;
+            const o = lienzoAparte(ctx);
+            if(!o) return;
+            const octx = o.getContext("2d");
+            octx.setTransform(base.a, base.b, base.c, base.d, base.e, base.f);
+            const Pp = P + oy;
+            // x' = x + k (P - y) ;  y' = P - (P - y) aplastar
+            octx.transform(1, 0, -k, aplastar, k * Pp, Pp * (1 - aplastar));
+            const ctx_antes = this.ctx, silueta_antes = this._silueta;
+            this.ctx = octx;
+            this._silueta = s.color || "#000000";
+            try {
+                for(const g of partes){
+                    const cad = cadenaTransformaciones(g, mapa);
+                    octx.save();
+                    if(cad.length) aplicarEnCanvas(octx, cad, ox, oy);
+                    for(const pintura of g.lista_pintado) if(pintura.visible !== false) this.pintarGrupoAnimacion(g, pintura, true);
+                    octx.restore();
+                }
+            } finally {
+                this.ctx = ctx_antes;
+                this._silueta = silueta_antes;
+            }
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.globalAlpha = opacidad;
+            if(blur > 0.2){
+                const LEJOS = 20000;
+                ctx.shadowColor = s.color || "#000000";
+                ctx.shadowBlur = 2 * blur * esc_vista;
+                ctx.shadowOffsetX = LEJOS;
+                ctx.drawImage(o, -LEJOS, 0);
+            } else {
+                ctx.drawImage(o, 0, 0);
+            }
+            ctx.restore();
+        }
+    }
+
     pintarGrupoAnimacion(grupo_, pintura, relleno=false){
         const grupo_elementos = pintura.elementos
+        // desenfoque (px del dibujo): la forma se dibuja muy lejos y queda solo su sombra
+        // borrosa en el lugar (funciona igual en el navegador y en node-canvas)
+        // (contextos de prueba, como el del reporte, pueden no tener getTransform)
+        const m = relleno && !this._silueta && this._desenfoque > 0 && typeof this.ctx.getTransform === "function" ? this.ctx.getTransform() : null;
+        const blur = m && Number.isFinite(m.a) ? this._desenfoque : 0;
+        if(blur){
+            const LEJOS = 20000;
+            const esc = Math.sqrt(Math.abs(m.a * m.d - m.b * m.c)) || 1;
+            this.ctx.save();
+            this.ctx.setTransform(m.a, m.b, m.c, m.d, m.e - LEJOS, m.f);
+            this.ctx.shadowColor = pintura.color;
+            this.ctx.shadowBlur = 2 * blur * esc;
+            this.ctx.shadowOffsetX = LEJOS;
+            this.ctx.shadowOffsetY = 0;
+        }
+        const avanzado = relleno && this._silueta ? this._silueta : relleno && pintura.degradado && !blur
+            ? rellenoDe(this.ctx, pintura, (numPos(grupo_.cx_solid, grupo_) || 0) + this.configuracion_lienzo.x_delta_original, (numPos(grupo_.cy_solid, grupo_) || 0) + this.configuracion_lienzo.y_delta_original)
+            : null;
 
         for (let i_elementos=0; i_elementos<grupo_elementos.length; i_elementos++){
             const elementos = grupo_elementos[i_elementos];
@@ -221,8 +425,8 @@ class ImprimirAnimacion{
             //console.log(lista_puntos)
             this.ctx.beginPath();
             if(relleno){
-                this.ctx.strokeStyle = pintura.color;//'black';
-                this.ctx.fillStyle = pintura.color; // Color de relleno (rojo semitransparente en este caso)
+                this.ctx.strokeStyle = avanzado || pintura.color;//'black';
+                this.ctx.fillStyle = avanzado || pintura.color; // Color de relleno (rojo semitransparente en este caso)
                 this.ctx.lineWidth = 0; // Grosor de la línea de contorno
             }
 
@@ -262,6 +466,7 @@ class ImprimirAnimacion{
                 this.ctx.closePath();
             }
         }
+        if(blur) this.ctx.restore();
     }
 
     pintarDimensionGrupo(grupo_, pintura, relleno=false){
@@ -425,8 +630,8 @@ function obtenerPuntosGrupo(grupo){
         const figura = grupo.lista_figuras[j];
 
         if (figura.tipo_figura === "PUNTO") {
-            x = parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid);
-            y = parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid);
+            x = numPos(figura.atributos.cx, grupo) + numPos(grupo.cx_solid, grupo);
+            y = numPos(figura.atributos.cy, grupo) + numPos(grupo.cy_solid, grupo);
         }
 
         /*if (figura.tipo_figura === "PUNTO") {

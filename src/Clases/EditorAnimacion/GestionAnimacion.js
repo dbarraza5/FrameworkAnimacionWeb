@@ -376,14 +376,15 @@ class GestionAnimacion{
 
         for(let i=0; i<lista_grupos.length; i++){
             const grupo_ = lista_grupos[i];
+            // (precision decimal: ver numPos)
             if(nombre_grupo === "root"){
-                grupo_.cx_solid = parseInt(grupo_.cx);
-                grupo_.cy_solid = parseInt(grupo_.cy);
+                grupo_.cx_solid = numPos(grupo_.cx, grupo_);
+                grupo_.cy_solid = numPos(grupo_.cy, grupo_);
             }else{
-                grupo_.cx_solid = parseInt(grupo_.cx) +
-                    parseInt(grupo_padre.cx_solid);
-                grupo_.cy_solid = parseInt(grupo_.cy) +
-                    parseInt(grupo_padre.cy_solid);
+                grupo_.cx_solid = numPos(grupo_.cx, grupo_) +
+                    numPos(grupo_padre.cx_solid, grupo_);
+                grupo_.cy_solid = numPos(grupo_.cy, grupo_) +
+                    numPos(grupo_padre.cy_solid, grupo_);
             }
             this.procesarPosicionFinalFiguras(grupo_.nombre)
         }
@@ -564,19 +565,27 @@ function normalizar_recta(recta1){
     return recta
 }
 
+// Coordenadas de dibujo. Por defecto se redondean a enteros (como siempre). Un grupo marcado
+// `_decimal` (escena con precision "decimal", ver GestionEvento._aplicarPrecision) las usa
+// con decimales: las figuras chicas no se escalonan con zoom o escala.
+export function numPos(v, grupo){
+    return grupo && grupo._decimal ? parseFloat(v) : parseInt(v);
+}
+
 function getCoorRecta(figura, grupo){
+    const n = (v) => numPos(v, grupo);
     return {
-        x1 : parseInt(figura.atributos.x1) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
-        y1 : parseInt(figura.atributos.y1) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid),
-        x2 : parseInt(figura.atributos.x2) + parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
-        y2 : parseInt(figura.atributos.y2) + parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid)
+        x1 : n(figura.atributos.x1) + n(figura.atributos.cx) + n(grupo.cx_solid),
+        y1 : n(figura.atributos.y1) + n(figura.atributos.cy) + n(grupo.cy_solid),
+        x2 : n(figura.atributos.x2) + n(figura.atributos.cx) + n(grupo.cx_solid),
+        y2 : n(figura.atributos.y2) + n(figura.atributos.cy) + n(grupo.cy_solid)
     }
 }
 
 function getCoorPunto(figura, grupo){
     return {
-        x: parseInt(figura.atributos.cx) + parseInt(grupo.cx_solid),
-        y: parseInt(figura.atributos.cy) + parseInt(grupo.cy_solid)
+        x: numPos(figura.atributos.cx, grupo) + numPos(grupo.cx_solid, grupo),
+        y: numPos(figura.atributos.cy, grupo) + numPos(grupo.cy_solid, grupo)
     }
 }
 

@@ -1,0 +1,1128 @@
+{
+ "tipo": "asset",
+ "nombre": "Skater con perrito",
+ "duracion": 9000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "tabla",
+   "partes": [
+    {
+     "nombre": "lija",
+     "poligono": [
+      [
+       -46,
+       -16
+      ],
+      [
+       46,
+       -16
+      ],
+      [
+       54,
+       -20
+      ],
+      [
+       56,
+       -16
+      ],
+      [
+       50,
+       -11
+      ],
+      [
+       -50,
+       -11
+      ],
+      [
+       -56,
+       -16
+      ],
+      [
+       -54,
+       -20
+      ]
+     ],
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -20
+      ],
+      "a": [
+       0,
+       -11
+      ],
+      "colores": [
+       [
+        0,
+        "#e04a3a"
+       ],
+       [
+        1,
+        "#8a1e14"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "eje",
+     "rect": [
+      -34,
+      -11,
+      34,
+      -8
+     ],
+     "color": "#888"
+    },
+    {
+     "nombre": "rueda_1",
+     "en": [
+      -30,
+      -5
+     ],
+     "circulo": {
+      "r": 5.5,
+      "lados": 10
+     },
+     "color": "#f0e6d0",
+     "borde": "#a89a80",
+     "giro": {
+      "desde": 0,
+      "hasta": 360,
+      "ms": 500
+     }
+    },
+    {
+     "nombre": "rueda_2",
+     "en": [
+      30,
+      -5
+     ],
+     "circulo": {
+      "r": 5.5,
+      "lados": 10
+     },
+     "color": "#f0e6d0",
+     "borde": "#a89a80",
+     "giro": {
+      "desde": 0,
+      "hasta": 360,
+      "ms": 500
+     }
+    }
+   ]
+  },
+  {
+   "nombre": "perro",
+   "en": [
+    34,
+    -18
+   ],
+   "partes": [
+    {
+     "nombre": "cola_perro_1",
+     "poligono": [
+      [
+       -10.4,
+       -15.2
+      ],
+      [
+       -18.6,
+       -25.1
+      ],
+      [
+       -21.4,
+       -22.9
+      ],
+      [
+       -13.6,
+       -12.8
+      ]
+     ],
+     "color": "#a86e3a",
+     "pivote": [
+      -12,
+      -14
+     ],
+     "inercia": {
+      "rigidez": 3,
+      "amortiguacion": 0.15
+     },
+     "partes": [
+      {
+       "nombre": "cola_perro_2",
+       "poligono": [
+        [
+         -18.4,
+         -24.6
+        ],
+        [
+         -23.1,
+         -34.4
+        ],
+        [
+         -24.9,
+         -33.6
+        ],
+        [
+         -21.6,
+         -23.4
+        ]
+       ],
+       "color": "#a86e3a",
+       "pivote": [
+        -20,
+        -24
+       ],
+       "inercia": {
+        "rigidez": 3.5,
+        "amortiguacion": 0.15
+       },
+       "partes": []
+      }
+     ]
+    },
+    {
+     "nombre": "patas",
+     "poligono": [
+      [
+       -10,
+       -8
+      ],
+      [
+       -7,
+       -8
+      ],
+      [
+       -7,
+       0
+      ],
+      [
+       -10,
+       0
+      ],
+      [
+       -10,
+       -8
+      ]
+     ],
+     "color": "#a86e3a"
+    },
+    {
+     "nombre": "patas_2",
+     "poligono": [
+      [
+       6,
+       -8
+      ],
+      [
+       9,
+       -8
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       6,
+       0
+      ]
+     ],
+     "color": "#a86e3a"
+    },
+    {
+     "nombre": "lomo",
+     "en": [
+      0,
+      -12
+     ],
+     "elipse": [
+      14,
+      7
+     ],
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       -3,
+       -3
+      ],
+      "radio": 15,
+      "colores": [
+       [
+        0,
+        "#ecc08a"
+       ],
+       [
+        1,
+        "#a86e3a"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "cabeza_perro",
+     "en": [
+      13,
+      -21
+     ],
+     "circulo": {
+      "r": 7,
+      "lados": 14
+     },
+     "color": "#d9a066"
+    },
+    {
+     "nombre": "hocico",
+     "en": [
+      19,
+      -19
+     ],
+     "elipse": [
+      4,
+      3
+     ],
+     "color": "#ecc08a"
+    },
+    {
+     "nombre": "nariz_perro",
+     "en": [
+      22.5,
+      -20
+     ],
+     "circulo": {
+      "r": 1.5,
+      "lados": 6
+     },
+     "color": "#2a1a10"
+    },
+    {
+     "nombre": "ojo_perro",
+     "en": [
+      15,
+      -23
+     ],
+     "circulo": {
+      "r": 1.2,
+      "lados": 6
+     },
+     "color": "#2a1a10"
+    },
+    {
+     "nombre": "oreja_atras",
+     "poligono": [
+      [
+       7.1,
+       -26.7
+      ],
+      [
+       2.7,
+       -16.9
+      ],
+      [
+       7.3,
+       -15.1
+      ],
+      [
+       10.9,
+       -25.3
+      ]
+     ],
+     "color": "#a86e3a",
+     "pivote": [
+      9,
+      -26
+     ],
+     "inercia": {
+      "rigidez": 2.4,
+      "amortiguacion": 0.15
+     },
+     "partes": []
+    },
+    {
+     "nombre": "oreja",
+     "poligono": [
+      [
+       10.1,
+       -27.6
+      ],
+      [
+       6.4,
+       -17.8
+      ],
+      [
+       11.6,
+       -16.2
+      ],
+      [
+       13.9,
+       -26.4
+      ]
+     ],
+     "color": "#8a5428",
+     "pivote": [
+      12,
+      -27
+     ],
+     "inercia": {
+      "rigidez": 2.2,
+      "amortiguacion": 0.15
+     },
+     "partes": []
+    }
+   ]
+  },
+  {
+   "nombre": "cuerpo",
+   "pivote": [
+    0,
+    -20
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      0
+     ],
+     [
+      400,
+      6,
+      "suave"
+     ],
+     [
+      2200,
+      2,
+      "suave"
+     ],
+     [
+      3950,
+      8,
+      "suave"
+     ],
+     [
+      4500,
+      -2,
+      "suave"
+     ],
+     [
+      6250,
+      2,
+      "suave"
+     ],
+     [
+      6500,
+      -14,
+      "salir"
+     ],
+     [
+      7500,
+      0,
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      0
+     ],
+     [
+      3950,
+      0
+     ],
+     [
+      4150,
+      10,
+      "suave"
+     ],
+     [
+      4400,
+      0,
+      "suave"
+     ],
+     [
+      4620,
+      8,
+      "salir"
+     ],
+     [
+      4900,
+      0,
+      "suave"
+     ]
+    ]
+   },
+   "partes": [
+    {
+     "nombre": "pierna_atras",
+     "poligono": [
+      [
+       -16,
+       -86
+      ],
+      [
+       -6,
+       -86
+      ],
+      [
+       -14,
+       -20
+      ],
+      [
+       -22,
+       -20
+      ]
+     ],
+     "color": "#24385a"
+    },
+    {
+     "nombre": "zapa_atras",
+     "rect": [
+      -28,
+      -22,
+      -10,
+      -16
+     ],
+     "color": "#f0f0f0"
+    },
+    {
+     "nombre": "pierna",
+     "poligono": [
+      [
+       -4,
+       -86
+      ],
+      [
+       8,
+       -86
+      ],
+      [
+       14,
+       -20
+      ],
+      [
+       6,
+       -20
+      ]
+     ],
+     "color": "#34507a"
+    },
+    {
+     "nombre": "zapa",
+     "rect": [
+      2,
+      -22,
+      22,
+      -16
+     ],
+     "color": "#ffffff",
+     "borde": "#bbb"
+    },
+    {
+     "nombre": "mochila",
+     "poligono": [
+      [
+       -28,
+       -146
+      ],
+      [
+       -12,
+       -150
+      ],
+      [
+       -10,
+       -100
+      ],
+      [
+       -26,
+       -96
+      ]
+     ],
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       -28,
+       0
+      ],
+      "a": [
+       -10,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#5a3a7a"
+       ],
+       [
+        1,
+        "#7a5a9a"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "cordon",
+     "poligono": [
+      [
+       -25,
+       -118
+      ],
+      [
+       -25,
+       -100
+      ],
+      [
+       -23,
+       -100
+      ],
+      [
+       -23,
+       -118
+      ]
+     ],
+     "color": "#444",
+     "pivote": [
+      -24,
+      -118
+     ],
+     "inercia": {
+      "rigidez": 1.8,
+      "amortiguacion": 0.12
+     },
+     "partes": [
+      {
+       "nombre": "dije",
+       "en": [
+        -24,
+        -96
+       ],
+       "circulo": {
+        "r": 5,
+        "lados": 12
+       },
+       "color": "#e04a8a"
+      }
+     ]
+    },
+    {
+     "nombre": "buzo",
+     "poligono": [
+      [
+       -12,
+       -86
+      ],
+      [
+       12,
+       -86
+      ],
+      [
+       16,
+       -142
+      ],
+      [
+       8,
+       -154
+      ],
+      [
+       -8,
+       -154
+      ],
+      [
+       -14,
+       -142
+      ]
+     ],
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       -14,
+       0
+      ],
+      "a": [
+       16,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#1f6a5c"
+       ],
+       [
+        1,
+        "#3fa08e"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "brazo",
+     "poligono": [
+      [
+       4,
+       -146
+      ],
+      [
+       12,
+       -146
+      ],
+      [
+       26,
+       -108
+      ],
+      [
+       20,
+       -104
+      ]
+     ],
+     "color": "#1f6a5c",
+     "pivote": [
+      8,
+      -146
+     ],
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        -10
+       ],
+       [
+        6400,
+        -10
+       ],
+       [
+        6550,
+        -55,
+        "salir"
+       ],
+       [
+        7600,
+        -10,
+        "suave"
+       ]
+      ]
+     },
+     "partes": [
+      {
+       "nombre": "mano",
+       "en": [
+        24,
+        -104
+       ],
+       "circulo": {
+        "r": 4.5,
+        "lados": 10
+       },
+       "color": "#e8b896"
+      }
+     ]
+    },
+    {
+     "nombre": "cuello",
+     "rect": [
+      -4,
+      -160,
+      5,
+      -150
+     ],
+     "color": "#c99272"
+    },
+    {
+     "nombre": "cabeza",
+     "pivote": [
+      0,
+      -160
+     ],
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        0
+       ],
+       [
+        6400,
+        0
+       ],
+       [
+        6600,
+        -10,
+        "salir"
+       ],
+       [
+        7800,
+        4,
+        "suave"
+       ],
+       [
+        9000,
+        0,
+        "suave"
+       ]
+      ]
+     },
+     "partes": [
+      {
+       "nombre": "cola_1",
+       "poligono": [
+        [
+         -18.1,
+         -187.1
+        ],
+        [
+         -29.3,
+         -166.6
+        ],
+        [
+         -20.7,
+         -161.4
+        ],
+        [
+         -7.9,
+         -180.9
+        ]
+       ],
+       "color": "#c0602a",
+       "pivote": [
+        -13,
+        -184
+       ],
+       "inercia": {
+        "rigidez": 2.2,
+        "amortiguacion": 0.32,
+        "limite": 40
+       },
+       "partes": [
+        {
+         "nombre": "cola_2",
+         "poligono": [
+          [
+           -29.7,
+           -165.8
+          ],
+          [
+           -36.7,
+           -144.4
+          ],
+          [
+           -29.3,
+           -141.6
+          ],
+          [
+           -20.3,
+           -162.2
+          ]
+         ],
+         "color": "#c0602a",
+         "pivote": [
+          -25,
+          -164
+         ],
+         "inercia": {
+          "rigidez": 2.6,
+          "amortiguacion": 0.32,
+          "limite": 25,
+          "fuerza": 0.7
+         },
+         "partes": [
+          {
+           "nombre": "cola_3",
+           "poligono": [
+            [
+             -37,
+             -143.6
+            ],
+            [
+             -37.5,
+             -122.2
+            ],
+            [
+             -34.5,
+             -121.8
+            ],
+            [
+             -29,
+             -142.4
+            ]
+           ],
+           "color": "#8a3e18",
+           "pivote": [
+            -33,
+            -143
+           ],
+           "inercia": {
+            "rigidez": 3,
+            "amortiguacion": 0.32,
+            "limite": 20,
+            "fuerza": 0.6
+           },
+           "partes": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "nombre": "cara",
+       "en": [
+        0,
+        -176
+       ],
+       "circulo": {
+        "r": 14,
+        "lados": 20
+       },
+       "degradado": {
+        "tipo": "radial",
+        "centro": [
+         4,
+         -4
+        ],
+        "radio": 17,
+        "colores": [
+         [
+          0,
+          "#f4ccaa"
+         ],
+         [
+          1,
+          "#c99272"
+         ]
+        ]
+       }
+      },
+      {
+       "nombre": "pelo",
+       "poligono": [
+        [
+         -14,
+         -178
+        ],
+        [
+         -12,
+         -190
+        ],
+        [
+         0,
+         -194
+        ],
+        [
+         12,
+         -190
+        ],
+        [
+         15,
+         -182
+        ],
+        [
+         6,
+         -186
+        ],
+        [
+         -4,
+         -184
+        ],
+        [
+         -10,
+         -176
+        ],
+        [
+         -14,
+         -170
+        ]
+       ],
+       "color": "#c0602a"
+      },
+      {
+       "nombre": "ojo",
+       "en": [
+        8,
+        -177
+       ],
+       "circulo": {
+        "r": 1.8,
+        "lados": 8
+       },
+       "color": "#1a1410"
+      },
+      {
+       "nombre": "sonrisa",
+       "poligono": [
+        [
+         6,
+         -167
+        ],
+        [
+         12,
+         -168
+        ],
+        [
+         10,
+         -165
+        ]
+       ],
+       "color": "#8a3a3a"
+      },
+      {
+       "nombre": "casco",
+       "poligono": [
+        [
+         -16,
+         -182
+        ],
+        [
+         -12,
+         -196
+        ],
+        [
+         2,
+         -201
+        ],
+        [
+         14,
+         -196
+        ],
+        [
+         17,
+         -184
+        ]
+       ],
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -201
+        ],
+        "a": [
+         0,
+         -182
+        ],
+        "colores": [
+         [
+          0,
+          "#f6f6f6"
+         ],
+         [
+          1,
+          "#b8c0c8"
+         ]
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "nombre": "bufanda_1",
+     "poligono": [
+      [
+       -8.4,
+       -153.8
+      ],
+      [
+       -24.1,
+       -143.4
+      ],
+      [
+       -19.9,
+       -136.6
+      ],
+      [
+       -3.6,
+       -146.2
+      ]
+     ],
+     "color": "#e0b030",
+     "pivote": [
+      -6,
+      -150
+     ],
+     "inercia": {
+      "rigidez": 2.4,
+      "amortiguacion": 0.3,
+      "limite": 45,
+      "punta": [
+       -22,
+       -140
+      ]
+     },
+     "partes": [
+      {
+       "nombre": "bufanda_2",
+       "poligono": [
+        [
+         -24.6,
+         -143
+        ],
+        [
+         -38.3,
+         -130.7
+        ],
+        [
+         -33.7,
+         -125.3
+        ],
+        [
+         -19.4,
+         -137
+        ]
+       ],
+       "color": "#b08018",
+       "pivote": [
+        -22,
+        -140
+       ],
+       "inercia": {
+        "rigidez": 2.8,
+        "amortiguacion": 0.3,
+        "limite": 40,
+        "punta": [
+         -36,
+         -128
+        ]
+       },
+       "partes": [
+        {
+         "nombre": "flecos",
+         "poligono": [
+          [
+           -34,
+           -132
+          ],
+          [
+           -42,
+           -124
+          ],
+          [
+           -38,
+           -122
+          ],
+          [
+           -40,
+           -118
+          ],
+          [
+           -35,
+           -122
+          ]
+         ],
+         "color": "#b08018"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "nombre": "nudo",
+     "en": [
+      -4,
+      -151
+     ],
+     "circulo": {
+      "r": 5,
+      "lados": 10
+     },
+     "color": "#e0b030"
+    }
+   ]
+  }
+ ]
+}

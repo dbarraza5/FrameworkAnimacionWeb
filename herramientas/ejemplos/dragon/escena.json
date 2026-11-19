@@ -1,0 +1,1876 @@
+{
+ "tipo": "escena",
+ "precision": "decimal",
+ "nombre": "El dragón y la torre",
+ "duracion": 13000,
+ "profundidad": true,
+ "sonido": "lleva",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "sonidos": [
+  {
+   "sonido": "Viento de montaña",
+   "t": 0,
+   "volumen": 0.4,
+   "bucle": true,
+   "fundido": {
+    "entrada": 1200,
+    "salida": 1500
+   }
+  },
+  {
+   "sonido": "Aleteo",
+   "t": 0,
+   "volumen": 0.7,
+   "bucle": true,
+   "fundido": {
+    "entrada": 800,
+    "salida": 600
+   }
+  },
+  {
+   "sonido": "Rugido",
+   "t": 4850,
+   "volumen": 1
+  },
+  {
+   "sonido": "Llamarada",
+   "t": 6400,
+   "volumen": 0.9
+  },
+  {
+   "sonido": "Fuego crepitando",
+   "t": 6900,
+   "volumen": 0.6,
+   "bucle": true,
+   "fundido": {
+    "entrada": 1500,
+    "salida": 1500
+   }
+  }
+ ],
+ "camara": {
+  "centro": [
+   300,
+   300
+  ],
+  "zoom": 1.25,
+  "temblor": {
+   "desde": 4900,
+   "hasta": 5700,
+   "amplitud": 5
+  },
+  "claves": {
+   "x": [
+    [
+     0,
+     120
+    ],
+    [
+     3800,
+     600,
+     "suave"
+    ],
+    [
+     6400,
+     700,
+     "suave"
+    ],
+    [
+     10300,
+     720
+    ],
+    [
+     12600,
+     900,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     260
+    ],
+    [
+     3800,
+     380,
+     "suave"
+    ],
+    [
+     12600,
+     330,
+     "suave"
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     1.25
+    ],
+    [
+     3800,
+     1.05,
+     "suave"
+    ],
+    [
+     4700,
+     1.2,
+     "suave"
+    ],
+    [
+     6000,
+     1.2
+    ],
+    [
+     6700,
+     1,
+     "suave"
+    ],
+    [
+     12600,
+     1,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -6,
+   "rect": [
+    -400,
+    -400,
+    1800,
+    640
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -400
+    ],
+    "a": [
+     0,
+     640
+    ],
+    "colores": [
+     [
+      0,
+      "#2a2050"
+     ],
+     [
+      0.5,
+      "#a04a4a"
+     ],
+     [
+      1,
+      "#f0a050"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "sol",
+   "en": [
+    300,
+    470
+   ],
+   "plano": -6,
+   "circulo": {
+    "r": 240,
+    "lados": 32
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 240,
+    "colores": [
+     [
+      0,
+      "rgba(255,240,176,0.9)"
+     ],
+     [
+      0.15,
+      "rgba(255,192,96,0.55)"
+     ],
+     [
+      1,
+      "rgba(255,128,48,0)"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "montes_lejos",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -5,
+   "desenfoque": 1.5,
+   "poligono": [
+    [
+     -400,
+     640
+    ],
+    [
+     -400,
+     430
+    ],
+    [
+     -200,
+     360
+    ],
+    [
+     0,
+     420
+    ],
+    [
+     220,
+     330
+    ],
+    [
+     420,
+     410
+    ],
+    [
+     640,
+     340
+    ],
+    [
+     860,
+     420
+    ],
+    [
+     1080,
+     350
+    ],
+    [
+     1300,
+     410
+    ],
+    [
+     1500,
+     330
+    ],
+    [
+     1800,
+     420
+    ],
+    [
+     1800,
+     640
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     330
+    ],
+    "a": [
+     0,
+     640
+    ],
+    "colores": [
+     [
+      0,
+      "#6a4a6a"
+     ],
+     [
+      1,
+      "#4a3450"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "montes_cerca",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "poligono": [
+    [
+     -400,
+     640
+    ],
+    [
+     -400,
+     520
+    ],
+    [
+     -100,
+     470
+    ],
+    [
+     200,
+     540
+    ],
+    [
+     500,
+     490
+    ],
+    [
+     800,
+     560
+    ],
+    [
+     1200,
+     500
+    ],
+    [
+     1500,
+     550
+    ],
+    [
+     1800,
+     500
+    ],
+    [
+     1800,
+     640
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     470
+    ],
+    "a": [
+     0,
+     640
+    ],
+    "colores": [
+     [
+      0,
+      "#3a2a3a"
+     ],
+     [
+      1,
+      "#2a1e2a"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "pasto",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -3,
+   "rect": [
+    -400,
+    620,
+    1800,
+    900
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     620
+    ],
+    "a": [
+     0,
+     900
+    ],
+    "colores": [
+     [
+      0,
+      "#4a3a28"
+     ],
+     [
+      1,
+      "#1e160e"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "resplandor_torre",
+   "en": [
+    1060,
+    480
+   ],
+   "plano": -2,
+   "circulo": {
+    "r": 340,
+    "lados": 32
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 340,
+    "colores": [
+     [
+      0,
+      "rgba(255,138,48,0.55)"
+     ],
+     [
+      1,
+      "rgba(255,138,48,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      6899,
+      0
+     ],
+     [
+      6900,
+      0.8,
+      "suave"
+     ],
+     [
+      6990,
+      0.9,
+      "suave"
+     ],
+     [
+      7080,
+      0.7,
+      "suave"
+     ],
+     [
+      7170,
+      0.7,
+      "suave"
+     ],
+     [
+      7260,
+      0.7,
+      "suave"
+     ],
+     [
+      7350,
+      1,
+      "suave"
+     ],
+     [
+      7440,
+      0.6,
+      "suave"
+     ],
+     [
+      7530,
+      0.7,
+      "suave"
+     ],
+     [
+      7620,
+      0.7,
+      "suave"
+     ],
+     [
+      7710,
+      1,
+      "suave"
+     ],
+     [
+      7800,
+      0.6,
+      "suave"
+     ],
+     [
+      7890,
+      0.8,
+      "suave"
+     ],
+     [
+      7980,
+      0.7,
+      "suave"
+     ],
+     [
+      8070,
+      1,
+      "suave"
+     ],
+     [
+      8160,
+      0.6,
+      "suave"
+     ],
+     [
+      8250,
+      0.7,
+      "suave"
+     ],
+     [
+      8340,
+      0.7,
+      "suave"
+     ],
+     [
+      8430,
+      0.9,
+      "suave"
+     ],
+     [
+      8520,
+      0.6,
+      "suave"
+     ],
+     [
+      8610,
+      0.7,
+      "suave"
+     ],
+     [
+      8700,
+      0.8,
+      "suave"
+     ],
+     [
+      8790,
+      0.9,
+      "suave"
+     ],
+     [
+      8880,
+      0.7,
+      "suave"
+     ],
+     [
+      8970,
+      0.6,
+      "suave"
+     ],
+     [
+      9060,
+      0.9,
+      "suave"
+     ],
+     [
+      9150,
+      0.8,
+      "suave"
+     ],
+     [
+      9240,
+      0.7,
+      "suave"
+     ],
+     [
+      9330,
+      0.6,
+      "suave"
+     ],
+     [
+      9420,
+      0.9,
+      "suave"
+     ],
+     [
+      9510,
+      0.7,
+      "suave"
+     ],
+     [
+      9600,
+      0.8,
+      "suave"
+     ],
+     [
+      9690,
+      0.6,
+      "suave"
+     ],
+     [
+      9780,
+      1,
+      "suave"
+     ],
+     [
+      9870,
+      0.7,
+      "suave"
+     ],
+     [
+      9960,
+      0.8,
+      "suave"
+     ],
+     [
+      10050,
+      0.6,
+      "suave"
+     ],
+     [
+      10140,
+      1,
+      "suave"
+     ],
+     [
+      10230,
+      0.7,
+      "suave"
+     ],
+     [
+      10320,
+      0.7,
+      "suave"
+     ],
+     [
+      10410,
+      0.6,
+      "suave"
+     ],
+     [
+      10500,
+      0.9,
+      "suave"
+     ],
+     [
+      10590,
+      0.7,
+      "suave"
+     ],
+     [
+      10680,
+      0.7,
+      "suave"
+     ],
+     [
+      10770,
+      0.7,
+      "suave"
+     ],
+     [
+      10860,
+      0.9,
+      "suave"
+     ],
+     [
+      10950,
+      0.8,
+      "suave"
+     ],
+     [
+      11040,
+      0.6,
+      "suave"
+     ],
+     [
+      11130,
+      0.8,
+      "suave"
+     ],
+     [
+      11220,
+      0.8,
+      "suave"
+     ],
+     [
+      11310,
+      0.8,
+      "suave"
+     ],
+     [
+      11400,
+      0.5,
+      "suave"
+     ],
+     [
+      11490,
+      0.8,
+      "suave"
+     ],
+     [
+      11580,
+      0.8,
+      "suave"
+     ],
+     [
+      11670,
+      0.9,
+      "suave"
+     ],
+     [
+      11760,
+      0.5,
+      "suave"
+     ],
+     [
+      11850,
+      0.9,
+      "suave"
+     ],
+     [
+      11940,
+      0.8,
+      "suave"
+     ],
+     [
+      12030,
+      0.9,
+      "suave"
+     ],
+     [
+      12120,
+      0.5,
+      "suave"
+     ],
+     [
+      12210,
+      0.9,
+      "suave"
+     ],
+     [
+      12300,
+      0.8,
+      "suave"
+     ],
+     [
+      12390,
+      0.8,
+      "suave"
+     ],
+     [
+      12480,
+      0.6,
+      "suave"
+     ],
+     [
+      12570,
+      0.8,
+      "suave"
+     ],
+     [
+      12660,
+      0.8,
+      "suave"
+     ],
+     [
+      12750,
+      0.7,
+      "suave"
+     ],
+     [
+      12840,
+      0.6,
+      "suave"
+     ],
+     [
+      12930,
+      0.8,
+      "suave"
+     ],
+     [
+      13000,
+      0,
+      "suave"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "torre",
+   "en": [
+    1060,
+    640
+   ],
+   "plano": -1,
+   "partes": [
+    {
+     "nombre": "pata_i",
+     "poligono": [
+      [
+       -56,
+       0
+      ],
+      [
+       -46,
+       0
+      ],
+      [
+       -26,
+       -200
+      ],
+      [
+       -34,
+       -200
+      ]
+     ],
+     "color": "#8a5a30",
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -260
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#8a5a30"
+       ],
+       [
+        1,
+        "#5a3a1e"
+       ]
+      ]
+     },
+     "colores": {
+      "quemada": {
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -260
+        ],
+        "a": [
+         0,
+         0
+        ],
+        "colores": [
+         [
+          0,
+          "#2a1a12"
+         ],
+         [
+          1,
+          "#100a06"
+         ]
+        ]
+       },
+       "borde": "#000000"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        6900,
+        ""
+       ],
+       [
+        9500,
+        "quemada",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "pata_d",
+     "poligono": [
+      [
+       46,
+       0
+      ],
+      [
+       56,
+       0
+      ],
+      [
+       34,
+       -200
+      ],
+      [
+       26,
+       -200
+      ]
+     ],
+     "color": "#7a4e28",
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -260
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#7a4e28"
+       ],
+       [
+        1,
+        "#4a3018"
+       ]
+      ]
+     },
+     "colores": {
+      "quemada": {
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -260
+        ],
+        "a": [
+         0,
+         0
+        ],
+        "colores": [
+         [
+          0,
+          "#2a1a12"
+         ],
+         [
+          1,
+          "#100a06"
+         ]
+        ]
+       },
+       "borde": "#000000"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        6900,
+        ""
+       ],
+       [
+        9500,
+        "quemada",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "cruz_1",
+     "poligono": [
+      [
+       -48,
+       -40
+      ],
+      [
+       -40,
+       -48
+      ],
+      [
+       40,
+       -120
+      ],
+      [
+       32,
+       -112
+      ]
+     ],
+     "color": "#6a4422",
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -260
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#6a4422"
+       ],
+       [
+        1,
+        "#4a3018"
+       ]
+      ]
+     },
+     "colores": {
+      "quemada": {
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -260
+        ],
+        "a": [
+         0,
+         0
+        ],
+        "colores": [
+         [
+          0,
+          "#2a1a12"
+         ],
+         [
+          1,
+          "#100a06"
+         ]
+        ]
+       },
+       "borde": "#000000"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        6900,
+        ""
+       ],
+       [
+        9500,
+        "quemada",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "cruz_2",
+     "poligono": [
+      [
+       40,
+       -40
+      ],
+      [
+       48,
+       -48
+      ],
+      [
+       -32,
+       -120
+      ],
+      [
+       -40,
+       -112
+      ]
+     ],
+     "color": "#6a4422",
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -260
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#6a4422"
+       ],
+       [
+        1,
+        "#4a3018"
+       ]
+      ]
+     },
+     "colores": {
+      "quemada": {
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -260
+        ],
+        "a": [
+         0,
+         0
+        ],
+        "colores": [
+         [
+          0,
+          "#2a1a12"
+         ],
+         [
+          1,
+          "#100a06"
+         ]
+        ]
+       },
+       "borde": "#000000"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        6900,
+        ""
+       ],
+       [
+        9500,
+        "quemada",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "plataforma",
+     "poligono": [
+      [
+       -56,
+       -200
+      ],
+      [
+       56,
+       -200
+      ],
+      [
+       56,
+       -212
+      ],
+      [
+       -56,
+       -212
+      ]
+     ],
+     "color": "#9a6a3a",
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -260
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#9a6a3a"
+       ],
+       [
+        1,
+        "#6a4422"
+       ]
+      ]
+     },
+     "colores": {
+      "quemada": {
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -260
+        ],
+        "a": [
+         0,
+         0
+        ],
+        "colores": [
+         [
+          0,
+          "#2a1a12"
+         ],
+         [
+          1,
+          "#100a06"
+         ]
+        ]
+       },
+       "borde": "#000000"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        6900,
+        ""
+       ],
+       [
+        9500,
+        "quemada",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "baranda",
+     "poligono": [
+      [
+       -52,
+       -212
+      ],
+      [
+       -46,
+       -212
+      ],
+      [
+       -46,
+       -244
+      ],
+      [
+       46,
+       -244
+      ],
+      [
+       46,
+       -212
+      ],
+      [
+       52,
+       -212
+      ],
+      [
+       52,
+       -250
+      ],
+      [
+       -52,
+       -250
+      ]
+     ],
+     "color": "#8a5a30",
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -260
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#8a5a30"
+       ],
+       [
+        1,
+        "#5a3a1e"
+       ]
+      ]
+     },
+     "colores": {
+      "quemada": {
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -260
+        ],
+        "a": [
+         0,
+         0
+        ],
+        "colores": [
+         [
+          0,
+          "#2a1a12"
+         ],
+         [
+          1,
+          "#100a06"
+         ]
+        ]
+       },
+       "borde": "#000000"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        6900,
+        ""
+       ],
+       [
+        9500,
+        "quemada",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "techo",
+     "poligono": [
+      [
+       -66,
+       -250
+      ],
+      [
+       66,
+       -250
+      ],
+      [
+       0,
+       -300
+      ]
+     ],
+     "color": "#a04a2a",
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -260
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#a04a2a"
+       ],
+       [
+        1,
+        "#6a2a18"
+       ]
+      ]
+     },
+     "colores": {
+      "quemada": {
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -260
+        ],
+        "a": [
+         0,
+         0
+        ],
+        "colores": [
+         [
+          0,
+          "#2a1a12"
+         ],
+         [
+          1,
+          "#100a06"
+         ]
+        ]
+       },
+       "borde": "#000000"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        6900,
+        ""
+       ],
+       [
+        9500,
+        "quemada",
+        "suave"
+       ]
+      ]
+     }
+    }
+   ],
+   "sonido": "no_lleva"
+  },
+  {
+   "instancia": "Dragón",
+   "nombre": "dragon",
+   "en": [
+    -300,
+    240
+   ],
+   "escala": 1.3,
+   "bucle": false,
+   "claves": {
+    "x": [
+     [
+      0,
+      -300
+     ],
+     [
+      3800,
+      470,
+      "salir"
+     ],
+     [
+      10300,
+      500,
+      "suave"
+     ],
+     [
+      12600,
+      1550,
+      "entrar"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      240
+     ],
+     [
+      1900,
+      210,
+      "suave"
+     ],
+     [
+      3800,
+      300,
+      "suave"
+     ],
+     [
+      10300,
+      290,
+      "suave"
+     ],
+     [
+      12600,
+      -120,
+      "entrar"
+     ]
+    ]
+   },
+   "sombra": {
+    "angulo": 12,
+    "piso": 640,
+    "opacidad": 0.45,
+    "desenfoque": 6,
+    "aplastar": 0.12
+   }
+  },
+  {
+   "nombre": "resplandor_llamarada",
+   "en": [
+    958.8,
+    369.7
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 420,
+    "lados": 32
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 420,
+    "colores": [
+     [
+      0,
+      "rgba(255,176,64,0.4)"
+     ],
+     [
+      1,
+      "rgba(255,176,64,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      6499,
+      0
+     ],
+     [
+      6500,
+      0.8,
+      "suave"
+     ],
+     [
+      6590,
+      0.9,
+      "suave"
+     ],
+     [
+      6680,
+      0.8,
+      "suave"
+     ],
+     [
+      6770,
+      0.7,
+      "suave"
+     ],
+     [
+      6860,
+      0.8,
+      "suave"
+     ],
+     [
+      6950,
+      1,
+      "suave"
+     ],
+     [
+      7040,
+      0.7,
+      "suave"
+     ],
+     [
+      7130,
+      0.8,
+      "suave"
+     ],
+     [
+      7220,
+      0.7,
+      "suave"
+     ],
+     [
+      7310,
+      1,
+      "suave"
+     ],
+     [
+      7400,
+      0.7,
+      "suave"
+     ],
+     [
+      7490,
+      0.8,
+      "suave"
+     ],
+     [
+      7580,
+      0.7,
+      "suave"
+     ],
+     [
+      7670,
+      1,
+      "suave"
+     ],
+     [
+      7760,
+      0.7,
+      "suave"
+     ],
+     [
+      7850,
+      0.8,
+      "suave"
+     ],
+     [
+      7940,
+      0.8,
+      "suave"
+     ],
+     [
+      8030,
+      1,
+      "suave"
+     ],
+     [
+      8120,
+      0.7,
+      "suave"
+     ],
+     [
+      8210,
+      0.8,
+      "suave"
+     ],
+     [
+      8300,
+      0.8,
+      "suave"
+     ],
+     [
+      8390,
+      0.9,
+      "suave"
+     ],
+     [
+      8480,
+      0.7,
+      "suave"
+     ],
+     [
+      8570,
+      0.7,
+      "suave"
+     ],
+     [
+      8660,
+      0.9,
+      "suave"
+     ],
+     [
+      8750,
+      0.8,
+      "suave"
+     ],
+     [
+      8840,
+      0.8,
+      "suave"
+     ],
+     [
+      8930,
+      0.7,
+      "suave"
+     ],
+     [
+      9020,
+      0.9,
+      "suave"
+     ],
+     [
+      9110,
+      0.8,
+      "suave"
+     ],
+     [
+      9200,
+      0.8,
+      "suave"
+     ],
+     [
+      9290,
+      0.6,
+      "suave"
+     ],
+     [
+      9380,
+      1,
+      "suave"
+     ],
+     [
+      9470,
+      0.8,
+      "suave"
+     ],
+     [
+      9900,
+      0,
+      "suave"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  }
+ ],
+ "efectos": [
+  {
+   "tipo": "particulas",
+   "nombre": "llamarada",
+   "en": [
+    698.8,
+    259.7
+   ],
+   "inicio": 6400,
+   "fin": 9500,
+   "suave": "si",
+   "mezcla": "suma",
+   "tasa": 150,
+   "vida": 720,
+   "velocidad": 560,
+   "angulo": 21,
+   "dispersion": 17,
+   "gravedad": -140,
+   "tam_ini": 10,
+   "tam_fin": 115,
+   "color_ini": "#ffd870",
+   "color_fin": "#e02800",
+   "opacidad": 0.7,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "humo_llamarada",
+   "en": [
+    698.8,
+    259.7
+   ],
+   "inicio": 6600,
+   "fin": 9700,
+   "tasa": 30,
+   "vida": 1400,
+   "velocidad": 380,
+   "angulo": 18,
+   "dispersion": 22,
+   "gravedad": -160,
+   "tam_ini": 20,
+   "tam_fin": 120,
+   "color_ini": "#6a4a3a",
+   "color_fin": "#2a2420",
+   "suave": "si",
+   "opacidad": 0.35,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "fuego_torre_0",
+   "en": [
+    1030,
+    490
+   ],
+   "inicio": 6900,
+   "fin": 13000,
+   "suave": "si",
+   "mezcla": "suma",
+   "tasa": 40,
+   "vida": 900,
+   "velocidad": 110,
+   "angulo": -90,
+   "dispersion": 40,
+   "gravedad": -200,
+   "tam_ini": 22,
+   "tam_fin": 75,
+   "color_ini": "#ffc850",
+   "color_fin": "#d82a08",
+   "opacidad": 0.65,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "fuego_torre_1",
+   "en": [
+    1060,
+    460
+   ],
+   "inicio": 7200,
+   "fin": 13000,
+   "suave": "si",
+   "mezcla": "suma",
+   "tasa": 40,
+   "vida": 900,
+   "velocidad": 110,
+   "angulo": -90,
+   "dispersion": 40,
+   "gravedad": -200,
+   "tam_ini": 22,
+   "tam_fin": 75,
+   "color_ini": "#ffc850",
+   "color_fin": "#d82a08",
+   "opacidad": 0.65,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "fuego_torre_2",
+   "en": [
+    1090,
+    430
+   ],
+   "inicio": 7500,
+   "fin": 13000,
+   "suave": "si",
+   "mezcla": "suma",
+   "tasa": 40,
+   "vida": 900,
+   "velocidad": 110,
+   "angulo": -90,
+   "dispersion": 40,
+   "gravedad": -200,
+   "tam_ini": 22,
+   "tam_fin": 75,
+   "color_ini": "#ffc850",
+   "color_fin": "#d82a08",
+   "opacidad": 0.65,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "humo_torre",
+   "en": [
+    1060,
+    350
+   ],
+   "inicio": 7500,
+   "fin": 13000,
+   "tasa": 12,
+   "vida": 4200,
+   "velocidad": 70,
+   "angulo": -98,
+   "dispersion": 30,
+   "gravedad": -30,
+   "tam_ini": 30,
+   "tam_fin": 220,
+   "color_ini": "#3a3230",
+   "color_fin": "#6a6460",
+   "suave": "si",
+   "opacidad": 0.4,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "brasas",
+   "en": [
+    1060,
+    460
+   ],
+   "inicio": 7300,
+   "fin": 13000,
+   "suave": "si",
+   "mezcla": "suma",
+   "tasa": 18,
+   "vida": 2200,
+   "velocidad": 90,
+   "angulo": -90,
+   "dispersion": 90,
+   "gravedad": -40,
+   "tam_ini": 3,
+   "tam_fin": 1,
+   "color_ini": "#ffd060",
+   "color_fin": "#ff4010",
+   "opacidad": 1,
+   "sonido": "no_lleva"
+  }
+ ]
+}

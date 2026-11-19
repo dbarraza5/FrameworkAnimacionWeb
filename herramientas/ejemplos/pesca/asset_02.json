@@ -1,0 +1,169 @@
+{
+ "tipo": "asset",
+ "nombre": "Gaviota",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "ala_i",
+   "poligono": [
+    [
+     0,
+     0
+    ],
+    [
+     -14,
+     -14
+    ],
+    [
+     -30,
+     -18
+    ],
+    [
+     -18,
+     -6
+    ]
+   ],
+   "color": "#f4f4f0",
+   "borde": "#8a8a8a",
+   "formas": {
+    "abajo": {
+     "poligono": [
+      [
+       0,
+       0
+      ],
+      [
+       -14,
+       4
+      ],
+      [
+       -30,
+       12
+      ],
+      [
+       -16,
+       4
+      ]
+     ]
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      260,
+      "abajo",
+      "suave"
+     ],
+     [
+      520,
+      "",
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "repetir"
+  },
+  {
+   "nombre": "cuerpo_g",
+   "en": [
+    2,
+    0
+   ],
+   "elipse": [
+    10,
+    4
+   ],
+   "color": "#ffffff",
+   "borde": "#9a9a9a"
+  },
+  {
+   "nombre": "pico",
+   "poligono": [
+    [
+     11,
+     -1
+    ],
+    [
+     17,
+     0
+    ],
+    [
+     11,
+     1
+    ]
+   ],
+   "color": "#e0a020"
+  },
+  {
+   "nombre": "ala_d",
+   "poligono": [
+    [
+     0,
+     0
+    ],
+    [
+     14,
+     -14
+    ],
+    [
+     30,
+     -18
+    ],
+    [
+     18,
+     -6
+    ]
+   ],
+   "color": "#f4f4f0",
+   "borde": "#8a8a8a",
+   "formas": {
+    "abajo": {
+     "poligono": [
+      [
+       0,
+       0
+      ],
+      [
+       14,
+       4
+      ],
+      [
+       30,
+       12
+      ],
+      [
+       16,
+       4
+      ]
+     ]
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      260,
+      "abajo",
+      "suave"
+     ],
+     [
+      520,
+      "",
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "repetir"
+  }
+ ]
+}

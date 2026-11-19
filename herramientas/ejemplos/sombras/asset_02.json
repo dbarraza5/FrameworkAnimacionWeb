@@ -1,0 +1,106 @@
+{
+ "tipo": "asset",
+ "nombre": "Farola",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "base",
+   "rect": [
+    -12,
+    -16,
+    12,
+    0
+   ],
+   "color": "#1a1e24"
+  },
+  {
+   "nombre": "poste",
+   "rect": [
+    -4,
+    -354,
+    4,
+    -14
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     -4,
+     0
+    ],
+    "a": [
+     4,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#3a4048"
+     ],
+     [
+      1,
+      "#14181c"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "brazo",
+   "poligono": [
+    [
+     -4,
+     -350
+    ],
+    [
+     0,
+     -358
+    ],
+    [
+     30,
+     -364
+    ],
+    [
+     30,
+     -358
+    ]
+   ],
+   "color": "#2a3038"
+  },
+  {
+   "nombre": "lampara",
+   "poligono": [
+    [
+     18,
+     -358
+    ],
+    [
+     42,
+     -358
+    ],
+    [
+     38,
+     -348
+    ],
+    [
+     22,
+     -348
+    ]
+   ],
+   "color": "#2a3038"
+  },
+  {
+   "nombre": "foco",
+   "en": [
+    30,
+    -347
+   ],
+   "elipse": [
+    8,
+    3
+   ],
+   "color": "#fff4cc"
+  }
+ ]
+}

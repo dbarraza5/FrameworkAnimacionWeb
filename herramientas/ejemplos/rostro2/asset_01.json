@@ -1,0 +1,452 @@
+{
+ "tipo": "asset",
+ "nombre": "Estudio (Lía 2)",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "pared",
+   "rect": [
+    -100,
+    -100,
+    1400,
+    820
+   ],
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     420,
+     300
+    ],
+    "radio": 1000,
+    "colores": [
+     [
+      0,
+      "#2a4352"
+     ],
+     [
+      0.55,
+      "#18262f"
+     ],
+     [
+      1,
+      "#0c1318"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "luz_pared",
+   "en": [
+    380,
+    260
+   ],
+   "circulo": {
+    "r": 420,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 420,
+    "colores": [
+     [
+      0,
+      "rgba(240,196,138,1)"
+     ],
+     [
+      0.5,
+      "rgba(240,196,138,0.5)"
+     ],
+     [
+      1,
+      "rgba(240,196,138,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "opacidad": 0.16
+  },
+  {
+   "nombre": "bokeh_0",
+   "en": [
+    180,
+    160
+   ],
+   "circulo": {
+    "r": 70,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 70,
+    "colores": [
+     [
+      0,
+      "rgba(243,197,138,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(243,197,138,0.7)"
+     ],
+     [
+      1,
+      "rgba(243,197,138,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      2500,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_1",
+   "en": [
+    1080,
+    120
+   ],
+   "circulo": {
+    "r": 90,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 90,
+    "colores": [
+     [
+      0,
+      "rgba(243,197,138,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(243,197,138,0.7)"
+     ],
+     [
+      1,
+      "rgba(243,197,138,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      2900,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_2",
+   "en": [
+    1150,
+    520
+   ],
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(156,200,232,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(156,200,232,0.7)"
+     ],
+     [
+      1,
+      "rgba(156,200,232,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      3300,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_3",
+   "en": [
+    120,
+    560
+   ],
+   "circulo": {
+    "r": 80,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 80,
+    "colores": [
+     [
+      0,
+      "rgba(243,197,138,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(243,197,138,0.7)"
+     ],
+     [
+      1,
+      "rgba(243,197,138,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      3700,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_4",
+   "en": [
+    960,
+    330
+   ],
+   "circulo": {
+    "r": 40,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 40,
+    "colores": [
+     [
+      0,
+      "rgba(243,197,138,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(243,197,138,0.7)"
+     ],
+     [
+      1,
+      "rgba(243,197,138,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      4100,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_5",
+   "en": [
+    320,
+    330
+   ],
+   "circulo": {
+    "r": 30,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 30,
+    "colores": [
+     [
+      0,
+      "rgba(156,200,232,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(156,200,232,0.7)"
+     ],
+     [
+      1,
+      "rgba(156,200,232,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      4500,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_6",
+   "en": [
+    1220,
+    300
+   ],
+   "circulo": {
+    "r": 26,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 26,
+    "colores": [
+     [
+      0,
+      "rgba(243,197,138,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(243,197,138,0.7)"
+     ],
+     [
+      1,
+      "rgba(243,197,138,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      4900,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_7",
+   "en": [
+    60,
+    330
+   ],
+   "circulo": {
+    "r": 22,
+    "lados": 20
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 22,
+    "colores": [
+     [
+      0,
+      "rgba(243,197,138,0.9)"
+     ],
+     [
+      0.75,
+      "rgba(243,197,138,0.7)"
+     ],
+     [
+      1,
+      "rgba(243,197,138,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.1
+     ],
+     [
+      5300,
+      0.26
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  }
+ ]
+}

@@ -1,0 +1,1890 @@
+{
+ "tipo": "escena",
+ "precision": "decimal",
+ "nombre": "Demolición de la torre",
+ "duracion": 11000,
+ "profundidad": true,
+ "sonido": "lleva",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "sonidos": [
+  {
+   "sonido": "Ciudad lejana",
+   "t": 0,
+   "volumen": 0.4,
+   "bucle": true,
+   "fundido": {
+    "entrada": 1000,
+    "salida": 1500
+   }
+  },
+  {
+   "sonido": "Cargas",
+   "t": 3000,
+   "volumen": 1
+  }
+ ],
+ "camara": {
+  "centro": [
+   660,
+   380
+  ],
+  "zoom": 1,
+  "temblor": {
+   "desde": 3000,
+   "hasta": 6200,
+   "amplitud": 7
+  },
+  "claves": {
+   "zoom": [
+    [
+     0,
+     1
+    ],
+    [
+     3000,
+     1.08,
+     "suave"
+    ],
+    [
+     11000,
+     1.18,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -5,
+   "rect": [
+    -200,
+    -300,
+    1500,
+    610
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -300
+    ],
+    "a": [
+     0,
+     610
+    ],
+    "colores": [
+     [
+      0,
+      "#6a7a8e"
+     ],
+     [
+      1,
+      "#c8ccd0"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "edificios_lejos",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "desenfoque": 2,
+   "poligono": [
+    [
+     -200,
+     610
+    ],
+    [
+     -200,
+     380
+    ],
+    [
+     -60,
+     380
+    ],
+    [
+     -60,
+     300
+    ],
+    [
+     80,
+     300
+    ],
+    [
+     80,
+     350
+    ],
+    [
+     200,
+     350
+    ],
+    [
+     200,
+     260
+    ],
+    [
+     330,
+     260
+    ],
+    [
+     330,
+     400
+    ],
+    [
+     1020,
+     400
+    ],
+    [
+     1020,
+     290
+    ],
+    [
+     1150,
+     290
+    ],
+    [
+     1150,
+     330
+    ],
+    [
+     1300,
+     330
+    ],
+    [
+     1300,
+     250
+    ],
+    [
+     1500,
+     250
+    ],
+    [
+     1500,
+     610
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     250
+    ],
+    "a": [
+     0,
+     610
+    ],
+    "colores": [
+     [
+      0,
+      "#8a96a4"
+     ],
+     [
+      1,
+      "#6a7480"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "vecino_izq",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -2,
+   "rect": [
+    400,
+    330,
+    540,
+    610
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     400,
+     0
+    ],
+    "a": [
+     540,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#7a6a5a"
+     ],
+     [
+      1,
+      "#5a4e42"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "vecino_der",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -2,
+   "rect": [
+    870,
+    380,
+    1010,
+    610
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     870,
+     0
+    ],
+    "a": [
+     1010,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#6a5e52"
+     ],
+     [
+      1,
+      "#4a4038"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "terreno",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -3,
+   "rect": [
+    -200,
+    610,
+    1500,
+    900
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     610
+    ],
+    "a": [
+     0,
+     900
+    ],
+    "colores": [
+     [
+      0,
+      "#7a6a54"
+     ],
+     [
+      1,
+      "#4a3e30"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "instancia": "Torre vieja",
+   "nombre": "torre",
+   "en": [
+    700,
+    610
+   ],
+   "plano": -1,
+   "fisica": {
+    "modo": "desarmar",
+    "nivel": 1,
+    "rebote": 0.15,
+    "friccion": 0.9
+   },
+   "reacciones": {
+    "al_soltarse": "Derrumbe",
+    "al_tocar_suelo": {
+     "sonido": "Escombros",
+     "max": 10
+    }
+   }
+  },
+  {
+   "nombre": "fogonazo_0",
+   "en": [
+    610,
+    590
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      2999,
+      0
+     ],
+     [
+      3030,
+      1,
+      "salir"
+     ],
+     [
+      3260,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "fogonazo_1",
+   "en": [
+    790,
+    590
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3069,
+      0
+     ],
+     [
+      3100,
+      1,
+      "salir"
+     ],
+     [
+      3330,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "fogonazo_2",
+   "en": [
+    670,
+    588
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3139,
+      0
+     ],
+     [
+      3170,
+      1,
+      "salir"
+     ],
+     [
+      3400,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "fogonazo_3",
+   "en": [
+    730,
+    588
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3209,
+      0
+     ],
+     [
+      3240,
+      1,
+      "salir"
+     ],
+     [
+      3470,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "fogonazo_4",
+   "en": [
+    610,
+    538
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3279,
+      0
+     ],
+     [
+      3310,
+      1,
+      "salir"
+     ],
+     [
+      3540,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "fogonazo_5",
+   "en": [
+    790,
+    538
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3349,
+      0
+     ],
+     [
+      3380,
+      1,
+      "salir"
+     ],
+     [
+      3610,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "fogonazo_6",
+   "en": [
+    670,
+    538
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3419,
+      0
+     ],
+     [
+      3450,
+      1,
+      "salir"
+     ],
+     [
+      3680,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "fogonazo_7",
+   "en": [
+    730,
+    538
+   ],
+   "plano": 1,
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 60,
+    "colores": [
+     [
+      0,
+      "rgba(255,244,192,0.95)"
+     ],
+     [
+      0.4,
+      "rgba(255,176,64,0.6)"
+     ],
+     [
+      1,
+      "rgba(255,96,32,0)"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3489,
+      0
+     ],
+     [
+      3520,
+      1,
+      "salir"
+     ],
+     [
+      3750,
+      0,
+      "entrar"
+     ]
+    ]
+   },
+   "sonido": "no_lleva"
+  },
+  {
+   "nombre": "valla",
+   "en": [
+    0,
+    0
+   ],
+   "plano": 2,
+   "partes": [
+    {
+     "nombre": "valla_tabla",
+     "rect": [
+      -200,
+      640,
+      1500,
+      660
+     ],
+     "color": "#d8c020"
+    },
+    {
+     "nombre": "raya_0",
+     "poligono": [
+      [
+       -200,
+       660
+      ],
+      [
+       -170,
+       640
+      ],
+      [
+       -150,
+       640
+      ],
+      [
+       -180,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_1",
+     "poligono": [
+      [
+       -128,
+       660
+      ],
+      [
+       -98,
+       640
+      ],
+      [
+       -78,
+       640
+      ],
+      [
+       -108,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_2",
+     "poligono": [
+      [
+       -56,
+       660
+      ],
+      [
+       -26,
+       640
+      ],
+      [
+       -6,
+       640
+      ],
+      [
+       -36,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_3",
+     "poligono": [
+      [
+       16,
+       660
+      ],
+      [
+       46,
+       640
+      ],
+      [
+       66,
+       640
+      ],
+      [
+       36,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_4",
+     "poligono": [
+      [
+       88,
+       660
+      ],
+      [
+       118,
+       640
+      ],
+      [
+       138,
+       640
+      ],
+      [
+       108,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_5",
+     "poligono": [
+      [
+       160,
+       660
+      ],
+      [
+       190,
+       640
+      ],
+      [
+       210,
+       640
+      ],
+      [
+       180,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_6",
+     "poligono": [
+      [
+       232,
+       660
+      ],
+      [
+       262,
+       640
+      ],
+      [
+       282,
+       640
+      ],
+      [
+       252,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_7",
+     "poligono": [
+      [
+       304,
+       660
+      ],
+      [
+       334,
+       640
+      ],
+      [
+       354,
+       640
+      ],
+      [
+       324,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_8",
+     "poligono": [
+      [
+       376,
+       660
+      ],
+      [
+       406,
+       640
+      ],
+      [
+       426,
+       640
+      ],
+      [
+       396,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_9",
+     "poligono": [
+      [
+       448,
+       660
+      ],
+      [
+       478,
+       640
+      ],
+      [
+       498,
+       640
+      ],
+      [
+       468,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_10",
+     "poligono": [
+      [
+       520,
+       660
+      ],
+      [
+       550,
+       640
+      ],
+      [
+       570,
+       640
+      ],
+      [
+       540,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_11",
+     "poligono": [
+      [
+       592,
+       660
+      ],
+      [
+       622,
+       640
+      ],
+      [
+       642,
+       640
+      ],
+      [
+       612,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_12",
+     "poligono": [
+      [
+       664,
+       660
+      ],
+      [
+       694,
+       640
+      ],
+      [
+       714,
+       640
+      ],
+      [
+       684,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_13",
+     "poligono": [
+      [
+       736,
+       660
+      ],
+      [
+       766,
+       640
+      ],
+      [
+       786,
+       640
+      ],
+      [
+       756,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_14",
+     "poligono": [
+      [
+       808,
+       660
+      ],
+      [
+       838,
+       640
+      ],
+      [
+       858,
+       640
+      ],
+      [
+       828,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_15",
+     "poligono": [
+      [
+       880,
+       660
+      ],
+      [
+       910,
+       640
+      ],
+      [
+       930,
+       640
+      ],
+      [
+       900,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_16",
+     "poligono": [
+      [
+       952,
+       660
+      ],
+      [
+       982,
+       640
+      ],
+      [
+       1002,
+       640
+      ],
+      [
+       972,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_17",
+     "poligono": [
+      [
+       1024,
+       660
+      ],
+      [
+       1054,
+       640
+      ],
+      [
+       1074,
+       640
+      ],
+      [
+       1044,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_18",
+     "poligono": [
+      [
+       1096,
+       660
+      ],
+      [
+       1126,
+       640
+      ],
+      [
+       1146,
+       640
+      ],
+      [
+       1116,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_19",
+     "poligono": [
+      [
+       1168,
+       660
+      ],
+      [
+       1198,
+       640
+      ],
+      [
+       1218,
+       640
+      ],
+      [
+       1188,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_20",
+     "poligono": [
+      [
+       1240,
+       660
+      ],
+      [
+       1270,
+       640
+      ],
+      [
+       1290,
+       640
+      ],
+      [
+       1260,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_21",
+     "poligono": [
+      [
+       1312,
+       660
+      ],
+      [
+       1342,
+       640
+      ],
+      [
+       1362,
+       640
+      ],
+      [
+       1332,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_22",
+     "poligono": [
+      [
+       1384,
+       660
+      ],
+      [
+       1414,
+       640
+      ],
+      [
+       1434,
+       640
+      ],
+      [
+       1404,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "raya_23",
+     "poligono": [
+      [
+       1456,
+       660
+      ],
+      [
+       1486,
+       640
+      ],
+      [
+       1506,
+       640
+      ],
+      [
+       1476,
+       660
+      ]
+     ],
+     "color": "#1a1a1a"
+    },
+    {
+     "nombre": "poste_0",
+     "rect": [
+      -150,
+      630,
+      -142,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_1",
+     "rect": [
+      40,
+      630,
+      48,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_2",
+     "rect": [
+      230,
+      630,
+      238,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_3",
+     "rect": [
+      420,
+      630,
+      428,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_4",
+     "rect": [
+      610,
+      630,
+      618,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_5",
+     "rect": [
+      800,
+      630,
+      808,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_6",
+     "rect": [
+      990,
+      630,
+      998,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_7",
+     "rect": [
+      1180,
+      630,
+      1188,
+      760
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "poste_8",
+     "rect": [
+      1370,
+      630,
+      1378,
+      760
+     ],
+     "color": "#3a3a3a"
+    }
+   ],
+   "sonido": "no_lleva"
+  },
+  {
+   "instancia": "Curiosos",
+   "nombre": "curiosos",
+   "en": [
+    60,
+    790
+   ],
+   "plano": 3,
+   "escala": 1.05,
+   "bucle": false,
+   "sonido": "no_lleva"
+  }
+ ],
+ "efectos": [
+  {
+   "tipo": "explosion",
+   "nombre": "carga_0",
+   "en": [
+    610,
+    590
+   ],
+   "t": 3000,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "carga_1",
+   "en": [
+    790,
+    590
+   ],
+   "t": 3070,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "carga_2",
+   "en": [
+    670,
+    588
+   ],
+   "t": 3140,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "carga_3",
+   "en": [
+    730,
+    588
+   ],
+   "t": 3210,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "carga_4",
+   "en": [
+    610,
+    538
+   ],
+   "t": 3280,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "carga_5",
+   "en": [
+    790,
+    538
+   ],
+   "t": 3350,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "carga_6",
+   "en": [
+    670,
+    538
+   ],
+   "t": 3420,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "carga_7",
+   "en": [
+    730,
+    538
+   ],
+   "t": 3490,
+   "fuerza": 520,
+   "radio": 70,
+   "arriba": 0.25,
+   "umbral": 60,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_0",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3550,
+   "fuerza": 7000,
+   "radio": 20083,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_1",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3595,
+   "fuerza": 7000,
+   "radio": 20133,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_2",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3640,
+   "fuerza": 7000,
+   "radio": 20183,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_3",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3685,
+   "fuerza": 7000,
+   "radio": 20233,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_4",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3730,
+   "fuerza": 7000,
+   "radio": 20283,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_5",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3775,
+   "fuerza": 7000,
+   "radio": 20333,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_6",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3820,
+   "fuerza": 7000,
+   "radio": 20383,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_7",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3865,
+   "fuerza": 7000,
+   "radio": 20433,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_8",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3910,
+   "fuerza": 7000,
+   "radio": 20482,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_9",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 3955,
+   "fuerza": 7000,
+   "radio": 20532,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_10",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 4000,
+   "fuerza": 7000,
+   "radio": 20582,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "explosion",
+   "nombre": "libera_11",
+   "en": [
+    -300,
+    20610
+   ],
+   "t": 4045,
+   "fuerza": 7000,
+   "radio": 20616,
+   "arriba": 0,
+   "umbral": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "polvo_0",
+   "en": [
+    550,
+    600
+   ],
+   "inicio": 3200,
+   "fin": 8000,
+   "tasa": 20,
+   "vida": 4600,
+   "velocidad": 95,
+   "angulo": -90,
+   "dispersion": 110,
+   "gravedad": -14,
+   "tam_ini": 30,
+   "tam_fin": 300,
+   "color_ini": "#c8b8a0",
+   "color_fin": "#7a7468",
+   "suave": "si",
+   "opacidad": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "polvo_1",
+   "en": [
+    650,
+    600
+   ],
+   "inicio": 3320,
+   "fin": 8000,
+   "tasa": 20,
+   "vida": 4600,
+   "velocidad": 95,
+   "angulo": -90,
+   "dispersion": 110,
+   "gravedad": -14,
+   "tam_ini": 30,
+   "tam_fin": 300,
+   "color_ini": "#c8b8a0",
+   "color_fin": "#7a7468",
+   "suave": "si",
+   "opacidad": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "polvo_2",
+   "en": [
+    750,
+    600
+   ],
+   "inicio": 3440,
+   "fin": 8000,
+   "tasa": 20,
+   "vida": 4600,
+   "velocidad": 95,
+   "angulo": -90,
+   "dispersion": 110,
+   "gravedad": -14,
+   "tam_ini": 30,
+   "tam_fin": 300,
+   "color_ini": "#c8b8a0",
+   "color_fin": "#7a7468",
+   "suave": "si",
+   "opacidad": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "polvo_3",
+   "en": [
+    850,
+    600
+   ],
+   "inicio": 3560,
+   "fin": 8000,
+   "tasa": 20,
+   "vida": 4600,
+   "velocidad": 95,
+   "angulo": -90,
+   "dispersion": 110,
+   "gravedad": -14,
+   "tam_ini": 30,
+   "tam_fin": 300,
+   "color_ini": "#c8b8a0",
+   "color_fin": "#7a7468",
+   "suave": "si",
+   "opacidad": 0.5,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "polvo_rueda_180",
+   "en": [
+    580,
+    600
+   ],
+   "inicio": 4050,
+   "fin": 8200,
+   "tasa": 16,
+   "vida": 3800,
+   "velocidad": 220,
+   "angulo": 180,
+   "dispersion": 18,
+   "gravedad": -8,
+   "tam_ini": 40,
+   "tam_fin": 240,
+   "color_ini": "#b8a890",
+   "color_fin": "#8a8070",
+   "suave": "si",
+   "opacidad": 0.45,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "polvo_rueda_0",
+   "en": [
+    820,
+    600
+   ],
+   "inicio": 4050,
+   "fin": 8200,
+   "tasa": 16,
+   "vida": 3800,
+   "velocidad": 220,
+   "angulo": 0,
+   "dispersion": 18,
+   "gravedad": -8,
+   "tam_ini": 40,
+   "tam_fin": 240,
+   "color_ini": "#b8a890",
+   "color_fin": "#8a8070",
+   "suave": "si",
+   "opacidad": 0.45,
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "chispas",
+   "en": [
+    700,
+    570
+   ],
+   "inicio": 3000,
+   "fin": 3600,
+   "tasa": 120,
+   "vida": 600,
+   "velocidad": 380,
+   "angulo": -90,
+   "dispersion": 160,
+   "gravedad": 900,
+   "tam_ini": 4,
+   "tam_fin": 1,
+   "color_ini": "#fff0a0",
+   "color_fin": "#ff6a20",
+   "suave": "si",
+   "opacidad": 0.9,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  }
+ ]
+}

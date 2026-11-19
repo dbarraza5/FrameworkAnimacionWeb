@@ -1,0 +1,343 @@
+{
+ "tipo": "asset",
+ "nombre": "Paseante",
+ "duracion": 1040,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "pierna_atras",
+   "poligono": [
+    [
+     -6,
+     -92
+    ],
+    [
+     6,
+     -92
+    ],
+    [
+     4,
+     -4
+    ],
+    [
+     -4,
+     -4
+    ]
+   ],
+   "color": "#2a2e3a",
+   "pivote": [
+    0,
+    -90
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -22,
+      "suave"
+     ],
+     [
+      520,
+      22,
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "zapato_atras",
+     "poligono": [
+      [
+       -6,
+       -6
+      ],
+      [
+       12,
+       -6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       -6,
+       0
+      ]
+     ],
+     "color": "#1e1410"
+    }
+   ]
+  },
+  {
+   "nombre": "brazo_atras",
+   "poligono": [
+    [
+     -4,
+     -150
+    ],
+    [
+     5,
+     -150
+    ],
+    [
+     4,
+     -100
+    ],
+    [
+     -3,
+     -100
+    ]
+   ],
+   "color": "#5a3424",
+   "pivote": [
+    0,
+    -148
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      20,
+      "suave"
+     ],
+     [
+      520,
+      -20,
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "abrigo",
+   "poligono": [
+    [
+     -14,
+     -88
+    ],
+    [
+     14,
+     -88
+    ],
+    [
+     16,
+     -152
+    ],
+    [
+     8,
+     -160
+    ],
+    [
+     -10,
+     -160
+    ],
+    [
+     -15,
+     -150
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     -15,
+     0
+    ],
+    "a": [
+     16,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#4a2a1a"
+     ],
+     [
+      1,
+      "#7a4a2e"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "cabeza",
+   "en": [
+    3,
+    -174
+   ],
+   "circulo": {
+    "r": 13,
+    "lados": 18
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     4,
+     -4
+    ],
+    "radio": 15,
+    "colores": [
+     [
+      0,
+      "#f0c8a8"
+     ],
+     [
+      1,
+      "#b88464"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "sombrero",
+   "poligono": [
+    [
+     -16,
+     -180
+    ],
+    [
+     20,
+     -180
+    ],
+    [
+     20,
+     -177
+    ],
+    [
+     -16,
+     -177
+    ],
+    [
+     -16,
+     -180
+    ],
+    [
+     -9,
+     -180
+    ],
+    [
+     -8,
+     -196
+    ],
+    [
+     12,
+     -196
+    ],
+    [
+     13,
+     -180
+    ]
+   ],
+   "color": "#1a1a22"
+  },
+  {
+   "nombre": "pierna",
+   "poligono": [
+    [
+     -6,
+     -92
+    ],
+    [
+     6,
+     -92
+    ],
+    [
+     4,
+     -4
+    ],
+    [
+     -4,
+     -4
+    ]
+   ],
+   "color": "#363b4a",
+   "pivote": [
+    0,
+    -90
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      22,
+      "suave"
+     ],
+     [
+      520,
+      -22,
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "zapato",
+     "poligono": [
+      [
+       -6,
+       -6
+      ],
+      [
+       12,
+       -6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       -6,
+       0
+      ]
+     ],
+     "color": "#2a1c14"
+    }
+   ]
+  },
+  {
+   "nombre": "brazo",
+   "poligono": [
+    [
+     -4,
+     -150
+    ],
+    [
+     5,
+     -150
+    ],
+    [
+     4,
+     -100
+    ],
+    [
+     -3,
+     -100
+    ]
+   ],
+   "color": "#6a3e2a",
+   "pivote": [
+    0,
+    -148
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -20,
+      "suave"
+     ],
+     [
+      520,
+      20,
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  }
+ ]
+}

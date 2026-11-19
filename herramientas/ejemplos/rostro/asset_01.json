@@ -1,0 +1,230 @@
+{
+ "tipo": "asset",
+ "nombre": "Estudio",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "banda_0",
+   "rect": [
+    -100,
+    -20,
+    1400,
+    95
+   ],
+   "color": "#14212a"
+  },
+  {
+   "nombre": "banda_1",
+   "rect": [
+    -100,
+    90,
+    1400,
+    205
+   ],
+   "color": "#172731"
+  },
+  {
+   "nombre": "banda_2",
+   "rect": [
+    -100,
+    200,
+    1400,
+    315
+   ],
+   "color": "#1b2d38"
+  },
+  {
+   "nombre": "banda_3",
+   "rect": [
+    -100,
+    310,
+    1400,
+    425
+   ],
+   "color": "#1f343f"
+  },
+  {
+   "nombre": "banda_4",
+   "rect": [
+    -100,
+    420,
+    1400,
+    535
+   ],
+   "color": "#223845"
+  },
+  {
+   "nombre": "banda_5",
+   "rect": [
+    -100,
+    530,
+    1400,
+    645
+   ],
+   "color": "#1f343f"
+  },
+  {
+   "nombre": "banda_6",
+   "rect": [
+    -100,
+    640,
+    1400,
+    755
+   ],
+   "color": "#1b2d38"
+  },
+  {
+   "nombre": "bokeh_0",
+   "en": [
+    180,
+    160
+   ],
+   "circulo": {
+    "r": 70,
+    "lados": 20
+   },
+   "color": "#f3c58a",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.06
+     ],
+     [
+      2500,
+      0.13
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_1",
+   "en": [
+    1080,
+    120
+   ],
+   "circulo": {
+    "r": 90,
+    "lados": 20
+   },
+   "color": "#f3c58a",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.06
+     ],
+     [
+      2900,
+      0.13
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_2",
+   "en": [
+    1150,
+    520
+   ],
+   "circulo": {
+    "r": 60,
+    "lados": 20
+   },
+   "color": "#f3c58a",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.06
+     ],
+     [
+      3300,
+      0.13
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_3",
+   "en": [
+    120,
+    560
+   ],
+   "circulo": {
+    "r": 80,
+    "lados": 20
+   },
+   "color": "#f3c58a",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.06
+     ],
+     [
+      3700,
+      0.13
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_4",
+   "en": [
+    960,
+    330
+   ],
+   "circulo": {
+    "r": 40,
+    "lados": 20
+   },
+   "color": "#f3c58a",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.06
+     ],
+     [
+      4100,
+      0.13
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "bokeh_5",
+   "en": [
+    320,
+    330
+   ],
+   "circulo": {
+    "r": 30,
+    "lados": 20
+   },
+   "color": "#f3c58a",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.06
+     ],
+     [
+      4500,
+      0.13
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  }
+ ]
+}

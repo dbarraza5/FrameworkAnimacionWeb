@@ -1,0 +1,88 @@
+{
+ "tipo": "asset",
+ "nombre": "Farola mojada",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "base",
+   "rect": [
+    -14,
+    -18,
+    14,
+    0
+   ],
+   "color": "#141820"
+  },
+  {
+   "nombre": "poste",
+   "rect": [
+    -5,
+    -326,
+    5,
+    -16
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     -5,
+     0
+    ],
+    "a": [
+     5,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#4a5868"
+     ],
+     [
+      0.4,
+      "#2a3440"
+     ],
+     [
+      1,
+      "#0e1216"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "cabezal",
+   "poligono": [
+    [
+     -22,
+     -326
+    ],
+    [
+     22,
+     -326
+    ],
+    [
+     14,
+     -344
+    ],
+    [
+     -14,
+     -344
+    ]
+   ],
+   "color": "#1a2028"
+  },
+  {
+   "nombre": "foco",
+   "en": [
+    0,
+    -324
+   ],
+   "elipse": [
+    14,
+    4
+   ],
+   "color": "#fff4cc"
+  }
+ ]
+}

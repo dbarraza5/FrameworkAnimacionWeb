@@ -9,6 +9,8 @@ import OperacionesGrupo, {origenGrupoX, origenGrupoY} from "../EditorAnimacion/O
 import {limitesGrupos, prepararGrupos} from "../EditorAnimacion/Miniatura";
 import {normalizarTransformacion, transformarVector} from "../EditorAnimacion/TransformacionInstancia";
 import * as Claves from "./Claves";
+import {aplicarIk, tieneIk} from "./Ik";
+import {aplicarInercia} from "./Inercia";
 import {clipsEscena} from "../Sonido/Pista";
 import {SimFisica, grupoEsEfecto, particulasEn, TIPOS_EFECTO, efectoDefecto} from "./Fisica";
 
@@ -636,14 +638,26 @@ class GestionEvento{
             const ef = g.efecto;
             if(ef.tipo !== "particulas") continue;
             const pos = (tt) => ({x: this.valorPropiedad(g.nombre, "x", tt), y: this.valorPropiedad(g.nombre, "y", tt)});
+            // opcionales: bordes suaves (degradado radial) y mezcla (suma / pantalla)
+            const suave = ef.suave === "si";
+            const modo = ef.mezcla === "suma" ? "lighter" : ef.mezcla === "pantalla" ? "screen" : null;
+            if(modo) ctx.globalCompositeOperation = modo;
             for(const p of particulasEn(ef, pos, t)){
                 ctx.globalAlpha = Math.max(0, Math.min(1, p.alfa));
-                ctx.fillStyle = p.color;
+                const r = Math.max(0.5, p.tam / 2);
+                // (contextos de prueba, como el del reporte, pueden no crear degradados)
+                const gr = suave && typeof ctx.createRadialGradient === "function" ? ctx.createRadialGradient(p.x + ox, p.y + oy, 0, p.x + ox, p.y + oy, r) : null;
+                if(gr && typeof gr.addColorStop === "function"){
+                    gr.addColorStop(0, p.color);
+                    gr.addColorStop(1, p.color.replace("rgb(", "rgba(").replace(")", ",0)"));
+                    ctx.fillStyle = gr;
+                } else ctx.fillStyle = p.color;
                 ctx.beginPath();
-                ctx.arc(p.x + ox, p.y + oy, Math.max(0.5, p.tam / 2), 0, Math.PI * 2);
+                ctx.arc(p.x + ox, p.y + oy, r, 0, Math.PI * 2);
                 ctx.fill();
             }
             ctx.globalAlpha = 1;
+            if(modo) ctx.globalCompositeOperation = "source-over";
         }
         if(!mostrar_iconos) return;
         ctx.save();
@@ -1048,6 +1062,21 @@ class GestionEvento{
             }
             if(Claves.tienePista(c, "opacidad")) d.opacidad = Math.max(0, Math.min(1, Claves.valorObjeto(c, "opacidad", t_ms, o.claves_bucle)));
             if(Claves.tienePista(c, "zoom") && o.camara) d.camara = {...o.camara, zoom: Math.max(0.05, Claves.valorObjeto(c, "zoom", t_ms, o.claves_bucle))};
+            // morphing: la forma de la parte se interpola entre grupos hermanos (Claves.formaEn)
+            if(Claves.tienePista(c, Claves.PISTA_FORMA)){
+                const f = Claves.formaEn(c, t_ms, o.claves_bucle);
+                const fuente = (n) => (!n || n === o.nombre ? o : this.gestion_grupos_originales.getGrupo(n) || o);
+                const A = fuente(f.a), B = fuente(f.b);
+                d.lista_figuras = Claves.interpolarFiguras(A.lista_figuras, B.lista_figuras, f.u);
+                // fase 1 de capacidades: tambien el color, si la parte lo pide
+                if(o.forma_color){
+                    // (los contornos son siempre los de la parte; de las formas solo se toma el color)
+                    d.lista_pintado = (Claves.interpolarPintado(A.lista_pintado, B.lista_pintado, f.u) || o.lista_pintado)
+                        .map((p, i) => (o.lista_pintado && o.lista_pintado[i] && p.elementos !== o.lista_pintado[i].elementos ? {...p, elementos: o.lista_pintado[i].elementos} : p));
+                    d.color = Claves.interpolarColor(A.color, B.color, f.u);
+                    d._color_animado = true;
+                }
+            }
             const props_t = ["rotacion", "escala_x", "escala_y"].filter((p) => Claves.tienePista(c, p));
             if(props_t.length){
                 const t = {...(o.transformacion || {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0})};
@@ -1055,6 +1084,44 @@ class GestionEvento{
                 d.transformacion = t;
             }
         }
+        // fase 2 de capacidades: cadenas IK (despues de las claves: usan la posicion del objetivo)
+        const originales = this.gestion_grupos_originales.grupos_figuras;
+        if(tieneIk(originales)){
+            this.gestion_grupos.procesarPosicionFinalFiguras();
+            aplicarIk(originales, this.gestion_grupos.grupos_figuras, t_ms);
+        }
+    }
+
+    // Inercia (Inercia.js): solo en el motor de la escena (o del asset abierto solo); el motor
+    // de un asset usado como instancia no la calcula (lo hace la escena, que ve tambien el
+    // movimiento de la instancia). El cache no se copia ni se guarda.
+    _aplicarInercia(t_ms){
+        const originales = this.gestion_grupos_originales.grupos_figuras;
+        if(!originales.some((g) => g.inercia)) return;
+        if(!this._cache_inercia) Object.defineProperty(this, "_cache_inercia", {value: new Map(), enumerable: false, writable: true});
+        const dinamicos = new Map(this.gestion_grupos.grupos_figuras.map((g) => [g.nombre, g]));
+        const contenedores = new Map(this.contenedoresInstancia().map((c) => [c.nombre, c]));
+        try {
+            aplicarInercia(originales, dinamicos, t_ms, (g, tau) => this._relojClaves(g, tau, contenedores), this._cache_inercia);
+        } catch (err) { console.error("inercia", err); }
+    }
+
+    // Instante (ms) en el reloj de las claves de un grupo: el de la escena, o para una parte
+    // de instancia el de su asset (como evaluarEn: desfase, evento y bucle).
+    _relojClaves(g, tau, contenedores){
+        if(!g._virtual) return tau;
+        const c = contenedores.get(g._instancia);
+        const a = c ? this._asset(c.instancia.id_eventos, c.instancia.version) : null;
+        if(!a) return tau;
+        const inst = c.instancia, motor = a.motor;
+        const raiz = motor.obtenerEvento("EventoGeneral");
+        if(!raiz) return tau;
+        const elegido = (motor.obtenerEvento(inst.evento || "EventoGeneral") || raiz).evento;
+        const duracion = Math.max(0, (elegido.tiempo_final - elegido.tiempo_inicio) / 1000);
+        const t = tau / 1000 - (parseFloat(inst.desfase) || 0) / 1000;
+        let t_evento = Math.min(Math.max(0, t), duracion);
+        if(inst.bucle && duracion > 0){ const ciclo = cicloBucle(Math.max(0, t), true, duracion * 1000); if(ciclo) t_evento = ciclo.t; }
+        return (motor.inicioAbsoluto(elegido) + t_evento) * 1000;
     }
 
     moverObjeto(nombre, dx, dy){
@@ -1329,8 +1396,22 @@ class GestionEvento{
         }
     }
 
+    // Precision decimal (escena.precision === "decimal"): marca cada grupo (tambien las partes de
+    // las instancias) con _decimal, NO enumerable (no se guarda ni se copia). numPos
+    // (GestionAnimacion.js) usa entonces decimales en vez de redondear a enteros. Sin el campo
+    // no se marca nada: las escenas de siempre se dibujan igual.
+    _aplicarPrecision(){
+        if(!(this.escena && this.escena.precision === "decimal")) return;
+        for(const lista of [this.gestion_grupos_originales.grupos_figuras, this.gestion_grupos.grupos_figuras]){
+            for(const g of lista){
+                if(!g._decimal) Object.defineProperty(g, "_decimal", {value: true, enumerable: false, configurable: true});
+            }
+        }
+    }
+
     procesandoEventos(){
         tiempo_universal=performance.now();
+        this._aplicarPrecision();
         const tiempo = this._t_forzado != null ? this._t_forzado : this.tiempo.cronometroC(tiempo_universal);
         if(true)//(this.reproducir)
         {
@@ -1361,6 +1442,10 @@ class GestionEvento{
 
             // Fase 6: instancias por referencia (sus partes las anima el motor de su asset)
             this.aplicarInstancias(this._t_escena || 0);
+            this._aplicarPrecision();
+
+            // fase 3 de capacidades: movimiento secundario (tambien de las partes de instancias)
+            this._aplicarInercia((this._t_escena || 0) * 1000);
 
             // Fase 9A: efectos y fisica de piezas (despues de claves e instancias)
             try { this.fisica.aplicar(this.tiempoActualMs()); } catch (err) { console.error("fisica", err); }
@@ -1470,6 +1555,7 @@ class GestionEvento{
         return this.gestion_grupos.grupos_figuras.map((g) => ({
             nombre: g.nombre, cx: g.cx, cy: g.cy, visible: g.visible, lista_figuras: g.lista_figuras,
             transformacion: g.transformacion, opacidad: g.opacidad,
+            ...(g._color_animado ? {lista_pintado: g.lista_pintado, color: g.color} : {}),
         }));
     }
 
@@ -1629,6 +1715,7 @@ class GestionEvento{
                 // Fase 7: claves del asset (rotacion, escala, opacidad de sus partes)
                 if(p.transformacion !== undefined) v.transformacion = p.transformacion;
                 if(p.opacidad !== undefined) v.opacidad = p.opacidad;
+                if(p.lista_pintado !== undefined){ v.lista_pintado = p.lista_pintado; v.color = p.color; }
             }
         }
     }

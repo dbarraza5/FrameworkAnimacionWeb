@@ -1,0 +1,45 @@
+{
+ "tipo": "escena",
+ "precision": "decimal",
+ "nombre": "Prueba de color",
+ "duracion": 9000,
+ "profundidad": true,
+ "camara": {
+  "centro": [
+   640,
+   360
+  ]
+ },
+ "objetos": [
+  {
+   "instancia": "Paisaje que cambia de color",
+   "nombre": "paisaje",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -3,
+   "bucle": false
+  },
+  {
+   "instancia": "Herrero (sonrojo)",
+   "nombre": "herrero",
+   "en": [
+    820,
+    690
+   ],
+   "bucle": false,
+   "escala": 1.3
+  },
+  {
+   "instancia": "Yunque y barra",
+   "nombre": "forja",
+   "en": [
+    1010,
+    700
+   ],
+   "bucle": false,
+   "escala": 1.3
+  }
+ ]
+}

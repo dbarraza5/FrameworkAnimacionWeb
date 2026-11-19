@@ -1,0 +1,187 @@
+{
+ "tipo": "asset",
+ "nombre": "Torso de Lía",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "cuello",
+   "poligono": [
+    [
+     -58,
+     -230
+    ],
+    [
+     58,
+     -230
+    ],
+    [
+     64,
+     -90
+    ],
+    [
+     -64,
+     -90
+    ]
+   ],
+   "color": "#cf9874"
+  },
+  {
+   "nombre": "sombra_menton",
+   "poligono": [
+    [
+     -60,
+     -215
+    ],
+    [
+     60,
+     -215
+    ],
+    [
+     48,
+     -165
+    ],
+    [
+     -48,
+     -165
+    ]
+   ],
+   "color": "#b88464",
+   "opacidad": 0.7
+  },
+  {
+   "nombre": "hombros",
+   "poligono": [
+    [
+     -360,
+     20
+    ],
+    [
+     -330,
+     -60
+    ],
+    [
+     -210,
+     -108
+    ],
+    [
+     -70,
+     -128
+    ],
+    [
+     70,
+     -128
+    ],
+    [
+     210,
+     -108
+    ],
+    [
+     330,
+     -60
+    ],
+    [
+     360,
+     20
+    ]
+   ],
+   "color": "#2f5d62",
+   "borde": "#21454a"
+  },
+  {
+   "nombre": "escote",
+   "poligono": [
+    [
+     -66,
+     -128
+    ],
+    [
+     66,
+     -128
+    ],
+    [
+     0,
+     -40
+    ]
+   ],
+   "color": "#cf9874"
+  },
+  {
+   "nombre": "cuello_sueter",
+   "poligono": [
+    [
+     -74,
+     -130
+    ],
+    [
+     -60,
+     -132
+    ],
+    [
+     0,
+     -50
+    ],
+    [
+     60,
+     -132
+    ],
+    [
+     74,
+     -130
+    ],
+    [
+     0,
+     -34
+    ]
+   ],
+   "color": "#21454a"
+  },
+  {
+   "nombre": "clavicula_izq",
+   "rect": [
+    -56,
+    -112,
+    -24,
+    -109
+   ],
+   "color": "#b88464",
+   "opacidad": 0.5
+  },
+  {
+   "nombre": "clavicula_der",
+   "rect": [
+    24,
+    -112,
+    56,
+    -109
+   ],
+   "color": "#b88464",
+   "opacidad": 0.5
+  },
+  {
+   "nombre": "dije",
+   "en": [
+    0,
+    -78
+   ],
+   "circulo": {
+    "r": 5,
+    "lados": 10
+   },
+   "color": "#d9b25a"
+  },
+  {
+   "nombre": "cadena_izq",
+   "rect": [
+    -40,
+    -122,
+    -2,
+    -120
+   ],
+   "color": "#d9b25a",
+   "opacidad": 0.7,
+   "rotacion": 0
+  }
+ ]
+}

@@ -9,6 +9,10 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 
 ## Novedades
 
+**2026-11-19 (página del proyecto: escenas y assets)**
+- La pestaña Escenas organiza la historia en **capítulos**, con orden manual y "Mover a…". También tiene un botón **Nueva escena**.
+- La página del proyecto separa **Escenas** y **Assets** en dos pestañas. Cada documento se clasifica solo y se puede corregir. La **escena principal** ⭐ aparece primero. Ver [§2](#2-empezar).
+
 **2026-11-13 (deshacer e historial)**
 - **Deshacer / Rehacer** (Ctrl + Z / Ctrl + Y), panel **Historial**, indicador **Sin guardar** con aviso al cerrar, **autoguardado** que se puede recuperar, y en el menú Archivo **Restaurar lo guardado**, **Guardar como** e **Importar**. Ver [§7g](#7g-deshacer-historial-y-guardar).
 
@@ -126,7 +130,17 @@ Hay dos editores:
 ## 2. Empezar
 
 1. Abre http://localhost:3000 e inicia sesión. Si no tienes cuenta, usa **Register**.
-2. En la página principal aparecen tus proyectos y sus animaciones. Desde ahí se abren los editores.
+2. En la página principal aparecen tus proyectos. Al abrir uno, su página tiene estas pestañas:
+   - **Escenas:** la historia, por **capítulos**.
+     - **Nuevo capítulo** crea uno. Cada capítulo se puede renombrar, subir, bajar o borrar; si lo borras, sus escenas no se pierden: pasan a "Sin capítulo".
+     - **Nueva escena**, dentro de un capítulo o arriba de todo, crea una escena vacía con cámara y te ofrece abrirla en el editor.
+     - Las escenas se ordenan con las flechas y se cambian de capítulo con **Mover a…**.
+     - La **principal** (⭐) aparece en un aviso arriba, con un botón para abrirla. Solo puede haber una.
+   - **Assets:** personajes, fondos, objetos y cualquier documento que se usa dentro de una escena. Son de todo el proyecto: no van en capítulos, y cualquier escena puede usarlos. El documento de ejemplo `evento_default`, que trae cada proyecto nuevo, queda oculto.
+   - **Dibujos:** los dibujos del proyecto, que se editan en el editor de dibujo.
+   - **Movimientos, Asistente y Sonido.**
+
+   **Cómo se clasifica:** un documento es escena si tiene cámara, instancias de otros assets o efectos; si no, es asset. Si la clasificación no te sirve, usa **A assets** o **A escenas**. El documento queda marcado como *elegido a mano*, y la flecha ↺ lo devuelve a la clasificación automática. Organizar no cambia el contenido ni la fecha de modificación.
 3. **Guarda seguido** con **Subir**: los cambios viven en el navegador hasta que se suben al servidor. Si recargas la página antes de subir, se pierden.
 
 > Si entras al editor sin haber iniciado sesión, la página muestra un error en vez de mandarte al inicio de sesión (limitación conocida). Vuelve a http://localhost:3000 e inicia sesión.
@@ -614,7 +628,7 @@ En el panel **Objetos**, menú **+ Efecto**:
 | Tornado | Atrae, hace girar y eleva lo que está dentro de su columna. | Desde / hasta, radio, alto, fuerza, elevación, giro |
 | Disparo | Golpea lo primero que toca su rayo. Con **Al impactar = pieza** empuja solo esa pieza (o el objeto entero si es rígido). Con **Al impactar = objeto** desarma todo el objeto alcanzado: sus partes salen hacia atrás, más fuerte cerca del impacto. | Dispara en (ms), dirección (°), fuerza, alcance, al impactar, radio del impacto, dispersión |
 | Viento | Empuja constantemente en una dirección. | Desde / hasta, dirección, fuerza |
-| Partículas | Fuego, humo, polvo, chispas (solo visual). | Desde / hasta, por segundo, vida, velocidad, dirección, dispersión, tamaño, colores, modo (chorro o remolino) |
+| Partículas | Fuego, humo, polvo, chispas (solo visual). | Desde / hasta, por segundo, vida, velocidad, dirección, dispersión, tamaño, colores, modo (chorro o remolino), bordes suaves, opacidad máxima y mezcla (normal, suma o pantalla: "suma" hace que se iluminen al superponerse, ideal para fuego y chispas) |
 
 El efecto es un objeto más: se mueve, se le ponen **claves** (un tornado que avanza, una estela que sigue a un meteorito) y en el lienzo se ve su radio, columna o rayo. Esa guía no aparece en Vista de cámara.
 

@@ -1,0 +1,359 @@
+{
+ "tipo": "asset",
+ "nombre": "Yunque y barra",
+ "duracion": 9000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "yunque",
+   "poligono": [
+    [
+     -90,
+     -60
+    ],
+    [
+     90,
+     -60
+    ],
+    [
+     110,
+     -80
+    ],
+    [
+     -60,
+     -80
+    ],
+    [
+     -110,
+     -70
+    ],
+    [
+     -90,
+     -60
+    ],
+    [
+     -40,
+     -60
+    ],
+    [
+     -30,
+     -20
+    ],
+    [
+     -60,
+     0
+    ],
+    [
+     60,
+     0
+    ],
+    [
+     30,
+     -20
+    ],
+    [
+     40,
+     -60
+    ]
+   ],
+   "color": "#3a3e44",
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -80
+    ],
+    "a": [
+     0,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#6a7078"
+     ],
+     [
+      1,
+      "#24272c"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "brillo_barra",
+   "en": [
+    10,
+    -92
+   ],
+   "circulo": {
+    "r": 180,
+    "lados": 28
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 120,
+    "colores": [
+     [
+      0,
+      "rgba(255,138,58,0)"
+     ],
+     [
+      1,
+      "rgba(255,138,58,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "colores": {
+    "rojo": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 120,
+      "colores": [
+       [
+        0,
+        "rgba(255,58,26,0.35)"
+       ],
+       [
+        1,
+        "rgba(255,58,26,0)"
+       ]
+      ]
+     }
+    },
+    "naranja": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 150,
+      "colores": [
+       [
+        0,
+        "rgba(255,138,42,0.6)"
+       ],
+       [
+        1,
+        "rgba(255,138,42,0)"
+       ]
+      ]
+     }
+    },
+    "blanco": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 180,
+      "colores": [
+       [
+        0,
+        "rgba(255,240,160,0.8)"
+       ],
+       [
+        1,
+        "rgba(255,176,64,0)"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      2500,
+      ""
+     ],
+     [
+      3800,
+      "rojo",
+      "suave"
+     ],
+     [
+      5200,
+      "naranja",
+      "suave"
+     ],
+     [
+      6500,
+      "blanco",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "barra",
+   "poligono": [
+    [
+     -90,
+     -98
+    ],
+    [
+     110,
+     -98
+    ],
+    [
+     114,
+     -92
+    ],
+    [
+     110,
+     -86
+    ],
+    [
+     -90,
+     -86
+    ]
+   ],
+   "color": "#6a6e74",
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -98
+    ],
+    "a": [
+     0,
+     -86
+    ],
+    "colores": [
+     [
+      0,
+      "#9aa0a8"
+     ],
+     [
+      1,
+      "#4a4e54"
+     ]
+    ]
+   },
+   "colores": {
+    "rojo": {
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -98
+      ],
+      "a": [
+       0,
+       -86
+      ],
+      "colores": [
+       [
+        0,
+        "#c0402a"
+       ],
+       [
+        1,
+        "#6a1a10"
+       ]
+      ]
+     }
+    },
+    "naranja": {
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -98
+      ],
+      "a": [
+       0,
+       -86
+      ],
+      "colores": [
+       [
+        0,
+        "#ffa040"
+       ],
+       [
+        1,
+        "#d04a1a"
+       ]
+      ]
+     }
+    },
+    "blanco": {
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -98
+      ],
+      "a": [
+       0,
+       -86
+      ],
+      "colores": [
+       [
+        0,
+        "#fffbe0"
+       ],
+       [
+        1,
+        "#ffc040"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      2500,
+      ""
+     ],
+     [
+      3800,
+      "rojo",
+      "suave"
+     ],
+     [
+      5200,
+      "naranja",
+      "suave"
+     ],
+     [
+      6500,
+      "blanco",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "mango",
+   "rect": [
+    -170,
+    -96,
+    -90,
+    -88
+   ],
+   "color": "#5a3a22"
+  }
+ ]
+}

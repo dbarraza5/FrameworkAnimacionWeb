@@ -53,6 +53,20 @@ Proyecto `6af48d71b2479cd1dfc94dea`. Caja = extremos del dibujo, en coordenadas 
 
 **Proyecto "Ciudad"** `6afb111e2a252769672eb496` ([`planeacion_ciudad.md`](planeacion_ciudad.md)): 22 assets hechos con generadores (edificios cercanos y lejanos, autobús, parada, auto deportivo, camioneta, 6 personas, calle de 3600) y **Ciudad (escena)** `6afb122d2a252769672edde2`. Sus fuentes en formato simple están en `herramientas/ejemplos/ciudad/` (para cambiarlas: editar, `validar` y `actualizar --id`). Pies en la vereda del fondo: y 428 para los edificios y 458–468 para las personas; autobús y 540, camioneta y 602; capas: edificios lejanos −2 a escala 0,7–0,85, cercanos −1. **Ojo:** con ~1200 grupos, dibujar un cuadro cuesta 60–90 ms.
 
+**Proyecto "P.U.L.S.E"** ([`planeacion_pulse.md`](planeacion_pulse.md)): ambientación del juego del usuario (nave industrial).
+- 20 assets: muro, tubería, torres, pasarelas, operario en 3 poses, araña robot, torreta, vórtices, ascensor…
+- Escena **P.U.L.S.E (escena)**, con sonidos del juego.
+- Escena **Lago radiactivo (escena)** (`lago.mjs`): agua con olas que se desplazan (claves `x` en partes, `ida_vuelta`), resplandor en franjas, barriles que flotan y partículas (chorro, niebla, géiser).
+
+**Proyecto "Ferro"** ([`planeacion_ferro.md`](planeacion_ferro.md)): puzle de imanes con arte propio. Escena **Ferro: nivel 1**: la bola cambia entre instancias (quieta y rodando), con campos que solo se ven activos y un imán que lleva a la bola por un riel (claves `x` compartidas). El choque contra las cajas es un `disparo` con `impacto: "objeto"`.
+
+**Proyecto "Ciudad en ruinas"** ([`planeacion_ruinas.md`](planeacion_ruinas.md)): ciudad apocalíptica de noche con zombis. Muestra el paralaje con claves que copian las de la cámara, una luz apagable como asset aparte, una acción de una sola vez (`bucle: false` + `desfase`) y niebla de bandas translúcidas. (Con el límite viejo, de 100 kB, un asset de unas 540 figuras no entraba; hoy el backend acepta 15 MB.)
+
+**Proyecto "Rostro"** ([`planeacion_rostro.md`](planeacion_rostro.md)): mujer que habla. La boca tiene 9 visemas como instancias que se prenden con opacidad `mantener`, según `labios(texto)`. La misma línea de tiempo sintetiza la voz. Las partes de la cabeza son objetos con el mismo origen y las mismas claves, y la escena usa `profundidad: false` para que el orden por altura no tape las cejas. **"Lía 2"** (`ejemplos/rostro2/`) es la versión con las mejoras: una sola boca con morphing, un pivote "Cabeza" con `padre`, degradados, desenfoque, mezcla y una voz por formantes en cascada. Para revisar un generador **sin guardar nada**: `node herramientas/pruebas/render_memoria.mjs <carpeta> --t 0,1000 --hoja /tmp/render/x.png [--recorte x,y,w,h]`. **Rendimiento:** un desenfoque grande es caro (unos 0,7 s por cuadro a 1280 px con varios); para manchas de luz o sombra conviene un círculo con degradado radial hasta transparente (`rgba(…,0)`).
+- Se generan con `herramientas/ejemplos/pulse/generar.mjs`.
+- Piso principal en y 500 y nivel alto en y 260. Boca del cañón del operario apuntando: `[46, −67]` desde los pies. Boca de la torreta: `[−64, −22]`.
+- Para desarmar un objeto entero con un disparo: `impacto: "objeto"`, fuerza ≈ 350–400. Con `"pieza"` se suelta una sola pieza.
+
 **Escenas de ejemplo:** Calle `…92de`, Meteorito `…caf8aa`, Tornado `…caf8e2`, Disparo `…caf912`, Disparo 2 `6af78db341d4694769b31303`.
 
 **Alturas útiles en la calle:** pies en la vereda del fondo y 430–476; carril del fondo y ≈ 535; carril del frente y ≈ 598; vereda del frente y 668–676.
@@ -85,6 +99,52 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
 - **Formato (resumen):**
   - asset: `{tipo: "asset", nombre, duracion, partes: [{nombre, en, poligono | rect | circulo | elipse, color, borde, pivote, rotacion, escala, claves, bucle, giro, partes}]}`;
   - escena: `{tipo: "escena", nombre, duracion, profundidad, camara: {centro, zoom, claves}, objetos: [{instancia, en (pies), ancla, escala, espejo, plano, fisica, evento, claves (x/y en coordenadas de los pies), repetir} | {nombre, en, partes}], efectos: [{tipo, en, ...parámetros, claves}]}`.
+- **Calidad** ([`planeacion_calidad.md`](planeacion_calidad.md)). Son campos opcionales; sin ellos todo se dibuja igual que antes.
+  - **`precision: "decimal"` en la escena:** usarlo siempre en escenas nuevas con personajes escalados o con zoom de cámara. Sin el campo, el motor redondea cada punto a enteros, y con escala por zoom los detalles chicos (ojos, bocas) se escalonan.
+  - **Para mirar la calidad**, usar PNG a resolución completa, no GIF: el GIF tiene 256 colores y escalona los degradados.
+  - **Al actualizar por nombre**, buscar el **nombre exacto** en el catálogo. "Lía 2" también aparece dentro de "Estudio (Lía 2)".
+  - **Morphing:** una parte con `formas: {a: {poligono: …}, o: {…}}` y `claves: {forma: [[t, "a"], [t2, "o", "suave"], [t3, ""]]}`. Entre clave y clave, los puntos se interpolan; `""` es la forma base de la parte. Todas las formas deben tener **la misma cantidad de puntos** (si no, salta y el validador avisa). Sirve para bocas, párpados, llamas, agua o telas, y reemplaza "un asset por visema".
+  - **Morphing de color** ([`planeacion_capacidades.md`](planeacion_capacidades.md), fase 1):
+    - `colores: {tarde: {degradado: …}, noche: "#0b1530"}` + `claves.forma` anima **solo el color**, con la misma geometría (cielo, luces, metal caliente, rubor).
+    - En `formas`, una forma con `color`, `borde` o `degradado` también interpola el color.
+    - Los degradados se interpolan si tienen el mismo tipo y la misma cantidad de paradas.
+    - Para brillos con degradado radial, el círculo tiene que medir **al menos** el radio mayor del degradado; si no, se ve un borde duro.
+    - Ejemplo: `herramientas/ejemplos/color/`.
+    - También funciona en **objetos dibujados de la escena** (no en instancias): por ejemplo, el cielo que se aclara con un relámpago en `ejemplos/lluvia/`.
+  - **IK de dos huesos** (fase 2): en el primer hueso, `ik: {hasta, punta, objetivo, doblez, orientar}`, y el objetivo es una parte vacía con claves `x`/`y`.
+    - Pies que no patinan: el objetivo del pie apoyado tiene claves constantes. Si se baja la cadera, las rodillas se doblan solas.
+    - `ik_peso` (0..1) pasa de claves a IK.
+    - Que la cadera quede algo más baja que la pierna estirada; si no, el pie se despega.
+    - Ejemplo: `herramientas/ejemplos/ik/`.
+  - **Inercia** (fase 3): en una parte con `pivote` donde se sujeta, `inercia: {rigidez, amortiguacion, limite, fuerza}`. Sirve para pelo, colas, bufandas, orejas, antenas y carteles.
+    - Las cadenas se arman con segmentos anidados, cada uno con su pivote.
+    - **No** se le ponen claves a lo que cuelga: reacciona solo al movimiento con claves de la escena y de sus padres.
+    - Ejemplo: `herramientas/ejemplos/inercia/`.
+  - **Cosas que tienen que encajar entre sí** (un bote sobre una ola, un sedal entre la caña y el pez, fase 9, `ejemplos/pesca/`): escribir el movimiento como funciones del tiempo en el generador y **muestrearlas en claves** (cada 50 ms, `lineal`).
+    - Un "hilo" entre dos puntos que se mueven es un rect con pivote en un extremo y claves de `x`, `y`, `rotacion` y `escala_y`.
+  - **Alas o mecanismos articulados** (fase 8, `ejemplos/dragon/`): una función genera las poses (con la misma cantidad de puntos por parte) y el morphing pasa de una a otra en bucle.
+  - **Cámara con `temblor` y claves `x`/`y`:** el temblor se suma al movimiento de la cámara. Antes lo reemplazaba.
+  - **Derrumbes con la física** (fase 7, `ejemplos/demolicion/`):
+    - Para **soltar piezas sin lanzarlas**, usar una explosión con `umbral: 0.5`, el centro muy lejos debajo del objeto y `radio` justo hasta la altura que se quiere soltar.
+    - Varias ondas seguidas sueltan de abajo hacia arriba.
+    - Las piezas no chocan entre sí: el polvo (partículas suaves grandes) tapa el montón final.
+  - **Sombras proyectadas** (fase 4): en un objeto de escena, `sombra: [{luz: "luz_a", alcance: 560, aplastar: -0.3}, …]`.
+    - La luz es un objeto vacío en el foco, o `[x, y]`, o `angulo` para el sol.
+    - Con las luces contra el fondo, usar `aplastar` negativo.
+    - Ejemplo: `herramientas/ejemplos/sombras/`.
+  - **Jerarquía:** un objeto de escena con `padre: "<otro objeto>"` va dentro del otro. Su `en` y sus claves `x`/`y` son relativos al origen del padre, y hereda la posición, la rotación, la escala, la opacidad y la visibilidad.
+    - Un pivote sin dibujo es `{nombre: "Cabeza", en, partes: [], claves}`.
+    - Los hijos se dibujan junto con el padre, en el orden de su `capa`, y **no se reordenan por profundidad** con el resto. Así se resuelve el problema de Lía sin desactivar `profundidad`.
+    - En el editor, los hijos se ven al "entrar" al padre.
+  - **Relleno degradado:** `degradado: {tipo: "lineal", de: [x,y], a: [x,y], colores: [[0, "#…"], [1, "#…"]]}` o `{tipo: "radial", centro, radio, colores}`, en coordenadas de la parte. Va en partes y en objetos dibujados.
+  - **`desenfoque: px`** (luces, sombras suaves, niebla, fondo fuera de foco) y **`mezcla`**: `suma` o `pantalla` para brillos y luz, `multiplicar` para sombras, además de `superponer`, `aclarar` y `oscurecer`. Se heredan a las partes hijas y sirven también en instancias. Con desenfoque, el relleno sale de color plano (el degradado se ignora).
+  - **Partículas:** `suave: "si"` (bordes difusos), `opacidad` (máxima, 0.9 por defecto) y `mezcla: "suma" | "pantalla"`. Con `suave` y `suma` la niebla y el fuego dejan de verse como manchas.
+  - **Boca desde un audio:** `node herramientas/labios.mjs voz.wav --formas a=a,e=e,i=i,o=o,u=u,m=m,f=f,cerrada= --desfase <ms>` devuelve `claves.forma` listas para pegar en la parte de la boca.
+    - Detecta silencio, las 5 vocales (por formantes), las fricativas (f/s) y los cierres breves (m/b/p).
+    - Solo lee **WAV**; un MP3 hay que convertirlo antes.
+    - Funciona mejor con una voz limpia. Probado con voces sintéticas de 100 a 260 Hz (`pruebas/labios.test.mjs`).
+  - **Límite de tamaño:** el backend acepta hasta 15 MB por request (antes eran 100 kB, unas 500 figuras).
+  - **Regresión visual:** `node herramientas/pruebas/regresion.mjs guardar /tmp/base.json` antes de tocar el motor y `… comparar /tmp/base.json` después. Dibuja **todos** los documentos de la base y lista los que cambiaron.
 - **Para modificar algo existente:** `descompilar` → editar el JSON → `validar` → `actualizar --id` (con respaldo automático). Lo que no es un polígono simple sale como `crudo` (figuras tal cual): se puede dejar como está.
 - **Sonido** ([`planeacion_sonido.md`](planeacion_sonido.md)): por nombre de sonido del proyecto (`autoria sonidos` los lista).
   - Escena: `sonidos: [{sonido, t, volumen?, bucle?, evento?}]` (sin `evento`, a la pista de la escena) y `sonido: "lleva" | "no_lleva"`.

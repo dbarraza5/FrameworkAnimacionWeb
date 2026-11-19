@@ -1,0 +1,736 @@
+{
+ "tipo": "escena",
+ "precision": "decimal",
+ "nombre": "Sombras: calle de noche",
+ "duracion": 11000,
+ "profundidad": true,
+ "camara": {
+  "centro": [
+   640,
+   380
+  ]
+ },
+ "objetos": [
+  {
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    -100,
+    -100,
+    1400,
+    470
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -100
+    ],
+    "a": [
+     0,
+     470
+    ],
+    "colores": [
+     [
+      0,
+      "#04060e"
+     ],
+     [
+      1,
+      "#141c30"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "muro",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    -100,
+    300,
+    1400,
+    610
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     300
+    ],
+    "a": [
+     0,
+     610
+    ],
+    "colores": [
+     [
+      0,
+      "#26222a"
+     ],
+     [
+      1,
+      "#3a3238"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "ladrillo_0",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    -40,
+    360,
+    30,
+    364
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_1",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    80,
+    430,
+    150,
+    434
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_2",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    200,
+    500,
+    270,
+    504
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_3",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    320,
+    360,
+    390,
+    364
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_4",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    440,
+    430,
+    510,
+    434
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_5",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    560,
+    500,
+    630,
+    504
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_6",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    680,
+    360,
+    750,
+    364
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_7",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    800,
+    430,
+    870,
+    434
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_8",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    920,
+    500,
+    990,
+    504
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_9",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    1040,
+    360,
+    1110,
+    364
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_10",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    1160,
+    430,
+    1230,
+    434
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "ladrillo_11",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -4,
+   "rect": [
+    1280,
+    500,
+    1350,
+    504
+   ],
+   "color": "#1e1a20",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "vereda",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -3,
+   "rect": [
+    -100,
+    610,
+    1400,
+    820
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     610
+    ],
+    "a": [
+     0,
+     820
+    ],
+    "colores": [
+     [
+      0,
+      "#3a3a40"
+     ],
+     [
+      1,
+      "#15151a"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "cono_a",
+   "en": [
+    360,
+    264
+   ],
+   "plano": -2,
+   "poligono": [
+    [
+     -8,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     230,
+     346
+    ],
+    [
+     -230,
+     346
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     0
+    ],
+    "a": [
+     0,
+     360
+    ],
+    "colores": [
+     [
+      0,
+      "rgba(255,224,160,0.2)"
+     ],
+     [
+      1,
+      "rgba(255,224,160,0.02)"
+     ]
+    ]
+   },
+   "mezcla": "suma"
+  },
+  {
+   "nombre": "charco_a",
+   "en": [
+    360,
+    628
+   ],
+   "plano": -2,
+   "circulo": {
+    "r": 260,
+    "lados": 32
+   },
+   "escala": [
+    1,
+    0.2
+   ],
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 260,
+    "colores": [
+     [
+      0,
+      "rgba(255,216,144,0.45)"
+     ],
+     [
+      1,
+      "rgba(255,216,144,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma"
+  },
+  {
+   "nombre": "halo_a",
+   "en": [
+    360,
+    262
+   ],
+   "plano": 2,
+   "circulo": {
+    "r": 70,
+    "lados": 24
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 70,
+    "colores": [
+     [
+      0,
+      "rgba(255,240,192,0.7)"
+     ],
+     [
+      1,
+      "rgba(255,240,192,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma"
+  },
+  {
+   "nombre": "luz_a",
+   "en": [
+    360,
+    264
+   ],
+   "plano": -2,
+   "partes": []
+  },
+  {
+   "instancia": "Farola",
+   "nombre": "farola_a",
+   "en": [
+    330,
+    610
+   ],
+   "plano": -1
+  },
+  {
+   "nombre": "cono_b",
+   "en": [
+    990,
+    264
+   ],
+   "plano": -2,
+   "poligono": [
+    [
+     -8,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     230,
+     346
+    ],
+    [
+     -230,
+     346
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     0
+    ],
+    "a": [
+     0,
+     360
+    ],
+    "colores": [
+     [
+      0,
+      "rgba(255,224,160,0.2)"
+     ],
+     [
+      1,
+      "rgba(255,224,160,0.02)"
+     ]
+    ]
+   },
+   "mezcla": "suma"
+  },
+  {
+   "nombre": "charco_b",
+   "en": [
+    990,
+    628
+   ],
+   "plano": -2,
+   "circulo": {
+    "r": 260,
+    "lados": 32
+   },
+   "escala": [
+    1,
+    0.2
+   ],
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 260,
+    "colores": [
+     [
+      0,
+      "rgba(255,216,144,0.45)"
+     ],
+     [
+      1,
+      "rgba(255,216,144,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma"
+  },
+  {
+   "nombre": "halo_b",
+   "en": [
+    990,
+    262
+   ],
+   "plano": 2,
+   "circulo": {
+    "r": 70,
+    "lados": 24
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 70,
+    "colores": [
+     [
+      0,
+      "rgba(255,240,192,0.7)"
+     ],
+     [
+      1,
+      "rgba(255,240,192,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma"
+  },
+  {
+   "nombre": "luz_b",
+   "en": [
+    990,
+    264
+   ],
+   "plano": -2,
+   "partes": []
+  },
+  {
+   "instancia": "Farola",
+   "nombre": "farola_b",
+   "en": [
+    960,
+    610
+   ],
+   "plano": -1
+  },
+  {
+   "instancia": "Paseante",
+   "nombre": "paseante",
+   "en": [
+    -60,
+    618
+   ],
+   "escala": 1.5,
+   "bucle": true,
+   "claves": {
+    "x": [
+     [
+      0,
+      -60
+     ],
+     [
+      11000,
+      1340,
+      "lineal"
+     ]
+    ]
+   },
+   "sombra": [
+    {
+     "luz": "luz_a",
+     "alcance": 560,
+     "opacidad": 0.7,
+     "desenfoque": 3,
+     "aplastar": -0.3,
+     "piso": 618
+    },
+    {
+     "luz": "luz_b",
+     "alcance": 560,
+     "opacidad": 0.7,
+     "desenfoque": 3,
+     "aplastar": -0.3,
+     "piso": 618
+    }
+   ]
+  },
+  {
+   "nombre": "pelota",
+   "en": [
+    645,
+    612
+   ],
+   "circulo": {
+    "r": 18,
+    "lados": 24
+   },
+   "ancla": [
+    0,
+    18
+   ],
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     -6,
+     -6
+    ],
+    "radio": 24,
+    "colores": [
+     [
+      0,
+      "#ff8a6a"
+     ],
+     [
+      0.6,
+      "#d83a2a"
+     ],
+     [
+      1,
+      "#6a1010"
+     ]
+    ]
+   },
+   "claves": {
+    "y": [
+     [
+      0,
+      612,
+      "entrar"
+     ],
+     [
+      450,
+      460,
+      "salir"
+     ],
+     [
+      900,
+      612,
+      "entrar"
+     ],
+     [
+      1350,
+      460,
+      "salir"
+     ],
+     [
+      1800,
+      612,
+      "entrar"
+     ],
+     [
+      2250,
+      460,
+      "salir"
+     ],
+     [
+      2700,
+      612,
+      "entrar"
+     ],
+     [
+      3150,
+      460,
+      "salir"
+     ],
+     [
+      3600,
+      612,
+      "entrar"
+     ],
+     [
+      4050,
+      460,
+      "salir"
+     ],
+     [
+      4500,
+      612,
+      "entrar"
+     ],
+     [
+      4950,
+      460,
+      "salir"
+     ]
+    ]
+   },
+   "sombra": [
+    {
+     "luz": "luz_a",
+     "alcance": 560,
+     "opacidad": 0.7,
+     "desenfoque": 2,
+     "aplastar": -0.3,
+     "piso": 612
+    },
+    {
+     "luz": "luz_b",
+     "alcance": 560,
+     "opacidad": 0.7,
+     "desenfoque": 2,
+     "aplastar": -0.3,
+     "piso": 612
+    }
+   ]
+  }
+ ]
+}

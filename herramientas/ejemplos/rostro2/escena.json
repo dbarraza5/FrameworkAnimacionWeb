@@ -1,0 +1,416 @@
+{
+ "tipo": "escena",
+ "precision": "decimal",
+ "nombre": "Lía 2",
+ "duracion": 16304,
+ "profundidad": true,
+ "sonido": "lleva",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "sonidos": [
+  {
+   "sonido": "Ambiente de estudio",
+   "t": 0,
+   "volumen": 0.25,
+   "bucle": true,
+   "fundido": {
+    "entrada": 800,
+    "salida": 1000
+   }
+  },
+  {
+   "sonido": "Voz de Lía 2",
+   "t": 0,
+   "volumen": 1
+  }
+ ],
+ "camara": {
+  "centro": [
+   640,
+   360
+  ],
+  "zoom": 1,
+  "claves": {
+   "zoom": [
+    [
+     0,
+     1,
+     "suave"
+    ],
+    [
+     16304,
+     1.08
+    ]
+   ],
+   "y": [
+    [
+     0,
+     360,
+     "suave"
+    ],
+    [
+     16304,
+     340
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Estudio (Lía 2)",
+   "nombre": "estudio",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -3
+  },
+  {
+   "instancia": "Torso de Lía 2",
+   "nombre": "torso",
+   "en": [
+    640,
+    740
+   ],
+   "plano": -1,
+   "claves": {
+    "escala_y": [
+     [
+      0,
+      1,
+      "suave"
+     ],
+     [
+      2100,
+      1.008,
+      "suave"
+     ]
+    ]
+   },
+   "repetir": "ida_vuelta"
+  },
+  {
+   "nombre": "Cabeza",
+   "en": [
+    640,
+    540
+   ],
+   "partes": [],
+   "claves": {
+    "x": [
+     [
+      0,
+      640,
+      "suave"
+     ],
+     [
+      950,
+      645.8,
+      "suave"
+     ],
+     [
+      1900,
+      643.1,
+      "suave"
+     ],
+     [
+      2850,
+      635.9,
+      "suave"
+     ],
+     [
+      3800,
+      634.7,
+      "suave"
+     ],
+     [
+      4750,
+      641.3,
+      "suave"
+     ],
+     [
+      5700,
+      646,
+      "suave"
+     ],
+     [
+      6650,
+      641.9,
+      "suave"
+     ],
+     [
+      7600,
+      635,
+      "suave"
+     ],
+     [
+      8550,
+      635.4,
+      "suave"
+     ],
+     [
+      9500,
+      642.5,
+      "suave"
+     ],
+     [
+      10450,
+      645.9,
+      "suave"
+     ],
+     [
+      11400,
+      640.6,
+      "suave"
+     ],
+     [
+      12350,
+      634.4,
+      "suave"
+     ],
+     [
+      13300,
+      636.4,
+      "suave"
+     ],
+     [
+      14250,
+      643.6,
+      "suave"
+     ],
+     [
+      15200,
+      645.6,
+      "suave"
+     ],
+     [
+      16150,
+      639.3,
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      542.5,
+      "suave"
+     ],
+     [
+      950,
+      542.8,
+      "suave"
+     ],
+     [
+      1900,
+      541,
+      "suave"
+     ],
+     [
+      2780,
+      546,
+      "suave"
+     ],
+     [
+      2850,
+      538.4,
+      "suave"
+     ],
+     [
+      3800,
+      537,
+      "suave"
+     ],
+     [
+      4750,
+      537.9,
+      "suave"
+     ],
+     [
+      5700,
+      540.3,
+      "suave"
+     ],
+     [
+      6650,
+      542.6,
+      "suave"
+     ],
+     [
+      7600,
+      542.8,
+      "suave"
+     ],
+     [
+      8550,
+      541,
+      "suave"
+     ],
+     [
+      9500,
+      538.4,
+      "suave"
+     ],
+     [
+      10450,
+      537,
+      "suave"
+     ],
+     [
+      11400,
+      537.9,
+      "suave"
+     ],
+     [
+      12350,
+      540.4,
+      "suave"
+     ],
+     [
+      12998,
+      546,
+      "suave"
+     ],
+     [
+      13300,
+      542.6,
+      "suave"
+     ],
+     [
+      13976,
+      546,
+      "suave"
+     ],
+     [
+      14250,
+      542.8,
+      "suave"
+     ],
+     [
+      15200,
+      540.9,
+      "suave"
+     ],
+     [
+      16150,
+      538.3,
+      "suave"
+     ]
+    ],
+    "rotacion": [
+     [
+      0,
+      0,
+      "suave"
+     ],
+     [
+      950,
+      1.7,
+      "suave"
+     ],
+     [
+      1900,
+      2.6,
+      "suave"
+     ],
+     [
+      2850,
+      2.2,
+      "suave"
+     ],
+     [
+      3800,
+      0.9,
+      "suave"
+     ],
+     [
+      4750,
+      -0.9,
+      "suave"
+     ],
+     [
+      5700,
+      -2.3,
+      "suave"
+     ],
+     [
+      6650,
+      -2.6,
+      "suave"
+     ],
+     [
+      7600,
+      -1.6,
+      "suave"
+     ],
+     [
+      8550,
+      0,
+      "suave"
+     ],
+     [
+      9500,
+      1.7,
+      "suave"
+     ],
+     [
+      10450,
+      2.6,
+      "suave"
+     ],
+     [
+      11400,
+      2.2,
+      "suave"
+     ],
+     [
+      12350,
+      0.8,
+      "suave"
+     ],
+     [
+      13300,
+      -1,
+      "suave"
+     ],
+     [
+      14250,
+      -2.3,
+      "suave"
+     ],
+     [
+      15200,
+      -2.5,
+      "suave"
+     ],
+     [
+      16150,
+      -1.6,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Cabeza de Lía 2",
+   "nombre": "cabeza",
+   "padre": "Cabeza",
+   "en": [
+    0,
+    200
+   ],
+   "bucle": false
+  },
+  {
+   "instancia": "Boca de Lía 2",
+   "nombre": "boca",
+   "padre": "Cabeza",
+   "en": [
+    0,
+    200
+   ],
+   "bucle": false
+  }
+ ],
+ "efectos": []
+}

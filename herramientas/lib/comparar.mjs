@@ -70,6 +70,8 @@ export function canonico(g, {efectoDefecto} = {}) {
         // un parametro de efecto que falta vale su valor por defecto (asi lo lee el motor)
         efecto: g.efecto && efectoDefecto ? sinIds({...efectoDefecto(g.efecto.tipo), ...g.efecto}) : sinIds(g.efecto),
         opacidad: g.opacidad ?? null,
+        desenfoque: g.desenfoque ?? null, mezcla: g.mezcla || null, forma_color: !!g.forma_color, ik: g.ik ? sinIds(g.ik) : null, inercia: g.inercia ? sinIds(g.inercia) : null, sombra: g.sombra ? sinIds(g.sombra) : null,
+        degradados: (g.lista_pintado || []).map((p) => (p.degradado ? sinIds(p.degradado) : null)),
     };
 }
 

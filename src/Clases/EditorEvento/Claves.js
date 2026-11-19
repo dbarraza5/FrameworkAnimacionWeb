@@ -156,3 +156,119 @@ export function valorObjeto(claves, prop, t, modo){
     }
     return v;
 }
+
+// ---------------- Morphing: pista "forma" ----------------
+// Una parte puede llevar `claves.forma: [{t, v: "<nombre de grupo>", interp}]`. Cada
+// valor nombra un grupo hermano (normalmente oculto) que guarda una forma de destino
+// con la MISMA topologia (mismo numero y tipo de figuras, en el mismo orden). Entre dos
+// claves, los puntos de las figuras se interpolan de una forma a la otra. Un valor
+// vacio ("") o el propio nombre de la parte es su forma base. No es una propiedad
+// numerica: no esta en PROPIEDADES y el editor de claves no la edita (todavia).
+export const PISTA_FORMA = "forma";
+
+// Tramo de la pista de forma en t: {a, b, u} (nombres de las formas y avance 0..1 ya
+// con la interpolacion aplicada). null si no hay pista. Respeta el bucle del objeto.
+export function formaEn(claves, t, modo){
+    const pista = claves && claves[PISTA_FORMA];
+    if(!pista || !pista.length) return null;
+    const tramo = modo && modo !== "mantener" ? tramoClaves(claves) : null;
+    const tt = tiempoEnBucle(t, tramo, modo).t;
+    if(tt <= pista[0].t) return {a: pista[0].v, b: pista[0].v, u: 0};
+    const ultima = pista[pista.length - 1];
+    if(tt >= ultima.t) return {a: ultima.v, b: ultima.v, u: 0};
+    let lo = 0, hi = pista.length - 1;
+    while(hi - lo > 1){
+        const m = (lo + hi) >> 1;
+        if(pista[m].t <= tt) lo = m; else hi = m;
+    }
+    const a = pista[lo], b = pista[hi];
+    const u = (tt - a.t) / ((b.t - a.t) || 1);
+    const f = (INTERPOLACIONES[a.interp] || INTERPOLACIONES[INTERP_DEFECTO]).f;
+    return {a: a.v, b: b.v, u: f(Math.max(0, Math.min(1, u)))};
+}
+
+// Mismas figuras (cantidad, tipo y orden): se pueden interpolar.
+export function formasCompatibles(fa, fb){
+    if(!Array.isArray(fa) || !Array.isArray(fb) || fa.length !== fb.length) return false;
+    for(let i = 0; i < fa.length; i++) if(fa[i].tipo_figura !== fb[i].tipo_figura) return false;
+    return true;
+}
+
+// Figuras interpoladas entre dos listas compatibles (u = 0 -> fa, 1 -> fb). Se
+// interpolan todos los atributos numericos; los demas se toman de fa. Si no son
+// compatibles se salta de una a la otra a la mitad del tramo.
+export function interpolarFiguras(fa, fb, u){
+    if(u <= 0 || fa === fb) return fa;
+    if(u >= 1) return fb;
+    if(!formasCompatibles(fa, fb)) return u < 0.5 ? fa : fb;
+    return fa.map((f, i) => {
+        const g = fb[i], A = f.atributos || {}, B = g.atributos || {};
+        const atributos = {...A};
+        for(const k in A){
+            const x = parseFloat(A[k]), y = parseFloat(B[k]);
+            if(Number.isFinite(x) && Number.isFinite(y)) atributos[k] = x + (y - x) * u;
+        }
+        return {...f, atributos};
+    });
+}
+
+// ---------------- Morphing de color (planeacion_capacidades.md, fase 1) ----------------
+// Solo si la parte lo pide (`forma_color: true`): sus formas de destino traen otro color
+// (pintado, borde o degradado) y se interpola junto con los puntos.
+
+// "#rgb" | "#rrggbb" | "rgb(r,g,b)" | "rgba(r,g,b,a)" -> [r, g, b, a] o null
+export function leerColor(c){
+    if(typeof c !== "string") return null;
+    const s = c.trim();
+    let m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
+    if(m){
+        const h = m[1].length === 3 ? m[1].split("").map((k) => k + k).join("") : m[1];
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), 1];
+    }
+    m = /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)$/i.exec(s);
+    if(m) return [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]];
+    return null;
+}
+
+// Color intermedio; si alguno no se puede leer, salta a la mitad del tramo.
+export function interpolarColor(a, b, u){
+    if(a === b || u <= 0) return a;
+    if(u >= 1) return b;
+    const A = leerColor(a), B = leerColor(b);
+    if(!A || !B) return u < 0.5 ? a : b;
+    const c = A.map((x, i) => x + (B[i] - x) * u);
+    const r = (v) => Math.round(Math.max(0, Math.min(255, v)));
+    const al = Math.round(Math.max(0, Math.min(1, c[3])) * 1000) / 1000;
+    return al >= 1 ? `rgb(${r(c[0])},${r(c[1])},${r(c[2])})` : `rgba(${r(c[0])},${r(c[1])},${r(c[2])},${al})`;
+}
+
+const mezclaNum = (x, y, u) => (Number.isFinite(x) && Number.isFinite(y) ? x + (y - x) * u : x);
+const mezclaPar = (p, q, u) => (Array.isArray(p) && Array.isArray(q) && p.length === q.length ? p.map((v, i) => mezclaNum(v, q[i], u)) : p);
+
+// Degradado intermedio (misma cantidad de paradas y mismo tipo); si no, salta. Si el
+// destino no tiene degradado se mantiene el de la parte.
+export function interpolarDegradado(a, b, u){
+    if(!a || !b || a === b || u <= 0) return a;
+    if(a.tipo !== b.tipo || !Array.isArray(a.colores) || !Array.isArray(b.colores) || a.colores.length !== b.colores.length){
+        return u < 0.5 ? a : b;
+    }
+    return {
+        ...a,
+        de: mezclaPar(a.de, b.de, u), a: mezclaPar(a.a, b.a, u), centro: mezclaPar(a.centro, b.centro, u),
+        radio: mezclaNum(a.radio, b.radio, u), radio_ini: mezclaNum(a.radio_ini, b.radio_ini, u),
+        colores: a.colores.map(([p, c], i) => [mezclaNum(p, b.colores[i][0], u), interpolarColor(c, b.colores[i][1], u)]),
+    };
+}
+
+// Pintado intermedio: por indice, color y degradado (los contornos son los de `pa`).
+export function interpolarPintado(pa, pb, u){
+    if(!Array.isArray(pa) || !Array.isArray(pb) || pa === pb || u <= 0) return pa;
+    return pa.map((p, i) => {
+        const q = pb[i];
+        if(!q) return p;
+        const color = interpolarColor(p.color, q.color, u);
+        const degradado = p.degradado ? interpolarDegradado(p.degradado, q.degradado || p.degradado, u) : undefined;
+        if(color === p.color && degradado === p.degradado) return p;
+        return degradado ? {...p, color, degradado} : {...p, color};
+    });
+}

@@ -16,7 +16,7 @@ import {efectoDefecto} from "../EditorEvento/Fisica";
 
 const CONOCIDOS = new Set(["_id", "nombre", "nodo_padre", "visible", "color", "cx", "cy", "capa", "clases",
     "lista_figuras", "lista_pintado", "transformacion", "claves", "claves_bucle", "camara", "instancia",
-    "plano", "fisica", "efecto", "opacidad", "sonidos", "sonido_marca"]);
+    "plano", "fisica", "efecto", "opacidad", "sonidos", "sonido_marca", "desenfoque", "mezcla", "forma_color", "ik", "inercia", "sombra"]);
 
 // ---- sonido (planeacion_sonido.md): ids de sonido -> nombres del formato simple ----
 let NOMBRE_SONIDO = (id) => null;
@@ -50,7 +50,7 @@ function sonidoDeGrupo(g, o, avisos) {
     if (rx) o.reacciones = rx;
     if (g.sonido_marca) o.sonido = g.sonido_marca;
 }
-const CLASES_PROPIAS = new Set(["root", "camara", "efecto"]);
+const CLASES_PROPIAS = new Set(["root", "camara", "efecto", "objeto_hijo"]);
 const r4 = (v) => Math.round(v * 10000) / 10000;
 const igual = (a, b) => Math.abs(a - b) < 1e-6;
 
@@ -107,7 +107,10 @@ function formaYComunes(g, p, avisos) {
     if (pts) {
         p.poligono = pts;
         p.color = pintado.color;
-        if (g.color !== pintado.color) p.borde = g.color;
+        // (con degradado, el compilador pone de borde el ultimo color del degradado)
+        const dg = pintado.degradado, bordeDefecto = dg && Array.isArray(dg.colores) && dg.colores.length ? dg.colores[dg.colores.length - 1][1] : pintado.color;
+        if (g.color !== bordeDefecto) p.borde = g.color;
+        if (dg) p.degradado = sinIds(dg);
     } else if ((g.lista_figuras || []).length) {
         p.crudo = sinIds({lista_figuras: g.lista_figuras, lista_pintado: g.lista_pintado});
         if (g.color && g.color !== "#2b2b2b") p.borde = g.color;
@@ -118,7 +121,16 @@ function formaYComunes(g, p, avisos) {
     if (clases.length) p.clases = clases;
     if (g.visible === false) p.visible = false;
     if (typeof g.opacidad === "number") p.opacidad = g.opacidad;
+    estiloDe(g, p);
     avisarDesconocidos(g, avisos);
+}
+
+function estiloDe(g, p) {
+    if (typeof g.desenfoque === "number") p.desenfoque = g.desenfoque;
+    if (g.mezcla) p.mezcla = g.mezcla;
+    if (g.forma_color) p.forma_color = true;
+    if (g.ik) p.ik = sinIds(g.ik);
+    if (g.inercia) p.inercia = sinIds(g.inercia);
 }
 
 function transformacionParte(g, p) {
@@ -209,11 +221,13 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
     const rxa = reaccionesSimple(esc.reacciones, avisos);
     if (rxa) def.reacciones = rxa;
     if (esc.orden_profundidad) def.profundidad = true;
+    if (esc.precision === "decimal") def.precision = "decimal";
     if (esc.fisica && typeof esc.fisica.gravedad === "number") def.gravedad = esc.fisica.gravedad;
-    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica", "sonidos", "sonido_marca", "reacciones"].includes(k));
+    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica", "sonidos", "sonido_marca", "reacciones", "precision"].includes(k));
     if (otros.length) avisos.push(`escena: campos que el formato simple no guarda: ${otros.join(", ")}`);
 
-    const raiz = hijos.get("root") || [];
+    const esHijo = (g) => (g.clases || []).includes("objeto_hijo");
+    const raiz = [...(hijos.get("root") || []), ...grupos.filter((g) => g.nodo_padre !== "root" && esHijo(g))];
     def.objetos = [];
     def.efectos = [];
     let capa = 1;                                    // el compilador numera objetos y efectos en orden
@@ -261,6 +275,7 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
         } else {
             o.nombre = g.nombre;
         }
+        if (esHijo(g)) o.padre = g.nodo_padre;
         o.en = [r4(g.cx + ax), r4(g.cy + ay)];
         if (ax || ay) o.ancla = [ax, ay];
         const sx = t.escala_x ?? 1, sy = t.escala_y ?? 1;
@@ -270,6 +285,7 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
         if (t.rotacion) o.rotacion = t.rotacion;
         if (g.capa !== capa) o.capa = g.capa;
         if (g.plano) o.plano = g.plano;
+        if (g.sombra) o.sombra = sinIds(g.sombra);
         if (g.fisica) {
             const f = g.fisica, ks = Object.keys(f);
             o.fisica = ks.every((k) => k === "modo" || (k === "nivel" && f.nivel === 1)) ? f.modo : {...f};
@@ -279,6 +295,7 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
             if (g.visible === false) o.visible = false;
             if (typeof g.opacidad === "number") o.opacidad = g.opacidad;
             if (g.color && g.color !== "#2b2b2b") o.borde = g.color;
+            estiloDe(g, o);
             avisarDesconocidos(g, avisos);
             if ((g.lista_figuras || []).length) avisos.push(`${g.nombre}: la instancia tiene figuras propias (se pierden)`);
         }
@@ -289,11 +306,11 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
         if (g.instancia && g.instancia.audio && (g.instancia.audio.volumen !== undefined || g.instancia.audio.silencio)) {
             o.audio = {...(g.instancia.audio.volumen !== undefined ? {volumen: g.instancia.audio.volumen} : {}), ...(g.instancia.audio.silencio ? {silencio: true} : {})};
         }
-        const sub = partesDe(g.nombre, hijos, avisos);
+        const sub = partesDe(g.nombre, new Map([...hijos].map(([k, v]) => [k, v.filter((x) => !esHijo(x))])), avisos);
         if (sub.length) {
             if (g.instancia) avisos.push(`${g.nombre}: la instancia tiene hijos guardados (se pierden)`);
             else o.partes = sub;
-        }
+        } else if (!g.instancia && !o.poligono && !o.crudo) o.partes = [];   // objeto vacio (pivote de sus hijos)
         def.objetos.push(o);
         capa++;
     }

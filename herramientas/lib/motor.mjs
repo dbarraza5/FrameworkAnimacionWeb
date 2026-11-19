@@ -40,12 +40,15 @@ export async function cargarMotor() {
     const salida = path.join(CACHE, "motor.mjs");
     const fuentes = ultimaModificacion(path.join(RAIZ, "src/Clases"));
     if (!fs.existsSync(salida) || fs.statSync(salida).mtimeMs < fuentes) {
+        const temporal = path.join(CACHE, `motor.${process.pid}.${Date.now()}.tmp.mjs`);
         await build({
             stdin: {contents: ENTRADA, resolveDir: RAIZ, loader: "js"},
-            bundle: true, platform: "node", format: "esm", outfile: salida, logLevel: "error",
+            bundle: true, platform: "node", format: "esm", outfile: temporal, logLevel: "error",
             // el motor no necesita React ni el DOM; si algun modulo los importa, que falle claro
             external: ["react", "react-dom"],
         });
+        // atomico: varias herramientas (o archivos de prueba en paralelo) pueden rehacerlo a la vez
+        fs.renameSync(temporal, salida);
     }
     // el motor escribe mucho por console.log: silenciarlo salvo con DEBUG=1
     if (!process.env.DEBUG) console.log = () => {};

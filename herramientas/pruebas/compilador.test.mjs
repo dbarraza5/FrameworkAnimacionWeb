@@ -205,3 +205,133 @@ test("sonido: errores claros (sonido inexistente, reaccion que no aplica, marca 
     // sin catalogo de sonidos
     contiene(Compilador.compilar({tipo: "escena", nombre: "e", duracion: 1000, sonidos: [{sonido: "Bang"}], objetos: []}, buscar).errores, "no hay catalogo de sonidos");
 });
+
+// ---------------- calidad: morphing, jerarquia, degradado, desenfoque, mezcla ----------------
+const ovalo = (w, h) => Array.from({length: 10}, (_, i) => [Math.round(w * Math.cos(i / 10 * 2 * Math.PI)), Math.round(h * Math.sin(i / 10 * 2 * Math.PI))]);
+
+test("morphing: formas -> grupos ocultos, claves.forma con nombres completos (ida y vuelta)", () => {
+    const def = {tipo: "asset", nombre: "Boca", partes: [
+        {nombre: "labios", poligono: ovalo(30, 4), color: "#b03a48",
+            formas: {a: {poligono: ovalo(26, 22)}, o: {poligono: ovalo(14, 16)}},
+            claves: {forma: [[0, ""], [300, "a", "suave"], [600, "o"]]}}]};
+    const r = Compilador.compilar(def, buscar, buscarSon);
+    assert.deepEqual(r.errores, []);
+    assert.deepEqual(r.avisos, []);
+    const a = grupo(r, "labios~a");
+    assert.equal(a.visible, false);
+    assert.equal(a.nodo_padre, "labios");
+    assert.deepEqual(grupo(r, "labios").claves.forma.map((c) => c.v), ["", "labios~a", "labios~o"]);
+    idaYVuelta(def);
+});
+
+test("morphing: forma inexistente es error; topologia distinta es aviso", () => {
+    const r = Compilador.compilar({tipo: "asset", nombre: "B", partes: [
+        {nombre: "x", poligono: ovalo(10, 10), formas: {t: {rect: [0, 0, 5, 5]}}, claves: {forma: [[0, "t"], [100, "nada"]]}}]}, buscar, buscarSon);
+    contiene(r.errores, '"nada", que no existe');
+    contiene(r.avisos, "salta en vez de transformarse");
+});
+
+test("morphing: el motor interpola los puntos entre dos formas", async () => {
+    const {Claves} = await cargarMotor();
+    const fa = [{tipo_figura: "RECTA", atributos: {x1: 0, y1: 0, x2: 10, y2: 0, cx: 0, cy: 0}}];
+    const fb = [{tipo_figura: "RECTA", atributos: {x1: 0, y1: 10, x2: 20, y2: 0, cx: 4, cy: 0}}];
+    const m = Claves.interpolarFiguras(fa, fb, 0.5)[0].atributos;
+    assert.deepEqual([m.y1, m.x2, m.cx], [5, 15, 2]);
+    const f = Claves.formaEn({forma: [{t: 0, v: "", interp: "lineal"}, {t: 100, v: "b", interp: "lineal"}]}, 25);
+    assert.deepEqual(f, {a: "", b: "b", u: 0.25});
+});
+
+test("jerarquia: padre, en relativo al padre, ciclo y padre inexistente; estilo (ida y vuelta)", () => {
+    const def = {tipo: "escena", nombre: "E", duracion: 1000, objetos: [
+        {nombre: "Cabeza", en: [600, 400], partes: [], claves: {rotacion: [[0, -10], [1000, 10, "suave"]]}},
+        {nombre: "Cara", padre: "Cabeza", en: [0, -100], circulo: 80, color: "#e8b48f",
+            degradado: {tipo: "radial", centro: [-20, -20], radio: 120, colores: [[0, "#ffffff"], [1, "#b97c58"]]}},
+        {instancia: "Casa", nombre: "Sombrero", padre: "Cabeza", en: [0, -180], escala: 0.2, mezcla: "multiplicar"},
+        {nombre: "Brillo", en: [100, 100], rect: [0, 0, 50, 50], color: "#ffff00", desenfoque: 12, mezcla: "suma",
+            degradado: {tipo: "lineal", de: [0, 0], a: [0, 50], colores: [[0, "#ffff00"], [1, "#ff8800"]]}},
+    ]};
+    const r = Compilador.compilar(def, buscar, buscarSon);
+    assert.deepEqual(r.errores, []);
+    assert.equal(grupo(r, "Cara").nodo_padre, "Cabeza");
+    assert.deepEqual([grupo(r, "Cara").cx, grupo(r, "Cara").cy], [0, -100]);
+    assert.equal(grupo(r, "Sombrero").nodo_padre, "Cabeza");
+    assert.equal(grupo(r, "Brillo").desenfoque, 12);
+    assert.equal(grupo(r, "Brillo").lista_pintado[0].degradado.tipo, "lineal");
+    idaYVuelta(def);
+    const malo = Compilador.compilar({tipo: "escena", nombre: "E", duracion: 1000, objetos: [
+        {nombre: "A", padre: "B", en: [0, 0], rect: [0, 0, 1, 1]}, {nombre: "B", padre: "A", en: [0, 0], rect: [0, 0, 1, 1]},
+        {nombre: "C", padre: "Z", en: [0, 0], rect: [0, 0, 1, 1]}, {nombre: "D", en: [0, 0], rect: [0, 0, 1, 1], mezcla: "rara", desenfoque: -1}]}, buscar, buscarSon);
+    contiene(malo.errores, "ciclo");
+    contiene(malo.errores, 'padre "Z"');
+    contiene(malo.errores, 'mezcla "rara"');
+    contiene(malo.errores, "desenfoque es un numero");
+});
+
+// ---------------- capacidades, fase 1: morphing de color ----------------
+test("color: interpolacion de colores, degradados y pintado", async () => {
+    const {Claves} = await cargarMotor();
+    assert.equal(Claves.interpolarColor("#000000", "#ffffff", 0.5), "rgb(128,128,128)");
+    assert.equal(Claves.interpolarColor("#f00", "rgba(0,0,255,0)", 0.5), "rgba(128,0,128,0.5)");
+    assert.equal(Claves.interpolarColor("#123456", "#123456", 0.3), "#123456");
+    assert.equal(Claves.interpolarColor("rojo", "#ffffff", 0.4), "rojo");          // ilegible: salta a la mitad
+    assert.equal(Claves.interpolarColor("rojo", "#ffffff", 0.6), "#ffffff");
+    const a = {tipo: "lineal", de: [0, 0], a: [0, 100], colores: [[0, "#000000"], [1, "#000000"]]};
+    const b = {tipo: "lineal", de: [0, 0], a: [0, 200], colores: [[0, "#ffffff"], [1, "#000000"]]};
+    const m = Claves.interpolarDegradado(a, b, 0.5);
+    assert.deepEqual([m.a, m.colores[0][1], m.colores[1][1]], [[0, 150], "rgb(128,128,128)", "#000000"]);
+    const pa = [{color: "#000000", visible: true, elementos: [[]]}];
+    assert.equal(Claves.interpolarPintado(pa, [{color: "#000000"}], 0.5)[0], pa[0]);  // mismo color: el mismo objeto
+});
+
+test("color: atajo colores -> formas con la misma geometria, forma_color y ida y vuelta", () => {
+    const def = {tipo: "asset", nombre: "Cielo", partes: [
+        {nombre: "cielo", rect: [0, 0, 100, 50], color: "#7ec0ee",
+            degradado: {tipo: "lineal", de: [0, 0], a: [0, 50], colores: [[0, "#4a90d9"], [1, "#bfe3ff"]]},
+            colores: {tarde: {degradado: {tipo: "lineal", de: [0, 0], a: [0, 50], colores: [[0, "#5b3a7a"], [1, "#ff9a4a"]]}}, noche: "#0b1530"},
+            claves: {forma: [[0, ""], [1000, "tarde", "lineal"], [2000, "noche", "lineal"]]}},
+        {nombre: "boca", poligono: ovalo(10, 3), color: "#aa4444", formas: {a: {poligono: ovalo(9, 8)}}, claves: {forma: [[0, ""], [100, "a"]]}}]};
+    const r = Compilador.compilar(def, buscar, buscarSon);
+    assert.deepEqual(r.errores, []);
+    assert.equal(grupo(r, "cielo").forma_color, true);
+    assert.equal(grupo(r, "boca").forma_color, undefined);          // solo geometria: como antes
+    const tarde = grupo(r, "cielo~tarde"), noche = grupo(r, "cielo~noche");
+    assert.equal(tarde.lista_figuras.length, grupo(r, "cielo").lista_figuras.length);
+    assert.equal(tarde.lista_pintado[0].degradado.colores[1][1], "#ff9a4a");
+    assert.equal(noche.lista_pintado[0].color, "#0b1530");
+    assert.equal(noche.lista_pintado[0].degradado.colores[0][1], "#4a90d9");   // lo que no dice, igual que la parte
+    idaYVuelta(def);
+    const malo = Compilador.compilar({tipo: "asset", nombre: "M", partes: [
+        {nombre: "x", rect: [0, 0, 1, 1], formas: {a: {rect: [0, 0, 2, 2]}}, colores: {a: "#fff", b: 5}},
+        {nombre: "y", partes: [], colores: {a: "#fff"}}]}, buscar, buscarSon);
+    contiene(malo.errores, "esta en formas y en colores");
+    contiene(malo.errores, "colores.b");
+    contiene(malo.errores, "colores necesita que la parte tenga una forma");
+});
+
+test("color: formas y colores tambien en objetos dibujados de la escena", () => {
+    const def = {tipo: "escena", nombre: "E", duracion: 1000, objetos: [
+        {nombre: "cielo", en: [0, 0], rect: [0, 0, 100, 50], color: "#102040", colores: {flash: "#8090c0"}, claves: {forma: [[0, ""], [500, "flash", "salir"]]}}]};
+    const r = Compilador.compilar(def, buscar, buscarSon);
+    assert.deepEqual(r.errores, []);
+    assert.equal(grupo(r, "cielo").forma_color, true);
+    assert.deepEqual(grupo(r, "cielo").claves.forma.map((c) => c.v), ["", "cielo~flash"]);
+    assert.equal(grupo(r, "cielo~flash").nodo_padre, "cielo");
+    const malo = Compilador.compilar({tipo: "escena", nombre: "E", duracion: 1000, objetos: [{instancia: "Casa", colores: {a: "#fff"}}]}, buscar, buscarSon);
+    contiene(malo.errores, "no de instancias");
+});
+
+test("camara: el temblor se suma a las claves x/y de la camara (no las reemplaza)", () => {
+    const esc = (claves) => ({tipo: "escena", nombre: "E", duracion: 4000, camara: {centro: [100, 100], temblor: {desde: 1000, hasta: 2000, amplitud: 10}, claves}, objetos: [{nombre: "a", en: [0, 0], rect: [0, 0, 1, 1]}]});
+    const cam = (r) => r.resultado.grupos_figuras.find((g) => (g.clases || []).includes("camara"));
+    // sin claves propias: la receta de siempre, alrededor del centro
+    const solo = cam(Compilador.compilar(esc(undefined), buscar, buscarSon));
+    assert.ok(solo.claves.x.every((k) => Math.abs(k.v - 100) <= 10));
+    // con claves: la camara viaja de 0 a 4000 y tiembla encima de ese viaje
+    const r = Compilador.compilar(esc({x: [[0, 0], [4000, 4000]]}), buscar, buscarSon);
+    assert.deepEqual(r.errores, []);
+    const x = cam(r).claves.x;
+    assert.equal(x[0].v, 0);
+    assert.equal(x[x.length - 1].v, 4000);
+    const medio = x.filter((k) => k.t > 1000 && k.t < 2000);
+    assert.ok(medio.length > 5 && medio.every((k) => Math.abs(k.v - k.t) <= 10), "dentro del temblor: el viaje + la sacudida");
+});

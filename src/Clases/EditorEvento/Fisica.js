@@ -48,7 +48,9 @@ export const TIPOS_EFECTO = {
         ["dispersion", "Dispersión (°)", 5, 40], ["gravedad", "Gravedad", 50, 0], ["tam_ini", "Tamaño inicial", 1, 10],
         ["tam_fin", "Tamaño final", 1, 26], ["color_ini", "Color inicial", "texto", "#ffcc33"],
         ["color_fin", "Color final", "texto", "#555555"], ["modo", "Modo", "lista:chorro,remolino", "chorro"],
-        ["radio", "Radio (remolino)", 10, 120], ["alto", "Alto (remolino)", 10, 400]]},
+        ["radio", "Radio (remolino)", 10, 120], ["alto", "Alto (remolino)", 10, 400],
+        ["suave", "Bordes suaves", "lista:no,si", "no"], ["opacidad", "Opacidad máxima", 0.05, 0.9],
+        ["mezcla", "Mezcla", "lista:normal,suma,pantalla", "normal"]]},
 };
 
 export const MODOS_FISICA = {
@@ -112,7 +114,7 @@ export function particulasEn(ef, posEn, t) {
             y = P0.y + Math.sin(ang) * v * a + 0.5 * num(ef.gravedad, 0) * a * a;
         }
         r.push({x, y, tam: num(ef.tam_ini, 10) + (num(ef.tam_fin, 26) - num(ef.tam_ini, 10)) * u,
-            color: mezclarColor(ef.color_ini, ef.color_fin, u), alfa: (1 - u) * (1 - u) * 0.9 + 0.05});
+            color: mezclarColor(ef.color_ini, ef.color_fin, u), alfa: (1 - u) * (1 - u) * num(ef.opacidad, 0.9) + 0.05});
     }
     return r;
 }

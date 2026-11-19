@@ -14,24 +14,34 @@
 //    pivote?: [x, y], rotacion?, escala?: n | [sx, sy],
 //    claves?: {prop: [[t, v, interp?]...]}, bucle?: "repetir"|"ida_vuelta"|"continuar",
 //    giro?: {desde, hasta, ms, interp?, modo?}  (atajo: claves de rotacion en bucle)
+//    formas?: {clave: FORMA}  (morphing: formas de destino; claves.forma: [[t, "clave" | "", interp?]])
+//    inercia?: true | {rigidez?, amortiguacion?, fuerza?, limite?, punta?}  (movimiento secundario: pendulo con resorte)
+//    ik?: {hasta, punta: [x,y], objetivo, doblez?: 1|-1, orientar?}  (cinematica inversa de 2 huesos; claves.ik_peso 0..1)
+//    colores?: {clave: "#color" | {color?, borde?, degradado?}}  (misma geometria, otro color: se interpola)
+//    degradado?: {tipo: "lineal", de, a, colores: [[pos, color]...]} | {tipo: "radial", centro, radio, colores}
+//    desenfoque?: px, mezcla?: normal|suma|pantalla|multiplicar|superponer|aclarar|oscurecer  (se heredan)
 //    partes?: [PARTE...]}
 // ESCENA
-//   {tipo: "escena", nombre, duracion, profundidad?: bool, gravedad?, eventos?: [...],
+//   {tipo: "escena", nombre, duracion, profundidad?: bool, precision?: "decimal", gravedad?, eventos?: [...],
 //    camara?: {centro: [x,y], zoom?, tamano?: [w,h], claves?, bucle?, temblor?, nombre?, capa?},
 //    objetos: [OBJETO...], efectos?: [EFECTO...]}
 // OBJETO
 //   instancia: {instancia: "<nombre del asset>", nombre?, en: [x,y] (pies), ancla?: [x,y],
 //               escala?: n | [sx, sy], espejo?, rotacion?, plano?, capa?, borde?, fisica?: "fijo"|"rigido"|"desarmar"|{...},
 //               evento?, bucle?, desfase?, version?, opacidad?, visible?,
-//               claves?: {x|y: [[t, v_pies, interp?]], ...}, repetir?}
+//               claves?: {x|y: [[t, v_pies, interp?]], ...}, repetir?,
+//               padre?: "<otro objeto>" (en y claves relativos al origen del padre; hereda su movimiento),
+//               desenfoque?, mezcla?,
+//               sombra?: true | {luz?: [x,y] | "<objeto>", angulo?, piso?, largo?, aplastar?, opacidad?, desenfoque?, color?} | [...]}
 //   dibujo:    {nombre, en, ancla?, una forma de PARTE y/o partes: [PARTE...], plano?, fisica?, claves?...}
 // EFECTO
 //   {tipo: explosion|tornado|disparo|viento|particulas, nombre?, en: [x,y], capa?, claves?, repetir?, ...parametros}
 // Lo inverso (editor -> simple) esta en Descompilador.js.
 
 import {TIPOS_EFECTO, MODOS_FISICA, efectoDefecto} from "../EditorEvento/Fisica";
-import {PROPIEDADES, INTERPOLACIONES, MODOS_BUCLE} from "../EditorEvento/Claves";
+import {PROPIEDADES, INTERPOLACIONES, MODOS_BUCLE, PISTA_FORMA, formasCompatibles, valorEn} from "../EditorEvento/Claves";
 import {GENERADORES, expandirGenerador, claveTemblor} from "./Generadores";
+import {PISTA_PESO} from "../EditorEvento/Ik";
 
 const FORMAS = ["poligono", "rect", "circulo", "elipse"];
 
@@ -100,15 +110,18 @@ function compilarClaves(claves, E, donde, ajuste) {
     if (!claves) return null;
     const r = {};
     for (const prop of Object.keys(claves)) {
-        if (!PROPIEDADES[prop]) { E.error(donde, `propiedad animable desconocida "${prop}" (validas: ${Object.keys(PROPIEDADES).join(", ")})`); continue; }
+        const esForma = prop === PISTA_FORMA;
+        if (!PROPIEDADES[prop] && !esForma && prop !== PISTA_PESO) { E.error(donde, `propiedad animable desconocida "${prop}" (validas: ${[...Object.keys(PROPIEDADES), PISTA_FORMA, PISTA_PESO].join(", ")})`); continue; }
         const lista = claves[prop];
         if (!Array.isArray(lista) || !lista.length) { E.error(donde, `claves.${prop} debe ser una lista de [t, valor, interp?]`); continue; }
         const pista = [];
         for (const k of lista) {
-            if (!Array.isArray(k) || !num(k[0]) || !num(k[1])) { E.error(donde, `clave de ${prop} invalida: ${JSON.stringify(k)} (se espera [t_ms, valor, interp?])`); continue; }
+            if (esForma) {
+                if (!Array.isArray(k) || !num(k[0]) || typeof k[1] !== "string") { E.error(donde, `clave de forma invalida: ${JSON.stringify(k)} (se espera [t_ms, "nombre de la parte con la forma", interp?])`); continue; }
+            } else if (!Array.isArray(k) || !num(k[0]) || !num(k[1])) { E.error(donde, `clave de ${prop} invalida: ${JSON.stringify(k)} (se espera [t_ms, valor, interp?])`); continue; }
             const interp = k[2] || "lineal";
             if (!INTERPOLACIONES[interp]) E.error(donde, `interpolacion "${interp}" desconocida (validas: ${Object.keys(INTERPOLACIONES).join(", ")})`);
-            pista.push({t: Math.round(k[0]), v: ajuste ? ajuste(prop, k[1]) : k[1], interp});
+            pista.push({t: Math.round(k[0]), v: ajuste && !esForma ? ajuste(prop, k[1]) : k[1], interp});
         }
         pista.sort((a, b) => a.t - b.t);
         for (let i = 1; i < pista.length; i++) if (pista[i].t === pista[i - 1].t) E.error(donde, `dos claves de ${prop} en t=${pista[i].t}`);
@@ -118,6 +131,29 @@ function compilarClaves(claves, E, donde, ajuste) {
 }
 
 function aplicarComunes(g, p, E, donde) {
+    aplicarEstilo(g, p, E, donde);
+    if (p.forma_color === true) g.forma_color = true;     // (lo escribe el descompilador)
+    if (p.inercia !== undefined) {                         // fase 3 de capacidades (movimiento secundario)
+        const i = p.inercia === true ? {} : p.inercia;
+        const CAMPOS = ["rigidez", "amortiguacion", "fuerza", "limite", "punta"];
+        if (!i || typeof i !== "object" || Array.isArray(i)) E.error(donde, "inercia es true o {rigidez?: Hz, amortiguacion?: 0..1, fuerza?, limite?: grados, punta?: [x, y]}");
+        else {
+            const malos = Object.keys(i).filter((k) => !CAMPOS.includes(k));
+            if (malos.length) E.error(donde, `inercia: campos desconocidos ${malos.join(", ")} (validos: ${CAMPOS.join(", ")})`);
+            for (const k of ["rigidez", "amortiguacion", "fuerza", "limite"]) if (i[k] !== undefined && !num(i[k])) E.error(donde, `inercia.${k} es un numero`);
+            if (i.rigidez !== undefined && num(i.rigidez) && i.rigidez <= 0) E.error(donde, "inercia.rigidez (Hz) tiene que ser mayor que 0");
+            if (i.punta !== undefined && !par(i.punta)) E.error(donde, "inercia.punta es [x, y]");
+            g.inercia = {...i};
+            if (!p.pivote) E.aviso(donde, "inercia sin pivote: la parte cuelga de su origen (pone pivote: [x, y] donde se sujeta)");
+        }
+    }
+    if (p.ik !== undefined) {                              // fase 2 de capacidades (se valida al final: validarIk)
+        const k = p.ik;
+        if (!k || typeof k !== "object" || typeof k.hasta !== "string" || typeof k.objetivo !== "string") E.error(donde, "ik es {hasta: \"<segundo hueso>\", punta: [x, y], objetivo: \"<grupo>\", doblez?: 1 | -1, orientar?: \"<grupo>\"}");
+        else if (k.punta !== undefined && !par(k.punta)) E.error(donde, "ik.punta es [x, y] (en coordenadas del segundo hueso)");
+        else if (k.doblez !== undefined && k.doblez !== 1 && k.doblez !== -1) E.error(donde, "ik.doblez es 1 o -1");
+        else g.ik = {hasta: k.hasta, punta: k.punta || [0, 0], objetivo: k.objetivo, ...(k.doblez ? {doblez: k.doblez} : {}), ...(k.orientar ? {orientar: k.orientar} : {})};
+    }
     if (p.visible === false) g.visible = false;
     if (num(p.opacidad)) g.opacidad = Math.max(0, Math.min(1, p.opacidad));
     const tieneT = p.pivote || num(p.rotacion) || p.escala !== undefined || p.giro || (p.claves && ["rotacion", "escala_x", "escala_y"].some((k) => p.claves[k]));
@@ -144,6 +180,66 @@ function aplicarComunes(g, p, E, donde) {
     }
 }
 
+// degradado: {tipo: "lineal", de: [x,y], a: [x,y], colores: [[pos 0..1, color]...]}
+//         o  {tipo: "radial", centro: [x,y], radio, radio_ini?, colores}   (coordenadas de la parte)
+function compilarDegradado(d, E, donde) {
+    if (d === undefined) return null;
+    const malo = (m) => { E.error(donde, `degradado: ${m}`); return null; };
+    if (!d || typeof d !== "object") return malo("es {tipo: lineal|radial, ..., colores: [[pos, color]...]}");
+    if (!Array.isArray(d.colores) || d.colores.length < 2 || !d.colores.every((c) => Array.isArray(c) && num(c[0]) && typeof c[1] === "string")) {
+        return malo("colores es una lista de al menos 2 [posicion 0..1, \"#color\"]");
+    }
+    const colores = d.colores.map(([p, c]) => [Math.max(0, Math.min(1, p)), c]);
+    if (d.tipo === "radial") {
+        if (d.centro !== undefined && !par(d.centro)) return malo("centro es [x, y]");
+        if (!num(d.radio)) return malo("radial necesita radio");
+        return {tipo: "radial", centro: d.centro || [0, 0], radio: d.radio, ...(num(d.radio_ini) ? {radio_ini: d.radio_ini} : {}), colores};
+    }
+    if (d.tipo !== undefined && d.tipo !== "lineal") return malo(`tipo "${d.tipo}" desconocido (lineal o radial)`);
+    if (!par(d.de) || !par(d.a)) return malo("lineal necesita de: [x, y] y a: [x, y]");
+    return {tipo: "lineal", de: d.de, a: d.a, colores};
+}
+
+// Fase 4 de capacidades: sombra proyectada de un objeto de escena.
+//   sombra: true | {luz?: [x, y] | "<objeto>", alcance?, angulo?, piso?, largo?, aplastar?, opacidad?, desenfoque?, color?} | [ ...varias luces ]
+// piso por defecto: donde estan los pies del objeto (en[1]).
+const CAMPOS_SOMBRA = ["luz", "angulo", "piso", "largo", "aplastar", "opacidad", "desenfoque", "color", "alcance"];
+function compilarSombra(v, pieY, E, donde) {
+    if (v === undefined || v === false) return null;
+    const lista = Array.isArray(v) ? v : [v === true ? {} : v];
+    const r = [];
+    lista.forEach((s, i) => {
+        const d = lista.length > 1 ? `${donde} › sombra #${i}` : `${donde} › sombra`;
+        if (!s || typeof s !== "object" || Array.isArray(s)) { E.error(d, "sombra es true, {luz?, angulo?, piso?, largo?, aplastar?, opacidad?, desenfoque?, color?} o una lista de esas"); return; }
+        const malos = Object.keys(s).filter((k) => !CAMPOS_SOMBRA.includes(k));
+        if (malos.length) E.error(d, `campos desconocidos ${malos.join(", ")} (validos: ${CAMPOS_SOMBRA.join(", ")})`);
+        if (s.luz !== undefined && !par(s.luz) && typeof s.luz !== "string") E.error(d, "luz es [x, y] o el nombre de un objeto de la escena");
+        for (const k of ["angulo", "piso", "largo", "aplastar", "opacidad", "desenfoque", "alcance"]) if (s[k] !== undefined && !num(s[k])) E.error(d, `${k} es un numero`);
+        if (s.color !== undefined && typeof s.color !== "string") E.error(d, "color es un texto (\"#000000\")");
+        r.push({piso: pieY, ...s});
+    });
+    return r.length ? r : null;
+}
+
+// las luces de las sombras nombran objetos que existen
+function validarSombras(grupos, E) {
+    const nombres = new Set(grupos.map((g) => g.nombre));
+    for (const g of grupos) for (const s of g.sombra || []) if (typeof s.luz === "string" && !nombres.has(s.luz)) E.error(g.nombre, `sombra: la luz "${s.luz}" no es un objeto de la escena`);
+}
+
+// desenfoque (px) y mezcla (modo de fusion): se heredan a las partes hijas.
+const MEZCLAS = ["normal", "suma", "pantalla", "multiplicar", "superponer", "aclarar", "oscurecer"];
+function aplicarEstilo(g, p, E, donde) {
+    if (p.desenfoque !== undefined) {
+        if (!num(p.desenfoque) || p.desenfoque < 0) E.error(donde, "desenfoque es un numero de px (>= 0)");
+        else if (p.desenfoque > 0) g.desenfoque = p.desenfoque;
+    }
+    if (p.mezcla !== undefined) {
+        if (!MEZCLAS.includes(p.mezcla)) E.error(donde, `mezcla "${p.mezcla}" desconocida (validas: ${MEZCLAS.join(", ")})`);
+        else if (p.mezcla !== "normal") g.mezcla = p.mezcla;
+    }
+}
+
 // Forma de una parte (o de un objeto dibujado) -> figuras y pintado del grupo.
 // `crudo: {lista_figuras, lista_pintado}` copia figuras del editor tal cual (lo usa el
 // descompilador para lo que no es un poligono simple: circulos, varios contornos...).
@@ -167,6 +263,12 @@ function aplicarForma(g, p, E, donde) {
         g.lista_figuras = lista_figuras;
         g.lista_pintado = [{color: p.color || "#888888", visible: true, elementos: [contorno]}];
         g.color = p.borde || p.color || "#2b2b2b";
+        const dg = compilarDegradado(p.degradado, E, donde);
+        if (dg) {
+            g.lista_pintado[0].degradado = dg;
+            if (!p.color) g.lista_pintado[0].color = dg.colores[0][1];
+            if (!p.borde) g.color = dg.colores[dg.colores.length - 1][1];
+        }
         return true;
     }
     if (p.borde) g.color = p.borde;
@@ -189,8 +291,89 @@ function compilarPartes(partes, padre, E, nombres, salida, prefijo) {
         }
         aplicarComunes(g, p, E, donde);
         salida.push(g);
+        compilarFormas(g, p, E, nombres, salida, donde);
         compilarPartes(p.partes, p.nombre, E, nombres, salida, donde + " › ");
     });
+}
+
+// Morphing: `formas: {clave: FORMA}` en una parte -> grupos hijos ocultos
+// "<parte>~<clave>" con esa forma; `claves.forma` puede nombrarlos por la clave corta.
+const SEP_FORMA = "~";
+// Fase 1 de capacidades: `colores: {clave: "#color" | {color?, borde?, degradado?}}` -> formas con la
+// MISMA geometria que la parte y otro color. Si alguna forma o `colores` trae color, la parte
+// queda con `forma_color: true` y el motor interpola tambien los colores.
+const CAMPOS_COLOR = ["color", "borde", "degradado"];
+function compilarFormas(g, p, E, nombres, salida, donde) {
+    if (p.formas === undefined && p.colores === undefined) return;
+    const formas = {};
+    if (p.formas !== undefined) {
+        if (!p.formas || typeof p.formas !== "object" || Array.isArray(p.formas)) { E.error(donde, "formas es {nombre: {poligono | rect | circulo | elipse}}"); return; }
+        Object.assign(formas, p.formas);
+    }
+    if (p.colores !== undefined) {
+        if (!p.colores || typeof p.colores !== "object" || Array.isArray(p.colores)) { E.error(donde, "colores es {nombre: \"#color\" | {color, borde, degradado}}"); return; }
+        const geometria = Object.fromEntries([...FORMAS, "crudo"].filter((k) => p[k] !== undefined).map((k) => [k, p[k]]));
+        if (!Object.keys(geometria).length) { E.error(donde, "colores necesita que la parte tenga una forma (poligono, rect, circulo, elipse)"); return; }
+        for (const [k, c] of Object.entries(p.colores)) {
+            if (formas[k] !== undefined) { E.error(donde, `"${k}" esta en formas y en colores: usa una sola`); continue; }
+            const col = typeof c === "string" ? {color: c} : c;
+            if (!col || typeof col !== "object" || !CAMPOS_COLOR.some((x) => col[x] !== undefined)) { E.error(donde, `colores.${k}: se espera "#color" o {color, borde, degradado}`); continue; }
+            formas[k] = {...geometria, ...col};
+        }
+    }
+    const conColor = Object.values(formas).some((f) => f && CAMPOS_COLOR.some((x) => f[x] !== undefined));
+    const base = g.lista_pintado[0] || {};
+    for (const [k, f] of Object.entries(formas)) {
+        const nombre = `${p.nombre}${SEP_FORMA}${k}`;
+        if (nombres.has(nombre)) { E.error(donde, `forma repetida "${k}"`); continue; }
+        nombres.add(nombre);
+        const h = grupoBase(nombre, p.nombre, 0, 0, 0);
+        h.visible = false;
+        h.clases = ["forma"];
+        // lo que la forma no dice, igual que la parte (asi solo cambia lo que se pide)
+        const def = conColor ? {color: f.color || base.color || p.color, borde: f.borde || (f.color && !p.borde ? f.color : g.color),
+            ...(f.degradado || base.degradado ? {degradado: f.degradado || base.degradado} : {})} : {color: f.color || p.color};
+        if (!aplicarForma(h, {...f, ...def}, E, `${donde} › formas.${k}`)) continue;
+        salida.push(h);
+    }
+    if (conColor) g.forma_color = true;
+    const pista = g.claves && g.claves[PISTA_FORMA];
+    if (pista) for (const c of pista) if (c.v && c.v !== p.nombre && formas[c.v] !== undefined) c.v = `${p.nombre}${SEP_FORMA}${c.v}`;
+}
+
+// IK: el segundo hueso es hijo directo, el objetivo existe y no es parte de la cadena.
+function validarIk(grupos, E) {
+    const mapa = new Map(grupos.map((g) => [g.nombre, g]));
+    const dentroDe = (g, raiz) => { const vistos = new Set(); for (let x = g; x && !vistos.has(x.nombre); x = mapa.get(x.nodo_padre)) { if (x.nombre === raiz) return true; vistos.add(x.nombre); } return false; };
+    for (const g of grupos) {
+        const k = g.ik;
+        if (!k) continue;
+        const b = mapa.get(k.hasta), t = mapa.get(k.objetivo);
+        if (!b) { E.error(g.nombre, `ik.hasta "${k.hasta}" no existe`); continue; }
+        if (b.nodo_padre !== g.nombre) E.error(g.nombre, `ik.hasta "${k.hasta}" tiene que ser hijo directo de "${g.nombre}"`);
+        if (!t) E.error(g.nombre, `ik.objetivo "${k.objetivo}" no existe`);
+        else if (dentroDe(t, g.nombre)) E.error(g.nombre, `ik.objetivo "${k.objetivo}" no puede estar dentro de la cadena (se moveria con ella)`);
+        if (k.orientar) { const c = mapa.get(k.orientar); if (!c || c.nodo_padre !== k.hasta) E.error(g.nombre, `ik.orientar "${k.orientar}" tiene que ser hijo directo de "${k.hasta}"`); }
+        if (!g.transformacion) E.aviso(g.nombre, "ik sin pivote: el hueso gira sobre su origen (pone pivote: [x, y] en la articulacion)");
+        if (b && !b.transformacion) E.aviso(k.hasta, "segundo hueso de ik sin pivote: gira sobre su origen (pone pivote: [x, y] en la articulacion)");
+    }
+}
+
+// Las claves de forma nombran grupos que existen y se pueden interpolar con la parte.
+function validarFormas(grupos, E) {
+    const mapa = new Map(grupos.map((g) => [g.nombre, g]));
+    for (const g of grupos) {
+        const pista = g.claves && g.claves[PISTA_FORMA];
+        if (!pista) continue;
+        for (const c of pista) {
+            if (!c.v || c.v === g.nombre) continue;
+            const h = mapa.get(c.v);
+            if (!h) { E.error(g.nombre, `la clave de forma en t=${c.t} nombra "${c.v}", que no existe`); continue; }
+            if (!formasCompatibles(g.lista_figuras, h.lista_figuras)) {
+                E.aviso(g.nombre, `la forma "${c.v}" no tiene las mismas figuras que la parte (${(h.lista_figuras || []).length} contra ${(g.lista_figuras || []).length}): salta en vez de transformarse`);
+            }
+        }
+    }
 }
 
 const grupoDefault = () => ({nombre: "default", nodo_padre: "root", visible: true, color: "#000000", cx: 0, cy: 0,
@@ -305,6 +488,8 @@ export function compilarAsset(def, buscarSonido) {
     const nombres = new Set(["default"]);
     compilarPartes(def && def.partes, "root", E, nombres, grupos, "");
     if (grupos.length === 1) E.error("asset", "no tiene partes");
+    validarFormas(grupos, E);
+    validarIk(grupos, E);
     const dur = def && num(def.duracion) ? def.duracion : 1000;
     const eventos = def && def.eventos ? JSON.parse(JSON.stringify(def.eventos)) : [eventoGeneral(dur)];
     const escena = {};
@@ -316,6 +501,26 @@ export function compilarAsset(def, buscarSonido) {
     }
     return {ok: !E.errores.length, errores: E.errores, avisos: E.avisos,
         resultado: {nombre: def && def.nombre, grupos_figuras: grupos, eventos, escena}};
+}
+
+// Temblor de camara: sin claves x / y es la receta tal cual (alrededor del centro). Si la camara
+// YA tiene claves x / y, el temblor se SUMA a ese movimiento (antes las reemplazaba y la camara
+// quedaba quieta en el centro): fuera de la ventana del temblor quedan sus claves; dentro, cada
+// clave del temblor vale "donde va la camara en ese instante" + la sacudida.
+function temblorSobreClaves(claves, centro, temblor) {
+    const sac = claveTemblor(centro, temblor);
+    const r = {...claves};
+    [["x", 0], ["y", 1]].forEach(([eje, i]) => {
+        const propia = claves[eje];
+        if (!Array.isArray(propia) || !propia.length || !propia.every((k) => Array.isArray(k) && num(k[0]) && num(k[1]))) { r[eje] = sac[eje]; return; }
+        const pista = propia.map(([t, v, interp]) => ({t, v, interp: interp || "lineal"})).sort((a, b) => a.t - b.t);
+        const desde = temblor.desde, hasta = temblor.hasta;
+        const fuera = propia.filter(([t]) => t < desde || t > hasta);
+        const dentro = sac[eje].filter(([t]) => t >= desde && t <= hasta).map(([t, v]) => [t, Math.round((valorEn(pista, t) + v - centro[i]) * 10) / 10, "lineal"]);
+        // la ultima clave antes del temblor sigue con su interpolacion hasta el comienzo del temblor
+        r[eje] = [...fuera, ...dentro].sort((a, b) => a[0] - b[0]).filter((k, j, l) => j === 0 || k[0] !== l[j - 1][0]);
+    });
+    return r;
 }
 
 // ---------------- escena ----------------
@@ -330,6 +535,7 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
     const grupos = [grupoDefault()];
     const nombres = new Set(["default"]);
     let capa = 1;
+    const padres = [], porNombre = new Map();
     const unico = (base) => { let n = base, k = 2; while (nombres.has(n)) n = `${base}_${k++}`; nombres.add(n); return n; };
 
     // camara
@@ -340,7 +546,7 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
     const gcam = {...grupoBase(unico(cam.nombre || "Cámara"), "root", centro[0], centro[1], num(cam.capa) ? cam.capa : 999), color: "#f0b429",
         clases: ["camara"], camara: {ancho: tam[0], alto: tam[1], zoom: num(cam.zoom) ? cam.zoom : 1}};
     // Fase A5: receta "temblor": {desde, hasta, amplitud?} -> claves de x / y de la camara
-    const claves_cam = cam.temblor ? {...(cam.claves || {}), ...claveTemblor(centro, cam.temblor)} : cam.claves;
+    const claves_cam = cam.temblor ? temblorSobreClaves(cam.claves || {}, centro, cam.temblor) : cam.claves;
     if (cam.temblor && !(num(cam.temblor.desde) && num(cam.temblor.hasta))) E.error("camara", "temblor es {desde, hasta, amplitud?} en ms");
     const ccam = compilarClaves(claves_cam, E, "camara");
     if (ccam) gcam.claves = ccam;
@@ -390,6 +596,9 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
         g.transformacion = {rotacion: num(o.rotacion) ? o.rotacion : 0, escala_x: (o.espejo ? -1 : 1) * esx, escala_y: esy,
             ancla_x: ancla[0], ancla_y: ancla[1]};
         if (num(o.plano) && o.plano !== 0) g.plano = o.plano;
+        aplicarEstilo(g, o, E, donde);
+        const so = compilarSombra(o.sombra, en[1], E, donde);
+        if (so) g.sombra = so;
         if (num(o.opacidad)) g.opacidad = o.opacidad;
         if (o.visible === false) g.visible = false;
         if (o.instancia && o.borde) g.color = o.borde;
@@ -402,6 +611,11 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
             g.claves = cl;
             for (const p in cl) if (cl[p].some((k) => k.t > dur)) E.aviso(donde, `hay claves de ${p} despues del final de la escena (${dur} ms)`);
         }
+        // morphing (formas / colores) tambien en objetos dibujados de la escena
+        if (o.formas !== undefined || o.colores !== undefined) {
+            if (o.instancia) E.error(donde, "formas y colores son de objetos dibujados o partes, no de instancias");
+            else compilarFormas(g, o, E, nombres, grupos, donde);
+        }
         if (o.repetir) {
             if (!MODOS_BUCLE[o.repetir]) E.error(donde, `repetir "${o.repetir}" desconocido`);
             else if (o.repetir !== "mantener") g.claves_bucle = o.repetir;
@@ -412,7 +626,31 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
             else g.instancia.audio = {...(num(o.audio.volumen) ? {volumen: o.audio.volumen} : {}), ...(o.audio.silencio ? {silencio: true} : {})};
         }
         if (o.instancia) grupos.push(g);
+        if (o.padre !== undefined) padres.push({g, padre: o.padre, donde});
+        porNombre.set(g.nombre, g);
+        if (o.nombre && o.nombre !== g.nombre) porNombre.set(o.nombre, g);
     });
+
+    // Jerarquia: un objeto con `padre` va dentro de otro objeto; su `en` y sus claves
+    // x / y son relativos al origen del padre, y hereda su movimiento, rotacion, escala,
+    // opacidad y visibilidad. Se dibuja junto con el padre (no se reordena por profundidad
+    // entre los demas objetos).
+    for (const {g, padre, donde} of padres) {
+        const p = typeof padre === "string" ? porNombre.get(padre) : null;
+        if (!p) { E.error(donde, `padre "${padre}" no es un objeto de la escena`); continue; }
+        if (p === g) { E.error(donde, "un objeto no puede ser su propio padre"); continue; }
+        g.nodo_padre = p.nombre;
+        g.clases = [...(g.clases || []), "objeto_hijo"];
+    }
+    for (const {g, donde} of padres) {
+        const vistos = new Set();
+        let x = g;
+        while (x && x.nodo_padre !== "root") {
+            if (vistos.has(x.nombre)) { E.error(donde, "la cadena de padres forma un ciclo"); g.nodo_padre = "root"; break; }
+            vistos.add(x.nombre);
+            x = grupos.find((y) => y.nombre === x.nodo_padre);
+        }
+    }
 
     ((def && def.efectos) || []).forEach((ef, i) => {
         const donde = `efecto ${ef && (ef.nombre || ef.tipo) ? (ef.nombre || ef.tipo) : "#" + i}`;
@@ -436,8 +674,16 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
         grupos.push(g);
     });
 
+    validarFormas(grupos, E);
+    validarIk(grupos, E);
+    validarSombras(grupos, E);
     const escena = {};
     if (def && def.profundidad) escena.orden_profundidad = true;
+    // precision de dibujo: "decimal" no redondea las coordenadas (figuras chicas con zoom o escala)
+    if (def && def.precision !== undefined) {
+        if (def.precision === "decimal") escena.precision = "decimal";
+        else if (def.precision !== "entera") E.error("escena", `precision "${def.precision}" desconocida (validas: decimal, entera)`);
+    }
     if (def && num(def.gravedad)) escena.fisica = {gravedad: def.gravedad};
     const eventos = def && Array.isArray(def.eventos) ? JSON.parse(JSON.stringify(def.eventos)) : [eventoGeneral(dur || 1000)];
     // sonido: clips sin "evento" van a la pista de la escena; con "evento", a ese evento

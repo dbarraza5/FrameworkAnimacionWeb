@@ -1,0 +1,2009 @@
+{
+ "tipo": "asset",
+ "nombre": "Paisaje que cambia de color",
+ "duracion": 9000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "cielo",
+   "rect": [
+    0,
+    0,
+    1280,
+    560
+   ],
+   "color": "#7ec0ee",
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     0
+    ],
+    "a": [
+     0,
+     560
+    ],
+    "colores": [
+     [
+      0,
+      "#3d7fd1"
+     ],
+     [
+      0.6,
+      "#8cc7f0"
+     ],
+     [
+      1,
+      "#d6efff"
+     ]
+    ]
+   },
+   "colores": {
+    "tarde": {
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       0
+      ],
+      "a": [
+       0,
+       560
+      ],
+      "colores": [
+       [
+        0,
+        "#3a3270"
+       ],
+       [
+        0.6,
+        "#e0705a"
+       ],
+       [
+        1,
+        "#ffc46a"
+       ]
+      ]
+     }
+    },
+    "noche": {
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       0
+      ],
+      "a": [
+       0,
+       560
+      ],
+      "colores": [
+       [
+        0,
+        "#050a1c"
+       ],
+       [
+        0.6,
+        "#101c3c"
+       ],
+       [
+        1,
+        "#24304e"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      1500,
+      "",
+      "suave"
+     ],
+     [
+      4000,
+      "tarde",
+      "suave"
+     ],
+     [
+      7000,
+      "noche",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_0",
+   "en": [
+    0,
+    10
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_1",
+   "en": [
+    317,
+    141
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_2",
+   "en": [
+    634,
+    272
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_3",
+   "en": [
+    951,
+    43
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_4",
+   "en": [
+    1268,
+    174
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_5",
+   "en": [
+    305,
+    305
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_6",
+   "en": [
+    622,
+    76
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_7",
+   "en": [
+    939,
+    207
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_8",
+   "en": [
+    1256,
+    338
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_9",
+   "en": [
+    293,
+    109
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_10",
+   "en": [
+    610,
+    240
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_11",
+   "en": [
+    927,
+    11
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_12",
+   "en": [
+    1244,
+    142
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_13",
+   "en": [
+    281,
+    273
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_14",
+   "en": [
+    598,
+    44
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_15",
+   "en": [
+    915,
+    175
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_16",
+   "en": [
+    1232,
+    306
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_17",
+   "en": [
+    269,
+    77
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_18",
+   "en": [
+    586,
+    208
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_19",
+   "en": [
+    903,
+    339
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_20",
+   "en": [
+    1220,
+    110
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_21",
+   "en": [
+    257,
+    241
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_22",
+   "en": [
+    574,
+    12
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_23",
+   "en": [
+    891,
+    143
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_24",
+   "en": [
+    1208,
+    274
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_25",
+   "en": [
+    245,
+    45
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_26",
+   "en": [
+    562,
+    176
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_27",
+   "en": [
+    879,
+    307
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_28",
+   "en": [
+    1196,
+    78
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_29",
+   "en": [
+    233,
+    209
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_30",
+   "en": [
+    550,
+    340
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_31",
+   "en": [
+    867,
+    111
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_32",
+   "en": [
+    1184,
+    242
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_33",
+   "en": [
+    221,
+    13
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_34",
+   "en": [
+    538,
+    144
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_35",
+   "en": [
+    855,
+    275
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7000,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_36",
+   "en": [
+    1172,
+    46
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7150,
+      0.5,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_37",
+   "en": [
+    209,
+    177
+   ],
+   "circulo": {
+    "r": 1.7999999999999998,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7300,
+      0.62,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_38",
+   "en": [
+    526,
+    308
+   ],
+   "circulo": {
+    "r": 2.4,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7450,
+      0.74,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "estrella_39",
+   "en": [
+    843,
+    79
+   ],
+   "circulo": {
+    "r": 1.2,
+    "lados": 6
+   },
+   "color": "#ffffff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      7600,
+      0.86,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "sol",
+   "en": [
+    880,
+    150
+   ],
+   "circulo": {
+    "r": 46,
+    "lados": 28
+   },
+   "color": "#fff3b0",
+   "colores": {
+    "tarde": "#ff8a3a",
+    "noche": "#d84a2a"
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      1500,
+      "",
+      "suave"
+     ],
+     [
+      4000,
+      "tarde",
+      "suave"
+     ],
+     [
+      7000,
+      "noche",
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      150
+     ],
+     [
+      1500,
+      160,
+      "suave"
+     ],
+     [
+      4000,
+      470,
+      "suave"
+     ],
+     [
+      6000,
+      640,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "halo_sol",
+   "en": [
+    880,
+    150
+   ],
+   "circulo": {
+    "r": 190,
+    "lados": 28
+   },
+   "color": "#fff3b0",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 160,
+    "colores": [
+     [
+      0,
+      "rgba(255,243,176,0.55)"
+     ],
+     [
+      1,
+      "rgba(255,243,176,0)"
+     ]
+    ]
+   },
+   "mezcla": "suma",
+   "colores": {
+    "tarde": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 190,
+      "colores": [
+       [
+        0,
+        "rgba(255,138,58,0.75)"
+       ],
+       [
+        1,
+        "rgba(255,138,58,0)"
+       ]
+      ]
+     }
+    },
+    "noche": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 120,
+      "colores": [
+       [
+        0,
+        "rgba(216,74,42,0)"
+       ],
+       [
+        1,
+        "rgba(216,74,42,0)"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      1500,
+      "",
+      "suave"
+     ],
+     [
+      4000,
+      "tarde",
+      "suave"
+     ],
+     [
+      7000,
+      "noche",
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      150
+     ],
+     [
+      1500,
+      160,
+      "suave"
+     ],
+     [
+      4000,
+      470,
+      "suave"
+     ],
+     [
+      6000,
+      640,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "luna",
+   "en": [
+    260,
+    120
+   ],
+   "circulo": {
+    "r": 26,
+    "lados": 24
+   },
+   "color": "#f2f0e6",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5500,
+      0
+     ],
+     [
+      7200,
+      1,
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      220
+     ],
+     [
+      5500,
+      220
+     ],
+     [
+      8500,
+      110,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "cerros_lejos",
+   "poligono": [
+    [
+     0,
+     430
+    ],
+    [
+     180,
+     330
+    ],
+    [
+     360,
+     400
+    ],
+    [
+     520,
+     300
+    ],
+    [
+     700,
+     380
+    ],
+    [
+     880,
+     290
+    ],
+    [
+     1060,
+     360
+    ],
+    [
+     1280,
+     310
+    ],
+    [
+     1280,
+     560
+    ],
+    [
+     0,
+     560
+    ]
+   ],
+   "color": "#6f93b0",
+   "colores": {
+    "tarde": "#7a4a6a",
+    "noche": "#141a30"
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      1500,
+      "",
+      "suave"
+     ],
+     [
+      4000,
+      "tarde",
+      "suave"
+     ],
+     [
+      7000,
+      "noche",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "cerros_cerca",
+   "poligono": [
+    [
+     0,
+     500
+    ],
+    [
+     240,
+     420
+    ],
+    [
+     480,
+     470
+    ],
+    [
+     760,
+     400
+    ],
+    [
+     1040,
+     460
+    ],
+    [
+     1280,
+     420
+    ],
+    [
+     1280,
+     600
+    ],
+    [
+     0,
+     600
+    ]
+   ],
+   "color": "#4f8a4a",
+   "colores": {
+    "tarde": "#5a3a3a",
+    "noche": "#0e1420"
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      1500,
+      "",
+      "suave"
+     ],
+     [
+      4000,
+      "tarde",
+      "suave"
+     ],
+     [
+      7000,
+      "noche",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "suelo",
+   "rect": [
+    0,
+    560,
+    1280,
+    720
+   ],
+   "color": "#5a9a44",
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     560
+    ],
+    "a": [
+     0,
+     720
+    ],
+    "colores": [
+     [
+      0,
+      "#6aaa50"
+     ],
+     [
+      1,
+      "#3f7a32"
+     ]
+    ]
+   },
+   "colores": {
+    "tarde": {
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       560
+      ],
+      "a": [
+       0,
+       720
+      ],
+      "colores": [
+       [
+        0,
+        "#7a5a40"
+       ],
+       [
+        1,
+        "#4a3020"
+       ]
+      ]
+     }
+    },
+    "noche": {
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       560
+      ],
+      "a": [
+       0,
+       720
+      ],
+      "colores": [
+       [
+        0,
+        "#141c22"
+       ],
+       [
+        1,
+        "#0a0e12"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      1500,
+      "",
+      "suave"
+     ],
+     [
+      4000,
+      "tarde",
+      "suave"
+     ],
+     [
+      7000,
+      "noche",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "casa",
+   "en": [
+    220,
+    560
+   ],
+   "partes": [
+    {
+     "nombre": "pared",
+     "rect": [
+      0,
+      -110,
+      150,
+      0
+     ],
+     "color": "#d8c8a8",
+     "colores": {
+      "tarde": "#c08a6a",
+      "noche": "#2a2a34"
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        1500,
+        "",
+        "suave"
+       ],
+       [
+        4000,
+        "tarde",
+        "suave"
+       ],
+       [
+        7000,
+        "noche",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "techo",
+     "poligono": [
+      [
+       -14,
+       -108
+      ],
+      [
+       75,
+       -170
+      ],
+      [
+       164,
+       -108
+      ]
+     ],
+     "color": "#a0463a",
+     "colores": {
+      "tarde": "#7a3030",
+      "noche": "#1a1418"
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        1500,
+        "",
+        "suave"
+       ],
+       [
+        4000,
+        "tarde",
+        "suave"
+       ],
+       [
+        7000,
+        "noche",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "ventana_1",
+     "rect": [
+      22,
+      -84,
+      44,
+      -58
+     ],
+     "color": "#3a4450",
+     "borde": "#2a3038",
+     "colores": {
+      "tarde": {
+       "color": "#7a6a50"
+      },
+      "noche": {
+       "color": "#ffd27a",
+       "borde": "#ffe9b0"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        4600,
+        ""
+       ],
+       [
+        5400,
+        "tarde",
+        "suave"
+       ],
+       [
+        6200,
+        "noche",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "ventana_2",
+     "rect": [
+      104,
+      -84,
+      126,
+      -58
+     ],
+     "color": "#3a4450",
+     "borde": "#2a3038",
+     "colores": {
+      "tarde": {
+       "color": "#7a6a50"
+      },
+      "noche": {
+       "color": "#ffd27a",
+       "borde": "#ffe9b0"
+      }
+     },
+     "claves": {
+      "forma": [
+       [
+        0,
+        ""
+       ],
+       [
+        4600,
+        ""
+       ],
+       [
+        5400,
+        "tarde",
+        "suave"
+       ],
+       [
+        6200,
+        "noche",
+        "suave"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "luz_ventanas",
+     "en": [
+      75,
+      -70
+     ],
+     "circulo": {
+      "r": 110,
+      "lados": 24
+     },
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 110,
+      "colores": [
+       [
+        0,
+        "rgba(255,210,122,0.5)"
+       ],
+       [
+        1,
+        "rgba(255,210,122,0)"
+       ]
+      ]
+     },
+     "mezcla": "suma",
+     "opacidad": 0,
+     "claves": {
+      "opacidad": [
+       [
+        0,
+        0
+       ],
+       [
+        5400,
+        0
+       ],
+       [
+        6400,
+        1,
+        "suave"
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

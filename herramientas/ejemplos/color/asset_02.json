@@ -1,0 +1,507 @@
+{
+ "tipo": "asset",
+ "nombre": "Herrero (sonrojo)",
+ "duracion": 9000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "cuerpo",
+   "poligono": [
+    [
+     -70,
+     0
+    ],
+    [
+     -62,
+     -120
+    ],
+    [
+     -30,
+     -150
+    ],
+    [
+     30,
+     -150
+    ],
+    [
+     62,
+     -120
+    ],
+    [
+     70,
+     0
+    ]
+   ],
+   "color": "#5a4a3a",
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     -70,
+     0
+    ],
+    "a": [
+     70,
+     0
+    ],
+    "colores": [
+     [
+      0,
+      "#6a5846"
+     ],
+     [
+      1,
+      "#3a2e24"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "delantal",
+   "poligono": [
+    [
+     -40,
+     0
+    ],
+    [
+     -36,
+     -120
+    ],
+    [
+     36,
+     -120
+    ],
+    [
+     40,
+     0
+    ]
+   ],
+   "color": "#8a6a4a"
+  },
+  {
+   "nombre": "cabeza",
+   "en": [
+    0,
+    -205
+   ],
+   "circulo": {
+    "r": 52,
+    "ry": 58,
+    "lados": 28
+   },
+   "color": "#e8b896",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     -16,
+     -18
+    ],
+    "radio": 70,
+    "colores": [
+     [
+      0,
+      "#f6d2b6"
+     ],
+     [
+      1,
+      "#d49a78"
+     ]
+    ]
+   },
+   "colores": {
+    "tibio": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       -16,
+       -18
+      ],
+      "radio": 70,
+      "colores": [
+       [
+        0,
+        "#f8c8ac"
+       ],
+       [
+        1,
+        "#d88a6a"
+       ]
+      ]
+     }
+    },
+    "caliente": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       -16,
+       -18
+      ],
+      "radio": 70,
+      "colores": [
+       [
+        0,
+        "#ffb89a"
+       ],
+       [
+        1,
+        "#d46a52"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      2500,
+      ""
+     ],
+     [
+      4500,
+      "tibio",
+      "suave"
+     ],
+     [
+      6500,
+      "caliente",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "rubor_izq",
+   "en": [
+    -26,
+    -192
+   ],
+   "circulo": {
+    "r": 16,
+    "lados": 18
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 16,
+    "colores": [
+     [
+      0,
+      "rgba(232,144,127,0.25)"
+     ],
+     [
+      1,
+      "rgba(232,144,127,0)"
+     ]
+    ]
+   },
+   "colores": {
+    "tibio": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 18,
+      "colores": [
+       [
+        0,
+        "rgba(224,106,90,0.6)"
+       ],
+       [
+        1,
+        "rgba(224,106,90,0)"
+       ]
+      ]
+     }
+    },
+    "caliente": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 21,
+      "colores": [
+       [
+        0,
+        "rgba(224,64,58,0.9)"
+       ],
+       [
+        1,
+        "rgba(224,64,58,0)"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      2500,
+      ""
+     ],
+     [
+      4500,
+      "tibio",
+      "suave"
+     ],
+     [
+      6500,
+      "caliente",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "rubor_der",
+   "en": [
+    26,
+    -192
+   ],
+   "circulo": {
+    "r": 16,
+    "lados": 18
+   },
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 16,
+    "colores": [
+     [
+      0,
+      "rgba(232,144,127,0.25)"
+     ],
+     [
+      1,
+      "rgba(232,144,127,0)"
+     ]
+    ]
+   },
+   "colores": {
+    "tibio": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 18,
+      "colores": [
+       [
+        0,
+        "rgba(224,106,90,0.6)"
+       ],
+       [
+        1,
+        "rgba(224,106,90,0)"
+       ]
+      ]
+     }
+    },
+    "caliente": {
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 21,
+      "colores": [
+       [
+        0,
+        "rgba(224,64,58,0.9)"
+       ],
+       [
+        1,
+        "rgba(224,64,58,0)"
+       ]
+      ]
+     }
+    }
+   },
+   "claves": {
+    "forma": [
+     [
+      0,
+      ""
+     ],
+     [
+      2500,
+      ""
+     ],
+     [
+      4500,
+      "tibio",
+      "suave"
+     ],
+     [
+      6500,
+      "caliente",
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "ojo_izq",
+   "en": [
+    -18,
+    -214
+   ],
+   "circulo": {
+    "r": 5,
+    "lados": 10
+   },
+   "color": "#2a1a14"
+  },
+  {
+   "nombre": "ojo_der",
+   "en": [
+    18,
+    -214
+   ],
+   "circulo": {
+    "r": 5,
+    "lados": 10
+   },
+   "color": "#2a1a14"
+  },
+  {
+   "nombre": "barba",
+   "poligono": [
+    [
+     -46,
+     -196
+    ],
+    [
+     -30,
+     -160
+    ],
+    [
+     0,
+     -146
+    ],
+    [
+     30,
+     -160
+    ],
+    [
+     46,
+     -196
+    ],
+    [
+     30,
+     -176
+    ],
+    [
+     0,
+     -170
+    ],
+    [
+     -30,
+     -176
+    ]
+   ],
+   "color": "#5a3a26"
+  },
+  {
+   "nombre": "boca",
+   "poligono": [
+    [
+     -12,
+     -178
+    ],
+    [
+     12,
+     -178
+    ],
+    [
+     8,
+     -173
+    ],
+    [
+     -8,
+     -173
+    ]
+   ],
+   "color": "#7a3a30"
+  },
+  {
+   "nombre": "sudor",
+   "en": [
+    40,
+    -238
+   ],
+   "poligono": [
+    [
+     0,
+     -7
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     -4,
+     0
+    ]
+   ],
+   "color": "#bfe3ff",
+   "opacidad": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      5200,
+      0
+     ],
+     [
+      5800,
+      0.9,
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      -238
+     ],
+     [
+      5800,
+      -238
+     ],
+     [
+      7500,
+      -200,
+      "lineal"
+     ]
+    ]
+   }
+  }
+ ]
+}
