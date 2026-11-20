@@ -74,7 +74,10 @@ export function MiniaturaAnimada({doc, evento, animar}) {
 // recibe {id, nombre, grupos_figuras}.
 // `embebido`: se dibuja como contenido de un panel del editor (sin el envoltorio
 // offcanvas) y carga los proyectos al montarse.
-export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgregar, embebido = false}) {
+// `idActual`: el documento que se esta editando (no se ofrece meterlo dentro de si mismo).
+// Organizacion (documento/planeacion_organizacion.md, fase 3): por defecto lista solo los
+// assets del proyecto; las escenas se ven marcando "incluir escenas".
+export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgregar, embebido = false, idActual = null}) {
     const panelRef = useRef(null);
     const cookie = new Cookies();
     const datos_usuario = cookie.get("usuario");
@@ -88,7 +91,8 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
     const [filtro, setFiltro] = useState("");
     // Fase 6: assets animados = documentos de eventos de cada proyecto (se agregan
     // como instancia por referencia: dibujo + eventos vienen del asset).
-    const [docsEventos, setDocsEventos] = useState({});  // id_proyecto -> [{id, nombre}]
+    const [docsEventos, setDocsEventos] = useState({});  // id_proyecto -> [{id, nombre, tipo, oculto}]
+    const [conEscenas, setConEscenas] = useState(false); // tambien ofrecer escenas (sub-escenas)
     const [docsAsset, setDocsAsset] = useState({});      // id_eventos -> documento completo (dibujo + eventos)
     const [eventoAsset, setEventoAsset] = useState({});  // id_eventos -> evento elegido para agregar
     const [hover, setHover] = useState(null);            // id_eventos con el mouse encima (se anima)
@@ -170,11 +174,14 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
         let cancelado = false;
         (async () => {
             try {
-                const res = await axios(configAxios("get", `/api/eventos/proyecto-slim/${proyecto.id}`));
-                const lista = (res.data || []).map((d) => ({id: d._id, nombre: d.nombre}));
+                // tipo escena / asset de cada documento (el mismo de la pagina del proyecto)
+                const res = await axios(configAxios("get", `/api/proyecto/${proyecto.id}/documentos`));
+                const lista = (res.data?.documentos || []).map((d) => ({id: d._id, nombre: d.nombre, tipo: d.tipo,
+                    // el documento de ejemplo de cada proyecto nuevo, y el que se esta editando
+                    oculto: (d.nombre === "evento_default" && !d.manual) || d._id === idActual}));
                 if (cancelado) return;
                 setDocsEventos((prev) => ({...prev, [proyecto.id]: lista}));
-                for (const d of lista) {
+                for (const d of lista.filter((x) => !x.oculto)) {
                     axios(configAxios("get", `/api/evento/id/${d.id}`))
                         .then((r) => setDocsAsset((prev) => ({...prev, [d.id]: r.data || {}})))
                         .catch(() => setDocsAsset((prev) => ({...prev, [d.id]: {}})));
@@ -187,10 +194,15 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [proyecto, docsEventos]);
 
-    const assets = (docsEventos[proyecto?.id] || [])
-        .filter((d) => `${proyecto.nombre} ${d.nombre}`.toLowerCase().includes(filtro.trim().toLowerCase()));
+    const docsVisibles = (docsEventos[proyecto?.id] || []).filter((d) => !d.oculto);
+    const escenasOcultas = docsVisibles.filter((d) => d.tipo === "escena").length;
+    const assets = docsVisibles
+        .filter((d) => conEscenas || d.tipo !== "escena")
+        .filter((d) => `${proyecto.nombre} ${d.nombre}`.toLowerCase().includes(filtro.trim().toLowerCase()))
+        // primero los assets, despues las escenas
+        .sort((a, b) => (a.tipo === "escena") - (b.tipo === "escena"));
     // Nombre del asset: el del proyecto (y el del documento si el proyecto tiene varios).
-    const nombreAsset = (d) => ((docsEventos[proyecto?.id] || []).length > 1
+    const nombreAsset = (d) => (docsVisibles.length > 1
         ? `${proyecto?.nombre} · ${d.nombre}` : (proyecto?.nombre || d.nombre));
     const eventosDe = (d) => (docsAsset[d.id]?.eventos || []).map((e) => e.nombre);
     const paqueteAsset = (d) => ({tipo: "instancia", id_eventos: d.id, nombre: nombreAsset(d),
@@ -268,6 +280,15 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                 )}
                 <input type="search" className="form-control form-control-sm" placeholder="Buscar animacion…"
                        value={filtro} onChange={(e) => setFiltro(e.target.value)}/>
+                {escenasOcultas > 0 && (
+                    <div className="form-check form-switch small mb-0" title="Las escenas del proyecto también se pueden meter dentro de otra escena (sub-escenas)">
+                        <input className="form-check-input" type="checkbox" id={`${id}-con-escenas`} checked={conEscenas}
+                               onChange={(e) => setConEscenas(e.target.checked)}/>
+                        <label className="form-check-label" htmlFor={`${id}-con-escenas`}>
+                            Incluir escenas <span className="text-body-secondary">({escenasOcultas})</span>
+                        </label>
+                    </div>
+                )}
 
                 <div className="small text-body-secondary">
                     Arrastra una miniatura al lienzo para agregarla donde la sueltes, o seleccionala y usa
@@ -309,7 +330,7 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                                                                         animar={hover === d.id}/>
                                                     : <div className="placeholder-glow"><span className="placeholder col-12 rounded" style={{height: ALTO_MINI}}/></div>}
                                                 <div className="small text-truncate mt-1">
-                                                    <i className="bi bi-link-45deg text-info me-1"/>{nombreAsset(d)}
+                                                    <i className={"bi me-1 " + (d.tipo === "escena" ? "bi-film text-warning" : "bi-link-45deg text-info")}/>{nombreAsset(d)}
                                                 </div>
                                                 {eventosDe(d).length > 1 && (
                                                     <select className="form-select form-select-sm mt-1" draggable={false}

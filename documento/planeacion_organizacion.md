@@ -15,7 +15,7 @@
 |---|---|---|
 | 1 | **Escenas y assets separados**, escena **principal** ⭐ y el nombre del proyecto en el título | **hecha, a revisar** |
 | 2 | **Capítulos y escenas** (ajustado el 2026-11-19, ver abajo): botones "Nuevo capítulo" y "Nueva escena", escenas dentro de capítulos con orden manual, mover escenas entre capítulos. Los assets **no** van en capítulos | **hecha, a revisar** |
-| 3 | **Integración:** la biblioteca de assets del editor muestra solo assets, por carpeta; la autoría (`catalogo`, `crear --carpeta`) y el respaldo .zip llevan la organización | pendiente |
+| 3 | **Integración:** la biblioteca del editor muestra solo assets; la autoría (`catalogo`, `crear --capitulo`, `capitulo`) y el respaldo .zip llevan la organización | **hecha, a revisar** |
 
 ## Fase 1 — Escenas y assets
 
@@ -130,3 +130,37 @@ Proyecto
 **Notas**
 - En "Fase 9", "Pescando en el mar" está marcada a mano como asset; no lo hice yo en esta fase, así que la dejé así. Con ↺ vuelve a ser escena.
 - Pendiente para la fase 3: que el respaldo .zip lleve los capítulos, la biblioteca del editor con solo assets y `crear --capitulo` en la autoría.
+
+### Resultado de la fase 3 (2026-11-19)
+
+**Hecho**
+- **Biblioteca del editor** (`OffcanvasAnimaciones.js`):
+  - lee los documentos con `GET /api/proyecto/:id/documentos`, con el mismo tipo que la página del proyecto;
+  - por defecto muestra solo **assets**;
+  - el interruptor **Incluir escenas (n)** agrega las escenas, con el ícono 🎞, para usarlas como sub-escenas;
+  - nunca ofrece la escena que se está editando (`idActual`) ni el `evento_default` de ejemplo;
+  - ya no descarga el documento completo de lo que oculta.
+- **Respaldo .zip** (`controller/RespaldoProyecto.js`): al importar, cada capítulo recibe un id nuevo, y `organizacion.capitulo` de las escenas se cambia junto con él. Los capítulos y la escena principal viajan con el proyecto.
+- **Autoría:**
+  - `controller/OrganizacionDatos.js` (nuevo): `capituloPorNombre` (lo crea si hace falta), `ordenAlFinal` y `ubicarEnCapitulo`. Lo usan la autoría y la página del proyecto.
+  - `GET /autoria/catalogo` trae `tipo` (automático o manual), `principal`, `capitulo` (el nombre), `orden` y la lista `capitulos`.
+  - `POST /autoria/escenas` acepta `capitulo` (un nombre).
+  - `PUT /autoria/eventos/:id/capitulo {capitulo: nombre | null}` mueve una escena de capítulo; con un asset responde 400.
+  - CLI `herramientas/autoria.mjs`:
+    - `catalogo` lista los assets y después las escenas por capítulo;
+    - `crear ... --capitulo "X"`;
+    - `capitulo "<escena>" "X" | --sin-capitulo`.
+- Documentación: guía (§ Organización y comandos) y Manual §7.
+
+**Verificado**
+- 6 pruebas del backend.
+- **Respaldo:** exportar e importar de verdad, con un capítulo y una escena `prueba_`. El capítulo recibe un id nuevo y la escena apunta a él. El proyecto importado y los datos de prueba se borraron.
+- **Autoría** con una llave temporal de "Fase 9":
+  - crear 2 escenas con `--capitulo` (el capítulo se creó solo);
+  - mover una a otro capítulo y la otra a "sin capítulo";
+  - mover un asset da error;
+  - el catálogo muestra la agrupación.
+  - Después se borraron las escenas y los capítulos, y se revocó la llave.
+- **En el navegador**, en el editor de una de esas escenas:
+  - la Biblioteca de "Fase 9" mostró solo los assets, sin la escena abierta ni `evento_default`;
+  - con **Incluir escenas (1)** apareció la otra escena.

@@ -5,7 +5,8 @@
 // Con LLAVE de proyecto (A2, recomendado): la llave define el proyecto, se usa la API /autoria
 //   AUTORIA_LLAVE=anim_... node herramientas/autoria.mjs catalogo
 //   AUTORIA_LLAVE=...       node herramientas/autoria.mjs validar  escena.json
-//   AUTORIA_LLAVE=...       node herramientas/autoria.mjs crear    escena.json
+//   AUTORIA_LLAVE=...       node herramientas/autoria.mjs crear    escena.json [--capitulo "Capítulo 1"]   (la escena queda al final de ese capitulo; se crea si no existe)
+//   AUTORIA_LLAVE=...       node herramientas/autoria.mjs capitulo "<escena>" "Capítulo 2" | --sin-capitulo   (mover una escena de capitulo)
 //   AUTORIA_LLAVE=...       node herramientas/autoria.mjs actualizar escena.json --id <id_eventos>   (respaldo automatico)
 //   AUTORIA_LLAVE=...       node herramientas/autoria.mjs compilar escena.json [--salida x.json]
 //   AUTORIA_LLAVE=...       node herramientas/autoria.mjs descompilar "<nombre>" | --id <id> [--salida x.json]   (editor -> formato simple)
@@ -64,11 +65,15 @@ class ViaApi {
     async catalogo() {
         const d = await this.pedir("GET", "/catalogo");
         this.id_proyecto = d.id_proyecto;
-        return new Map(d.documentos.map((x) => [x.nombre, {id: String(x.id), tipo: x.tipo, eventos: x.eventos.map((e) => e.nombre)}]));
+        this.capitulos = d.capitulos || [];
+        return new Map(d.documentos.map((x) => [x.nombre, {id: String(x.id), tipo: x.tipo, eventos: x.eventos.map((e) => e.nombre),
+            capitulo: x.capitulo || null, orden: x.orden, principal: !!x.principal}]));
     }
-    async crear(tipo, resultado) {
-        return this.pedir("POST", tipo === "asset" ? "/assets" : "/escenas", resultado);
+    async crear(tipo, resultado, capitulo) {
+        if (capitulo && tipo === "asset") throw new Error("--capitulo es solo para escenas: los assets son de todo el proyecto");
+        return this.pedir("POST", tipo === "asset" ? "/assets" : "/escenas", capitulo ? {...resultado, capitulo} : resultado);
     }
+    async moverCapitulo(id, capitulo) { return this.pedir("PUT", `/eventos/${id}/capitulo`, {capitulo}); }
     async documento(id) { return this.pedir("GET", `/eventos/${id}`); }
     async sonidos() { return this.pedir("GET", "/sonidos"); }
     async crearPendiente(nombre, nota) { return this.pedir("POST", "/sonidos", {nombre, nota}); }
@@ -94,7 +99,8 @@ class ViaMongo {
             .find({id_proyecto: this.id_proyecto}, {projection: {nombre: 1, "eventos.nombre": 1}}).toArray();
         return new Map(docs.map((d) => [d.nombre, {id: String(d._id), eventos: (d.eventos || []).map((e) => e.nombre)}]));
     }
-    async crear(tipo, resultado) {
+    async crear(tipo, resultado, capitulo) {
+        if (capitulo) throw new Error("--capitulo solo funciona con llave");
         const base = await db(), id_proyecto = this.id_proyecto;
         const {nombre, grupos_figuras, eventos, escena} = resultado;
         if (await base.collection("eventos").findOne({id_proyecto, nombre})) throw new Error(`ya existe "${nombre}" en el proyecto (no se sobrescribe)`);
@@ -152,7 +158,7 @@ function informar(r) {
 async function principal() {
     const a = argumentos(process.argv.slice(2));
     const [cmd, archivo] = a._;
-    const comandos = ["catalogo", "generadores", "validar", "compilar", "descompilar", "crear", "actualizar", "borrar", "sonidos", "sonido-pendiente"];
+    const comandos = ["catalogo", "generadores", "validar", "compilar", "descompilar", "crear", "actualizar", "borrar", "sonidos", "sonido-pendiente", "capitulo"];
     if (cmd === "generadores") {
         const {Generadores} = await cargarMotor();
         for (const [n, g] of Object.entries(Generadores.GENERADORES)) salida(`${n.padEnd(10)} ${g.descripcion}
@@ -181,7 +187,31 @@ async function principal() {
     }
     if (cmd === "catalogo") {
         salida(`proyecto ${c.id_proyecto}`);
-        for (const [n, v] of cat) salida(`${v.tipo ? v.tipo.padEnd(7) : ""}${n}  ${v.id}  eventos: ${v.eventos.join(", ")}`);
+        const linea = (n, v) => `${v.tipo ? v.tipo.padEnd(7) : ""}${v.principal ? "* " : ""}${n}  ${v.id}  eventos: ${v.eventos.join(", ")}`;
+        if (!c.capitulos) { for (const [n, v] of cat) salida(linea(n, v)); return; }
+        // con llave: assets (de todo el proyecto) y escenas por capitulo, en su orden (* = principal)
+        const filas = [...cat];
+        const porOrden = (a, b) => (a[1].orden ?? Infinity) - (b[1].orden ?? Infinity) || a[0].localeCompare(b[0]);
+        salida("ASSETS");
+        for (const [n, v] of filas.filter(([, v]) => v.tipo !== "escena").sort((a, b) => a[0].localeCompare(b[0]))) salida("  " + linea(n, v));
+        for (const cap of c.capitulos.concat([null])) {
+            const esc = filas.filter(([, v]) => v.tipo === "escena" && v.capitulo === cap).sort(porOrden);
+            if (cap === null && !esc.length) continue;
+            salida(cap === null ? "ESCENAS SIN CAPITULO" : `CAPITULO "${cap}"`);
+            for (const [n, v] of esc) salida("  " + linea(n, v));
+            if (!esc.length) salida("  (vacio)");
+        }
+        return;
+    }
+    if (cmd === "capitulo") {
+        // mover una escena de capitulo (solo organiza; no cambia el contenido)
+        if (!(c instanceof ViaApi)) throw new Error("capitulo solo funciona con llave");
+        const destino = a["sin-capitulo"] ? null : a._[2];
+        if (!archivo || (destino === undefined)) throw new Error('uso: autoria.mjs capitulo "<escena>" "<capitulo>"   |   autoria.mjs capitulo "<escena>" --sin-capitulo');
+        const fila = cat.get(archivo) || [...cat.values()].find((v) => v.id === archivo);
+        if (!fila) throw new Error(`no existe "${archivo}" en el proyecto`);
+        const d = await c.moverCapitulo(fila.id, destino);
+        salida(d.capitulo ? `"${archivo}" -> capitulo "${d.capitulo}" (al final)` : `"${archivo}" -> sin capitulo`);
         return;
     }
     if (cmd === "borrar") {
@@ -232,8 +262,9 @@ async function principal() {
         fs.writeFileSync(destino, JSON.stringify(r.resultado, null, 1));
         salida(`escrito ${destino}`);
     } else if (cmd === "crear") {
-        const d = await c.crear(r.def.tipo, r.resultado);
-        salida(`CREADO "${r.resultado.nombre}": eventos ${d.id_eventos}${d.id_dibujo ? `, dibujo ${d.id_dibujo}` : ""}`);
+        const capitulo = typeof a.capitulo === "string" ? a.capitulo : null;
+        const d = await c.crear(r.def.tipo, r.resultado, capitulo);
+        salida(`CREADO "${r.resultado.nombre}": eventos ${d.id_eventos}${d.id_dibujo ? `, dibujo ${d.id_dibujo}` : ""}${d.capitulo ? ` (capitulo "${d.capitulo}")` : ""}`);
     } else if (cmd === "actualizar") {
         if (!a.id) throw new Error("actualizar necesita --id <id del documento de eventos>");
         const d = await c.actualizar(a.id, r.resultado);

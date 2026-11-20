@@ -10,6 +10,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 ## Novedades
 
 **2026-11-19 (página del proyecto: escenas y assets)**
+- La **Biblioteca** del editor muestra solo assets; las escenas se ven con **Incluir escenas**. El respaldo .zip guarda los capítulos.
 - La pestaña Escenas organiza la historia en **capítulos**, con orden manual y "Mover a…". También tiene un botón **Nueva escena**.
 - La página del proyecto separa **Escenas** y **Assets** en dos pestañas. Cada documento se clasifica solo y se puede corregir. La **escena principal** ⭐ aparece primero. Ver [§2](#2-empezar).
 
@@ -331,7 +332,7 @@ Las velocidades y distancias están en **unidades del dibujo** (las mismas de la
 En la pestaña **Biblioteca** del panel derecho:
 
 1. **Elige el proyecto.** Aparecen dos secciones:
-   - **Assets animados:** el proyecto completo, dibujo y eventos. Tiene el ícono 🔗.
+   - **Assets animados:** los assets del proyecto, cada uno con su dibujo y sus eventos. Tiene el ícono 🔗. Las escenas no aparecen; con el interruptor **Incluir escenas** se suman, marcadas con 🎞, para meter una escena dentro de otra. Nunca aparece la escena que estás editando.
    - **Dibujos (copia editable):** cada animación del proyecto, solo el dibujo.
 
    Hay buscador y botón de recargar.

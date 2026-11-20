@@ -82,9 +82,11 @@ Todo se ejecuta **dentro del contenedor del frontend** (Node 18). La escritura v
 docker exec frontend_container sh -c 'printf %s "<llave>" > /tmp/llave && chmod 600 /tmp/llave'
 H="docker exec -w /home/app frontend_container sh -c"   # en Git Bash, anteponer MSYS_NO_PATHCONV=1
 K='AUTORIA_LLAVE=$(cat /tmp/llave)'
-$H "$K npm run autoria -- catalogo"                                  # assets y escenas del proyecto de la llave
+$H "$K npm run autoria -- catalogo"                                  # assets, y escenas por capítulo (* = principal)
 $H "$K npm run autoria -- validar  herramientas/ejemplos/molino.json"
 $H "$K npm run autoria -- crear    herramientas/ejemplos/molino.json"  # asset = dibujo + eventos; escena = eventos
+$H "$K npm run autoria -- crear    escena.json --capitulo \"Capítulo 1\""   # la escena queda al final del capítulo (se crea si no existe)
+$H "$K npm run autoria -- capitulo \"<escena>\" \"Capítulo 2\""           # mover de capítulo (o --sin-capitulo); solo escenas
 $H "$K npm run autoria -- actualizar escena.json --id <id_eventos>"   # guarda antes un RESPALDO (versión congelada)
 $H "$K npm run autoria -- borrar --id <id_eventos>"                  # solo lo que creó esta llave; la escena antes que su asset
 $H "$K npm run autoria -- descompilar \"<nombre>\" --salida /tmp/x.json" # escena o asset existente -> formato simple (vuelta exacta)
@@ -183,3 +185,9 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
 ## 6. Al entregar
 - Decir qué se creó (nombres e ids) y cómo verlo (desde la lista de eventos del proyecto; Cámara → Vista de cámara → ▶).
 - Si algo no se probó, decirlo explícitamente.
+
+## Organización: capítulos (documento/planeacion_organizacion.md)
+
+- **Assets:** son de todo el proyecto, no van en capítulos, y cualquier escena los usa. `--capitulo` con un asset da error.
+- **Historias con varias escenas:** crea cada escena con `--capitulo "<nombre>"`. Va quedando al final del capítulo, en el orden en que la creas. El usuario las reordena en la pestaña Escenas.
+- **El tipo del catálogo** es el mismo que muestra la página del proyecto: el automático, o el que el usuario eligió a mano. Una escena marcada a mano como asset aparece como asset.

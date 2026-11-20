@@ -1006,7 +1006,7 @@ function EditorEvento(props){
                     <Inspector {...props_paneles} refLienzo={refLienzo} objetosSeleccionados={objetosSeleccionados}/>
                 </div>
                 <div className={`ed-cuerpo ${layout.pestana_der === "biblioteca" ? "" : "d-none"}`}>
-                    <OffcanvasAnimaciones id="bibliotecaAnimaciones" embebido onAgregar={agregarAnimacionAlCentro}/>
+                    <OffcanvasAnimaciones id="bibliotecaAnimaciones" embebido onAgregar={agregarAnimacionAlCentro} idActual={props.id_evento}/>
                 </div>
                 <div className={`ed-cuerpo ${layout.pestana_der === "sonido" ? "" : "d-none"}`}>
                     <PanelSonido refEvento={refEvento} idProyecto={idProyecto} sonidos={sonidos} recargarSonidos={recargarSonidos}
