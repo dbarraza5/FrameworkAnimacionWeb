@@ -335,3 +335,57 @@ test("camara: el temblor se suma a las claves x/y de la camara (no las reemplaza
     const medio = x.filter((k) => k.t > 1000 && k.t < 2000);
     assert.ok(medio.length > 5 && medio.every((k) => Math.abs(k.v - k.t) <= 10), "dentro del temblor: el viaje + la sacudida");
 });
+
+test("camara vertical 9:16: tamano y centro por defecto en el medio del cuadro", () => {
+    const def = {tipo: "escena", nombre: "v", duracion: 1000, camara: {tamano: [720, 1280]}, objetos: []};
+    const r = Compilador.compilar(def, () => null, () => null);
+    assert.ok(r.ok, JSON.stringify(r.errores));
+    const cam = r.resultado.grupos_figuras.find((g) => (g.clases || []).includes("camara"));
+    assert.deepEqual([cam.camara.ancho, cam.camara.alto, cam.cx, cam.cy], [720, 1280, 360, 640]);
+    // horizontal sin tamano: igual que antes
+    const h = Compilador.compilar({...def, camara: {}}, () => null, () => null).resultado.grupos_figuras.find((g) => (g.clases || []).includes("camara"));
+    assert.deepEqual([h.camara.ancho, h.camara.alto, h.cx, h.cy], [1280, 720, 640, 360]);
+    const mal = Compilador.compilar({...def, camara: {tamano: [720]}}, () => null, () => null);
+    assert.ok(!mal.ok && mal.errores.some((e) => /tamano/.test(e)));
+    // ida y vuelta
+    const d = Descompilador.descompilar({...r.resultado, nombre: "v"}, () => null, () => null).def;
+    assert.deepEqual(d.camara.tamano, [720, 1280]);
+});
+
+test("acciones de una instancia: compilan, se validan, vuelven igual y el motor elige la vigente", async () => {
+    const {GestionEvento} = await cargarMotor();
+    const cat = (n) => (n === "Persona" ? {id: "a00000000000000000000002", eventos: ["EventoGeneral", "Caminar", "Saltar"]} : null);
+    const def = {tipo: "escena", nombre: "a", duracion: 5000, objetos: [{instancia: "Persona", en: [100, 400],
+        acciones: [[0, "Caminar"], [2000, "Saltar", false], [3500, "EventoGeneral"]]}]};
+    const r = Compilador.compilar(def, cat, () => null);
+    assert.ok(r.ok, JSON.stringify(r.errores));
+    const inst = r.resultado.grupos_figuras.find((g) => g.instancia).instancia;
+    assert.deepEqual(inst.acciones, [{t: 0, evento: "Caminar", bucle: true}, {t: 2000, evento: "Saltar", bucle: false}, {t: 3500, evento: "EventoGeneral", bucle: true}]);
+    const d = Descompilador.descompilar({...r.resultado, nombre: "a"}, () => "Persona", () => null).def;
+    assert.deepEqual(d.objetos[0].acciones, def.objetos[0].acciones);
+    // el motor: antes de la primera, el evento de la instancia; despues, la vigente desde su comienzo
+    assert.deepEqual(GestionEvento.accionEn({evento: "X", bucle: false, acciones: inst.acciones.slice(1)}, 1), {evento: "X", bucle: false, t0: 0});
+    assert.deepEqual(GestionEvento.accionEn(inst, 2.5), {evento: "Saltar", bucle: false, t0: 2});
+    assert.deepEqual(GestionEvento.accionEn(inst, 4), {evento: "EventoGeneral", bucle: true, t0: 3.5});
+    const mal = Compilador.compilar({...def, objetos: [{instancia: "Persona", en: [0, 0], acciones: [[0, "Volar"], [1000, "Caminar"], [500, "Saltar"]]}]}, cat, () => null);
+    assert.ok(!mal.ok);
+    assert.ok(mal.errores.some((e) => /Volar/.test(e)) && mal.errores.some((e) => /en aumento/.test(e)), mal.errores.join(" | "));
+});
+
+test("temblor de camara: varias ventanas, con entrada gradual y sin decaer", () => {
+    const def = (temblor) => ({tipo: "escena", nombre: "t", duracion: 10000, camara: {centro: [500, 300], temblor}, objetos: []});
+    const cam = (r) => r.resultado.grupos_figuras.find((g) => (g.clases || []).includes("camara"));
+    const r = Compilador.compilar(def([{desde: 1000, hasta: 3000, amplitud: 4, entrada: 1000}, {desde: 5000, hasta: 8000, amplitud: 20, decae: false}]), buscar, buscarSon);
+    assert.deepEqual(r.errores, []);
+    const x = cam(r).claves.x, dev = (a, b) => Math.max(...x.filter((k) => k.t > a && k.t < b).map((k) => Math.abs(k.v - 500)));
+    assert.ok(dev(1000, 1300) < dev(1700, 2200), "la primera ventana crece de a poco (entrada)");
+    assert.ok(dev(5000, 8000) > 10, "la segunda es fuerte");
+    assert.ok(dev(7300, 7700) > 10, "sin decaer: sigue fuerte cerca del final");
+    assert.ok(Math.abs(x.find((k) => k.t === 4000)?.v ?? 500) === 500 || dev(3100, 4900) === -Infinity || dev(3100, 4900) < 0.5, "entre ventanas, quieta");
+    assert.ok(Compilador.compilar(def({desde: 3000, hasta: 1000}), buscar, buscarSon).errores.length);
+});
+
+test("temblor que empieza en 0: sin claves repetidas", () => {
+    const r = Compilador.compilar({tipo: "escena", nombre: "t0", duracion: 3000, camara: {centro: [100, 100], temblor: {desde: 0, hasta: 2000, amplitud: 5}}, objetos: []}, buscar, buscarSon);
+    assert.deepEqual(r.errores, []);
+});

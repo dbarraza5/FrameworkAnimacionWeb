@@ -1,4 +1,5 @@
 import {Tiempo} from "./Tiempo";
+import {dibujarDialogos as pintarDialogos} from "./Dialogos";
 import {GestionMovimientos} from "./GestionMovimientos";
 import {GestionAnimacion} from "../EditorAnimacion/GestionAnimacion";
 import {ImprimirAnimacion} from "../EditorAnimacion/ImprimirAnimacion";
@@ -631,6 +632,12 @@ class GestionEvento{
     }
 
     // Particulas y (en el editor) los iconos de los efectos, en coordenadas del dibujo.
+    // Globos de dialogo de la escena (escena.dialogos, ver Dialogos.js). ox, oy: paneo del editor.
+    dibujarDialogos(ctx, ox = 0, oy = 0){
+        if(!(this.escena && (this.escena.dialogos || []).length)) return;
+        pintarDialogos(this, ctx, ox, oy, this.tiempoActualMs());
+    }
+
     dibujarEfectos(ctx, ox, oy, px, mostrar_iconos){
         const t = this.tiempoActualMs();
         const efs = this.gestion_grupos_originales.grupos_figuras.filter((g) => grupoEsEfecto(g) && !g._virtual);
@@ -1116,11 +1123,12 @@ class GestionEvento{
         const inst = c.instancia, motor = a.motor;
         const raiz = motor.obtenerEvento("EventoGeneral");
         if(!raiz) return tau;
-        const elegido = (motor.obtenerEvento(inst.evento || "EventoGeneral") || raiz).evento;
+        const acc = GestionEvento.accionEn(inst, tau / 1000);
+        const elegido = (motor.obtenerEvento(acc.evento || "EventoGeneral") || raiz).evento;
         const duracion = Math.max(0, (elegido.tiempo_final - elegido.tiempo_inicio) / 1000);
-        const t = tau / 1000 - (parseFloat(inst.desfase) || 0) / 1000;
+        const t = tau / 1000 - acc.t0 - (parseFloat(inst.desfase) || 0) / 1000;
         let t_evento = Math.min(Math.max(0, t), duracion);
-        if(inst.bucle && duracion > 0){ const ciclo = cicloBucle(Math.max(0, t), true, duracion * 1000); if(ciclo) t_evento = ciclo.t; }
+        if(acc.bucle && duracion > 0){ const ciclo = cicloBucle(Math.max(0, t), true, duracion * 1000); if(ciclo) t_evento = ciclo.t; }
         return (motor.inicioAbsoluto(elegido) + t_evento) * 1000;
     }
 
@@ -1683,6 +1691,21 @@ class GestionEvento{
         });
     }
 
+    // Evento, bucle e inicio (s) que reproduce una instancia en el instante t (s de la escena):
+    // la accion vigente de inst.acciones ([{t ms, evento, bucle}], ordenadas) o, antes de la
+    // primera (o sin acciones), el evento y el bucle de la instancia.
+    static accionEn(inst, t){
+        let r = {evento: inst.evento, bucle: !!inst.bucle, t0: 0};
+        if(Array.isArray(inst.acciones)){
+            const ms = t * 1000;
+            for(const a of inst.acciones){
+                if(a.t > ms) break;
+                r = {evento: a.evento, bucle: a.bucle !== false, t0: a.t / 1000};
+            }
+        }
+        return r;
+    }
+
     // En cada cuadro: pose de cada instancia segun su asset y su evento.
     aplicarInstancias(t_escena){
         this.sincronizarInstancias();
@@ -1698,11 +1721,14 @@ class GestionEvento{
             // 9A: si la fisica solto al objeto (o a una pieza suya), su animacion se congela
             const dc = dinamicos.get(c.nombre);
             const t_obj = dc && dc._t_congelado != null ? Math.min(t_escena, dc._t_congelado) : t_escena;
-            const t = t_obj - (parseFloat(inst.desfase) || 0) / 1000;
-            const clave = `${GestionEvento.claveAsset(inst.id_eventos, inst.version)}|${inst.evento}|${!!inst.bucle}|${t.toFixed(4)}`;
+            // acciones en el tiempo: [{t (ms), evento, bucle}] ordenadas; la vigente reproduce su
+            // evento desde su comienzo (antes de la primera, el evento de la instancia)
+            const {evento, bucle, t0: t_accion} = GestionEvento.accionEn(inst, t_obj);
+            const t = t_obj - t_accion - (parseFloat(inst.desfase) || 0) / 1000;
+            const clave = `${GestionEvento.claveAsset(inst.id_eventos, inst.version)}|${evento}|${bucle}|${t.toFixed(4)}`;
             let pose = cache.get(clave);
             if(!pose){
-                pose = asset.motor.evaluarEn(inst.evento || "EventoGeneral", t, !!inst.bucle);
+                pose = asset.motor.evaluarEn(evento || "EventoGeneral", t, bucle);
                 cache.set(clave, pose);
             }
             for(const p of pose || []){
@@ -1716,6 +1742,10 @@ class GestionEvento{
                 if(p.transformacion !== undefined) v.transformacion = p.transformacion;
                 if(p.opacidad !== undefined) v.opacidad = p.opacidad;
                 if(p.lista_pintado !== undefined){ v.lista_pintado = p.lista_pintado; v.color = p.color; }
+            }
+            // claves propias de partes en esta instancia (p. ej. la boca desde la voz)
+            if(inst.claves_partes){
+                for(const parte in inst.claves_partes) Claves.aplicarClavesParte(dinamicos.get(`${c.nombre}${SEP}${parte}`), inst.claves_partes[parte], t_obj * 1000);
             }
         }
     }

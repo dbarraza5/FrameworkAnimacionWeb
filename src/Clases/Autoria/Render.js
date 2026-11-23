@@ -3,6 +3,7 @@
 // Node (herramientas/render.mjs, Fase A3). No depende del DOM: recibe un contexto 2D.
 
 import {cadenaTransformaciones, mapaGrupos, transformarPunto} from "../EditorAnimacion/TransformacionInstancia";
+import {aplicarEstilo, estiloEn} from "../EditorEvento/Estilo";
 
 // Caja de un objeto en el dibujo (con escala, espejo y rotacion de su cadena), en el
 // estado actual del motor. null si no tiene nada dibujado.
@@ -32,6 +33,9 @@ export function limitesEscena(m) {
 export function dibujarCuadro(m, ctx, w, h, t, {todo = false, fondo = "#ffffff"} = {}) {
     // tiempo FORZADO (no los relojes del editor: pausar/buscar se pisan entre si)
     const forzado_antes = m._t_forzado;
+    // stop-motion (escena.fps_animacion): el instante se redondea hacia abajo a pasos de 1/fps
+    const fps_anim = m.escena && m.escena.fps_animacion;
+    if (fps_anim > 0) t = Math.floor(t * fps_anim / 1000 + 1e-6) * 1000 / fps_anim;
     m._t_forzado = t / 1000;
     try { m.procesandoEventos(); } finally { m._t_forzado = forzado_antes; }
     m.gestion_grupos.procesarPosicionFinalFiguras();
@@ -58,6 +62,10 @@ export function dibujarCuadro(m, ctx, w, h, t, {todo = false, fondo = "#ffffff"}
     try {
         imp.imprimirListaGrupos(m.ordenDibujo(), [], [], [], null, null, null, null, true);
         m.dibujarEfectos(ctx, 0, 0, 1 / esc, false);
+        // estilo de imagen de la escena (duotono con tramado, etc.): sobre lo que ve la camara, antes de los globos
+        const estilo = m.escena && m.escena.estilo;
+        if (estilo) aplicarEstilo(ctx, estiloEn(estilo, t), (w - r.w * esc) / 2, (h - r.h * esc) / 2, r.w * esc, r.h * esc, 720, t);
+        if (m.dibujarDialogos) m.dibujarDialogos(ctx, 0, 0);
     } finally {
         imp.ctx = ctx_antes;
         imp.atenuados = atenuados;

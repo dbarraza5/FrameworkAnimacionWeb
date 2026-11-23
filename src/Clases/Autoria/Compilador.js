@@ -20,15 +20,25 @@
 //    colores?: {clave: "#color" | {color?, borde?, degradado?}}  (misma geometria, otro color: se interpola)
 //    degradado?: {tipo: "lineal", de, a, colores: [[pos, color]...]} | {tipo: "radial", centro, radio, colores}
 //    desenfoque?: px, mezcla?: normal|suma|pantalla|multiplicar|superponer|aclarar|oscurecer  (se heredan)
+//    facetas?: {luz: [x, y, z] | luces: [[t, [x, y, z]]...], detalle?, relieve?, azar?, semilla?, sombra?, luzMax?}  (low poly: triangulos con luz por cara, Facetas.js)
 //    partes?: [PARTE...]}
 // ESCENA
 //   {tipo: "escena", nombre, duracion, profundidad?: bool, precision?: "decimal", gravedad?, eventos?: [...],
-//    camara?: {centro: [x,y], zoom?, tamano?: [w,h], claves?, bucle?, temblor?, nombre?, capa?},
-//    objetos: [OBJETO...], efectos?: [EFECTO...]}
+//    camara?: {centro: [x,y], zoom?, tamano?: [w,h], claves?, bucle?, temblor?: {desde, hasta, amplitud?, entrada?, decae?} | [...], nombre?, capa?},
+//    objetos: [OBJETO...], efectos?: [EFECTO...],
+//    fps_animacion?: 1..60  (stop-motion: las poses cambian a ese ritmo),
+//    estilo?: {paleta: [colores de oscuro a claro], tramado?: bayer2|bayer4|bayer8|ninguno, pixel?, contraste?, brillo?}  (filtro de imagen, Estilo.js),
+//    dialogos?: [{quien: "<objeto>", parte?: "<parte>" (por defecto "cabeza" si existe), texto, desde, hasta, estilo?: dialogo|grito|pensamiento|narrador,
+//                 velocidad?: letras/s, lado?: arriba|abajo, desplazar?: [dx, dy], posicion?: arriba|abajo}]}  (globos, Dialogos.js)
+//                 estilo "texto": texto que vive EN la escena (un monitor, letras en el aire), sin globo: en: [x,y] (en el
+//                 dibujo; con quien, desde el centro de su caja o de su parte), tamano (px del dibujo), color?, fuente?:
+//                 sans|serif|mono, ancho? (corta lineas), alinear?: izquierda|centro|derecha, cursor?: true, resplandor?: px
 // OBJETO
 //   instancia: {instancia: "<nombre del asset>", nombre?, en: [x,y] (pies), ancla?: [x,y],
 //               escala?: n | [sx, sy], espejo?, rotacion?, plano?, capa?, borde?, fisica?: "fijo"|"rigido"|"desarmar"|{...},
 //               evento?, bucle?, desfase?, version?, opacidad?, visible?,
+//               acciones?: [[t, "<evento>", bucle?]...]  (desde t ms reproduce ese evento desde su comienzo; bucle por defecto true),
+//               claves_partes?: {"<parte>": {rotacion|escala_x|escala_y|opacidad: [[t, v, interp?]], peso?: [[t, 0..1]]}}  (claves de una parte del asset en esta instancia; t de la escena; peso mezcla con la animacion del asset),
 //               claves?: {x|y: [[t, v_pies, interp?]], ...}, repetir?,
 //               padre?: "<otro objeto>" (en y claves relativos al origen del padre; hereda su movimiento),
 //               desenfoque?, mezcla?,
@@ -39,6 +49,8 @@
 // Lo inverso (editor -> simple) esta en Descompilador.js.
 
 import {TIPOS_EFECTO, MODOS_FISICA, efectoDefecto} from "../EditorEvento/Fisica";
+import {expandirFacetas} from "./Facetas";
+import {normalizarEstilo} from "../EditorEvento/Estilo";
 import {PROPIEDADES, INTERPOLACIONES, MODOS_BUCLE, PISTA_FORMA, formasCompatibles, valorEn} from "../EditorEvento/Claves";
 import {GENERADORES, expandirGenerador, claveTemblor} from "./Generadores";
 import {PISTA_PESO} from "../EditorEvento/Ik";
@@ -280,6 +292,8 @@ function compilarPartes(partes, padre, E, nombres, salida, prefijo) {
     (partes || []).forEach((p, i) => {
         const donde = `${prefijo}${p && p.nombre ? p.nombre : "#" + i}`;
         if (!p || typeof p !== "object") { E.error(donde, "cada parte es un objeto"); return; }
+        // facetas (low poly): la parte se convierte en triangulos con luz por cara (Facetas.js)
+        if (p.facetas !== undefined) p = expandirFacetas(p, E, donde);
         if (!p.nombre || typeof p.nombre !== "string") { E.error(donde, "falta nombre"); return; }
         if (nombres.has(p.nombre)) { E.error(donde, `nombre repetido "${p.nombre}"`); return; }
         nombres.add(p.nombre);
@@ -374,6 +388,81 @@ function validarFormas(grupos, E) {
             }
         }
     }
+}
+
+// Globos de dialogo (planeacion_zorro_cuervo.md, fase 2): se validan y quien habla pasa a ser
+// el nombre del grupo (el objeto puede haberse renombrado al compilar).
+// Acciones de una instancia: [[t, "Evento", bucle?]] -> [{t, evento, bucle}] ordenadas por t.
+function compilarAcciones(lista, asset, nombre, donde, E) {
+    if (!Array.isArray(lista) || !lista.length) { E.error(donde, 'acciones es una lista de [t, "evento", bucle?]'); return null; }
+    const salida = [];
+    for (const [i, x] of lista.entries()) {
+        if (!Array.isArray(x) || !num(x[0]) || typeof x[1] !== "string" || (x[2] !== undefined && typeof x[2] !== "boolean")) {
+            E.error(`${donde} › acciones[${i}]`, 'cada accion es [t (ms), "evento", bucle? (true/false)]'); continue;
+        }
+        if (asset.eventos && !asset.eventos.includes(x[1])) {
+            E.error(`${donde} › acciones[${i}]`, `el asset "${nombre}" no tiene el evento "${x[1]}" (tiene: ${asset.eventos.join(", ")})`); continue;
+        }
+        salida.push({t: x[0], evento: x[1], bucle: x[2] !== false});
+    }
+    for (let i = 1; i < salida.length; i++) {
+        if (salida[i].t <= salida[i - 1].t) E.error(`${donde} › acciones`, "los tiempos tienen que ir en aumento");
+    }
+    return salida.length ? salida : null;
+}
+
+const ESTILOS_DIALOGO = ["dialogo", "grito", "pensamiento", "narrador", "texto"];
+const CAMPOS_TEXTO = ["en", "tamano", "color", "fuente", "ancho", "alinear", "cursor", "resplandor"];
+function compilarDialogos(lista, porNombre, dur, E) {
+    if (lista === undefined) return null;
+    if (!Array.isArray(lista)) { E.error("dialogos", "dialogos es una lista de {quien, texto, desde, hasta}"); return null; }
+    const salida = [];
+    lista.forEach((d, i) => {
+        const donde = `dialogos[${i}]`;
+        if (!d || typeof d !== "object") { E.error(donde, "cada dialogo es {quien, texto, desde, hasta}"); return; }
+        // (voz: false = sin voz; lo usa herramientas/voces.mjs, no se guarda)
+        const conocidos = ["quien", "texto", "desde", "hasta", "estilo", "velocidad", "lado", "desplazar", "posicion", "parte", "voz", ...CAMPOS_TEXTO];
+        const raros = Object.keys(d).filter((k) => !conocidos.includes(k));
+        if (raros.length) E.error(donde, `campos desconocidos: ${raros.join(", ")} (validos: ${conocidos.join(", ")})`);
+        const estilo = d.estilo === undefined ? "dialogo" : d.estilo;
+        if (!ESTILOS_DIALOGO.includes(estilo)) E.error(donde, `estilo "${d.estilo}" desconocido (validos: ${ESTILOS_DIALOGO.join(", ")})`);
+        if (typeof d.texto !== "string" || !d.texto.trim()) E.error(donde, "falta texto");
+        if (!num(d.desde) || !num(d.hasta) || d.hasta <= d.desde) E.error(donde, "desde y hasta son ms, con hasta > desde");
+        else if (num(dur) && d.desde >= dur) E.aviso(donde, `empieza en ${d.desde} ms, despues de que termina la escena (${dur} ms)`);
+        if (d.velocidad !== undefined && !(num(d.velocidad) && d.velocidad >= 0)) E.error(donde, "velocidad es letras por segundo (0 = todo de una vez)");
+        // que se alcance a leer: escribirse completo y quedar al menos 0,8 s (28 letras/s por defecto)
+        else if (typeof d.texto === "string" && num(d.desde) && num(d.hasta)) {
+            const vel = d.velocidad === undefined ? 28 : d.velocidad;
+            const escribir = vel > 0 ? Array.from(d.texto).length / vel * 1000 + 110 : 0;
+            if (escribir + 800 > d.hasta - d.desde) E.aviso(donde, `"${d.texto.slice(0, 24)}…" tarda ${Math.round(escribir)} ms en escribirse: dale mas tiempo (hasta) o mas velocidad`);
+        }
+        if (d.lado !== undefined && !["arriba", "abajo"].includes(d.lado)) E.error(donde, 'lado es "arriba" o "abajo"');
+        if (d.posicion !== undefined && !["arriba", "abajo"].includes(d.posicion)) E.error(donde, 'posicion es "arriba" o "abajo" (solo narrador)');
+        if (d.desplazar !== undefined && !par(d.desplazar)) E.error(donde, "desplazar es [dx, dy]");
+        const esTexto = estilo === "texto";
+        const ajenos = CAMPOS_TEXTO.filter((k) => d[k] !== undefined);
+        if (!esTexto && ajenos.length) E.error(donde, `${ajenos.join(", ")} solo valen con estilo "texto"`);
+        if (esTexto) {
+            if (!par(d.en)) E.error(donde, "texto: en es [x, y] (en el dibujo; con quien, relativo al centro de su caja)");
+            if (!(num(d.tamano) && d.tamano > 0)) E.error(donde, "texto: tamano es el alto de la letra en px del dibujo (> 0)");
+            if (d.color !== undefined && typeof d.color !== "string") E.error(donde, "texto: color es un texto (\"#7dff9a\")");
+            if (d.fuente !== undefined && !["sans", "serif", "mono"].includes(d.fuente)) E.error(donde, 'texto: fuente es "sans", "serif" o "mono"');
+            if (d.ancho !== undefined && !(num(d.ancho) && d.ancho > 0)) E.error(donde, "texto: ancho es px del dibujo (> 0)");
+            if (d.alinear !== undefined && !["izquierda", "centro", "derecha"].includes(d.alinear)) E.error(donde, 'texto: alinear es "izquierda", "centro" o "derecha"');
+            if (d.cursor !== undefined && typeof d.cursor !== "boolean") E.error(donde, "texto: cursor es true o false");
+            if (d.resplandor !== undefined && !(num(d.resplandor) && d.resplandor >= 0)) E.error(donde, "texto: resplandor es px (>= 0)");
+        }
+        const g = d.quien !== undefined ? porNombre.get(d.quien) : null;
+        if (esTexto && d.quien !== undefined && !g) E.error(donde, `quien "${d.quien}" no es un objeto de la escena`);
+        if (estilo !== "narrador" && !esTexto && !g) E.error(donde, d.quien === undefined ? "falta quien (el objeto que habla)" : `quien "${d.quien}" no es un objeto de la escena`);
+        const o = {quien: g ? g.nombre : null, texto: d.texto, desde: d.desde, hasta: d.hasta};
+        if (estilo !== "dialogo") o.estilo = estilo;
+        if (d.parte !== undefined && (typeof d.parte !== "string" || !d.parte.trim())) E.error(donde, "parte es el nombre de una parte de quien habla (por ejemplo \"cabeza\" o \"boca\")");
+        for (const k of ["velocidad", "lado", "desplazar", "posicion", "parte", ...CAMPOS_TEXTO]) if (d[k] !== undefined) o[k] = d[k];
+        if (o.quien === null) delete o.quien;
+        salida.push(o);
+    });
+    return salida.length ? salida : null;
 }
 
 const grupoDefault = () => ({nombre: "default", nodo_padre: "root", visible: true, color: "#000000", cx: 0, cy: 0,
@@ -540,14 +629,18 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
 
     // camara
     const cam = (def && def.camara) || {};
-    const centro = cam.centro || [640, 360];
+    // tamano del cuadro (la forma del video): [1280, 720] horizontal; [720, 1280] vertical 9:16
+    let tam = cam.tamano || [1280, 720];
+    if (!par(tam) || !(tam[0] > 0 && tam[1] > 0)) { E.error("camara", "tamano es [ancho, alto] positivos (p. ej. [720, 1280] para vertical)"); tam = [1280, 720]; }
+    const centro = cam.centro || [tam[0] / 2, tam[1] / 2];
     if (!par(centro)) E.error("camara", "centro es [x, y]");
-    const tam = cam.tamano || [1280, 720];
     const gcam = {...grupoBase(unico(cam.nombre || "Cámara"), "root", centro[0], centro[1], num(cam.capa) ? cam.capa : 999), color: "#f0b429",
         clases: ["camara"], camara: {ancho: tam[0], alto: tam[1], zoom: num(cam.zoom) ? cam.zoom : 1}};
     // Fase A5: receta "temblor": {desde, hasta, amplitud?} -> claves de x / y de la camara
-    const claves_cam = cam.temblor ? temblorSobreClaves(cam.claves || {}, centro, cam.temblor) : cam.claves;
-    if (cam.temblor && !(num(cam.temblor.desde) && num(cam.temblor.hasta))) E.error("camara", "temblor es {desde, hasta, amplitud?} en ms");
+    // temblor: uno o una lista de {desde, hasta, amplitud?, entrada?, decae?, paso?} (si se pisan, se suman)
+    const temblores = cam.temblor ? (Array.isArray(cam.temblor) ? cam.temblor : [cam.temblor]) : [];
+    const claves_cam = temblores.length ? temblores.reduce((cl, tb) => temblorSobreClaves(cl, centro, tb), cam.claves || {}) : cam.claves;
+    if (temblores.some((tb) => !tb || !(num(tb.desde) && num(tb.hasta)) || tb.hasta <= tb.desde)) E.error("camara", "temblor es {desde, hasta, amplitud?, entrada?, decae?} en ms (o una lista de esos)");
     const ccam = compilarClaves(claves_cam, E, "camara");
     if (ccam) gcam.claves = ccam;
     if (cam.bucle && cam.bucle !== "mantener") gcam.claves_bucle = cam.bucle;
@@ -580,6 +673,26 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
                 bucle: o.bucle !== false, desfase: num(o.desfase) ? o.desfase : 0};
             if (o.version) g.instancia.version = o.version;
             if (a.eventos && o.evento && !a.eventos.includes(o.evento)) E.error(donde, `el asset "${o.instancia}" no tiene el evento "${o.evento}" (tiene: ${a.eventos.join(", ")})`);
+            if (o.acciones !== undefined) {
+                const acc = compilarAcciones(o.acciones, a, o.instancia, donde, E);
+                if (acc) g.instancia.acciones = acc;
+            }
+            // claves propias de partes del asset en esta instancia: {"<parte>": {prop: [[t, v, interp?]], peso?: [...]}}
+            if (o.claves_partes !== undefined) {
+                if (!o.claves_partes || typeof o.claves_partes !== "object" || Array.isArray(o.claves_partes)) E.error(donde, "claves_partes es {\"<parte>\": {prop: [[t, v, interp?]], peso?: [[t, v]]}}");
+                else {
+                    const cp = {};
+                    for (const parte of Object.keys(o.claves_partes)) {
+                        const pistas = o.claves_partes[parte] || {};
+                        for (const prop of Object.keys(pistas)) if (!["rotacion", "escala_x", "escala_y", "opacidad", "peso"].includes(prop)) E.error(`${donde} › claves_partes.${parte}`, `propiedad desconocida "${prop}" (rotacion, escala_x, escala_y, opacidad, peso)`);
+                        const {peso, ...resto} = pistas, dd = `${donde} › claves_partes.${parte}`;
+                        const cl = compilarClaves(resto, E, dd) || {};
+                        if (peso) { const cw = compilarClaves({opacidad: peso}, E, dd + " › peso"); if (cw) cl.peso = cw.opacidad; }
+                        if (Object.keys(cl).length) cp[parte] = cl;
+                    }
+                    if (Object.keys(cp).length) g.instancia.claves_partes = cp;
+                }
+            }
         } else if (o.partes || o.crudo !== undefined || FORMAS.some((f) => o[f] !== undefined)) {
             if (!o.nombre) { E.error(donde, "un objeto dibujado necesita nombre"); return; }
             if (nombres.has(o.nombre)) { E.error(donde, `nombre repetido "${o.nombre}"`); return; }
@@ -685,6 +798,19 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
         else if (def.precision !== "entera") E.error("escena", `precision "${def.precision}" desconocida (validas: decimal, entera)`);
     }
     if (def && num(def.gravedad)) escena.fisica = {gravedad: def.gravedad};
+    // stop-motion: la animacion avanza a saltos de 1/fps s (el video sigue a su fps)
+    if (def && def.fps_animacion !== undefined) {
+        if (num(def.fps_animacion) && def.fps_animacion >= 1 && def.fps_animacion <= 60) escena.fps_animacion = def.fps_animacion;
+        else E.error("escena", "fps_animacion: de 1 a 60 cuadros por segundo");
+    }
+    const dialogos = compilarDialogos(def && def.dialogos, porNombre, dur, E);
+    if (dialogos) escena.dialogos = dialogos;
+    // estilo de imagen (Estilo.js): duotono con tramado, pixelado...
+    if (def && def.estilo !== undefined) {
+        const {estilo, errores} = normalizarEstilo(def.estilo);
+        errores.forEach((x) => E.error("escena", x));
+        if (estilo) escena.estilo = estilo;
+    }
     const eventos = def && Array.isArray(def.eventos) ? JSON.parse(JSON.stringify(def.eventos)) : [eventoGeneral(dur || 1000)];
     // sonido: clips sin "evento" van a la pista de la escena; con "evento", a ese evento
     const clips = S.clips(def && def.sonidos, "escena", dur);

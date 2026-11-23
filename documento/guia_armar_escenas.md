@@ -126,6 +126,7 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
     - Un "hilo" entre dos puntos que se mueven es un rect con pivote en un extremo y claves de `x`, `y`, `rotacion` y `escala_y`.
   - **Alas o mecanismos articulados** (fase 8, `ejemplos/dragon/`): una función genera las poses (con la misma cantidad de puntos por parte) y el morphing pasa de una a otra en bucle.
   - **Cámara con `temblor` y claves `x`/`y`:** el temblor se suma al movimiento de la cámara. Antes lo reemplazaba.
+  - **Varios temblores:** `temblor` también acepta una lista: `[{desde, hasta, amplitud, entrada?, decae?, paso?}, …]`. `entrada` (ms) hace crecer la vibración de a poco, y `decae: false` la mantiene pareja hasta el final (por defecto se va calmando). Si dos ventanas se pisan, se suman.
   - **Derrumbes con la física** (fase 7, `ejemplos/demolicion/`):
     - Para **soltar piezas sin lanzarlas**, usar una explosión con `umbral: 0.5`, el centro muy lejos debajo del objeto y `radio` justo hasta la altura que se quiere soltar.
     - Varias ondas seguidas sueltan de abajo hacia arriba.
@@ -191,3 +192,45 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
 - **Assets:** son de todo el proyecto, no van en capítulos, y cualquier escena los usa. `--capitulo` con un asset da error.
 - **Historias con varias escenas:** crea cada escena con `--capitulo "<nombre>"`. Va quedando al final del capítulo, en el orden en que la creas. El usuario las reordena en la pestaña Escenas.
 - **El tipo del catálogo** es el mismo que muestra la página del proyecto: el automático, o el que el usuario eligió a mano. Una escena marcada a mano como asset aparece como asset.
+
+## Globos de diálogo y formato vertical (planeacion_zorro_cuervo.md)
+
+- **Vertical 9:16 (TikTok):** `"camara": {"tamano": [720, 1280]}`. Sin `centro`, la cámara queda en `[360, 640]`. La escala del dibujo es la de siempre (720 de alto en horizontal); la resolución del video (1080×1920) se elige al exportar.
+- **Diálogos:** en la escena, `"dialogos": [...]`:
+
+```json
+"dialogos": [
+  {"texto": "Había una vez…", "desde": 0, "hasta": 3000, "estilo": "narrador"},
+  {"quien": "zorro", "texto": "¡Qué plumas tan brillantes!", "desde": 2500, "hasta": 6500},
+  {"quien": "cuervo", "texto": "¿Será verdad?", "desde": 5000, "hasta": 8500, "estilo": "pensamiento"},
+  {"quien": "cuervo", "texto": "¡CRAAA!", "desde": 8500, "hasta": 10500, "estilo": "grito"}
+]
+```
+
+  - `quien` es el **nombre de un objeto** de la escena (o el del asset instanciado). El globo lo sigue y la cola apunta a la **parte `cabeza`** del asset, si la tiene; si no, a lo alto del objeto entero.
+  - `parte: "boca"` apunta a otra parte, y `desplazar: [dx, dy]` corre la punta. Conviene que los personajes nuevos tengan una parte llamada `cabeza`.
+  - **Estilos:** `dialogo` (el de siempre), `grito`, `pensamiento` y `narrador`. El narrador no lleva `quien`: es una franja arriba, o abajo con `posicion: "abajo"`.
+  - `velocidad`: letras por segundo, 28 si no se indica; con 0 el texto aparece de una vez.
+  - `lado`: `"arriba"` o `"abajo"`. Si el globo no cabe en el cuadro, cambia de lado solo.
+  - El tamaño del texto se calcula sobre lo que ve la cámara: con zoom se lee igual.
+  - El compilador avisa si un texto no alcanza a escribirse y quedar 0,8 s antes de `hasta`.
+- **Texto en la escena** (estilo `"texto"`): letras que viven en el mundo, sin globo, como un monitor, un holograma o palabras en el aire.
+  - `{estilo: "texto", texto, desde, hasta, en: [x, y], tamano, color?, fuente?: "sans" | "serif" | "mono", ancho?, alinear?: "izquierda" | "centro" | "derecha", cursor?: true, resplandor?: px, velocidad?}`.
+  - **Coordenadas:** sin `quien`, `en` es una posición del dibujo. Con `quien` (y `parte`), es relativa al centro de la caja de ese objeto o parte, y el texto lo sigue.
+  - **Tamaño:** `tamano` y `ancho` están en px del dibujo, así que el texto se agranda con el zoom, como cualquier objeto (los globos, en cambio, se leen siempre igual).
+  - **Cursor:** `cursor: true` dibuja un bloque que sigue a la última letra y parpadea cuando termina de escribirse.
+  - **Voz:** `voces.mjs` le da voz como a cualquier diálogo, según el reparto de `quien`.
+- **Para revisar:** `render_memoria` con `--t` o `--gif`; los globos salen igual que en el video.
+
+## Acciones de una instancia (planeacion_zorro_cuervo.md, fase 3)
+
+- **Un personaje con varias acciones** = un asset con un **evento por acción**: ventanas de su línea de tiempo con claves (`eventos` tal cual en el asset; ver `ejemplos/zorro/generar.mjs`, `armarAcciones`).
+- **En la escena**, `acciones: [[0, "Caminar"], [1500, "Olfatear"], [6900, "Atrapar", false]]` cambia de acción en el tiempo. Cada acción empieza desde su comienzo. Con `false` se reproduce una sola vez y queda en su última pose.
+- **Claves de una parte en una instancia:** `claves_partes: {boca: {escala_y: [[t, v]], peso: [[t, 0..1]]}}` anima una parte del asset solo en esa instancia (t de la escena). `peso` mezcla con la animación del asset.
+- **Boca desde la voz:** en `voces`, `kiru: {..., boca: {parte: "boca", prop: "escala_y", cerrada: 0.22, abierta: 1}}` (o una lista de partes). `voces.mjs` escribe esas `claves_partes` desde el volumen de cada línea.
+- **Las poses** conviene escribirlas como funciones del tiempo local, muestreadas cada 50 ms y periódicas en las acciones en bucle, para que el bucle no salte. El párpado y la boca van con `formas`, y lo que aparece y desaparece (el queso en la boca) con `opacidad`.
+- **Assets del proyecto "El zorro y el cuervo":**
+  - **Zorro:** mira a la derecha. Boca en `[150, -118]` desde los pies, con la cabeza derecha.
+  - **Cuervo:** mira a la derecha; en la escena se usa con `espejo`. Punta del pico en `[70, -92]`.
+  - **Árbol del cuervo:** percha en `[-232, -628]`.
+  - **Bosque:** suelo en y = 0.

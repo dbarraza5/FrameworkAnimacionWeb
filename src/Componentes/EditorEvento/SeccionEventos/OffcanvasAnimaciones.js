@@ -77,6 +77,16 @@ export function MiniaturaAnimada({doc, evento, animar}) {
 // `idActual`: el documento que se esta editando (no se ofrece meterlo dentro de si mismo).
 // Organizacion (documento/planeacion_organizacion.md, fase 3): por defecto lista solo los
 // assets del proyecto; las escenas se ven marcando "incluir escenas".
+// El backend a veces responde el error como objeto ({name, msj}, p. ej. con la sesion vencida):
+// siempre se muestra como texto (un objeto en el JSX rompe todo el editor).
+function textoError(e) {
+    const x = e?.response?.data?.error ?? e?.message;
+    if (!x) return "";
+    if (typeof x === "string") return x;
+    if (x.name === "TokenExpiredError") return "La sesión venció: vuelve a iniciar sesión.";
+    return x.msj || x.message || x.name || JSON.stringify(x);
+}
+
 export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgregar, embebido = false, idActual = null}) {
     const panelRef = useRef(null);
     const cookie = new Cookies();
@@ -121,7 +131,7 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
             setProyectos(lista);
             if (lista.length > 0) setProyectoId((actual) => actual || lista[0].id);
         } catch (e) {
-            setError(e?.response?.data?.error || e?.message || "Error al obtener los proyectos.");
+            setError(textoError(e) || "Error al obtener los proyectos.");
         } finally {
             setCargando(false);
         }
@@ -161,7 +171,7 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                     return next;
                 });
             } catch (e) {
-                if (!cancelado) setError(e?.response?.data?.error || e?.message || "Error al cargar las miniaturas.");
+                if (!cancelado) setError(textoError(e) || "Error al cargar las miniaturas.");
             }
         })();
         return () => { cancelado = true; };
@@ -187,7 +197,7 @@ export default function OffcanvasAnimaciones({id = "offcanvasAnimaciones", onAgr
                         .catch(() => setDocsAsset((prev) => ({...prev, [d.id]: {}})));
                 }
             } catch (e) {
-                if (!cancelado) setError(e?.response?.data?.error || e?.message || "Error al cargar los assets animados.");
+                if (!cancelado) setError(textoError(e) || "Error al cargar los assets animados.");
             }
         })();
         return () => { cancelado = true; };

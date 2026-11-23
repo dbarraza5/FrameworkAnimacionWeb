@@ -4,6 +4,7 @@
 //   - Cada escena tiene su capitulo (o ninguno) y su orden dentro de el.
 // Animacion.js pasa los datos de GET /api/proyecto/:id/documentos y una funcion `peticion` para la API.
 import {useState} from "react";
+import ModalCapitulo from "./ModalCapitulo";
 
 const fecha = (f) => (f ? new Date(f).toLocaleString() : "");
 const SIN = "__sin__"; // clave de la seccion "Sin capitulo"
@@ -19,6 +20,7 @@ function HistoriaEscenas({id_proyecto, capitulos, setCapitulos, documentos, actu
     const [filtro, setFiltro] = useState("");
     const [cerrados, setCerrados] = useState({});
     const [ocupado, setOcupado] = useState(false);
+    const [verCapitulo, setVerCapitulo] = useState(null);   // {titulo, escenas}: ver de corrido / exportar MP4 (fase 5)
     const texto = filtro.trim().toLowerCase();
     const escenas = documentos.filter((d) => d.tipo === "escena");
     const ids_cap = new Set(capitulos.map((c) => c._id));
@@ -158,6 +160,11 @@ function HistoriaEscenas({id_proyecto, capitulos, setCapitulos, documentos, actu
                 </div>
             )}
 
+            {verCapitulo && (
+                <ModalCapitulo titulo={verCapitulo.titulo} escenas={verCapitulo.escenas} id_proyecto={id_proyecto}
+                               peticion={peticion} onCerrar={() => setVerCapitulo(null)}/>
+            )}
+
             {secciones.map((s) => {
                 const todas = deCapitulo(s.clave);
                 const lista = texto ? todas.filter((d) => (d.nombre || "").toLowerCase().includes(texto)) : todas;
@@ -175,6 +182,13 @@ function HistoriaEscenas({id_proyecto, capitulos, setCapitulos, documentos, actu
                             </button>
                             <span className="badge bg-secondary">{todas.length}</span>
                             <div className="ms-auto d-flex gap-1">
+                                {!!todas.length && (
+                                    <button type="button" className="btn btn-sm btn-success" disabled={ocupado}
+                                            title="Ver todas las escenas de corrido, con sonido, y exportarlas como un solo MP4"
+                                            onClick={() => setVerCapitulo({titulo: s.nombre, escenas: todas})}>
+                                        <i className="bi bi-collection-play me-1"/>Ver y exportar
+                                    </button>
+                                )}
                                 <button type="button" className="btn btn-sm btn-outline-primary" disabled={ocupado} onClick={() => nuevaEscena(s.clave)}>
                                     <i className="bi bi-plus-circle me-1"/>Nueva escena
                                 </button>

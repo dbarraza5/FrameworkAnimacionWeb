@@ -104,6 +104,10 @@ export default function PanelObjeto({refLienzo, seleccion}) {
 
     if (!seleccion.length) return null;
 
+    // formatos de la camara: [clave, ancho, alto, texto] (la escala del dibujo es la de 16:9: 720 de alto)
+    const FORMATOS_CAMARA = [["16:9", 1280, 720, "Horizontal 16:9"], ["9:16", 720, 1280, "Vertical 9:16 (TikTok, Reels)"],
+        ["1:1", 900, 900, "Cuadrado 1:1"], ["4:5", 864, 1080, "Vertical 4:5"]];
+
     const aplicar = (campo, texto) => {
         const v = parseFloat(texto);
         if (!Number.isFinite(v) || !unico) return;
@@ -208,6 +212,20 @@ export default function PanelObjeto({refLienzo, seleccion}) {
                                 </div>
                                 {campo("cam_ancho", "Ancho del cuadro", 10, "px")}
                                 {campo("cam_alto", "Alto del cuadro", 10, "px")}
+                                <div className="col-12">
+                                    <label className="form-label small mb-0">Formato</label>
+                                    <select className="form-select form-select-sm" title="Proporción del cuadro de la cámara (el video sale con esta forma)"
+                                            value={(FORMATOS_CAMARA.find(([, w, h]) => w === valores.cam_ancho && h === valores.cam_alto) || ["otro"])[0]}
+                                            onChange={(e) => {
+                                                const fmt = FORMATOS_CAMARA.find(([n]) => n === e.target.value);
+                                                if (!fmt || !unico) return;
+                                                ev().fijarCamara(unico, "ancho", fmt[1]);
+                                                ev().fijarCamara(unico, "alto", fmt[2]);
+                                            }}>
+                                        {FORMATOS_CAMARA.map(([n, w, h, t]) => <option key={n} value={n}>{t} ({w}×{h})</option>)}
+                                        <option value="otro" disabled>Otro</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="small text-body-secondary mt-1">
                                 Ve {Math.round(valores.cam_ancho / (valores.zoom || 1))} × {Math.round(valores.cam_alto / (valores.zoom || 1))} del dibujo.

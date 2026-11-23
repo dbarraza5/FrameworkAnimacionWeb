@@ -78,8 +78,9 @@ class ViaApi {
     async sonidos() { return this.pedir("GET", "/sonidos"); }
     async crearPendiente(nombre, nota) { return this.pedir("POST", "/sonidos", {nombre, nota}); }
     async actualizar(id, resultado) {
-        const {grupos_figuras, eventos, escena} = resultado;
-        return this.pedir("PUT", `/eventos/${id}`, {grupos_figuras, eventos, escena});
+        // el nombre tambien viaja: si cambio en el archivo, el documento se renombra
+        const {nombre, grupos_figuras, eventos, escena} = resultado;
+        return this.pedir("PUT", `/eventos/${id}`, {nombre, grupos_figuras, eventos, escena});
     }
 }
 

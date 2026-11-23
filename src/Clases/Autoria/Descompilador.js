@@ -223,7 +223,10 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
     if (esc.orden_profundidad) def.profundidad = true;
     if (esc.precision === "decimal") def.precision = "decimal";
     if (esc.fisica && typeof esc.fisica.gravedad === "number") def.gravedad = esc.fisica.gravedad;
-    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica", "sonidos", "sonido_marca", "reacciones", "precision"].includes(k));
+    if ((esc.dialogos || []).length) def.dialogos = JSON.parse(JSON.stringify(esc.dialogos));
+    if (esc.estilo) def.estilo = JSON.parse(JSON.stringify(esc.estilo));
+    if (esc.fps_animacion) def.fps_animacion = esc.fps_animacion;
+    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica", "sonidos", "sonido_marca", "reacciones", "precision", "dialogos", "estilo", "fps_animacion"].includes(k));
     if (otros.length) avisos.push(`escena: campos que el formato simple no guarda: ${otros.join(", ")}`);
 
     const esHijo = (g) => (g.clases || []).includes("objeto_hijo");
@@ -271,6 +274,9 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
             if (i.evento && i.evento !== "EventoGeneral") o.evento = i.evento;
             if (i.bucle === false) o.bucle = false;
             if (i.desfase) o.desfase = i.desfase;
+            if ((i.acciones || []).length) o.acciones = i.acciones.map((a) => (a.bucle === false ? [a.t, a.evento, false] : [a.t, a.evento]));
+            if (i.claves_partes && Object.keys(i.claves_partes).length) o.claves_partes = Object.fromEntries(Object.entries(i.claves_partes).map(([parte, pistas]) =>
+                [parte, Object.fromEntries(Object.entries(pistas).map(([prop, lista]) => [prop, lista.map((c) => [c.t, c.v, c.interp])]))]));
             if (i.version) o.version = i.version;
         } else {
             o.nombre = g.nombre;

@@ -4,6 +4,7 @@ import {dibujarCuadro, tamanoSalida} from "../../Clases/Autoria/Render";
 import {Zip} from "../../Clases/Autoria/Zip";
 import {Mp4, mp4Disponible, par} from "../../Clases/Autoria/Mp4";
 import {mezclar, wav} from "../../Clases/Sonido/Mezcla";
+import {crearEstimador, textoEstimacion, formatoDuracion} from "../../Clases/Autoria/Estimador";
 
 // Archivo -> Exportar video (Fase A7 de documento/planeacion_autoria_asistida.md).
 // Dibuja la escena "como se vera" (lo que ve la camara) cuadro a cuadro con el mismo
@@ -20,6 +21,10 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
     const [formato, setFormato] = useState(mp4Disponible() ? "mp4" : "gif");
     const [progreso, setProgreso] = useState(null);     // 0..1 mientras exporta
     const [mensaje, setMensaje] = useState("");
+    const [estimacion, setEstimacion] = useState(null);
+    const estimador = useRef(null);
+    // cada avance actualiza la barra y la estimacion de lo que falta
+    const avanzar = (x) => { setProgreso(x); if (estimador.current) setEstimacion(estimador.current.actualizar(x)); };
     const cancelar = useRef(false);
     // sonido (planeacion_sonido.md): la mezcla de la escena va como pista del MP4 o audio.wav en el .zip
     const clips = (() => { try { return motor().clipsAudio(); } catch (e) { return []; } })();
@@ -45,6 +50,8 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
         // (no se pausan los relojes: el render usa un tiempo forzado, ver Render.js)
         cancelar.current = false;
         setMensaje("");
+        estimador.current = crearEstimador();
+        setEstimacion(null);
         const t = tamanoSalida(m, ancho);
         const {w, h} = formato === "mp4" ? {w: par(t.w), h: par(t.h)} : t;     // H.264: medidas pares
         const canvas = document.createElement("canvas");
@@ -66,13 +73,13 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
                     if (cancelar.current) { video.cancelar(); setMensaje("Cancelado."); return; }
                     dibujarCuadro(m, ctx, w, h, t0 + i * paso);
                     await video.cuadro(canvas);
-                    setProgreso((i + 1) / total);
+                    avanzar((i + 1) / total);
                     if (i % 3 === 2) await new Promise((r) => setTimeout(r, 0));
                 }
                 if (pista) await video.audio(pista);
                 const blob = await video.terminar();
                 descargar(blob, `${base}.mp4`);
-                setMensaje(`Listo: MP4 de ${total} cuadros, ${w}×${h} a ${fps} cuadros por segundo${pista ? ", con sonido" : ""} (${Math.round(blob.size / 1024)} KB).`);
+                setMensaje(`Listo en ${formatoDuracion(estimador.current.actualizar(1).transcurrido)}: MP4 de ${total} cuadros, ${w}×${h} a ${fps} cuadros por segundo${pista ? ", con sonido" : ""} (${Math.round(blob.size / 1024)} KB).`);
                 return;
             }
             if (formato === "zip") {
@@ -83,7 +90,7 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
                     dibujarCuadro(m, ctx, w, h, t0 + i * paso);
                     const b = await new Promise((r) => canvas.toBlob(r, "image/png"));
                     zip.agregar(`${base}_${String(i + 1).padStart(cifras, "0")}.png`, new Uint8Array(await b.arrayBuffer()));
-                    setProgreso((i + 1) / total);
+                    avanzar((i + 1) / total);
                 }
                 const pista = conSonido ? await mezcla(t0, t0 + total * paso) : null;
                 if (pista) zip.agregar("audio.wav", wav(pista));
@@ -98,7 +105,7 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
                 const {data} = ctx.getImageData(0, 0, w, h);
                 const paleta = quantize(data, 256);
                 gif.writeFrame(applyPalette(data, paleta), w, h, {palette: paleta, delay: Math.round(paso)});
-                setProgreso((i + 1) / total);
+                avanzar((i + 1) / total);
                 if (i % 3 === 2) await new Promise((r) => setTimeout(r, 0));   // dejar respirar a la pagina
             }
             gif.finish();
@@ -108,6 +115,7 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
             setMensaje("No se pudo exportar: " + (e && e.message ? e.message : e));
         } finally {
             setProgreso(null);
+            setEstimacion(null);
             m.buscarTiempo(t_antes);                     // el editor vuelve a donde estaba
             if (estaba && m.reproducirProceso) m.reproducirProceso();
         }
@@ -157,7 +165,10 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
                     </>}
                     <div><label className="form-label mb-0">Ancho (px)</label>
                         <select className="form-select form-select-sm" value={ancho} disabled={exportando} onChange={(e) => setAncho(parseInt(e.target.value, 10))}>
-                            {[320, 480, 640, 960, 1280].map((a) => <option key={a} value={a}>{a}</option>)}
+                            {[320, 480, 640, 720, 960, 1080, 1280].map((a) => {
+                                const t = (() => { try { return tamanoSalida(motor(), a); } catch (e) { return null; } })();
+                                return <option key={a} value={a}>{t ? `${a} (${t.w}×${t.h})` : a}</option>;
+                            })}
                         </select></div>
                 </div>
                 {exportando && (
@@ -165,6 +176,7 @@ export default function ModalExportarVideo({refEvento, nombre, onCerrar, audio})
                         <div className="progress-bar" style={{width: `${Math.round(progreso * 100)}%`}}/>
                     </div>
                 )}
+                {exportando && <div className="small mt-1"><b>{Math.round(progreso * 100)}%</b> · {textoEstimacion(estimacion)}</div>}
                 {mensaje && <div className="small mt-2">{mensaje}</div>}
                 <div className="d-flex justify-content-end gap-2 mt-3">
                     {exportando

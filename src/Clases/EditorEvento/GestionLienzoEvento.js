@@ -434,6 +434,8 @@ class GestionLienzoEvento{
         if(this.eventos_.dibujarEfectos){
             const cl = this.configuracion_lienzo;
             this.eventos_.dibujarEfectos(ctx, cl.x_delta_original, cl.y_delta_original, 1 / (cl.escala || 1), !cl.vista_camara);
+            // globos de dialogo (planeacion_zorro_cuervo.md, fase 2)
+            if(this.eventos_.dibujarDialogos) this.eventos_.dibujarDialogos(ctx, cl.x_delta_original, cl.y_delta_original);
         }
 
         // 8A: fuera de lo que ve la camara, oscurecido (siempre un poco; en "Vista de

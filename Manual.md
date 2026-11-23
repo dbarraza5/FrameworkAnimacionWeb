@@ -10,6 +10,7 @@ Manual para quien anima con el editor. Explica cómo se usa cada parte y crece a
 ## Novedades
 
 **2026-11-19 (página del proyecto: escenas y assets)**
+- **Ver y exportar un capítulo:** las escenas de corrido con sonido, y un solo MP4 (por ejemplo, vertical para TikTok). Las escenas también traen **globos de diálogo** y los personajes tienen **acciones** que cambian en el tiempo.
 - La **Biblioteca** del editor muestra solo assets; las escenas se ven con **Incluir escenas**. El respaldo .zip guarda los capítulos.
 - La pestaña Escenas organiza la historia en **capítulos**, con orden manual y "Mover a…". También tiene un botón **Nueva escena**.
 - La página del proyecto separa **Escenas** y **Assets** en dos pestañas. Cada documento se clasifica solo y se puede corregir. La **escena principal** ⭐ aparece primero. Ver [§2](#2-empezar).
@@ -137,6 +138,10 @@ Hay dos editores:
      - **Nueva escena**, dentro de un capítulo o arriba de todo, crea una escena vacía con cámara y te ofrece abrirla en el editor.
      - Las escenas se ordenan con las flechas y se cambian de capítulo con **Mover a…**.
      - La **principal** (⭐) aparece en un aviso arriba, con un botón para abrirla. Solo puede haber una.
+     - **Ver y exportar** (en cada capítulo) abre un panel:
+       - ver el capítulo entero de corrido, con sonido;
+       - exportarlo como **un solo MP4**, con el ancho (hasta 1080×1920 en vertical), los cuadros por segundo, corte o fundido entre escenas y sonido sí o no.
+       - Mientras exporta, muestra el **porcentaje**, el **tiempo transcurrido** y una **estimación de lo que falta**. También aparece en Archivo → Exportar video del editor.
    - **Assets:** personajes, fondos, objetos y cualquier documento que se usa dentro de una escena. Son de todo el proyecto: no van en capítulos, y cualquier escena puede usarlos. El documento de ejemplo `evento_default`, que trae cada proyecto nuevo, queda oculto.
    - **Dibujos:** los dibujos del proyecto, que se editan en el editor de dibujo.
    - **Movimientos, Asistente y Sonido.**

@@ -272,3 +272,27 @@ export function interpolarPintado(pa, pb, u){
         return degradado ? {...p, color, degradado} : {...p, color};
     });
 }
+
+// ---------------- Claves propias de partes de una instancia (planeacion_voces.md, fase 3) ----------------
+// La escena puede animar una parte del asset en UNA instancia: inst.claves_partes =
+//   {"<parte>": {escala_y: [{t, v, interp}], peso?: [{t, v}]}}   (t: ms de la escena)
+// `g` es la parte ya posada por el asset; el valor final es asset + (clave - asset) * peso
+// (sin pista de peso, peso 1: la clave manda). Props: rotacion, escala_x, escala_y, opacidad.
+const PROPS_PARTE = {
+    rotacion: {leer: (g) => num(g.transformacion?.rotacion, 0)},
+    escala_x: {leer: (g) => num(g.transformacion?.escala_x, 1)},
+    escala_y: {leer: (g) => num(g.transformacion?.escala_y, 1)},
+    opacidad: {leer: (g) => num(g.opacidad, 1)},
+};
+export function aplicarClavesParte(g, pistas, t){
+    if(!g || !pistas) return;
+    const peso = tienePista(pistas, "peso") ? Math.max(0, Math.min(1, valorEn(pistas.peso, t))) : 1;
+    if(peso <= 0) return;
+    for(const prop in pistas){
+        const def = PROPS_PARTE[prop];
+        if(!def || !tienePista(pistas, prop)) continue;
+        const base = def.leer(g), v = base + (valorEn(pistas[prop], t) - base) * peso;
+        if(prop === "opacidad") g.opacidad = v;
+        else g.transformacion = {...(g.transformacion || {}), [prop]: v};   // copia: la pose puede estar compartida
+    }
+}

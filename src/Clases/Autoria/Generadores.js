@@ -322,12 +322,16 @@ export function expandirGenerador(def) {
 // ---------------- recetas para escenas ----------------
 
 // Temblor de camara: claves de x / y alrededor de `centro`, decrecientes, entre desde y hasta (ms).
-export function claveTemblor(centro, {desde, hasta, amplitud = 14, paso = 40}) {
+// entrada: ms en que la vibracion crece desde 0; decae: true (se va calmando hasta el final) | false (pareja)
+export function claveTemblor(centro, {desde, hasta, amplitud = 14, paso = 40, entrada = 0, decae = true}) {
     const [cx, cy] = centro;
-    const x = [[0, cx], [desde, cx]], y = [[0, cy], [desde, cy]];
+    // (si empieza en 0, una sola clave inicial: dos en el mismo instante no valen)
+    const x = desde > 0 ? [[0, cx], [desde, cx]] : [[0, cx]], y = desde > 0 ? [[0, cy], [desde, cy]] : [[0, cy]];
     let k = 0;
     for (let t = desde + paso; t < hasta; t += paso, k++) {
-        const a = amplitud * (1 - (t - desde) / (hasta - desde));
+        const sube = entrada > 0 ? Math.min(1, (t - desde) / entrada) : 1;
+        const baja = decae ? 1 - (t - desde) / (hasta - desde) : Math.min(1, (hasta - t) / Math.max(paso, 200));
+        const a = amplitud * sube * baja;
         x.push([t, Math.round((cx + (k % 2 ? a : -a) * (0.6 + 0.4 * Math.sin(k * 1.7))) * 10) / 10]);
         y.push([t, Math.round((cy + (k % 3 === 0 ? a : -a * 0.7)) * 10) / 10]);
     }
