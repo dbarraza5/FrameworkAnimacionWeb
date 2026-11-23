@@ -1,0 +1,192 @@
+{
+ "tipo": "asset",
+ "nombre": "Mariposa amarilla",
+ "duracion": 220,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "ala_atras",
+   "capa": 0,
+   "pivote": [
+    0,
+    -2
+   ],
+   "poligono": [
+    [
+     0,
+     -2
+    ],
+    [
+     -6,
+     -18
+    ],
+    [
+     -16,
+     -16
+    ],
+    [
+     -12,
+     -4
+    ]
+   ],
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     -8
+    ],
+    "radio": 16,
+    "colores": [
+     [
+      0,
+      "#ffe066"
+     ],
+     [
+      1,
+      "#f2a51a"
+     ]
+    ]
+   },
+   "borde": "#3a2a20",
+   "claves": {
+    "escala_y": [
+     [
+      0,
+      1
+     ],
+     [
+      110,
+      0.15,
+      "suave"
+     ],
+     [
+      220,
+      1,
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "repetir"
+  },
+  {
+   "nombre": "ala_adelante",
+   "capa": 2,
+   "pivote": [
+    0,
+    -2
+   ],
+   "poligono": [
+    [
+     0,
+     -2
+    ],
+    [
+     4,
+     -20
+    ],
+    [
+     16,
+     -20
+    ],
+    [
+     12,
+     -6
+    ],
+    [
+     6,
+     2
+    ],
+    [
+     0,
+     4
+    ]
+   ],
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     -8
+    ],
+    "radio": 16,
+    "colores": [
+     [
+      0,
+      "#ffe066"
+     ],
+     [
+      1,
+      "#f2a51a"
+     ]
+    ]
+   },
+   "borde": "#3a2a20",
+   "claves": {
+    "escala_y": [
+     [
+      0,
+      1
+     ],
+     [
+      110,
+      0.15,
+      "suave"
+     ],
+     [
+      220,
+      1,
+      "suave"
+     ]
+    ]
+   },
+   "bucle": "repetir"
+  },
+  {
+   "nombre": "cuerpo",
+   "capa": 1,
+   "poligono": [
+    [
+     -7,
+     -1
+    ],
+    [
+     8,
+     -3
+    ],
+    [
+     9,
+     -1
+    ],
+    [
+     -7,
+     1
+    ]
+   ],
+   "color": "#2a1e18"
+  },
+  {
+   "nombre": "antena",
+   "capa": 1,
+   "poligono": [
+    [
+     8,
+     -3
+    ],
+    [
+     14,
+     -9
+    ],
+    [
+     14.6,
+     -8.4
+    ],
+    [
+     9,
+     -2
+    ]
+   ],
+   "color": "#2a1e18"
+  }
+ ]
+}

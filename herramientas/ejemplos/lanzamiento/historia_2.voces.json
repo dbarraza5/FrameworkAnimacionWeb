@@ -1,0 +1,513 @@
+{
+ "tipo": "escena",
+ "nombre": "2. Countdown",
+ "duracion": 15975,
+ "precision": "decimal",
+ "profundidad": false,
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "0F6wBri3KtnolnAMTeIU"
+  },
+  "orbitador": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  },
+  "orbitador_arriba": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  }
+ },
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.86,
+   "radio": 16,
+   "intensidad": 0.8
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   1196,
+   358
+  ],
+  "zoom": 4,
+  "temblor": [
+   {
+    "desde": 5400,
+    "hasta": 13000,
+    "amplitud": 2.5,
+    "entrada": 800,
+    "decae": false,
+    "paso": 33
+   }
+  ],
+  "claves": {
+   "x": [
+    [
+     0,
+     1196
+    ],
+    [
+     3400,
+     1190,
+     "suave"
+    ],
+    [
+     3401,
+     1160
+    ],
+    [
+     5600,
+     1150,
+     "suave"
+    ],
+    [
+     5601,
+     1140
+    ],
+    [
+     15975,
+     1140,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     358
+    ],
+    [
+     3400,
+     358,
+     "suave"
+    ],
+    [
+     3401,
+     250
+    ],
+    [
+     5600,
+     240,
+     "suave"
+    ],
+    [
+     5601,
+     700
+    ],
+    [
+     15975,
+     680,
+     "suave"
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     4
+    ],
+    [
+     3400,
+     4.4,
+     "suave"
+    ],
+    [
+     3401,
+     2.2
+    ],
+    [
+     5600,
+     2.4,
+     "suave"
+    ],
+    [
+     5601,
+     1.6
+    ],
+    [
+     15975,
+     1.75,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo del amanecer",
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Mar y costa",
+   "nombre": "costa",
+   "en": [
+    0,
+    560
+   ],
+   "plano": -9
+  },
+  {
+   "instancia": "Torre de agua",
+   "nombre": "torre_agua",
+   "en": [
+    620,
+    830
+   ],
+   "plano": -7,
+   "escala": 0.9
+  },
+  {
+   "instancia": "Plataforma de lanzamiento",
+   "nombre": "plataforma",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -5
+  },
+  {
+   "instancia": "Torre de servicio",
+   "nombre": "torre",
+   "en": [
+    1350,
+    760
+   ],
+   "plano": -4,
+   "acciones": [
+    [
+     0,
+     "Solo gorra"
+    ],
+    [
+     3500,
+     "Retirar gorra",
+     false
+    ]
+   ]
+  },
+  {
+   "instancia": "Agua de supresión",
+   "nombre": "agua",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -4.5,
+   "acciones": [
+    [
+     0,
+     "Apagada"
+    ],
+    [
+     1200,
+     "Rociar",
+     false
+    ],
+    [
+     1800,
+     "Rociando"
+    ]
+   ]
+  },
+  {
+   "instancia": "Tanque externo",
+   "nombre": "tanque",
+   "en": [
+    1100,
+    710
+   ],
+   "plano": -3
+  },
+  {
+   "instancia": "Cohete lateral",
+   "nombre": "cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -2
+  },
+  {
+   "instancia": "Orbitador Aurora",
+   "nombre": "orbitador",
+   "en": [
+    52,
+    -10
+   ],
+   "padre": "tanque",
+   "plano": -2.5
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_0",
+   "en": [
+    66,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": -2.6,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ],
+    [
+     5400,
+     "Arrancar",
+     false
+    ],
+    [
+     7945,
+     "Encendido"
+    ]
+   ]
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_1",
+   "en": [
+    92,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": -2.6,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ],
+    [
+     5520,
+     "Arrancar",
+     false
+    ],
+    [
+     8065,
+     "Encendido"
+    ]
+   ]
+  },
+  {
+   "instancia": "Llama de cohete",
+   "nombre": "llama_cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -2.1,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ]
+   ]
+  },
+  {
+   "instancia": "Vapor del tanque",
+   "nombre": "vapor_lox",
+   "en": [
+    -20,
+    -320
+   ],
+   "padre": "tanque",
+   "plano": -2.8
+  },
+  {
+   "instancia": "Vapor del tanque",
+   "nombre": "vapor_lh2",
+   "en": [
+    30,
+    -200
+   ],
+   "padre": "tanque",
+   "plano": -2.8,
+   "desfase": 1700,
+   "escala": 0.8
+  },
+  {
+   "instancia": "Vapor de arranque",
+   "nombre": "vapor_arranque",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -3.8,
+   "bucle": false,
+   "desfase": 5600
+  }
+ ],
+ "efectos": [
+  {
+   "tipo": "particulas",
+   "nombre": "chispas",
+   "en": [
+    1180,
+    710
+   ],
+   "inicio": 4700,
+   "fin": 5800,
+   "tasa": 60,
+   "vida": 700,
+   "velocidad": 220,
+   "angulo": 90,
+   "dispersion": 120,
+   "gravedad": 300,
+   "tam_ini": 3,
+   "tam_fin": 1,
+   "color_ini": "#fff6c0",
+   "color_fin": "#ff8a30",
+   "suave": "si",
+   "opacidad": 0.95,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "T-minus ten… nine… eight… seven…",
+   "desde": 2000,
+   "hasta": 7045,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 10
+  },
+  {
+   "texto": "Six… we have main engine start…",
+   "desde": 7145,
+   "hasta": 10766,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 12
+  },
+  {
+   "texto": "Four… three… two… one…",
+   "desde": 10866,
+   "hasta": 15975,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 10
+  }
+ ],
+ "sonidos": [
+  {
+   "sonido": "Viento y mar",
+   "t": 0,
+   "volumen": 0.3,
+   "bucle": true
+  },
+  {
+   "sonido": "Vapor siseante",
+   "t": 0,
+   "volumen": 0.28,
+   "bucle": true
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 2000,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 3000,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 4000,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 5000,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 7145,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 8145,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 10866,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 11866,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 12866,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Pitido de cuenta",
+   "t": 13866,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Agua de supresión",
+   "t": 1200,
+   "volumen": 0.5,
+   "bucle": true,
+   "fundido": {
+    "entrada": 600,
+    "salida": 0
+   }
+  },
+  {
+   "sonido": "Arranque de motores",
+   "t": 5400,
+   "volumen": 0.9
+  },
+  {
+   "sonido": "voz narrador f4a472ba",
+   "t": 2000,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz narrador de99ccb8",
+   "t": 7145,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz narrador 748d9be6",
+   "t": 10866,
+   "volumen": 1
+  },
+  {
+   "sonido": "Música: tensión",
+   "t": 0,
+   "volumen": 0.42,
+   "recorte": [
+    12000,
+    23217
+   ],
+   "fundido": {
+    "entrada": 0,
+    "salida": 1500
+   }
+  }
+ ]
+}

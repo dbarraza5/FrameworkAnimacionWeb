@@ -1,0 +1,135 @@
+{
+ "tipo": "asset",
+ "nombre": "Queso",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "lado",
+   "poligono": [
+    [
+     -20,
+     -8
+    ],
+    [
+     18,
+     -16
+    ],
+    [
+     20,
+     0
+    ],
+    [
+     -20,
+     0
+    ]
+   ],
+   "color": "#f0b43a",
+   "borde": "#c98f1c"
+  },
+  {
+   "nombre": "cara",
+   "poligono": [
+    [
+     -20,
+     -8
+    ],
+    [
+     -6,
+     -26
+    ],
+    [
+     20,
+     -16
+    ],
+    [
+     18,
+     -16
+    ]
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     -20,
+     -26
+    ],
+    "a": [
+     20,
+     -8
+    ],
+    "colores": [
+     [
+      0,
+      "#fff09a"
+     ],
+     [
+      1,
+      "#ffd75e"
+     ]
+    ]
+   },
+   "borde": "#c98f1c"
+  },
+  {
+   "nombre": "frente",
+   "poligono": [
+    [
+     -20,
+     -8
+    ],
+    [
+     -20,
+     0
+    ],
+    [
+     -6,
+     -18
+    ],
+    [
+     -6,
+     -26
+    ]
+   ],
+   "color": "#f6c64a",
+   "borde": "#c98f1c"
+  },
+  {
+   "nombre": "agujero_1",
+   "en": [
+    -2,
+    -6
+   ],
+   "elipse": [
+    3.4,
+    2.6
+   ],
+   "color": "#d9a028"
+  },
+  {
+   "nombre": "agujero_2",
+   "en": [
+    10,
+    -9
+   ],
+   "elipse": [
+    2.2,
+    1.8
+   ],
+   "color": "#d9a028"
+  },
+  {
+   "nombre": "agujero_3",
+   "en": [
+    2,
+    -16
+   ],
+   "elipse": [
+    2.6,
+    1.6
+   ],
+   "color": "#e6b23a"
+  }
+ ]
+}

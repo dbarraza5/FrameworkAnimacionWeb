@@ -1,0 +1,392 @@
+{
+ "tipo": "escena",
+ "nombre": "6. Tank separation",
+ "duracion": 10000,
+ "precision": "decimal",
+ "profundidad": false,
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "0F6wBri3KtnolnAMTeIU"
+  },
+  "orbitador": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  },
+  "orbitador_arriba": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  }
+ },
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.86,
+   "radio": 18,
+   "intensidad": 0.9
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   700,
+   300
+  ],
+  "zoom": 1,
+  "temblor": [
+   {
+    "desde": 0,
+    "hasta": 1800,
+    "amplitud": 3,
+    "paso": 33
+   }
+  ],
+  "claves": {
+   "zoom": [
+    [
+     0,
+     1
+    ],
+    [
+     10000,
+     0.85,
+     "suave"
+    ]
+   ],
+   "x": [
+    [
+     0,
+     700
+    ],
+    [
+     4600,
+     700
+    ],
+    [
+     10000,
+     790,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     300
+    ],
+    [
+     4600,
+     300
+    ],
+    [
+     10000,
+     200,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Espacio profundo",
+   "nombre": "espacio",
+   "en": [
+    640,
+    360
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Tierra desde la altura",
+   "nombre": "tierra_alta",
+   "en": [
+    560,
+    720
+   ],
+   "plano": -9,
+   "rotacion": -10,
+   "escala": 1.2
+  },
+  {
+   "instancia": "Tanque externo",
+   "nombre": "tanque",
+   "en": [
+    640,
+    330
+   ],
+   "plano": 0,
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      34
+     ],
+     [
+      4600,
+      34
+     ],
+     [
+      10000,
+      52,
+      "suave"
+     ]
+    ],
+    "x": [
+     [
+      0,
+      640
+     ],
+     [
+      4600,
+      640
+     ],
+     [
+      10000,
+      520,
+      "entrar"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      330
+     ],
+     [
+      4600,
+      330
+     ],
+     [
+      10000,
+      590,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Orbitador Aurora",
+   "nombre": "orbitador_suelto",
+   "en": [
+    688.7,
+    350.79
+   ],
+   "plano": 0.5,
+   "rotacion": 34,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      4600,
+      1,
+      "mantener"
+     ],
+     [
+      10000,
+      1,
+      "mantener"
+     ]
+    ],
+    "x": [
+     [
+      4600,
+      688.7
+     ],
+     [
+      10000,
+      728.7,
+      "salir"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Orbitador Aurora",
+   "nombre": "orbitador",
+   "en": [
+    52,
+    -10
+   ],
+   "padre": "tanque",
+   "plano": 0.5,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      4600,
+      0,
+      "mantener"
+     ],
+     [
+      10000,
+      0,
+      "mantener"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_0",
+   "en": [
+    66,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": 0.4,
+   "acciones": [
+    [
+     0,
+     "Encendido"
+    ]
+   ],
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1
+     ],
+     [
+      1800,
+      1
+     ],
+     [
+      2200,
+      0,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_1",
+   "en": [
+    92,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": 0.4,
+   "acciones": [
+    [
+     0,
+     "Encendido"
+    ]
+   ],
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1
+     ],
+     [
+      1800,
+      1
+     ],
+     [
+      2200,
+      0,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Propulsores de maniobra",
+   "nombre": "rcs",
+   "en": [
+    100,
+    -340
+   ],
+   "padre": "tanque",
+   "plano": 1.6,
+   "acciones": [
+    [
+     0,
+     "Quieto"
+    ],
+    [
+     4400,
+     "Soplos",
+     false
+    ]
+   ],
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      6200,
+      0,
+      "mantener"
+     ],
+     [
+      10000,
+      0,
+      "mantener"
+     ]
+    ]
+   }
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Main engine cutoff.",
+   "desde": 2000,
+   "hasta": 4300,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 16
+  },
+  {
+   "texto": "External tank separation.",
+   "desde": 4900,
+   "hasta": 10000,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 16
+  }
+ ],
+ "sonidos": [
+  {
+   "sonido": "Rugido lejano",
+   "t": 0,
+   "volumen": 0.35,
+   "bucle": true,
+   "recorte": [
+    0,
+    2400
+   ],
+   "fundido": {
+    "entrada": 0,
+    "salida": 700
+   }
+  },
+  {
+   "sonido": "Separación de cohetes",
+   "t": 4600,
+   "volumen": 0.35
+  },
+  {
+   "sonido": "Propulsores",
+   "t": 4400,
+   "volumen": 0.6
+  }
+ ]
+}

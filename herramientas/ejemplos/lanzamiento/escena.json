@@ -1,0 +1,303 @@
+{
+ "tipo": "escena",
+ "nombre": "prueba_plataforma",
+ "duracion": 14000,
+ "precision": "decimal",
+ "profundidad": false,
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.8,
+   "radio": 14,
+   "intensidad": 0.6
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   1100,
+   420
+  ],
+  "zoom": 0.7,
+  "claves": {
+   "zoom": [
+    [
+     0,
+     0.7
+    ],
+    [
+     7000,
+     1.05,
+     "suave"
+    ],
+    [
+     7001,
+     1.6
+    ],
+    [
+     14000,
+     1.75,
+     "suave"
+    ]
+   ],
+   "x": [
+    [
+     0,
+     1100
+    ],
+    [
+     7000,
+     1110,
+     "suave"
+    ],
+    [
+     7001,
+     1180
+    ],
+    [
+     14000,
+     1170,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     420
+    ],
+    [
+     7000,
+     480,
+     "suave"
+    ],
+    [
+     7001,
+     360
+    ],
+    [
+     14000,
+     350,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo del amanecer",
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Mar y costa",
+   "nombre": "costa",
+   "en": [
+    0,
+    560
+   ],
+   "plano": -9
+  },
+  {
+   "instancia": "Torre de agua",
+   "nombre": "torre_agua",
+   "en": [
+    620,
+    830
+   ],
+   "plano": -7,
+   "escala": 0.9
+  },
+  {
+   "instancia": "Plataforma de lanzamiento",
+   "nombre": "plataforma",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -5
+  },
+  {
+   "instancia": "Torre de servicio",
+   "nombre": "torre",
+   "en": [
+    1350,
+    760
+   ],
+   "plano": -4,
+   "acciones": [
+    [
+     0,
+     "Brazos puestos"
+    ],
+    [
+     3500,
+     "Retirar brazo de tripulación",
+     false
+    ],
+    [
+     8500,
+     "Retirar gorra",
+     false
+    ]
+   ]
+  },
+  {
+   "instancia": "Tanque externo",
+   "nombre": "tanque",
+   "en": [
+    1100,
+    710
+   ],
+   "plano": -3
+  },
+  {
+   "instancia": "Cohete lateral",
+   "nombre": "cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -2
+  },
+  {
+   "instancia": "Orbitador Aurora",
+   "nombre": "orbitador",
+   "en": [
+    52,
+    -10
+   ],
+   "padre": "tanque",
+   "plano": -2.5
+  },
+  {
+   "instancia": "Gaviota",
+   "nombre": "gaviota_0",
+   "en": [
+    300,
+    380
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "desfase": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      300
+     ],
+     [
+      14000,
+      1200,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      380
+     ],
+     [
+      7000,
+      340,
+      "suave"
+     ],
+     [
+      14000,
+      390,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Gaviota",
+   "nombre": "gaviota_1",
+   "en": [
+    520,
+    330
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "desfase": 90,
+   "claves": {
+    "x": [
+     [
+      0,
+      520
+     ],
+     [
+      14000,
+      1420,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      330
+     ],
+     [
+      7000,
+      290,
+      "suave"
+     ],
+     [
+      14000,
+      340,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Gaviota",
+   "nombre": "gaviota_2",
+   "en": [
+    2000,
+    300
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "desfase": 210,
+   "claves": {
+    "x": [
+     [
+      0,
+      2000
+     ],
+     [
+      14000,
+      1100,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      300
+     ],
+     [
+      7000,
+      260,
+      "suave"
+     ],
+     [
+      14000,
+      310,
+      "suave"
+     ]
+    ]
+   }
+  }
+ ],
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ }
+}

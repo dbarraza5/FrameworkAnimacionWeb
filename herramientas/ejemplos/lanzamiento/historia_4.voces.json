@@ -1,0 +1,390 @@
+{
+ "tipo": "escena",
+ "nombre": "4. Tower clear: the climb",
+ "duracion": 14000,
+ "precision": "decimal",
+ "profundidad": false,
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "0F6wBri3KtnolnAMTeIU"
+  },
+  "orbitador": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  },
+  "orbitador_arriba": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  }
+ },
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.86,
+   "radio": 18,
+   "intensidad": 0.9
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   640,
+   330
+  ],
+  "zoom": 0.9,
+  "temblor": [
+   {
+    "desde": 0,
+    "hasta": 14000,
+    "amplitud": 9,
+    "decae": true,
+    "paso": 33
+   }
+  ],
+  "claves": {
+   "zoom": [
+    [
+     0,
+     0.95
+    ],
+    [
+     14000,
+     0.75,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo del amanecer",
+   "nombre": "cielo",
+   "en": [
+    -460,
+    380
+   ],
+   "plano": -10,
+   "claves": {
+    "y": [
+     [
+      0,
+      380
+     ],
+     [
+      14000,
+      3980,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Mar y costa",
+   "nombre": "costa",
+   "en": [
+    -460,
+    940
+   ],
+   "plano": -9,
+   "claves": {
+    "y": [
+     [
+      0,
+      940
+     ],
+     [
+      5000,
+      2600,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Plataforma de lanzamiento",
+   "nombre": "plataforma",
+   "en": [
+    640,
+    1200
+   ],
+   "plano": -8,
+   "claves": {
+    "y": [
+     [
+      0,
+      1200
+     ],
+     [
+      3000,
+      2400,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Torre de servicio",
+   "nombre": "torre",
+   "en": [
+    890,
+    1200
+   ],
+   "plano": -8,
+   "acciones": [
+    [
+     0,
+     "Brazos retirados"
+    ]
+   ],
+   "claves": {
+    "y": [
+     [
+      0,
+      1200
+     ],
+     [
+      3000,
+      2400,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Columna de humo",
+   "nombre": "columna",
+   "en": [
+    0,
+    230
+   ],
+   "padre": "tanque",
+   "plano": -0.8,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.4
+     ],
+     [
+      3000,
+      1,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Cono de condensación",
+   "nombre": "cono",
+   "en": [
+    40,
+    -200
+   ],
+   "padre": "tanque",
+   "plano": 1.5,
+   "bucle": false,
+   "desfase": 9200
+  },
+  {
+   "instancia": "Tanque externo",
+   "nombre": "tanque",
+   "en": [
+    640,
+    330
+   ],
+   "plano": 0,
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      0
+     ],
+     [
+      3500,
+      0
+     ],
+     [
+      9000,
+      22,
+      "suave"
+     ],
+     [
+      14000,
+      26,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Cohete lateral",
+   "nombre": "cohete_atras",
+   "en": [
+    6,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -0.5
+  },
+  {
+   "instancia": "Cohete lateral",
+   "nombre": "cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": 1
+  },
+  {
+   "instancia": "Llama de cohete",
+   "nombre": "llama_cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": 0.9,
+   "acciones": [
+    [
+     0,
+     "Encendido"
+    ]
+   ]
+  },
+  {
+   "instancia": "Orbitador Aurora",
+   "nombre": "orbitador",
+   "en": [
+    52,
+    -10
+   ],
+   "padre": "tanque",
+   "plano": 0.5
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_0",
+   "en": [
+    66,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": 0.4,
+   "acciones": [
+    [
+     0,
+     "Encendido"
+    ]
+   ]
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_1",
+   "en": [
+    92,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": 0.4,
+   "acciones": [
+    [
+     0,
+     "Encendido"
+    ]
+   ]
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Tower clear.",
+   "desde": 400,
+   "hasta": 2800,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 17
+  },
+  {
+   "texto": "Aurora, go at throttle up.",
+   "desde": 5200,
+   "hasta": 8400,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 17
+  },
+  {
+   "quien": "orbitador",
+   "texto": "Roger, go at throttle up.",
+   "desde": 8800,
+   "hasta": 12500,
+   "velocidad": 13
+  }
+ ],
+ "sonidos": [
+  {
+   "sonido": "Rugido del despegue",
+   "t": 0,
+   "volumen": 0.8,
+   "bucle": true,
+   "recorte": [
+    0,
+    3000
+   ],
+   "fundido": {
+    "entrada": 0,
+    "salida": 2000
+   }
+  },
+  {
+   "sonido": "Rugido lejano",
+   "t": 1000,
+   "volumen": 0.75,
+   "bucle": true,
+   "fundido": {
+    "entrada": 1500,
+    "salida": 0
+   }
+  },
+  {
+   "sonido": "Estampido sónico",
+   "t": 9200,
+   "volumen": 0.9
+  },
+  {
+   "sonido": "voz narrador 9f7e84c9",
+   "t": 400,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz narrador 6f0e744c",
+   "t": 5200,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz orbitador 6368aa21",
+   "t": 8950,
+   "volumen": 1
+  },
+  {
+   "sonido": "Música: épica",
+   "t": 0,
+   "volumen": 0.5,
+   "recorte": [
+    10000,
+    24000
+   ],
+   "fundido": {
+    "entrada": 0,
+    "salida": 0
+   }
+  }
+ ]
+}

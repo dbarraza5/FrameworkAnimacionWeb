@@ -1,0 +1,344 @@
+{
+ "tipo": "escena",
+ "nombre": "Transmisión perdida",
+ "duracion": 16000,
+ "precision": "decimal",
+ "profundidad": false,
+ "estilo": {
+  "pantalla": {
+   "barrido": 0.32,
+   "curvatura": 0.12,
+   "aberracion": 2,
+   "ruido": 0.05,
+   "vineta": 0.55,
+   "parpadeo": 0.04
+  },
+  "resplandor": {
+   "umbral": 0.62,
+   "radio": 10,
+   "intensidad": 0.8
+  },
+  "claves": {
+   "estatica": [
+    [
+     0,
+     0.05
+    ],
+    [
+     6600,
+     0.05
+    ],
+    [
+     7000,
+     0.9,
+     "suave"
+    ],
+    [
+     7900,
+     1
+    ],
+    [
+     8300,
+     0.35,
+     "suave"
+    ],
+    [
+     9800,
+     0.25
+    ],
+    [
+     10400,
+     0.6,
+     "lineal"
+    ],
+    [
+     10700,
+     0.3
+    ],
+    [
+     11400,
+     0.4
+    ],
+    [
+     11800,
+     0.5
+    ],
+    [
+     12300,
+     1,
+     "suave"
+    ],
+    [
+     12600,
+     0.2
+    ],
+    [
+     13500,
+     0.15
+    ],
+    [
+     13900,
+     0.06,
+     "suave"
+    ],
+    [
+     16000,
+     0.05
+    ]
+   ]
+  }
+ },
+ "camara": {
+  "tamano": [
+   960,
+   720
+  ],
+  "centro": [
+   480,
+   360
+  ],
+  "zoom": 1,
+  "claves": {
+   "zoom": [
+    [
+     0,
+     1
+    ],
+    [
+     1500,
+     1,
+     "suave"
+    ],
+    [
+     6500,
+     1.15,
+     "suave"
+    ],
+    [
+     13600,
+     1.05
+    ],
+    [
+     16000,
+     1.12,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     360
+    ],
+    [
+     6500,
+     330,
+     "suave"
+    ],
+    [
+     13600,
+     350
+    ],
+    [
+     16000,
+     340,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Estudio de noticias",
+   "nombre": "estudio",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      8000,
+      0,
+      "mantener"
+     ],
+     [
+      13600,
+      1,
+      "mantener"
+     ],
+     [
+      16000,
+      1,
+      "mantener"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Robot presentadora",
+   "nombre": "robot",
+   "en": [
+    480,
+    560
+   ],
+   "plano": -8,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      8000,
+      0,
+      "mantener"
+     ],
+     [
+      13600,
+      1,
+      "mantener"
+     ],
+     [
+      16000,
+      1,
+      "mantener"
+     ]
+    ]
+   },
+   "acciones": [
+    [
+     0,
+     "Quieto"
+    ],
+    [
+     1300,
+     "Hablar"
+    ],
+    [
+     6600,
+     "Quieto"
+    ],
+    [
+     13600,
+     "Confundida",
+     false
+    ]
+   ]
+  },
+  {
+   "instancia": "Mensaje alienígena",
+   "nombre": "mensaje",
+   "en": [
+    0,
+    0
+   ],
+   "plano": 0,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      8000,
+      1,
+      "mantener"
+     ],
+     [
+      12600,
+      0,
+      "mantener"
+     ],
+     [
+      16000,
+      0,
+      "mantener"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Carta de ajuste",
+   "nombre": "carta",
+   "en": [
+    0,
+    0
+   ],
+   "plano": 1,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      12600,
+      1,
+      "mantener"
+     ],
+     [
+      13600,
+      0,
+      "mantener"
+     ],
+     [
+      16000,
+      0,
+      "mantener"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Encendido del tubo",
+   "nombre": "encendido",
+   "en": [
+    0,
+    0
+   ],
+   "plano": 5,
+   "bucle": false
+  }
+ ],
+ "dialogos": [
+  {
+   "quien": "robot",
+   "texto": "Buenas noches, galaxia. Estas son las noticias del Canal 7.",
+   "desde": 1400,
+   "hasta": 4100
+  },
+  {
+   "quien": "robot",
+   "texto": "Hoy, en el anillo de Kepler, se inauguró el puerto espacial más gran…",
+   "desde": 4300,
+   "hasta": 7000
+  },
+  {
+   "texto": "…no están solos…",
+   "desde": 8900,
+   "hasta": 12200,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 8
+  },
+  {
+   "quien": "robot",
+   "texto": "¿…Hola? ¿Seguimos al aire?",
+   "desde": 14000,
+   "hasta": 16000,
+   "velocidad": 30
+  }
+ ],
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ }
+}

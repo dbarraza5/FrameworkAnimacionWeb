@@ -1,0 +1,1154 @@
+{
+ "tipo": "escena",
+ "nombre": "Barcas en el lago",
+ "duracion": 15000,
+ "precision": "decimal",
+ "profundidad": false,
+ "estilo": {
+  "acuarela": {
+   "desplazar": 3,
+   "escala": 22,
+   "velocidad": 0.35,
+   "lavado": 1.4,
+   "borde": 0.55,
+   "transparencia": 0.1
+  },
+  "papel": {
+   "intensidad": 0.045,
+   "fibras": 0.25,
+   "escala": 1.6
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   640,
+   380
+  ],
+  "zoom": 1,
+  "claves": {
+   "zoom": [
+    [
+     0,
+     1
+    ],
+    [
+     15000,
+     1.08,
+     "suave"
+    ]
+   ],
+   "x": [
+    [
+     0,
+     640
+    ],
+    [
+     15000,
+     670,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo de acuarela",
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Sol del alba",
+   "nombre": "sol",
+   "en": [
+    820,
+    390
+   ],
+   "plano": -9.5,
+   "claves": {
+    "y": [
+     [
+      0,
+      320
+     ],
+     [
+      15000,
+      180,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Nube de acuarela",
+   "nombre": "nube_1",
+   "en": [
+    300,
+    140
+   ],
+   "plano": -9,
+   "claves": {
+    "x": [
+     [
+      0,
+      250
+     ],
+     [
+      15000,
+      420,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Nube de acuarela",
+   "nombre": "nube_2",
+   "en": [
+    1000,
+    90
+   ],
+   "plano": -9,
+   "escala": 0.8,
+   "claves": {
+    "x": [
+     [
+      0,
+      980
+     ],
+     [
+      15000,
+      1120,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Montañas lejanas",
+   "nombre": "montanas_lejos",
+   "en": [
+    0,
+    410
+   ],
+   "plano": -8
+  },
+  {
+   "instancia": "Montañas cercanas",
+   "nombre": "montanas_cerca",
+   "en": [
+    0,
+    410
+   ],
+   "plano": -7
+  },
+  {
+   "instancia": "Pinos de la orilla",
+   "nombre": "pinos",
+   "en": [
+    0,
+    410
+   ],
+   "plano": -6
+  },
+  {
+   "instancia": "Lago",
+   "nombre": "lago",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -5
+  },
+  {
+   "instancia": "Montañas lejanas",
+   "nombre": "reflejo_lejos",
+   "en": [
+    0,
+    410
+   ],
+   "plano": -4.8,
+   "escala": [
+    1,
+    -0.85
+   ],
+   "opacidad": 0.35,
+   "claves": {
+    "x": [
+     [
+      0,
+      0,
+      "suave"
+     ],
+     [
+      300,
+      1.99,
+      "suave"
+     ],
+     [
+      600,
+      2.98,
+      "suave"
+     ],
+     [
+      900,
+      2.47,
+      "suave"
+     ],
+     [
+      1200,
+      0.72,
+      "suave"
+     ],
+     [
+      1500,
+      -1.39,
+      "suave"
+     ],
+     [
+      1800,
+      -2.81,
+      "suave"
+     ],
+     [
+      2100,
+      -2.81,
+      "suave"
+     ],
+     [
+      2400,
+      -1.39,
+      "suave"
+     ],
+     [
+      2700,
+      0.72,
+      "suave"
+     ],
+     [
+      3000,
+      2.47,
+      "suave"
+     ],
+     [
+      3300,
+      2.98,
+      "suave"
+     ],
+     [
+      3600,
+      1.99,
+      "suave"
+     ],
+     [
+      3900,
+      0,
+      "suave"
+     ],
+     [
+      4200,
+      -1.99,
+      "suave"
+     ],
+     [
+      4500,
+      -2.98,
+      "suave"
+     ],
+     [
+      4800,
+      -2.47,
+      "suave"
+     ],
+     [
+      5100,
+      -0.72,
+      "suave"
+     ],
+     [
+      5400,
+      1.39,
+      "suave"
+     ],
+     [
+      5700,
+      2.81,
+      "suave"
+     ],
+     [
+      6000,
+      2.81,
+      "suave"
+     ],
+     [
+      6300,
+      1.39,
+      "suave"
+     ],
+     [
+      6600,
+      -0.72,
+      "suave"
+     ],
+     [
+      6900,
+      -2.47,
+      "suave"
+     ],
+     [
+      7200,
+      -2.98,
+      "suave"
+     ],
+     [
+      7500,
+      -1.99,
+      "suave"
+     ],
+     [
+      7800,
+      0,
+      "suave"
+     ],
+     [
+      8100,
+      1.99,
+      "suave"
+     ],
+     [
+      8400,
+      2.98,
+      "suave"
+     ],
+     [
+      8700,
+      2.47,
+      "suave"
+     ],
+     [
+      9000,
+      0.72,
+      "suave"
+     ],
+     [
+      9300,
+      -1.39,
+      "suave"
+     ],
+     [
+      9600,
+      -2.81,
+      "suave"
+     ],
+     [
+      9900,
+      -2.81,
+      "suave"
+     ],
+     [
+      10200,
+      -1.39,
+      "suave"
+     ],
+     [
+      10500,
+      0.72,
+      "suave"
+     ],
+     [
+      10800,
+      2.47,
+      "suave"
+     ],
+     [
+      11100,
+      2.98,
+      "suave"
+     ],
+     [
+      11400,
+      1.99,
+      "suave"
+     ],
+     [
+      11700,
+      0,
+      "suave"
+     ],
+     [
+      12000,
+      -1.99,
+      "suave"
+     ],
+     [
+      12300,
+      -2.98,
+      "suave"
+     ],
+     [
+      12600,
+      -2.47,
+      "suave"
+     ],
+     [
+      12900,
+      -0.72,
+      "suave"
+     ],
+     [
+      13200,
+      1.39,
+      "suave"
+     ],
+     [
+      13500,
+      2.81,
+      "suave"
+     ],
+     [
+      13800,
+      2.81,
+      "suave"
+     ],
+     [
+      14100,
+      1.39,
+      "suave"
+     ],
+     [
+      14400,
+      -0.72,
+      "suave"
+     ],
+     [
+      14700,
+      -2.47,
+      "suave"
+     ],
+     [
+      15000,
+      -2.98,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Montañas cercanas",
+   "nombre": "reflejo_cerca",
+   "en": [
+    0,
+    410
+   ],
+   "plano": -4.7,
+   "escala": [
+    1,
+    -0.9
+   ],
+   "opacidad": 0.4,
+   "claves": {
+    "x": [
+     [
+      0,
+      0,
+      "suave"
+     ],
+     [
+      300,
+      2.27,
+      "suave"
+     ],
+     [
+      600,
+      2.97,
+      "suave"
+     ],
+     [
+      900,
+      1.62,
+      "suave"
+     ],
+     [
+      1200,
+      -0.85,
+      "suave"
+     ],
+     [
+      1500,
+      -2.73,
+      "suave"
+     ],
+     [
+      1800,
+      -2.73,
+      "suave"
+     ],
+     [
+      2100,
+      -0.85,
+      "suave"
+     ],
+     [
+      2400,
+      1.62,
+      "suave"
+     ],
+     [
+      2700,
+      2.97,
+      "suave"
+     ],
+     [
+      3000,
+      2.27,
+      "suave"
+     ],
+     [
+      3300,
+      0,
+      "suave"
+     ],
+     [
+      3600,
+      -2.27,
+      "suave"
+     ],
+     [
+      3900,
+      -2.97,
+      "suave"
+     ],
+     [
+      4200,
+      -1.62,
+      "suave"
+     ],
+     [
+      4500,
+      0.85,
+      "suave"
+     ],
+     [
+      4800,
+      2.73,
+      "suave"
+     ],
+     [
+      5100,
+      2.73,
+      "suave"
+     ],
+     [
+      5400,
+      0.85,
+      "suave"
+     ],
+     [
+      5700,
+      -1.62,
+      "suave"
+     ],
+     [
+      6000,
+      -2.97,
+      "suave"
+     ],
+     [
+      6300,
+      -2.27,
+      "suave"
+     ],
+     [
+      6600,
+      0,
+      "suave"
+     ],
+     [
+      6900,
+      2.27,
+      "suave"
+     ],
+     [
+      7200,
+      2.97,
+      "suave"
+     ],
+     [
+      7500,
+      1.62,
+      "suave"
+     ],
+     [
+      7800,
+      -0.85,
+      "suave"
+     ],
+     [
+      8100,
+      -2.73,
+      "suave"
+     ],
+     [
+      8400,
+      -2.73,
+      "suave"
+     ],
+     [
+      8700,
+      -0.85,
+      "suave"
+     ],
+     [
+      9000,
+      1.62,
+      "suave"
+     ],
+     [
+      9300,
+      2.97,
+      "suave"
+     ],
+     [
+      9600,
+      2.27,
+      "suave"
+     ],
+     [
+      9900,
+      0,
+      "suave"
+     ],
+     [
+      10200,
+      -2.27,
+      "suave"
+     ],
+     [
+      10500,
+      -2.97,
+      "suave"
+     ],
+     [
+      10800,
+      -1.62,
+      "suave"
+     ],
+     [
+      11100,
+      0.85,
+      "suave"
+     ],
+     [
+      11400,
+      2.73,
+      "suave"
+     ],
+     [
+      11700,
+      2.73,
+      "suave"
+     ],
+     [
+      12000,
+      0.85,
+      "suave"
+     ],
+     [
+      12300,
+      -1.62,
+      "suave"
+     ],
+     [
+      12600,
+      -2.97,
+      "suave"
+     ],
+     [
+      12900,
+      -2.27,
+      "suave"
+     ],
+     [
+      13200,
+      0,
+      "suave"
+     ],
+     [
+      13500,
+      2.27,
+      "suave"
+     ],
+     [
+      13800,
+      2.97,
+      "suave"
+     ],
+     [
+      14100,
+      1.62,
+      "suave"
+     ],
+     [
+      14400,
+      -0.85,
+      "suave"
+     ],
+     [
+      14700,
+      -2.73,
+      "suave"
+     ],
+     [
+      15000,
+      -2.73,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Pinos de la orilla",
+   "nombre": "reflejo_pinos",
+   "en": [
+    0,
+    410
+   ],
+   "plano": -4.6,
+   "escala": [
+    1,
+    -0.9
+   ],
+   "opacidad": 0.45,
+   "claves": {
+    "x": [
+     [
+      0,
+      0,
+      "suave"
+     ],
+     [
+      300,
+      2.6,
+      "suave"
+     ],
+     [
+      600,
+      2.6,
+      "suave"
+     ],
+     [
+      900,
+      0,
+      "suave"
+     ],
+     [
+      1200,
+      -2.6,
+      "suave"
+     ],
+     [
+      1500,
+      -2.6,
+      "suave"
+     ],
+     [
+      1800,
+      0,
+      "suave"
+     ],
+     [
+      2100,
+      2.6,
+      "suave"
+     ],
+     [
+      2400,
+      2.6,
+      "suave"
+     ],
+     [
+      2700,
+      0,
+      "suave"
+     ],
+     [
+      3000,
+      -2.6,
+      "suave"
+     ],
+     [
+      3300,
+      -2.6,
+      "suave"
+     ],
+     [
+      3600,
+      0,
+      "suave"
+     ],
+     [
+      3900,
+      2.6,
+      "suave"
+     ],
+     [
+      4200,
+      2.6,
+      "suave"
+     ],
+     [
+      4500,
+      0,
+      "suave"
+     ],
+     [
+      4800,
+      -2.6,
+      "suave"
+     ],
+     [
+      5100,
+      -2.6,
+      "suave"
+     ],
+     [
+      5400,
+      0,
+      "suave"
+     ],
+     [
+      5700,
+      2.6,
+      "suave"
+     ],
+     [
+      6000,
+      2.6,
+      "suave"
+     ],
+     [
+      6300,
+      0,
+      "suave"
+     ],
+     [
+      6600,
+      -2.6,
+      "suave"
+     ],
+     [
+      6900,
+      -2.6,
+      "suave"
+     ],
+     [
+      7200,
+      0,
+      "suave"
+     ],
+     [
+      7500,
+      2.6,
+      "suave"
+     ],
+     [
+      7800,
+      2.6,
+      "suave"
+     ],
+     [
+      8100,
+      0,
+      "suave"
+     ],
+     [
+      8400,
+      -2.6,
+      "suave"
+     ],
+     [
+      8700,
+      -2.6,
+      "suave"
+     ],
+     [
+      9000,
+      0,
+      "suave"
+     ],
+     [
+      9300,
+      2.6,
+      "suave"
+     ],
+     [
+      9600,
+      2.6,
+      "suave"
+     ],
+     [
+      9900,
+      0,
+      "suave"
+     ],
+     [
+      10200,
+      -2.6,
+      "suave"
+     ],
+     [
+      10500,
+      -2.6,
+      "suave"
+     ],
+     [
+      10800,
+      0,
+      "suave"
+     ],
+     [
+      11100,
+      2.6,
+      "suave"
+     ],
+     [
+      11400,
+      2.6,
+      "suave"
+     ],
+     [
+      11700,
+      0,
+      "suave"
+     ],
+     [
+      12000,
+      -2.6,
+      "suave"
+     ],
+     [
+      12300,
+      -2.6,
+      "suave"
+     ],
+     [
+      12600,
+      0,
+      "suave"
+     ],
+     [
+      12900,
+      2.6,
+      "suave"
+     ],
+     [
+      13200,
+      2.6,
+      "suave"
+     ],
+     [
+      13500,
+      0,
+      "suave"
+     ],
+     [
+      13800,
+      -2.6,
+      "suave"
+     ],
+     [
+      14100,
+      -2.6,
+      "suave"
+     ],
+     [
+      14400,
+      0,
+      "suave"
+     ],
+     [
+      14700,
+      2.6,
+      "suave"
+     ],
+     [
+      15000,
+      2.6,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Sol del alba",
+   "nombre": "reflejo_sol",
+   "en": [
+    820,
+    500
+   ],
+   "plano": -4.5,
+   "escala": [
+    0.7,
+    -1.5
+   ],
+   "opacidad": 0.3,
+   "claves": {
+    "y": [
+     [
+      0,
+      500
+     ],
+     [
+      15000,
+      640,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bandada de acuarela",
+   "nombre": "bandada",
+   "en": [
+    -100,
+    160
+   ],
+   "plano": -3,
+   "claves": {
+    "x": [
+     [
+      2000,
+      -100
+     ],
+     [
+      11000,
+      1400,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      2000,
+      180
+     ],
+     [
+      11000,
+      110,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Barca vacía",
+   "nombre": "reflejo_barca_2",
+   "en": [
+    980,
+    520
+   ],
+   "plano": -2.5,
+   "escala": [
+    0.8,
+    -0.8
+   ],
+   "opacidad": 0.35,
+   "desfase": 900
+  },
+  {
+   "instancia": "Barca vacía",
+   "nombre": "barca_2",
+   "en": [
+    980,
+    520
+   ],
+   "plano": -2,
+   "escala": 0.8,
+   "desfase": 900
+  },
+  {
+   "instancia": "Barca con pescador",
+   "nombre": "reflejo_barca_1",
+   "en": [
+    520,
+    600
+   ],
+   "plano": -1.5,
+   "escala": [
+    1.1,
+    -1.1
+   ],
+   "opacidad": 0.3,
+   "acciones": [
+    [
+     0,
+     "Esperar"
+    ],
+    [
+     5200,
+     "Lanzar",
+     false
+    ],
+    [
+     7600,
+     "Esperar"
+    ]
+   ]
+  },
+  {
+   "instancia": "Barca con pescador",
+   "nombre": "barca_1",
+   "en": [
+    520,
+    600
+   ],
+   "plano": -1,
+   "escala": 1.1,
+   "acciones": [
+    [
+     0,
+     "Esperar"
+    ],
+    [
+     5200,
+     "Lanzar",
+     false
+    ],
+    [
+     7600,
+     "Esperar"
+    ]
+   ]
+  },
+  {
+   "instancia": "Juncos",
+   "nombre": "juncos",
+   "en": [
+    20,
+    760
+   ],
+   "plano": 2,
+   "escala": 1.4
+  },
+  {
+   "instancia": "Juncos",
+   "nombre": "juncos_2",
+   "en": [
+    1130,
+    780
+   ],
+   "plano": 2,
+   "escala": 1.2,
+   "desfase": 1300
+  }
+ ],
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ }
+}

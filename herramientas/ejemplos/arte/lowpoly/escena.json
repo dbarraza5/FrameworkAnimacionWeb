@@ -1,0 +1,344 @@
+{
+ "tipo": "escena",
+ "nombre": "El valle de las montañas de cristal",
+ "duracion": 15000,
+ "precision": "decimal",
+ "profundidad": false,
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.78,
+   "radio": 14,
+   "intensidad": 0.6
+  },
+  "claves": {
+   "brillo": [
+    [
+     0,
+     -0.12
+    ],
+    [
+     15000,
+     0.04,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   640,
+   380
+  ],
+  "zoom": 1,
+  "claves": {
+   "zoom": [
+    [
+     0,
+     1
+    ],
+    [
+     15000,
+     1.1,
+     "suave"
+    ]
+   ],
+   "x": [
+    [
+     0,
+     620
+    ],
+    [
+     15000,
+     700,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     380
+    ],
+    [
+     15000,
+     400,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo facetado",
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Sol facetado",
+   "nombre": "sol",
+   "en": [
+    300,
+    470
+   ],
+   "plano": -9.5,
+   "claves": {
+    "y": [
+     [
+      0,
+      500
+     ],
+     [
+      15000,
+      230,
+      "suave"
+     ]
+    ],
+    "x": [
+     [
+      0,
+      280
+     ],
+     [
+      15000,
+      360,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Nube facetada",
+   "nombre": "nube_1",
+   "en": [
+    200,
+    70
+   ],
+   "plano": -9,
+   "escala": 0.8,
+   "claves": {
+    "x": [
+     [
+      0,
+      150
+     ],
+     [
+      15000,
+      380,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Nube facetada",
+   "nombre": "nube_2",
+   "en": [
+    900,
+    40
+   ],
+   "plano": -9,
+   "escala": 1,
+   "claves": {
+    "x": [
+     [
+      0,
+      880
+     ],
+     [
+      15000,
+      1060,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Nube facetada",
+   "nombre": "nube_3",
+   "en": [
+    1200,
+    110
+   ],
+   "plano": -9,
+   "escala": 0.6,
+   "claves": {
+    "x": [
+     [
+      0,
+      1180
+     ],
+     [
+      15000,
+      1300,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Cordillera lejana",
+   "nombre": "cordillera",
+   "en": [
+    0,
+    470
+   ],
+   "plano": -8
+  },
+  {
+   "instancia": "Montañas de cristal",
+   "nombre": "montanas",
+   "en": [
+    0,
+    500
+   ],
+   "plano": -7
+  },
+  {
+   "instancia": "Colinas",
+   "nombre": "colinas",
+   "en": [
+    0,
+    590
+   ],
+   "plano": -6
+  },
+  {
+   "instancia": "Río facetado",
+   "nombre": "rio",
+   "en": [
+    0,
+    530
+   ],
+   "plano": -5
+  },
+  {
+   "instancia": "Pino low poly",
+   "nombre": "pino_0",
+   "en": [
+    80,
+    600
+   ],
+   "plano": -4,
+   "escala": 1.4
+  },
+  {
+   "instancia": "Pino low poly",
+   "nombre": "pino_1",
+   "en": [
+    150,
+    640
+   ],
+   "plano": 2,
+   "escala": 1.1
+  },
+  {
+   "instancia": "Pino low poly",
+   "nombre": "pino_2",
+   "en": [
+    1040,
+    580
+   ],
+   "plano": -4,
+   "escala": 1.2
+  },
+  {
+   "instancia": "Pino low poly",
+   "nombre": "pino_3",
+   "en": [
+    1110,
+    610
+   ],
+   "plano": 2,
+   "escala": 1.5
+  },
+  {
+   "instancia": "Pino low poly",
+   "nombre": "pino_4",
+   "en": [
+    1190,
+    590
+   ],
+   "plano": -4,
+   "escala": 1
+  },
+  {
+   "instancia": "Pino low poly",
+   "nombre": "pino_5",
+   "en": [
+    420,
+    560
+   ],
+   "plano": -4,
+   "escala": 0.9
+  },
+  {
+   "instancia": "Pino low poly",
+   "nombre": "pino_6",
+   "en": [
+    760,
+    565
+   ],
+   "plano": -4,
+   "escala": 0.8
+  },
+  {
+   "instancia": "Ciervo low poly",
+   "nombre": "ciervo",
+   "en": [
+    460,
+    650
+   ],
+   "plano": 1,
+   "escala": 1.4,
+   "claves": {
+    "x": [
+     [
+      0,
+      380
+     ],
+     [
+      6000,
+      640,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      600
+     ],
+     [
+      6000,
+      645,
+      "suave"
+     ]
+    ]
+   },
+   "acciones": [
+    [
+     0,
+     "Caminar"
+    ],
+    [
+     6000,
+     "Beber",
+     false
+    ],
+    [
+     10000,
+     "Mirar"
+    ]
+   ]
+  }
+ ],
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ }
+}

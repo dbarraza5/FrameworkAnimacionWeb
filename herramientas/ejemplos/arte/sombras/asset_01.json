@@ -1,0 +1,1 @@
+{"tipo":"asset","nombre":"Cielo del atardecer","duracion":1000,"marcas":{"EventoGeneral":"no_lleva"},"partes":[{"nombre":"cielo","capa":0,"rect":[-400,-100,2800,800],"degradado":{"tipo":"lineal","de":[0,-100],"a":[0,620],"colores":[[0,"#3b2a6a"],[0.45,"#c2507a"],[0.75,"#f08a4a"],[1,"#ffd27a"]]}}]}

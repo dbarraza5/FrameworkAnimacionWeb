@@ -1,0 +1,1273 @@
+{
+ "tipo": "escena",
+ "nombre": "La plaza de las agujas",
+ "duracion": 16000,
+ "precision": "decimal",
+ "profundidad": true,
+ "estilo": {
+  "paleta": [
+   "#3a2440",
+   "#f2b8c6"
+  ],
+  "tramado": "bayer4",
+  "pixel": 1.5,
+  "contraste": 1.4,
+  "brillo": 0.06
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   660,
+   780
+  ],
+  "zoom": 1,
+  "claves": {
+   "x": [
+    [
+     0,
+     660,
+     "suave"
+    ],
+    [
+     500,
+     660,
+     "suave"
+    ],
+    [
+     1000,
+     660,
+     "suave"
+    ],
+    [
+     1500,
+     660,
+     "suave"
+    ],
+    [
+     2000,
+     660,
+     "suave"
+    ],
+    [
+     2500,
+     660,
+     "suave"
+    ],
+    [
+     3000,
+     660,
+     "suave"
+    ],
+    [
+     3500,
+     694.42,
+     "suave"
+    ],
+    [
+     4000,
+     762.42,
+     "suave"
+    ],
+    [
+     4500,
+     830.27,
+     "suave"
+    ],
+    [
+     5000,
+     897.25,
+     "suave"
+    ],
+    [
+     5500,
+     964.23,
+     "suave"
+    ],
+    [
+     6000,
+     1031.21,
+     "suave"
+    ],
+    [
+     6500,
+     1098.2,
+     "suave"
+    ],
+    [
+     7000,
+     1165.18,
+     "suave"
+    ],
+    [
+     7500,
+     1232.16,
+     "suave"
+    ],
+    [
+     8000,
+     1299.14,
+     "suave"
+    ],
+    [
+     8500,
+     1366.12,
+     "suave"
+    ],
+    [
+     9000,
+     1433.11,
+     "suave"
+    ],
+    [
+     9500,
+     1500.09,
+     "suave"
+    ],
+    [
+     10000,
+     1567.07,
+     "suave"
+    ],
+    [
+     10500,
+     1634.05,
+     "suave"
+    ],
+    [
+     11000,
+     1640,
+     "suave"
+    ],
+    [
+     11500,
+     1640,
+     "suave"
+    ],
+    [
+     12000,
+     1640,
+     "suave"
+    ],
+    [
+     12500,
+     1640,
+     "suave"
+    ],
+    [
+     13000,
+     1640,
+     "suave"
+    ],
+    [
+     13500,
+     1640,
+     "suave"
+    ],
+    [
+     14000,
+     1640,
+     "suave"
+    ],
+    [
+     14500,
+     1640,
+     "suave"
+    ],
+    [
+     15000,
+     1640,
+     "suave"
+    ],
+    [
+     15500,
+     1640,
+     "suave"
+    ],
+    [
+     16000,
+     1640,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     780,
+     "suave"
+    ],
+    [
+     500,
+     780,
+     "suave"
+    ],
+    [
+     1000,
+     780,
+     "suave"
+    ],
+    [
+     1500,
+     780,
+     "suave"
+    ],
+    [
+     2000,
+     780,
+     "suave"
+    ],
+    [
+     2500,
+     775.21,
+     "suave"
+    ],
+    [
+     3000,
+     766.06,
+     "suave"
+    ],
+    [
+     3500,
+     756.91,
+     "suave"
+    ],
+    [
+     4000,
+     747.75,
+     "suave"
+    ],
+    [
+     4500,
+     737.72,
+     "suave"
+    ],
+    [
+     5000,
+     722.83,
+     "suave"
+    ],
+    [
+     5500,
+     707.95,
+     "suave"
+    ],
+    [
+     6000,
+     693.06,
+     "suave"
+    ],
+    [
+     6500,
+     678.18,
+     "suave"
+    ],
+    [
+     7000,
+     663.29,
+     "suave"
+    ],
+    [
+     7500,
+     648.41,
+     "suave"
+    ],
+    [
+     8000,
+     633.52,
+     "suave"
+    ],
+    [
+     8500,
+     618.64,
+     "suave"
+    ],
+    [
+     9000,
+     603.75,
+     "suave"
+    ],
+    [
+     9500,
+     588.87,
+     "suave"
+    ],
+    [
+     10000,
+     573.98,
+     "suave"
+    ],
+    [
+     10500,
+     559.1,
+     "suave"
+    ],
+    [
+     11000,
+     544.21,
+     "suave"
+    ],
+    [
+     11500,
+     532.52,
+     "suave"
+    ],
+    [
+     12000,
+     522.09,
+     "suave"
+    ],
+    [
+     12500,
+     520,
+     "suave"
+    ],
+    [
+     13000,
+     520,
+     "suave"
+    ],
+    [
+     13500,
+     520,
+     "suave"
+    ],
+    [
+     14000,
+     520,
+     "suave"
+    ],
+    [
+     14500,
+     520,
+     "suave"
+    ],
+    [
+     15000,
+     520,
+     "suave"
+    ],
+    [
+     15500,
+     520,
+     "suave"
+    ],
+    [
+     16000,
+     520,
+     "suave"
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     1,
+     "suave"
+    ],
+    [
+     11500,
+     1.08,
+     "suave"
+    ],
+    [
+     13000,
+     1.25,
+     "suave"
+    ],
+    [
+     16000,
+     1.3,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Suelo de la plaza",
+   "nombre": "suelo",
+   "en": [
+    1200,
+    700
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Sombra de nube",
+   "nombre": "nube_1",
+   "en": [
+    300,
+    500
+   ],
+   "plano": -9,
+   "claves": {
+    "x": [
+     [
+      0,
+      200
+     ],
+     [
+      16000,
+      900,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      420
+     ],
+     [
+      16000,
+      520,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Sombra de nube",
+   "nombre": "nube_2",
+   "en": [
+    1500,
+    1000
+   ],
+   "plano": -9,
+   "escala": 0.8,
+   "claves": {
+    "x": [
+     [
+      0,
+      1300
+     ],
+     [
+      16000,
+      1950,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      1050
+     ],
+     [
+      16000,
+      1120,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Aguja",
+   "nombre": "aguja_1",
+   "en": [
+    430,
+    470
+   ],
+   "escala": 1.15
+  },
+  {
+   "instancia": "Aguja",
+   "nombre": "aguja_2",
+   "en": [
+    980,
+    330
+   ],
+   "escala": 0.85,
+   "desfase": 1700
+  },
+  {
+   "instancia": "Aguja",
+   "nombre": "aguja_3",
+   "en": [
+    1480,
+    420
+   ],
+   "escala": 1.25,
+   "desfase": 900,
+   "espejo": true
+  },
+  {
+   "instancia": "Aguja",
+   "nombre": "aguja_4",
+   "en": [
+    2080,
+    520
+   ],
+   "escala": 1,
+   "desfase": 2600
+  },
+  {
+   "instancia": "Aguja",
+   "nombre": "aguja_5",
+   "en": [
+    1290,
+    1290
+   ],
+   "escala": 1.2,
+   "desfase": 400
+  },
+  {
+   "instancia": "Aguja",
+   "nombre": "aguja_6",
+   "en": [
+    2000,
+    1150
+   ],
+   "escala": 0.9,
+   "desfase": 3100,
+   "espejo": true
+  },
+  {
+   "instancia": "Mascarón",
+   "nombre": "mascaron",
+   "en": [
+    190,
+    560
+   ],
+   "escala": 1.1
+  },
+  {
+   "instancia": "Mascarón",
+   "nombre": "mascaron_2",
+   "en": [
+    1880,
+    330
+   ],
+   "escala": 0.75,
+   "desfase": 1500
+  },
+  {
+   "instancia": "Arbusto oscuro",
+   "nombre": "arbusto_1",
+   "en": [
+    90,
+    1160
+   ],
+   "escala": 2.2
+  },
+  {
+   "instancia": "Arbusto oscuro",
+   "nombre": "arbusto_2",
+   "en": [
+    640,
+    260
+   ],
+   "escala": 1.2,
+   "desfase": 1200
+  },
+  {
+   "instancia": "Arbusto oscuro",
+   "nombre": "arbusto_3",
+   "en": [
+    2230,
+    860
+   ],
+   "escala": 1.6,
+   "desfase": 2500
+  },
+  {
+   "instancia": "Arbusto oscuro",
+   "nombre": "arbusto_4",
+   "en": [
+    760,
+    1270
+   ],
+   "escala": 1.4,
+   "desfase": 600
+  },
+  {
+   "instancia": "Farol",
+   "nombre": "farol_1",
+   "en": [
+    560,
+    820
+   ],
+   "desfase": 0
+  },
+  {
+   "instancia": "Farol",
+   "nombre": "farol_2",
+   "en": [
+    1040,
+    720
+   ],
+   "desfase": 800
+  },
+  {
+   "instancia": "Farol",
+   "nombre": "farol_3",
+   "en": [
+    1520,
+    610
+   ],
+   "desfase": 1600
+  },
+  {
+   "instancia": "Estandarte",
+   "nombre": "estandarte_1",
+   "en": [
+    820,
+    960
+   ],
+   "desfase": 300
+  },
+  {
+   "instancia": "Estandarte",
+   "nombre": "estandarte_2",
+   "en": [
+    1340,
+    860
+   ],
+   "desfase": 1100
+  },
+  {
+   "instancia": "Portal",
+   "nombre": "portal",
+   "en": [
+    1810,
+    640
+   ],
+   "plano": -8,
+   "acciones": [
+    [
+     0,
+     "Latir"
+    ],
+    [
+     12100,
+     "Abrirse",
+     false
+    ]
+   ]
+  },
+  {
+   "instancia": "Peregrino",
+   "nombre": "peregrino",
+   "en": [
+    180,
+    930
+   ],
+   "escala": 1.3,
+   "claves": {
+    "x": [
+     [
+      0,
+      180,
+      "lineal"
+     ],
+     [
+      250,
+      214,
+      "lineal"
+     ],
+     [
+      500,
+      248,
+      "lineal"
+     ],
+     [
+      750,
+      282,
+      "lineal"
+     ],
+     [
+      1000,
+      316.01,
+      "lineal"
+     ],
+     [
+      1250,
+      350.01,
+      "lineal"
+     ],
+     [
+      1500,
+      384.01,
+      "lineal"
+     ],
+     [
+      1750,
+      418.01,
+      "lineal"
+     ],
+     [
+      2000,
+      452.01,
+      "lineal"
+     ],
+     [
+      2250,
+      486.01,
+      "lineal"
+     ],
+     [
+      2500,
+      520.01,
+      "lineal"
+     ],
+     [
+      2750,
+      554.02,
+      "lineal"
+     ],
+     [
+      3000,
+      588.02,
+      "lineal"
+     ],
+     [
+      3250,
+      622.02,
+      "lineal"
+     ],
+     [
+      3500,
+      656.02,
+      "lineal"
+     ],
+     [
+      3750,
+      690.02,
+      "lineal"
+     ],
+     [
+      4000,
+      723.66,
+      "lineal"
+     ],
+     [
+      4250,
+      757.15,
+      "lineal"
+     ],
+     [
+      4500,
+      790.64,
+      "lineal"
+     ],
+     [
+      4750,
+      824.14,
+      "lineal"
+     ],
+     [
+      5000,
+      857.63,
+      "lineal"
+     ],
+     [
+      5250,
+      891.12,
+      "lineal"
+     ],
+     [
+      5500,
+      924.61,
+      "lineal"
+     ],
+     [
+      5750,
+      958.1,
+      "lineal"
+     ],
+     [
+      6000,
+      991.59,
+      "lineal"
+     ],
+     [
+      6250,
+      1025.08,
+      "lineal"
+     ],
+     [
+      6500,
+      1058.57,
+      "lineal"
+     ],
+     [
+      6750,
+      1092.07,
+      "lineal"
+     ],
+     [
+      7000,
+      1125.56,
+      "lineal"
+     ],
+     [
+      7250,
+      1159.05,
+      "lineal"
+     ],
+     [
+      7500,
+      1192.54,
+      "lineal"
+     ],
+     [
+      7750,
+      1226.03,
+      "lineal"
+     ],
+     [
+      8000,
+      1259.52,
+      "lineal"
+     ],
+     [
+      8250,
+      1293.01,
+      "lineal"
+     ],
+     [
+      8500,
+      1326.5,
+      "lineal"
+     ],
+     [
+      8750,
+      1359.99,
+      "lineal"
+     ],
+     [
+      9000,
+      1393.49,
+      "lineal"
+     ],
+     [
+      9250,
+      1426.98,
+      "lineal"
+     ],
+     [
+      9500,
+      1460.47,
+      "lineal"
+     ],
+     [
+      9750,
+      1493.96,
+      "lineal"
+     ],
+     [
+      10000,
+      1527.45,
+      "lineal"
+     ],
+     [
+      10250,
+      1560.94,
+      "lineal"
+     ],
+     [
+      10500,
+      1594.43,
+      "lineal"
+     ],
+     [
+      10750,
+      1628.27,
+      "lineal"
+     ],
+     [
+      11000,
+      1662.18,
+      "lineal"
+     ],
+     [
+      11250,
+      1696.09,
+      "lineal"
+     ],
+     [
+      11500,
+      1730,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      930,
+      "lineal"
+     ],
+     [
+      250,
+      925.42,
+      "lineal"
+     ],
+     [
+      500,
+      920.85,
+      "lineal"
+     ],
+     [
+      750,
+      916.27,
+      "lineal"
+     ],
+     [
+      1000,
+      911.69,
+      "lineal"
+     ],
+     [
+      1250,
+      907.11,
+      "lineal"
+     ],
+     [
+      1500,
+      902.54,
+      "lineal"
+     ],
+     [
+      1750,
+      897.96,
+      "lineal"
+     ],
+     [
+      2000,
+      893.38,
+      "lineal"
+     ],
+     [
+      2250,
+      888.81,
+      "lineal"
+     ],
+     [
+      2500,
+      884.23,
+      "lineal"
+     ],
+     [
+      2750,
+      879.65,
+      "lineal"
+     ],
+     [
+      3000,
+      875.07,
+      "lineal"
+     ],
+     [
+      3250,
+      870.5,
+      "lineal"
+     ],
+     [
+      3500,
+      865.92,
+      "lineal"
+     ],
+     [
+      3750,
+      861.34,
+      "lineal"
+     ],
+     [
+      4000,
+      854.74,
+      "lineal"
+     ],
+     [
+      4250,
+      847.3,
+      "lineal"
+     ],
+     [
+      4500,
+      839.86,
+      "lineal"
+     ],
+     [
+      4750,
+      832.41,
+      "lineal"
+     ],
+     [
+      5000,
+      824.97,
+      "lineal"
+     ],
+     [
+      5250,
+      817.53,
+      "lineal"
+     ],
+     [
+      5500,
+      810.09,
+      "lineal"
+     ],
+     [
+      5750,
+      802.64,
+      "lineal"
+     ],
+     [
+      6000,
+      795.2,
+      "lineal"
+     ],
+     [
+      6250,
+      787.76,
+      "lineal"
+     ],
+     [
+      6500,
+      780.32,
+      "lineal"
+     ],
+     [
+      6750,
+      772.87,
+      "lineal"
+     ],
+     [
+      7000,
+      765.43,
+      "lineal"
+     ],
+     [
+      7250,
+      757.99,
+      "lineal"
+     ],
+     [
+      7500,
+      750.55,
+      "lineal"
+     ],
+     [
+      7750,
+      743.1,
+      "lineal"
+     ],
+     [
+      8000,
+      735.66,
+      "lineal"
+     ],
+     [
+      8250,
+      728.22,
+      "lineal"
+     ],
+     [
+      8500,
+      720.78,
+      "lineal"
+     ],
+     [
+      8750,
+      713.33,
+      "lineal"
+     ],
+     [
+      9000,
+      705.89,
+      "lineal"
+     ],
+     [
+      9250,
+      698.45,
+      "lineal"
+     ],
+     [
+      9500,
+      691.01,
+      "lineal"
+     ],
+     [
+      9750,
+      683.56,
+      "lineal"
+     ],
+     [
+      10000,
+      676.12,
+      "lineal"
+     ],
+     [
+      10250,
+      668.68,
+      "lineal"
+     ],
+     [
+      10500,
+      661.24,
+      "lineal"
+     ],
+     [
+      10750,
+      655.65,
+      "lineal"
+     ],
+     [
+      11000,
+      650.43,
+      "lineal"
+     ],
+     [
+      11250,
+      645.22,
+      "lineal"
+     ],
+     [
+      11500,
+      640,
+      "lineal"
+     ]
+    ]
+   },
+   "acciones": [
+    [
+     0,
+     "Caminar"
+    ],
+    [
+     11500,
+     "Quieto"
+    ],
+    [
+     12000,
+     "Mirar arriba",
+     false
+    ]
+   ]
+  }
+ ],
+ "efectos": [
+  {
+   "tipo": "particulas",
+   "nombre": "motas_0",
+   "en": [
+    400,
+    900
+   ],
+   "inicio": 0,
+   "fin": 16000,
+   "tasa": 3,
+   "vida": 7000,
+   "velocidad": 12,
+   "angulo": -90,
+   "dispersion": 180,
+   "gravedad": -1,
+   "tam_ini": 3,
+   "tam_fin": 5,
+   "color_ini": "#ffffff",
+   "color_fin": "#ffffff",
+   "suave": "si",
+   "opacidad": 0.85,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "motas_1",
+   "en": [
+    900,
+    650
+   ],
+   "inicio": 0,
+   "fin": 16000,
+   "tasa": 3,
+   "vida": 7000,
+   "velocidad": 12,
+   "angulo": -90,
+   "dispersion": 180,
+   "gravedad": -1,
+   "tam_ini": 3,
+   "tam_fin": 5,
+   "color_ini": "#ffffff",
+   "color_fin": "#ffffff",
+   "suave": "si",
+   "opacidad": 0.85,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "motas_2",
+   "en": [
+    1300,
+    900
+   ],
+   "inicio": 0,
+   "fin": 16000,
+   "tasa": 3,
+   "vida": 7000,
+   "velocidad": 12,
+   "angulo": -90,
+   "dispersion": 180,
+   "gravedad": -1,
+   "tam_ini": 3,
+   "tam_fin": 5,
+   "color_ini": "#ffffff",
+   "color_fin": "#ffffff",
+   "suave": "si",
+   "opacidad": 0.85,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "motas_3",
+   "en": [
+    1700,
+    600
+   ],
+   "inicio": 0,
+   "fin": 16000,
+   "tasa": 3,
+   "vida": 7000,
+   "velocidad": 12,
+   "angulo": -90,
+   "dispersion": 180,
+   "gravedad": -1,
+   "tam_ini": 3,
+   "tam_fin": 5,
+   "color_ini": "#ffffff",
+   "color_fin": "#ffffff",
+   "suave": "si",
+   "opacidad": 0.85,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "motas_4",
+   "en": [
+    1100,
+    400
+   ],
+   "inicio": 0,
+   "fin": 16000,
+   "tasa": 3,
+   "vida": 7000,
+   "velocidad": 12,
+   "angulo": -90,
+   "dispersion": 180,
+   "gravedad": -1,
+   "tam_ini": 3,
+   "tam_fin": 5,
+   "color_ini": "#ffffff",
+   "color_fin": "#ffffff",
+   "suave": "si",
+   "opacidad": 0.85,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  }
+ ],
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ }
+}

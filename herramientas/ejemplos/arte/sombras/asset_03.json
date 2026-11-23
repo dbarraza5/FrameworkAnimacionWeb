@@ -1,0 +1,1 @@
+{"tipo":"asset","nombre":"Sol poniente","duracion":1000,"marcas":{"EventoGeneral":"no_lleva"},"partes":[{"nombre":"halo","circulo":{"r":260,"lados":40},"degradado":{"tipo":"radial","centro":[0,0],"radio":260,"colores":[[0,"rgba(255,230,150,0.55)"],[1,"rgba(255,230,150,0)"]]},"borde":"rgba(0,0,0,0)"},{"nombre":"disco","circulo":{"r":90,"lados":40},"color":"#fff0b0"}]}

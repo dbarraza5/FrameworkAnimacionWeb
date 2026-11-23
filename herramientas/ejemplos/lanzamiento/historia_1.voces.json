@@ -1,0 +1,458 @@
+{
+ "tipo": "escena",
+ "nombre": "1. Dawn on the pad",
+ "duracion": 12000,
+ "precision": "decimal",
+ "profundidad": false,
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "0F6wBri3KtnolnAMTeIU"
+  },
+  "orbitador": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  },
+  "orbitador_arriba": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  }
+ },
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.86,
+   "radio": 16,
+   "intensidad": 0.7
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   1000,
+   480
+  ],
+  "zoom": 0.55,
+  "claves": {
+   "zoom": [
+    [
+     0,
+     0.55
+    ],
+    [
+     12000,
+     0.82,
+     "suave"
+    ]
+   ],
+   "x": [
+    [
+     0,
+     1000
+    ],
+    [
+     12000,
+     1110,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     480
+    ],
+    [
+     12000,
+     470,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo del amanecer",
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Mar y costa",
+   "nombre": "costa",
+   "en": [
+    0,
+    560
+   ],
+   "plano": -9
+  },
+  {
+   "instancia": "Torre de agua",
+   "nombre": "torre_agua",
+   "en": [
+    620,
+    830
+   ],
+   "plano": -7,
+   "escala": 0.9
+  },
+  {
+   "instancia": "Plataforma de lanzamiento",
+   "nombre": "plataforma",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -5
+  },
+  {
+   "instancia": "Torre de servicio",
+   "nombre": "torre",
+   "en": [
+    1350,
+    760
+   ],
+   "plano": -4,
+   "acciones": [
+    [
+     0,
+     "Brazos puestos"
+    ],
+    [
+     8000,
+     "Retirar brazo de tripulación",
+     false
+    ]
+   ]
+  },
+  {
+   "instancia": "Agua de supresión",
+   "nombre": "agua",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -4.5,
+   "acciones": [
+    [
+     0,
+     "Apagada"
+    ]
+   ]
+  },
+  {
+   "instancia": "Tanque externo",
+   "nombre": "tanque",
+   "en": [
+    1100,
+    710
+   ],
+   "plano": -3
+  },
+  {
+   "instancia": "Cohete lateral",
+   "nombre": "cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -2
+  },
+  {
+   "instancia": "Orbitador Aurora",
+   "nombre": "orbitador",
+   "en": [
+    52,
+    -10
+   ],
+   "padre": "tanque",
+   "plano": -2.5
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_0",
+   "en": [
+    66,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": -2.6,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ]
+   ]
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_1",
+   "en": [
+    92,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": -2.6,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ]
+   ]
+  },
+  {
+   "instancia": "Llama de cohete",
+   "nombre": "llama_cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -2.1,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ]
+   ]
+  },
+  {
+   "instancia": "Vapor del tanque",
+   "nombre": "vapor_lox",
+   "en": [
+    -20,
+    -320
+   ],
+   "padre": "tanque",
+   "plano": -2.8
+  },
+  {
+   "instancia": "Vapor del tanque",
+   "nombre": "vapor_lh2",
+   "en": [
+    30,
+    -200
+   ],
+   "padre": "tanque",
+   "plano": -2.8,
+   "desfase": 1700,
+   "escala": 0.8
+  },
+  {
+   "instancia": "Gaviota",
+   "nombre": "gaviota_0",
+   "en": [
+    200,
+    300
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "desfase": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      200
+     ],
+     [
+      12000,
+      900,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      300
+     ],
+     [
+      6000,
+      270,
+      "suave"
+     ],
+     [
+      12000,
+      310,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Gaviota",
+   "nombre": "gaviota_1",
+   "en": [
+    720,
+    360
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "desfase": 170,
+   "claves": {
+    "x": [
+     [
+      0,
+      720
+     ],
+     [
+      12000,
+      20,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      360
+     ],
+     [
+      6000,
+      330,
+      "suave"
+     ],
+     [
+      12000,
+      370,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Gaviota",
+   "nombre": "gaviota_2",
+   "en": [
+    1240,
+    300
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "desfase": 340,
+   "claves": {
+    "x": [
+     [
+      0,
+      1240
+     ],
+     [
+      12000,
+      1940,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      300
+     ],
+     [
+      6000,
+      270,
+      "suave"
+     ],
+     [
+      12000,
+      310,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Gaviota",
+   "nombre": "gaviota_3",
+   "en": [
+    1760,
+    360
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "desfase": 510,
+   "claves": {
+    "x": [
+     [
+      0,
+      1760
+     ],
+     [
+      12000,
+      1060,
+      "lineal"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      360
+     ],
+     [
+      6000,
+      330,
+      "suave"
+     ],
+     [
+      12000,
+      370,
+      "suave"
+     ]
+    ]
+   }
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "This is Launch Control. All systems are go for mission Horizon-1.",
+   "desde": 2000,
+   "hasta": 7800,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 18
+  }
+ ],
+ "sonidos": [
+  {
+   "sonido": "Viento y mar",
+   "t": 0,
+   "volumen": 0.6,
+   "bucle": true,
+   "fundido": {
+    "entrada": 1500,
+    "salida": 0
+   }
+  },
+  {
+   "sonido": "Vapor siseante",
+   "t": 0,
+   "volumen": 0.3,
+   "bucle": true
+  },
+  {
+   "sonido": "voz narrador 4e06eab0",
+   "t": 2000,
+   "volumen": 1
+  },
+  {
+   "sonido": "Música: tensión",
+   "t": 0,
+   "volumen": 0.42,
+   "recorte": [
+    0,
+    12000
+   ],
+   "fundido": {
+    "entrada": 1200,
+    "salida": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,260 @@
+{
+ "tipo": "escena",
+ "nombre": "7. Orbit",
+ "duracion": 13532,
+ "precision": "decimal",
+ "profundidad": false,
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "0F6wBri3KtnolnAMTeIU"
+  },
+  "orbitador": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  },
+  "orbitador_arriba": {
+   "motor": "elevenlabs",
+   "voz": "cKLbkUTUBoxzpe6oCPbr",
+   "radio": true
+  }
+ },
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.86,
+   "radio": 16,
+   "intensidad": 0.7
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   0,
+   200
+  ],
+  "zoom": 0.85,
+  "claves": {
+   "zoom": [
+    [
+     0,
+     0.85
+    ],
+    [
+     13532,
+     1.05,
+     "suave"
+    ]
+   ],
+   "x": [
+    [
+     0,
+     0
+    ],
+    [
+     13532,
+     50,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     200
+    ],
+    [
+     13532,
+     170,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Espacio profundo",
+   "nombre": "espacio",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Tierra desde la órbita",
+   "nombre": "tierra",
+   "en": [
+    -200,
+    1100
+   ],
+   "plano": -9,
+   "desfase": 20000
+  },
+  {
+   "instancia": "Orbitador desde arriba",
+   "nombre": "orbitador_arriba",
+   "en": [
+    40,
+    150
+   ],
+   "plano": 2,
+   "escala": 1.4,
+   "rotacion": -8,
+   "acciones": [
+    [
+     0,
+     "Cerrada"
+    ],
+    [
+     1800,
+     "Abrir",
+     false
+    ],
+    [
+     7332,
+     "Abierta"
+    ]
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      40
+     ],
+     [
+      13532,
+      80,
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      150
+     ],
+     [
+      13532,
+      132,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Satélite",
+   "nombre": "satelite",
+   "en": [
+    50,
+    148
+   ],
+   "plano": 1.9,
+   "escala": 1.1,
+   "rotacion": -8,
+   "acciones": [
+    [
+     0,
+     "Plegado"
+    ],
+    [
+     8032,
+     "Desplegar",
+     false
+    ],
+    [
+     10432,
+     "Desplegado"
+    ]
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      50
+     ],
+     [
+      13532,
+      90,
+      "suave"
+     ]
+    ],
+    "y": [
+     [
+      0,
+      148
+     ],
+     [
+      7532,
+      140,
+      "suave"
+     ],
+     [
+      13532,
+      70,
+      "suave"
+     ]
+    ]
+   }
+  }
+ ],
+ "dialogos": [
+  {
+   "quien": "orbitador_arriba",
+   "texto": "Control, this is Aurora. We are in orbit. The view is incredible.",
+   "desde": 800,
+   "hasta": 7132,
+   "velocidad": 13
+  },
+  {
+   "texto": "Welcome to space, Aurora.",
+   "desde": 7732,
+   "hasta": 10532,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 14
+  },
+  {
+   "texto": "MISSION HORIZON-1",
+   "desde": 10832,
+   "hasta": 13532,
+   "estilo": "narrador",
+   "velocidad": 0,
+   "voz": false
+  }
+ ],
+ "sonidos": [
+  {
+   "sonido": "Servos de la bodega",
+   "t": 1800,
+   "volumen": 0.45
+  },
+  {
+   "sonido": "voz orbitador_arriba 76d30a02",
+   "t": 950,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz narrador c38f52b6",
+   "t": 7732,
+   "volumen": 1
+  },
+  {
+   "sonido": "Música: espacio",
+   "t": 0,
+   "volumen": 0.5,
+   "recorte": [
+    10000,
+    21816
+   ],
+   "fundido": {
+    "entrada": 0,
+    "salida": 1500
+   }
+  }
+ ]
+}

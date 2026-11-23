@@ -1,0 +1,245 @@
+{
+ "tipo": "escena",
+ "nombre": "Lluvia en la calle Ocho",
+ "duracion": 15000,
+ "precision": "decimal",
+ "profundidad": false,
+ "estilo": {
+  "paleta": [
+   "#0d0d10",
+   "#ece6d6"
+  ],
+  "tramado": "lineas",
+  "lineas": {
+   "celda": 5,
+   "angulo": 40,
+   "cruzado": true
+  },
+  "contraste": 1.25,
+  "brillo": 0.02,
+  "contorno": {
+   "grosor": 1.3,
+   "color": "#0d0d10",
+   "umbral": 85
+  },
+  "claves": {
+   "brillo": [
+    [
+     0,
+     0.02
+    ],
+    [
+     11200,
+     0.02,
+     "lineal"
+    ],
+    [
+     11600,
+     0.2,
+     "suave"
+    ],
+    [
+     12300,
+     0.02,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   600,
+   400
+  ],
+  "zoom": 1,
+  "claves": {
+   "x": [
+    [
+     0,
+     560
+    ],
+    [
+     4600,
+     700,
+     "suave"
+    ],
+    [
+     15000,
+     760,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     400
+    ],
+    [
+     15000,
+     420,
+     "suave"
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     1
+    ],
+    [
+     4600,
+     1.1,
+     "suave"
+    ],
+    [
+     9500,
+     1.45,
+     "suave"
+    ],
+    [
+     10300,
+     1.45
+    ],
+    [
+     11300,
+     1.1,
+     "suave"
+    ],
+    [
+     15000,
+     1.15,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Edificios",
+   "nombre": "edificios",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Calle mojada",
+   "nombre": "calle",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -9
+  },
+  {
+   "instancia": "Farol noir",
+   "nombre": "farol",
+   "en": [
+    850,
+    570
+   ],
+   "plano": -5
+  },
+  {
+   "instancia": "Detective",
+   "nombre": "detective",
+   "en": [
+    180,
+    560
+   ],
+   "plano": 0,
+   "escala": 1.2,
+   "claves": {
+    "x": [
+     [
+      0,
+      180
+     ],
+     [
+      4600,
+      700,
+      "lineal"
+     ]
+    ]
+   },
+   "acciones": [
+    [
+     0,
+     "Caminar"
+    ],
+    [
+     4600,
+     "Quieto"
+    ],
+    [
+     5500,
+     "Encender el fósforo",
+     false
+    ]
+   ]
+  },
+  {
+   "instancia": "Auto de los 40",
+   "nombre": "auto",
+   "en": [
+    1900,
+    690
+   ],
+   "plano": 1,
+   "claves": {
+    "x": [
+     [
+      0,
+      1900
+     ],
+     [
+      10600,
+      1900
+     ],
+     [
+      13200,
+      -500,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Lluvia",
+   "nombre": "lluvia",
+   "en": [
+    0,
+    0
+   ],
+   "plano": 5
+  },
+  {
+   "instancia": "Lluvia",
+   "nombre": "lluvia_2",
+   "en": [
+    300,
+    120
+   ],
+   "plano": 5,
+   "desfase": 230,
+   "escala": 1.2
+  }
+ ],
+ "dialogos": [
+  {
+   "quien": "detective",
+   "texto": "Otra vez tú…",
+   "desde": 7800,
+   "hasta": 10200,
+   "estilo": "pensamiento",
+   "velocidad": 18
+  }
+ ],
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ }
+}

@@ -1,0 +1,2966 @@
+{
+ "tipo": "escena",
+ "nombre": "prueba_ignicion",
+ "duracion": 16000,
+ "precision": "decimal",
+ "profundidad": false,
+ "estilo": {
+  "resplandor": {
+   "umbral": 0.86,
+   "radio": 18,
+   "intensidad": 1
+  },
+  "claves": {
+   "brillo": [
+    [
+     0,
+     0
+    ],
+    [
+     6950,
+     0
+    ],
+    [
+     7080,
+     0.35,
+     "lineal"
+    ],
+    [
+     7900,
+     0.05,
+     "suave"
+    ],
+    [
+     16000,
+     0
+    ]
+   ]
+  }
+ },
+ "camara": {
+  "tamano": [
+   1280,
+   720
+  ],
+  "centro": [
+   1130,
+   470
+  ],
+  "zoom": 1,
+  "temblor": [
+   {
+    "desde": 4000,
+    "hasta": 7000,
+    "amplitud": 3,
+    "entrada": 900,
+    "decae": false,
+    "paso": 33
+   },
+   {
+    "desde": 7000,
+    "hasta": 10200,
+    "amplitud": 20,
+    "entrada": 150,
+    "decae": false,
+    "paso": 33
+   },
+   {
+    "desde": 10200,
+    "hasta": 16000,
+    "amplitud": 12,
+    "decae": true,
+    "paso": 33
+   }
+  ],
+  "claves": {
+   "zoom": [
+    [
+     0,
+     1.1
+    ],
+    [
+     7000,
+     1.15,
+     "suave"
+    ],
+    [
+     9800,
+     0.9,
+     "suave"
+    ],
+    [
+     16000,
+     0.8,
+     "suave"
+    ]
+   ],
+   "x": [
+    [
+     0,
+     1130
+    ],
+    [
+     16000,
+     1110,
+     "suave"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     470
+    ],
+    [
+     7000,
+     470
+    ],
+    [
+     8800,
+     450,
+     "suave"
+    ],
+    [
+     9300,
+     450,
+     "suave"
+    ],
+    [
+     9800,
+     383.75,
+     "suave"
+    ],
+    [
+     10300,
+     266,
+     "suave"
+    ],
+    [
+     10800,
+     112.25,
+     "suave"
+    ],
+    [
+     11300,
+     -82,
+     "suave"
+    ],
+    [
+     11800,
+     -321.25,
+     "suave"
+    ],
+    [
+     12300,
+     -610,
+     "suave"
+    ],
+    [
+     12800,
+     -952.75,
+     "suave"
+    ],
+    [
+     13300,
+     -1354,
+     "suave"
+    ],
+    [
+     13800,
+     -1818.25,
+     "suave"
+    ],
+    [
+     14300,
+     -2350,
+     "suave"
+    ],
+    [
+     14800,
+     -2953.75,
+     "suave"
+    ],
+    [
+     15300,
+     -3634,
+     "suave"
+    ],
+    [
+     15800,
+     -4395.25,
+     "suave"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo del amanecer",
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Mar y costa",
+   "nombre": "costa",
+   "en": [
+    0,
+    560
+   ],
+   "plano": -9
+  },
+  {
+   "instancia": "Torre de agua",
+   "nombre": "torre_agua",
+   "en": [
+    620,
+    830
+   ],
+   "plano": -7,
+   "escala": 0.9
+  },
+  {
+   "instancia": "Plataforma de lanzamiento",
+   "nombre": "plataforma",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -5
+  },
+  {
+   "instancia": "Torre de servicio",
+   "nombre": "torre",
+   "en": [
+    1350,
+    760
+   ],
+   "plano": -4,
+   "acciones": [
+    [
+     0,
+     "Brazos retirados"
+    ]
+   ]
+  },
+  {
+   "instancia": "Agua de supresión",
+   "nombre": "agua",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -4.5,
+   "acciones": [
+    [
+     0,
+     "Apagada"
+    ],
+    [
+     1500,
+     "Rociar",
+     false
+    ],
+    [
+     2100,
+     "Rociando"
+    ]
+   ]
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_0",
+   "en": [
+    1095,
+    879.23
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 7500
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_1",
+   "en": [
+    1105,
+    857.07
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 8280
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_2",
+   "en": [
+    1095,
+    834.84
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 8620
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_3",
+   "en": [
+    1105,
+    811.4
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 8880
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_4",
+   "en": [
+    1095,
+    789.13
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 9080
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_5",
+   "en": [
+    1105,
+    765.67
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 9260
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_6",
+   "en": [
+    1095,
+    741.93
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 9420
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_7",
+   "en": [
+    1105,
+    718.8
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 9560
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_8",
+   "en": [
+    1095,
+    693.38
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 9700
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_9",
+   "en": [
+    1105,
+    669.67
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 9820
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_10",
+   "en": [
+    1095,
+    644.15
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 9940
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_11",
+   "en": [
+    1105,
+    621.44
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10040
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_12",
+   "en": [
+    1095,
+    597.38
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10140
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_13",
+   "en": [
+    1105,
+    571.94
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10240
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_14",
+   "en": [
+    1095,
+    545.08
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10340
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_15",
+   "en": [
+    1105,
+    522.55
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10420
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_16",
+   "en": [
+    1095,
+    499.07
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10500
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_17",
+   "en": [
+    1105,
+    474.62
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10580
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_18",
+   "en": [
+    1095,
+    449.19
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10660
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_19",
+   "en": [
+    1105,
+    422.75
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10740
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_20",
+   "en": [
+    1095,
+    395.29
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10820
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_21",
+   "en": [
+    1105,
+    366.78
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10900
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_22",
+   "en": [
+    1095,
+    344.71
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 10960
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_23",
+   "en": [
+    1105,
+    322.04
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11020
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_24",
+   "en": [
+    1095,
+    298.75
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11080
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_25",
+   "en": [
+    1105,
+    274.84
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11140
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_26",
+   "en": [
+    1095,
+    250.31
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11200
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_27",
+   "en": [
+    1105,
+    225.14
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11260
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_28",
+   "en": [
+    1095,
+    199.32
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11320
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_29",
+   "en": [
+    1105,
+    172.86
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11380
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_30",
+   "en": [
+    1095,
+    145.74
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11440
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_31",
+   "en": [
+    1105,
+    117.95
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11500
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_32",
+   "en": [
+    1095,
+    89.49
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11560
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_33",
+   "en": [
+    1105,
+    60.35
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11620
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_34",
+   "en": [
+    1095,
+    30.51
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11680
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_35",
+   "en": [
+    1105,
+    -0.02
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11740
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_36",
+   "en": [
+    1095,
+    -31.25
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11800
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_37",
+   "en": [
+    1105,
+    -63.2
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11860
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_38",
+   "en": [
+    1095,
+    -95.87
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11920
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_39",
+   "en": [
+    1105,
+    -118.05
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 11960
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_40",
+   "en": [
+    1095,
+    -140.56
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12000
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_41",
+   "en": [
+    1105,
+    -163.4
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12040
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_42",
+   "en": [
+    1095,
+    -186.56
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12080
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_43",
+   "en": [
+    1105,
+    -210.06
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12120
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_44",
+   "en": [
+    1095,
+    -233.9
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12160
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_45",
+   "en": [
+    1105,
+    -258.07
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12200
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_46",
+   "en": [
+    1095,
+    -282.59
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12240
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_47",
+   "en": [
+    1105,
+    -307.44
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12280
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_48",
+   "en": [
+    1095,
+    -332.64
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12320
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_49",
+   "en": [
+    1105,
+    -358.19
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12360
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_50",
+   "en": [
+    1095,
+    -384.09
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12400
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_51",
+   "en": [
+    1105,
+    -410.33
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12440
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_52",
+   "en": [
+    1095,
+    -436.93
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12480
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_53",
+   "en": [
+    1105,
+    -463.89
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12520
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_54",
+   "en": [
+    1095,
+    -491.21
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12560
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_55",
+   "en": [
+    1105,
+    -518.88
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12600
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_56",
+   "en": [
+    1095,
+    -546.92
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12640
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_57",
+   "en": [
+    1105,
+    -575.32
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12680
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_58",
+   "en": [
+    1095,
+    -604.1
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12720
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_59",
+   "en": [
+    1105,
+    -633.24
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12760
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_60",
+   "en": [
+    1095,
+    -662.75
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12800
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_61",
+   "en": [
+    1105,
+    -692.64
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12840
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_62",
+   "en": [
+    1095,
+    -722.9
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12880
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_63",
+   "en": [
+    1105,
+    -753.55
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12920
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_64",
+   "en": [
+    1095,
+    -784.57
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 12960
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_65",
+   "en": [
+    1105,
+    -815.98
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13000
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_66",
+   "en": [
+    1095,
+    -847.77
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13040
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_67",
+   "en": [
+    1105,
+    -879.95
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13080
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_68",
+   "en": [
+    1095,
+    -912.53
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13120
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_69",
+   "en": [
+    1105,
+    -945.49
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13160
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_70",
+   "en": [
+    1095,
+    -978.85
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13200
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_71",
+   "en": [
+    1105,
+    -1012.61
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13240
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_72",
+   "en": [
+    1095,
+    -1046.77
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13280
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_73",
+   "en": [
+    1105,
+    -1081.33
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13320
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_74",
+   "en": [
+    1095,
+    -1116.29
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13360
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_75",
+   "en": [
+    1105,
+    -1151.67
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13400
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_76",
+   "en": [
+    1095,
+    -1187.45
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13440
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_77",
+   "en": [
+    1105,
+    -1223.64
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13480
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_78",
+   "en": [
+    1095,
+    -1260.24
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13520
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_79",
+   "en": [
+    1105,
+    -1297.26
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13560
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_80",
+   "en": [
+    1095,
+    -1334.7
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13600
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_81",
+   "en": [
+    1105,
+    -1372.56
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13640
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_82",
+   "en": [
+    1095,
+    -1410.84
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13680
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_83",
+   "en": [
+    1105,
+    -1449.55
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13720
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_84",
+   "en": [
+    1095,
+    -1488.69
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13760
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_85",
+   "en": [
+    1105,
+    -1528.25
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13800
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_86",
+   "en": [
+    1095,
+    -1568.25
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13840
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_87",
+   "en": [
+    1105,
+    -1608.68
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13880
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_88",
+   "en": [
+    1095,
+    -1649.54
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13920
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_89",
+   "en": [
+    1105,
+    -1690.85
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 13960
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_90",
+   "en": [
+    1095,
+    -1732.6
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14000
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_91",
+   "en": [
+    1105,
+    -1774.79
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14040
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_92",
+   "en": [
+    1095,
+    -1817.43
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14080
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_93",
+   "en": [
+    1105,
+    -1860.51
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14120
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_94",
+   "en": [
+    1095,
+    -1904.05
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14160
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_95",
+   "en": [
+    1105,
+    -1948.03
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14200
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_96",
+   "en": [
+    1095,
+    -1970.2
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14220
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_97",
+   "en": [
+    1105,
+    -1992.48
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14240
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_98",
+   "en": [
+    1095,
+    -2014.87
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14260
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_99",
+   "en": [
+    1105,
+    -2037.38
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14280
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_100",
+   "en": [
+    1095,
+    -2060
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14300
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_101",
+   "en": [
+    1105,
+    -2082.74
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14320
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_102",
+   "en": [
+    1095,
+    -2105.59
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14340
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_103",
+   "en": [
+    1105,
+    -2128.56
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14360
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_104",
+   "en": [
+    1095,
+    -2151.64
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14380
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_105",
+   "en": [
+    1105,
+    -2174.85
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14400
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_106",
+   "en": [
+    1095,
+    -2198.16
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14420
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_107",
+   "en": [
+    1105,
+    -2221.6
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14440
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_108",
+   "en": [
+    1095,
+    -2245.15
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14460
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_109",
+   "en": [
+    1105,
+    -2268.82
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14480
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_110",
+   "en": [
+    1095,
+    -2292.61
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14500
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_111",
+   "en": [
+    1105,
+    -2316.51
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14520
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_112",
+   "en": [
+    1095,
+    -2340.54
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14540
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_113",
+   "en": [
+    1105,
+    -2364.68
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14560
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_114",
+   "en": [
+    1095,
+    -2388.94
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14580
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_115",
+   "en": [
+    1105,
+    -2413.32
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14600
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_116",
+   "en": [
+    1095,
+    -2437.82
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14620
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_117",
+   "en": [
+    1105,
+    -2462.44
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14640
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_118",
+   "en": [
+    1095,
+    -2487.18
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14660
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_119",
+   "en": [
+    1105,
+    -2512.04
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14680
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_120",
+   "en": [
+    1095,
+    -2537.02
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14700
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_121",
+   "en": [
+    1105,
+    -2562.13
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14720
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_122",
+   "en": [
+    1095,
+    -2587.35
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14740
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_123",
+   "en": [
+    1105,
+    -2612.69
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14760
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_124",
+   "en": [
+    1095,
+    -2638.16
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14780
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_125",
+   "en": [
+    1105,
+    -2663.75
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14800
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_126",
+   "en": [
+    1095,
+    -2689.46
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14820
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_127",
+   "en": [
+    1105,
+    -2715.3
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14840
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_128",
+   "en": [
+    1095,
+    -2741.25
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14860
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_129",
+   "en": [
+    1105,
+    -2767.33
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14880
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_130",
+   "en": [
+    1095,
+    -2793.54
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14900
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_131",
+   "en": [
+    1105,
+    -2819.86
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14920
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_132",
+   "en": [
+    1095,
+    -2846.32
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14940
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_133",
+   "en": [
+    1105,
+    -2872.89
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14960
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_134",
+   "en": [
+    1095,
+    -2899.59
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 14980
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_135",
+   "en": [
+    1105,
+    -2926.42
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15000
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_136",
+   "en": [
+    1095,
+    -2953.37
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15020
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_137",
+   "en": [
+    1105,
+    -2980.45
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15040
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_138",
+   "en": [
+    1095,
+    -3007.65
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15060
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_139",
+   "en": [
+    1105,
+    -3034.98
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15080
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_140",
+   "en": [
+    1095,
+    -3062.43
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15100
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_141",
+   "en": [
+    1105,
+    -3090.01
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15120
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_142",
+   "en": [
+    1095,
+    -3117.72
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15140
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_143",
+   "en": [
+    1105,
+    -3145.56
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15160
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_144",
+   "en": [
+    1095,
+    -3173.52
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15180
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_145",
+   "en": [
+    1105,
+    -3201.61
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15200
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_146",
+   "en": [
+    1095,
+    -3229.83
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15220
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_147",
+   "en": [
+    1105,
+    -3258.18
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15240
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_148",
+   "en": [
+    1095,
+    -3286.66
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15260
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_149",
+   "en": [
+    1105,
+    -3315.26
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15280
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_150",
+   "en": [
+    1095,
+    -3344
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15300
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_151",
+   "en": [
+    1105,
+    -3372.86
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15320
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_152",
+   "en": [
+    1095,
+    -3401.86
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15340
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_153",
+   "en": [
+    1105,
+    -3430.98
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15360
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_154",
+   "en": [
+    1095,
+    -3460.24
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15380
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_155",
+   "en": [
+    1105,
+    -3489.63
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15400
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_156",
+   "en": [
+    1095,
+    -3519.14
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15420
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_157",
+   "en": [
+    1105,
+    -3548.79
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15440
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_158",
+   "en": [
+    1095,
+    -3578.57
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15460
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_159",
+   "en": [
+    1105,
+    -3608.48
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15480
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_160",
+   "en": [
+    1095,
+    -3638.53
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15500
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_161",
+   "en": [
+    1105,
+    -3668.7
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15520
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_162",
+   "en": [
+    1095,
+    -3699.01
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15540
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_163",
+   "en": [
+    1105,
+    -3729.46
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15560
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_164",
+   "en": [
+    1095,
+    -3760.03
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15580
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_165",
+   "en": [
+    1105,
+    -3790.74
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15600
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_166",
+   "en": [
+    1095,
+    -3821.59
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15620
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_167",
+   "en": [
+    1105,
+    -3852.56
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15640
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_168",
+   "en": [
+    1095,
+    -3883.68
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15660
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_169",
+   "en": [
+    1105,
+    -3914.92
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15680
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_170",
+   "en": [
+    1095,
+    -3946.3
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15700
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_171",
+   "en": [
+    1105,
+    -3977.82
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15720
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_172",
+   "en": [
+    1095,
+    -4009.47
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15740
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_173",
+   "en": [
+    1105,
+    -4041.26
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15760
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_174",
+   "en": [
+    1095,
+    -4073.19
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15780
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_175",
+   "en": [
+    1105,
+    -4105.25
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15800
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_176",
+   "en": [
+    1095,
+    -4137.45
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15820
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_177",
+   "en": [
+    1105,
+    -4169.78
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15840
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_178",
+   "en": [
+    1095,
+    -4202.26
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15860
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_179",
+   "en": [
+    1105,
+    -4234.87
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15880
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_180",
+   "en": [
+    1095,
+    -4267.62
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15900
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_181",
+   "en": [
+    1105,
+    -4300.5
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15920
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_182",
+   "en": [
+    1095,
+    -4333.53
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15940
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_183",
+   "en": [
+    1105,
+    -4366.69
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15960
+  },
+  {
+   "instancia": "Bocanada de estela",
+   "nombre": "estela_184",
+   "en": [
+    1095,
+    -4400
+   ],
+   "plano": -3.5,
+   "bucle": false,
+   "desfase": 15980
+  },
+  {
+   "instancia": "Tanque externo",
+   "nombre": "tanque",
+   "en": [
+    1100,
+    710
+   ],
+   "plano": -3,
+   "claves": {
+    "y": [
+     [
+      0,
+      710
+     ],
+     [
+      7300,
+      710
+     ],
+     [
+      7400,
+      709.81,
+      "lineal"
+     ],
+     [
+      7500,
+      709.23,
+      "lineal"
+     ],
+     [
+      7600,
+      708.22,
+      "lineal"
+     ],
+     [
+      7700,
+      706.74,
+      "lineal"
+     ],
+     [
+      7800,
+      704.75,
+      "lineal"
+     ],
+     [
+      7900,
+      702.22,
+      "lineal"
+     ],
+     [
+      8000,
+      699.12,
+      "lineal"
+     ],
+     [
+      8100,
+      695.41,
+      "lineal"
+     ],
+     [
+      8200,
+      691.05,
+      "lineal"
+     ],
+     [
+      8300,
+      686,
+      "lineal"
+     ],
+     [
+      8400,
+      680.23,
+      "lineal"
+     ],
+     [
+      8500,
+      673.71,
+      "lineal"
+     ],
+     [
+      8600,
+      666.4,
+      "lineal"
+     ],
+     [
+      8700,
+      658.26,
+      "lineal"
+     ],
+     [
+      8800,
+      649.25,
+      "lineal"
+     ],
+     [
+      8900,
+      639.34,
+      "lineal"
+     ],
+     [
+      9000,
+      628.5,
+      "lineal"
+     ],
+     [
+      9100,
+      616.69,
+      "lineal"
+     ],
+     [
+      9200,
+      603.87,
+      "lineal"
+     ],
+     [
+      9300,
+      590,
+      "lineal"
+     ],
+     [
+      9400,
+      575.05,
+      "lineal"
+     ],
+     [
+      9500,
+      558.99,
+      "lineal"
+     ],
+     [
+      9600,
+      541.78,
+      "lineal"
+     ],
+     [
+      9700,
+      523.38,
+      "lineal"
+     ],
+     [
+      9800,
+      503.75,
+      "lineal"
+     ],
+     [
+      9900,
+      482.86,
+      "lineal"
+     ],
+     [
+      10000,
+      460.68,
+      "lineal"
+     ],
+     [
+      10100,
+      437.17,
+      "lineal"
+     ],
+     [
+      10200,
+      412.29,
+      "lineal"
+     ],
+     [
+      10300,
+      386,
+      "lineal"
+     ],
+     [
+      10400,
+      358.27,
+      "lineal"
+     ],
+     [
+      10500,
+      329.07,
+      "lineal"
+     ],
+     [
+      10600,
+      298.36,
+      "lineal"
+     ],
+     [
+      10700,
+      266.1,
+      "lineal"
+     ],
+     [
+      10800,
+      232.25,
+      "lineal"
+     ],
+     [
+      10900,
+      196.78,
+      "lineal"
+     ],
+     [
+      11000,
+      159.66,
+      "lineal"
+     ],
+     [
+      11100,
+      120.85,
+      "lineal"
+     ],
+     [
+      11200,
+      80.31,
+      "lineal"
+     ],
+     [
+      11300,
+      38,
+      "lineal"
+     ],
+     [
+      11400,
+      -6.11,
+      "lineal"
+     ],
+     [
+      11500,
+      -52.05,
+      "lineal"
+     ],
+     [
+      11600,
+      -99.86,
+      "lineal"
+     ],
+     [
+      11700,
+      -149.58,
+      "lineal"
+     ],
+     [
+      11800,
+      -201.25,
+      "lineal"
+     ],
+     [
+      11900,
+      -254.9,
+      "lineal"
+     ],
+     [
+      12000,
+      -310.56,
+      "lineal"
+     ],
+     [
+      12100,
+      -368.27,
+      "lineal"
+     ],
+     [
+      12200,
+      -428.07,
+      "lineal"
+     ],
+     [
+      12300,
+      -490,
+      "lineal"
+     ],
+     [
+      12400,
+      -554.09,
+      "lineal"
+     ],
+     [
+      12500,
+      -620.37,
+      "lineal"
+     ],
+     [
+      12600,
+      -688.88,
+      "lineal"
+     ],
+     [
+      12700,
+      -759.66,
+      "lineal"
+     ],
+     [
+      12800,
+      -832.75,
+      "lineal"
+     ],
+     [
+      12900,
+      -908.18,
+      "lineal"
+     ],
+     [
+      13000,
+      -985.98,
+      "lineal"
+     ],
+     [
+      13100,
+      -1066.19,
+      "lineal"
+     ],
+     [
+      13200,
+      -1148.85,
+      "lineal"
+     ],
+     [
+      13300,
+      -1234,
+      "lineal"
+     ],
+     [
+      13400,
+      -1321.67,
+      "lineal"
+     ],
+     [
+      13500,
+      -1411.89,
+      "lineal"
+     ],
+     [
+      13600,
+      -1504.7,
+      "lineal"
+     ],
+     [
+      13700,
+      -1600.14,
+      "lineal"
+     ],
+     [
+      13800,
+      -1698.25,
+      "lineal"
+     ],
+     [
+      13900,
+      -1799.06,
+      "lineal"
+     ],
+     [
+      14000,
+      -1902.6,
+      "lineal"
+     ],
+     [
+      14100,
+      -2008.91,
+      "lineal"
+     ],
+     [
+      14200,
+      -2118.03,
+      "lineal"
+     ],
+     [
+      14300,
+      -2230,
+      "lineal"
+     ],
+     [
+      14400,
+      -2344.85,
+      "lineal"
+     ],
+     [
+      14500,
+      -2462.61,
+      "lineal"
+     ],
+     [
+      14600,
+      -2583.32,
+      "lineal"
+     ],
+     [
+      14700,
+      -2707.02,
+      "lineal"
+     ],
+     [
+      14800,
+      -2833.75,
+      "lineal"
+     ],
+     [
+      14900,
+      -2963.54,
+      "lineal"
+     ],
+     [
+      15000,
+      -3096.42,
+      "lineal"
+     ],
+     [
+      15100,
+      -3232.43,
+      "lineal"
+     ],
+     [
+      15200,
+      -3371.61,
+      "lineal"
+     ],
+     [
+      15300,
+      -3514,
+      "lineal"
+     ],
+     [
+      15400,
+      -3659.63,
+      "lineal"
+     ],
+     [
+      15500,
+      -3808.53,
+      "lineal"
+     ],
+     [
+      15600,
+      -3960.74,
+      "lineal"
+     ],
+     [
+      15700,
+      -4116.3,
+      "lineal"
+     ],
+     [
+      15800,
+      -4275.25,
+      "lineal"
+     ],
+     [
+      15900,
+      -4437.62,
+      "lineal"
+     ],
+     [
+      16000,
+      -4603.44,
+      "lineal"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Vapor del tanque",
+   "nombre": "vapor_lox",
+   "en": [
+    -20,
+    -320
+   ],
+   "padre": "tanque",
+   "plano": -2.8,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1
+     ],
+     [
+      7000,
+      1
+     ],
+     [
+      7700,
+      0,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Vapor del tanque",
+   "nombre": "vapor_lh2",
+   "en": [
+    30,
+    -200
+   ],
+   "padre": "tanque",
+   "plano": -2.8,
+   "desfase": 1700,
+   "escala": 0.8,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1
+     ],
+     [
+      7000,
+      1
+     ],
+     [
+      7700,
+      0,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Cohete lateral",
+   "nombre": "cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -2
+  },
+  {
+   "instancia": "Orbitador Aurora",
+   "nombre": "orbitador",
+   "en": [
+    52,
+    -10
+   ],
+   "padre": "tanque",
+   "plano": -2.5
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_0",
+   "en": [
+    66,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": -2.6,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ],
+    [
+     4000,
+     "Arrancar",
+     false
+    ],
+    [
+     5400,
+     "Encendido"
+    ]
+   ]
+  },
+  {
+   "instancia": "Llama de motor principal",
+   "nombre": "llama_motor_1",
+   "en": [
+    92,
+    -12
+   ],
+   "padre": "tanque",
+   "plano": -2.6,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ],
+    [
+     4120,
+     "Arrancar",
+     false
+    ],
+    [
+     5520,
+     "Encendido"
+    ]
+   ]
+  },
+  {
+   "instancia": "Llama de cohete",
+   "nombre": "llama_cohete",
+   "en": [
+    0,
+    50
+   ],
+   "padre": "tanque",
+   "plano": -2.1,
+   "acciones": [
+    [
+     0,
+     "Apagado"
+    ],
+    [
+     7000,
+     "Encender",
+     false
+    ],
+    [
+     7600,
+     "Encendido"
+    ]
+   ]
+  },
+  {
+   "instancia": "Vapor de arranque",
+   "nombre": "vapor_arranque",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -3.8,
+   "bucle": false,
+   "desfase": 4200
+  },
+  {
+   "instancia": "Nube de humo",
+   "nombre": "humo",
+   "en": [
+    1100,
+    760
+   ],
+   "plano": -1,
+   "bucle": false,
+   "desfase": 7050
+  }
+ ],
+ "efectos": [
+  {
+   "tipo": "particulas",
+   "nombre": "chispas",
+   "en": [
+    1180,
+    710
+   ],
+   "inicio": 3400,
+   "fin": 4500,
+   "tasa": 60,
+   "vida": 700,
+   "velocidad": 220,
+   "angulo": 90,
+   "dispersion": 120,
+   "gravedad": 300,
+   "tam_ini": 3,
+   "tam_fin": 1,
+   "color_ini": "#fff6c0",
+   "color_fin": "#ff8a30",
+   "suave": "si",
+   "opacidad": 0.95,
+   "mezcla": "suma",
+   "sonido": "no_lleva"
+  }
+ ],
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ }
+}
