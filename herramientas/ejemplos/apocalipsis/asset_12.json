@@ -1,0 +1,171 @@
+{
+ "tipo": "asset",
+ "nombre": "Auto volcado",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "techo",
+   "poligono": [
+    [
+     -46,
+     0
+    ],
+    [
+     52,
+     0
+    ],
+    [
+     84,
+     -30
+    ],
+    [
+     120,
+     -38
+    ],
+    [
+     122,
+     -76
+    ],
+    [
+     -118,
+     -76
+    ],
+    [
+     -120,
+     -40
+    ],
+    [
+     -76,
+     -32
+    ]
+   ],
+   "color": "#3a4150",
+   "borde": "#161921"
+  },
+  {
+   "nombre": "ventanas",
+   "poligono": [
+    [
+     -40,
+     -4
+    ],
+    [
+     46,
+     -4
+    ],
+    [
+     70,
+     -28
+    ],
+    [
+     -62,
+     -28
+    ]
+   ],
+   "color": "#0b0d12"
+  },
+  {
+   "nombre": "bajos",
+   "rect": [
+    -112,
+    -86,
+    116,
+    -76
+   ],
+   "color": "#1a1c22"
+  },
+  {
+   "nombre": "eje",
+   "rect": [
+    -80,
+    -92,
+    80,
+    -86
+   ],
+   "color": "#2a2c33"
+  },
+  {
+   "nombre": "rueda_a",
+   "en": [
+    -70,
+    -96
+   ],
+   "circulo": {
+    "r": 18,
+    "lados": 12
+   },
+   "color": "#121317"
+  },
+  {
+   "nombre": "rueda_b",
+   "en": [
+    72,
+    -96
+   ],
+   "circulo": {
+    "r": 18,
+    "lados": 12
+   },
+   "color": "#121317"
+  },
+  {
+   "nombre": "llanta_a",
+   "en": [
+    -70,
+    -96
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 8
+   },
+   "color": "#5a606c"
+  },
+  {
+   "nombre": "llanta_b",
+   "en": [
+    72,
+    -96
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 8
+   },
+   "color": "#5a606c"
+  },
+  {
+   "nombre": "oxido",
+   "poligono": [
+    [
+     80,
+     -70
+    ],
+    [
+     116,
+     -66
+    ],
+    [
+     112,
+     -44
+    ],
+    [
+     86,
+     -48
+    ]
+   ],
+   "color": "#5a3726",
+   "opacidad": 0.6
+  },
+  {
+   "nombre": "foco_roto",
+   "rect": [
+    116,
+    -60,
+    124,
+    -48
+   ],
+   "color": "#6a6a50"
+  }
+ ]
+}

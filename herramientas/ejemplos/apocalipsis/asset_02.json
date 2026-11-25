@@ -1,0 +1,96 @@
+{
+ "tipo": "asset",
+ "nombre": "Luna",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "halo_grande",
+   "circulo": {
+    "r": 150,
+    "lados": 24
+   },
+   "color": "#9aa6c8",
+   "opacidad": 0.04
+  },
+  {
+   "nombre": "halo",
+   "circulo": {
+    "r": 85,
+    "lados": 24
+   },
+   "color": "#c9cfe0",
+   "opacidad": 0.08
+  },
+  {
+   "nombre": "disco",
+   "circulo": {
+    "r": 46,
+    "lados": 24
+   },
+   "color": "#e9e6cf"
+  },
+  {
+   "nombre": "sombra",
+   "en": [
+    12,
+    6
+   ],
+   "circulo": {
+    "r": 38,
+    "lados": 20
+   },
+   "color": "#cfcab0",
+   "opacidad": 0.5
+  },
+  {
+   "nombre": "crater_0",
+   "en": [
+    -14,
+    -12
+   ],
+   "circulo": {
+    "r": 8,
+    "lados": 10
+   },
+   "color": "#bdb79c"
+  },
+  {
+   "nombre": "crater_1",
+   "en": [
+    10,
+    14
+   ],
+   "circulo": {
+    "r": 6,
+    "lados": 10
+   },
+   "color": "#bdb79c"
+  },
+  {
+   "nombre": "crater_2",
+   "en": [
+    18,
+    -16
+   ],
+   "circulo": {
+    "r": 4,
+    "lados": 10
+   },
+   "color": "#bdb79c"
+  },
+  {
+   "nombre": "crater_3",
+   "en": [
+    -6,
+    20
+   ],
+   "circulo": {
+    "r": 5,
+    "lados": 10
+   },
+   "color": "#bdb79c"
+  }
+ ]
+}

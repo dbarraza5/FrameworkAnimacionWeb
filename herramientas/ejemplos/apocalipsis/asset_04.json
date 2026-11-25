@@ -1,0 +1,322 @@
+{
+ "tipo": "asset",
+ "nombre": "Niebla baja",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "banda_0",
+   "en": [
+    0,
+    6.1
+   ],
+   "elipse": [
+    335,
+    32
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0.1,
+   "claves": {
+    "x": [
+     [
+      0,
+      -89
+     ],
+     [
+      3483,
+      89
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_1",
+   "en": [
+    383.3,
+    4.5
+   ],
+   "elipse": [
+    247,
+    19
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -56
+     ],
+     [
+      4628,
+      56
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_2",
+   "en": [
+    589.7,
+    -3.7
+   ],
+   "elipse": [
+    315,
+    28
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -66
+     ],
+     [
+      4294,
+      66
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_3",
+   "en": [
+    868.9,
+    3.9
+   ],
+   "elipse": [
+    297,
+    29
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0.1,
+   "claves": {
+    "x": [
+     [
+      0,
+      -47
+     ],
+     [
+      2870,
+      47
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_4",
+   "en": [
+    1140.1,
+    -5
+   ],
+   "elipse": [
+    322,
+    31
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -56
+     ],
+     [
+      4372,
+      56
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_5",
+   "en": [
+    1471.6,
+    2.7
+   ],
+   "elipse": [
+    357,
+    20
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -41
+     ],
+     [
+      4845,
+      41
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_6",
+   "en": [
+    1775.5,
+    9.6
+   ],
+   "elipse": [
+    344,
+    22
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -76
+     ],
+     [
+      4719,
+      76
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_7",
+   "en": [
+    2090.5,
+    5
+   ],
+   "elipse": [
+    243,
+    28
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0.1,
+   "claves": {
+    "x": [
+     [
+      0,
+      -69
+     ],
+     [
+      3566,
+      69
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_8",
+   "en": [
+    2380.3,
+    -0.3
+   ],
+   "elipse": [
+    215,
+    28
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -54
+     ],
+     [
+      4510,
+      54
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_9",
+   "en": [
+    2559.6,
+    8.2
+   ],
+   "elipse": [
+    315,
+    30
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -53
+     ],
+     [
+      3631,
+      53
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_10",
+   "en": [
+    2896.8,
+    -0.7
+   ],
+   "elipse": [
+    315,
+    19
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -58
+     ],
+     [
+      4375,
+      58
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "banda_11",
+   "en": [
+    3123.1,
+    8.8
+   ],
+   "elipse": [
+    222,
+    27
+   ],
+   "color": "#7a88a6",
+   "opacidad": 0,
+   "claves": {
+    "x": [
+     [
+      0,
+      -69
+     ],
+     [
+      3055,
+      69
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  }
+ ]
+}

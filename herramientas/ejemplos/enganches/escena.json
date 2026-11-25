@@ -1,0 +1,27 @@
+{
+ "tipo": "escena", "nombre": "Paseo con copa", "duracion": 6000,
+ "camara": {"centro": [640, 360]},
+ "objetos": [
+  {"nombre": "fondo", "en": [0, 0], "plano": -10, "rect": [-200, -200, 1500, 900],
+   "degradado": {"tipo": "lineal", "de": [0, 0], "a": [0, 600], "colores": [[0, "#1d2b53"], [1, "#7e5a9b"]]}},
+  {"nombre": "vereda", "en": [0, 600], "plano": -5, "rect": [-200, 0, 1500, 300], "color": "#4a4458"},
+  {"instancia": "Paseante", "nombre": "beto", "en": [200, 600], "escala": 1.6, "claves": {"x": [[0, 200], [6000, 1000]]}},
+  {"instancia": "Paseante con vestido", "nombre": "ana", "en": [1080, 600], "escala": 1.6, "espejo": true, "desfase": 250, "claves": {"x": [[0, 1080], [6000, 300]]}},
+  {"nombre": "copa", "padre": "beto", "enganche": "mano", "partes": [
+    {"nombre": "copa_vino", "poligono": [[-7, -22], [7, -22], [5, -12], [-5, -12]], "color": "#9b1d3a"},
+    {"nombre": "copa_vidrio", "poligono": [[-8, -30], [8, -30], [6, -12], [0, -8], [-6, -12]], "color": "rgba(220,235,255,0.35)", "borde": "#dfe9ff"},
+    {"nombre": "copa_pie", "rect": [-1, -8, 1, 4], "color": "#dfe9ff"},
+    {"nombre": "copa_base", "rect": [-6, 4, 6, 6], "color": "#dfe9ff"}]},
+  {"nombre": "sombrero", "padre": "beto", "enganche": "cabeza", "partes": [
+    {"nombre": "ala", "rect": [-24, -2, 24, 3], "color": "#222222"},
+    {"nombre": "copa_sombrero", "rect": [-14, -24, 14, -2], "color": "#2b2b2b"},
+    {"nombre": "cinta", "rect": [-14, -8, 14, -3], "color": "#c0392b"}]},
+  {"nombre": "farol", "padre": "ana", "enganche": "mano", "partes": [
+    {"nombre": "asa", "rect": [-1, 0, 1, 10], "color": "#333333"},
+    {"nombre": "luz", "en": [0, 20], "circulo": {"r": 10, "lados": 16}, "color": "#ffd36b"},
+    {"nombre": "marco", "en": [0, 20], "rect": [-9, -11, 9, 11], "color": "rgba(0,0,0,0)", "borde": "#333333"}]}
+ ],
+ "dialogos": [
+  {"texto": "Objetos enganchados a la mano y a la cabeza", "desde": 300, "hasta": 5800, "estilo": "texto", "en": {"cuadro": "arriba-centro"}, "tamano": 30, "color": "#ffffff", "velocidad": 0}
+ ]
+}

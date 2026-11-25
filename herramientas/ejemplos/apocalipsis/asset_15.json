@@ -1,0 +1,92 @@
+{
+ "tipo": "asset",
+ "nombre": "Luz de farola",
+ "duracion": 3000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "cono",
+   "poligono": [
+    [
+     -12,
+     2
+    ],
+    [
+     12,
+     2
+    ],
+    [
+     150,
+     320
+    ],
+    [
+     -150,
+     320
+    ]
+   ],
+   "color": "#f3d9a0",
+   "opacidad": 0.1
+  },
+  {
+   "nombre": "charco_luz",
+   "en": [
+    0,
+    322
+   ],
+   "elipse": [
+    150,
+    16
+   ],
+   "color": "#f3d9a0",
+   "opacidad": 0.12
+  },
+  {
+   "nombre": "halo",
+   "en": [
+    0,
+    2
+   ],
+   "circulo": {
+    "r": 34,
+    "lados": 14
+   },
+   "color": "#ffe2a0",
+   "opacidad": 0.25
+  },
+  {
+   "nombre": "foco",
+   "en": [
+    0,
+    1
+   ],
+   "elipse": [
+    10,
+    4
+   ],
+   "color": "#fff4d0",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1
+     ],
+     [
+      2300,
+      1
+     ],
+     [
+      2350,
+      0.4
+     ],
+     [
+      2420,
+      1
+     ]
+    ]
+   },
+   "bucle": "repetir"
+  }
+ ]
+}

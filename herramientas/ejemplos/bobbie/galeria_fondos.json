@@ -1,0 +1,305 @@
+{
+ "tipo": "escena",
+ "nombre": "0. Galería de fondos",
+ "duracion": 19800,
+ "precision": "decimal",
+ "camara": {
+  "tamano": [
+   720,
+   1280
+  ],
+  "centro": [
+   360,
+   640
+  ],
+  "claves": {
+   "x": [
+    [
+     0,
+     360,
+     "mantener"
+    ],
+    [
+     2200,
+     1360,
+     "mantener"
+    ],
+    [
+     4400,
+     2360,
+     "mantener"
+    ],
+    [
+     6600,
+     3360,
+     "mantener"
+    ],
+    [
+     8800,
+     4360,
+     "mantener"
+    ],
+    [
+     11000,
+     5360,
+     "mantener"
+    ],
+    [
+     13200,
+     6360,
+     "mantener"
+    ],
+    [
+     15400,
+     7360,
+     "mantener"
+    ],
+    [
+     17600,
+     8360,
+     "mantener"
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo_auto",
+   "en": [
+    360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Auto 1920",
+   "nombre": "auto",
+   "en": [
+    -200,
+    1000
+   ],
+   "escala": 1.2,
+   "evento": "Andar",
+   "claves": {
+    "x": [
+     [
+      0,
+      -200
+     ],
+     [
+      2200,
+      900
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie",
+   "padre": "auto",
+   "enganche": "estribo",
+   "evento": "Cola"
+  },
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo_0",
+   "en": [
+    1360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Fondo estación",
+   "nombre": "fondo_1",
+   "en": [
+    2360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Fondo maizal",
+   "nombre": "fondo_2",
+   "en": [
+    3360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Fondo río",
+   "nombre": "fondo_3",
+   "en": [
+    4360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Fondo pradera nevada",
+   "nombre": "fondo_4",
+   "en": [
+    5360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Fondo montañas",
+   "nombre": "fondo_5",
+   "en": [
+    6360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Fondo bosque",
+   "nombre": "fondo_6",
+   "en": [
+    7360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Fondo noche",
+   "nombre": "fondo_7",
+   "en": [
+    8360,
+    1000
+   ],
+   "plano": -10
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Auto 1920 + Bobbie en el estribo",
+   "desde": 100,
+   "hasta": 2100,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo Silverton",
+   "desde": 2300,
+   "hasta": 4300,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo estación",
+   "desde": 4500,
+   "hasta": 6500,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo maizal",
+   "desde": 6700,
+   "hasta": 8700,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo río",
+   "desde": 8900,
+   "hasta": 10900,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo pradera nevada",
+   "desde": 11100,
+   "hasta": 13100,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo montañas",
+   "desde": 13300,
+   "hasta": 15300,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo bosque",
+   "desde": 15500,
+   "hasta": 17500,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Fondo noche",
+   "desde": 17700,
+   "hasta": 19700,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  }
+ ]
+}

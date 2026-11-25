@@ -164,6 +164,8 @@ export function insertarTiempo(esc, t, delta) {
         if (typeof ef.inicio === "number") ef.inicio = mover(ef.inicio);
         if (typeof ef.fin === "number") ef.fin = ef.fin >= t ? ef.fin + delta : ef.fin;
     }
+    // pasos de alto nivel (IA-5: caminar, mirar, tomar, soltar, plano): como las claves; un tramo que cruza el punto se estira
+    for (const p of e.pasos || []) for (const k of ["t", "desde", "hasta"]) if (typeof p[k] === "number") p[k] = mover(p[k]);
     // un globo que ya empezo no se estira (su duracion la decide su propia voz); uno que empieza despues, se corre entero
     for (const d of e.dialogos || []) { if (d.desde >= t) { d.desde += delta; d.hasta += delta; } }
     for (const c of e.sonidos || []) {

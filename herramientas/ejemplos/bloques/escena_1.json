@@ -1,0 +1,1575 @@
+{
+ "tipo": "escena",
+ "nombre": "1. Amanecer",
+ "duracion": 13000,
+ "precision": "decimal",
+ "camara": {
+  "centro": [
+   640,
+   360
+  ]
+ },
+ "objetos": [
+  {
+   "nombre": "cielo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -10,
+   "rect": [
+    -400,
+    -600,
+    1700,
+    560
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -200
+    ],
+    "a": [
+     0,
+     560
+    ],
+    "colores": [
+     [
+      0,
+      "#2b2d6e"
+     ],
+     [
+      0.55,
+      "#e07a5f"
+     ],
+     [
+      1,
+      "#f6c28b"
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "cielo_dia",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -9,
+   "rect": [
+    -400,
+    -600,
+    1700,
+    560
+   ],
+   "degradado": {
+    "tipo": "lineal",
+    "de": [
+     0,
+     -200
+    ],
+    "a": [
+     0,
+     560
+    ],
+    "colores": [
+     [
+      0,
+      "#4ea8de"
+     ],
+     [
+      1,
+      "#bde0fe"
+     ]
+    ]
+   },
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      3000,
+      0,
+      "suave"
+     ],
+     [
+      9000,
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "sol",
+   "en": {
+    "cuadro": "arriba-derecha",
+    "desplazar": [
+     -70,
+     70
+    ]
+   },
+   "plano": -8,
+   "partes": [
+    {
+     "nombre": "sol_halo",
+     "rect": [
+      -46,
+      -46,
+      46,
+      46
+     ],
+     "color": "rgba(255,230,140,0.35)",
+     "claves": {
+      "y": [
+       [
+        0,
+        420
+       ],
+       [
+        7000,
+        0,
+        "salir"
+       ]
+      ]
+     },
+     "partes": [
+      {
+       "nombre": "sol_disco",
+       "rect": [
+        -30,
+        -30,
+        30,
+        30
+       ],
+       "color": "#ffd166",
+       "borde": "#f4a261"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "nube_1",
+   "en": [
+    80,
+    120
+   ],
+   "plano": -8,
+   "opacidad": 0.9,
+   "partes": [
+    {
+     "nombre": "nube_1_a",
+     "rect": [
+      0,
+      0,
+      180,
+      30
+     ],
+     "color": "#ffffff"
+    },
+    {
+     "nombre": "nube_1_b",
+     "rect": [
+      30,
+      -20,
+      140,
+      0
+     ],
+     "color": "#ffffff"
+    }
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      80
+     ],
+     [
+      13000,
+      340
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "nube_2",
+   "en": [
+    700,
+    70
+   ],
+   "plano": -8,
+   "opacidad": 0.9,
+   "partes": [
+    {
+     "nombre": "nube_2_a",
+     "rect": [
+      0,
+      0,
+      140,
+      30
+     ],
+     "color": "#ffffff"
+    },
+    {
+     "nombre": "nube_2_b",
+     "rect": [
+      30,
+      -20,
+      100,
+      0
+     ],
+     "color": "#ffffff"
+    }
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      700
+     ],
+     [
+      13000,
+      900
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "nube_3",
+   "en": [
+    1050,
+    170
+   ],
+   "plano": -8,
+   "opacidad": 0.9,
+   "partes": [
+    {
+     "nombre": "nube_3_a",
+     "rect": [
+      0,
+      0,
+      120,
+      30
+     ],
+     "color": "#ffffff"
+    },
+    {
+     "nombre": "nube_3_b",
+     "rect": [
+      30,
+      -20,
+      80,
+      0
+     ],
+     "color": "#ffffff"
+    }
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      1050
+     ],
+     [
+      13000,
+      1210
+     ]
+    ]
+   }
+  },
+  {
+   "nombre": "colinas",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -7,
+   "partes": [
+    {
+     "nombre": "colina_0",
+     "rect": [
+      -200,
+      520,
+      -100,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_1",
+     "rect": [
+      -100,
+      480,
+      0,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_2",
+     "rect": [
+      0,
+      440,
+      100,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_3",
+     "rect": [
+      100,
+      500,
+      200,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_4",
+     "rect": [
+      200,
+      460,
+      300,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_5",
+     "rect": [
+      300,
+      520,
+      400,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_6",
+     "rect": [
+      400,
+      480,
+      500,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_7",
+     "rect": [
+      500,
+      440,
+      600,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_8",
+     "rect": [
+      600,
+      500,
+      700,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_9",
+     "rect": [
+      700,
+      460,
+      800,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_10",
+     "rect": [
+      800,
+      520,
+      900,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_11",
+     "rect": [
+      900,
+      480,
+      1000,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_12",
+     "rect": [
+      1000,
+      440,
+      1100,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_13",
+     "rect": [
+      1100,
+      500,
+      1200,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_14",
+     "rect": [
+      1200,
+      460,
+      1300,
+      560
+     ],
+     "color": "#356c48"
+    },
+    {
+     "nombre": "colina_15",
+     "rect": [
+      1300,
+      520,
+      1400,
+      560
+     ],
+     "color": "#3c7a52"
+    },
+    {
+     "nombre": "colina_16",
+     "rect": [
+      1400,
+      480,
+      1500,
+      560
+     ],
+     "color": "#356c48"
+    }
+   ]
+  },
+  {
+   "nombre": "suelo",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -3,
+   "partes": [
+    {
+     "nombre": "suelo_relleno",
+     "rect": [
+      -200,
+      720,
+      1520,
+      1760
+     ],
+     "color": "#4a4d52"
+    },
+    {
+     "nombre": "suelo_fila0",
+     "rect": [
+      -200,
+      560,
+      1520,
+      600
+     ],
+     "color": "#8a5a35"
+    },
+    {
+     "nombre": "suelo_pasto",
+     "rect": [
+      -200,
+      560,
+      1520,
+      574
+     ],
+     "color": "#5fae3e"
+    },
+    {
+     "nombre": "suelo_h0",
+     "rect": [
+      -200,
+      598,
+      1520,
+      600
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_fila1",
+     "rect": [
+      -200,
+      600,
+      1520,
+      640
+     ],
+     "color": "#8a5a35"
+    },
+    {
+     "nombre": "suelo_h1",
+     "rect": [
+      -200,
+      638,
+      1520,
+      640
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_fila2",
+     "rect": [
+      -200,
+      640,
+      1520,
+      680
+     ],
+     "color": "#8a5a35"
+    },
+    {
+     "nombre": "suelo_h2",
+     "rect": [
+      -200,
+      678,
+      1520,
+      680
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_fila3",
+     "rect": [
+      -200,
+      680,
+      1520,
+      720
+     ],
+     "color": "#8c8f94"
+    },
+    {
+     "nombre": "suelo_h3",
+     "rect": [
+      -200,
+      718,
+      1520,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v0",
+     "rect": [
+      -201,
+      560,
+      -199,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v1",
+     "rect": [
+      -161,
+      560,
+      -159,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v2",
+     "rect": [
+      -121,
+      560,
+      -119,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v3",
+     "rect": [
+      -81,
+      560,
+      -79,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v4",
+     "rect": [
+      -41,
+      560,
+      -39,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v5",
+     "rect": [
+      -1,
+      560,
+      1,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v6",
+     "rect": [
+      39,
+      560,
+      41,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v7",
+     "rect": [
+      79,
+      560,
+      81,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v8",
+     "rect": [
+      119,
+      560,
+      121,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v9",
+     "rect": [
+      159,
+      560,
+      161,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v10",
+     "rect": [
+      199,
+      560,
+      201,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v11",
+     "rect": [
+      239,
+      560,
+      241,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v12",
+     "rect": [
+      279,
+      560,
+      281,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v13",
+     "rect": [
+      319,
+      560,
+      321,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v14",
+     "rect": [
+      359,
+      560,
+      361,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v15",
+     "rect": [
+      399,
+      560,
+      401,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v16",
+     "rect": [
+      439,
+      560,
+      441,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v17",
+     "rect": [
+      479,
+      560,
+      481,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v18",
+     "rect": [
+      519,
+      560,
+      521,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v19",
+     "rect": [
+      559,
+      560,
+      561,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v20",
+     "rect": [
+      599,
+      560,
+      601,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v21",
+     "rect": [
+      639,
+      560,
+      641,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v22",
+     "rect": [
+      679,
+      560,
+      681,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v23",
+     "rect": [
+      719,
+      560,
+      721,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v24",
+     "rect": [
+      759,
+      560,
+      761,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v25",
+     "rect": [
+      799,
+      560,
+      801,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v26",
+     "rect": [
+      839,
+      560,
+      841,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v27",
+     "rect": [
+      879,
+      560,
+      881,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v28",
+     "rect": [
+      919,
+      560,
+      921,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v29",
+     "rect": [
+      959,
+      560,
+      961,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v30",
+     "rect": [
+      999,
+      560,
+      1001,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v31",
+     "rect": [
+      1039,
+      560,
+      1041,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v32",
+     "rect": [
+      1079,
+      560,
+      1081,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v33",
+     "rect": [
+      1119,
+      560,
+      1121,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v34",
+     "rect": [
+      1159,
+      560,
+      1161,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v35",
+     "rect": [
+      1199,
+      560,
+      1201,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v36",
+     "rect": [
+      1239,
+      560,
+      1241,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v37",
+     "rect": [
+      1279,
+      560,
+      1281,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v38",
+     "rect": [
+      1319,
+      560,
+      1321,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v39",
+     "rect": [
+      1359,
+      560,
+      1361,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v40",
+     "rect": [
+      1399,
+      560,
+      1401,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v41",
+     "rect": [
+      1439,
+      560,
+      1441,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v42",
+     "rect": [
+      1479,
+      560,
+      1481,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_v43",
+     "rect": [
+      1519,
+      560,
+      1521,
+      720
+     ],
+     "color": "rgba(0,0,0,0.22)"
+    },
+    {
+     "nombre": "suelo_m0",
+     "rect": [
+      910,
+      680,
+      920,
+      690
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m1",
+     "rect": [
+      20,
+      630,
+      30,
+      640
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m3",
+     "rect": [
+      940,
+      660,
+      950,
+      670
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m4",
+     "rect": [
+      400,
+      690,
+      410,
+      700
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m5",
+     "rect": [
+      130,
+      640,
+      140,
+      650
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m6",
+     "rect": [
+      550,
+      590,
+      560,
+      600
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m7",
+     "rect": [
+      1390,
+      640,
+      1400,
+      650
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m8",
+     "rect": [
+      830,
+      640,
+      840,
+      650
+     ],
+     "color": "#7a4e2d"
+    },
+    {
+     "nombre": "suelo_m10",
+     "rect": [
+      840,
+      680,
+      850,
+      690
+     ],
+     "color": "#7a7d82"
+    },
+    {
+     "nombre": "suelo_m11",
+     "rect": [
+      970,
+      590,
+      980,
+      600
+     ],
+     "color": "#7a4e2d"
+    },
+    {
+     "nombre": "suelo_m12",
+     "rect": [
+      930,
+      690,
+      940,
+      700
+     ],
+     "color": "#7a7d82"
+    },
+    {
+     "nombre": "suelo_m13",
+     "rect": [
+      190,
+      680,
+      200,
+      690
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m14",
+     "rect": [
+      640,
+      580,
+      650,
+      590
+     ],
+     "color": "#7a4e2d"
+    },
+    {
+     "nombre": "suelo_m15",
+     "rect": [
+      -60,
+      620,
+      -50,
+      630
+     ],
+     "color": "#7a4e2d"
+    },
+    {
+     "nombre": "suelo_m18",
+     "rect": [
+      230,
+      710,
+      240,
+      720
+     ],
+     "color": "#7a7d82"
+    },
+    {
+     "nombre": "suelo_m19",
+     "rect": [
+      1270,
+      700,
+      1280,
+      710
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m20",
+     "rect": [
+      370,
+      610,
+      380,
+      620
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m21",
+     "rect": [
+      1060,
+      660,
+      1070,
+      670
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m22",
+     "rect": [
+      1250,
+      690,
+      1260,
+      700
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m23",
+     "rect": [
+      1440,
+      610,
+      1450,
+      620
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m24",
+     "rect": [
+      1030,
+      670,
+      1040,
+      680
+     ],
+     "color": "#7a4e2d"
+    },
+    {
+     "nombre": "suelo_m25",
+     "rect": [
+      200,
+      710,
+      210,
+      720
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m26",
+     "rect": [
+      900,
+      650,
+      910,
+      660
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m27",
+     "rect": [
+      770,
+      700,
+      780,
+      710
+     ],
+     "color": "#7a7d82"
+    },
+    {
+     "nombre": "suelo_m29",
+     "rect": [
+      1330,
+      700,
+      1340,
+      710
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m30",
+     "rect": [
+      -10,
+      600,
+      0,
+      610
+     ],
+     "color": "#7a4e2d"
+    },
+    {
+     "nombre": "suelo_m31",
+     "rect": [
+      500,
+      590,
+      510,
+      600
+     ],
+     "color": "#7a4e2d"
+    },
+    {
+     "nombre": "suelo_m32",
+     "rect": [
+      180,
+      680,
+      190,
+      690
+     ],
+     "color": "#7a7d82"
+    },
+    {
+     "nombre": "suelo_m33",
+     "rect": [
+      870,
+      580,
+      880,
+      590
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m34",
+     "rect": [
+      20,
+      630,
+      30,
+      640
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m35",
+     "rect": [
+      820,
+      700,
+      830,
+      710
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m37",
+     "rect": [
+      760,
+      620,
+      770,
+      630
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m39",
+     "rect": [
+      990,
+      620,
+      1000,
+      630
+     ],
+     "color": "#9b6840"
+    },
+    {
+     "nombre": "suelo_m40",
+     "rect": [
+      -20,
+      710,
+      -10,
+      720
+     ],
+     "color": "#7a7d82"
+    },
+    {
+     "nombre": "suelo_m41",
+     "rect": [
+      1300,
+      710,
+      1310,
+      720
+     ],
+     "color": "#9da0a5"
+    },
+    {
+     "nombre": "suelo_m42",
+     "rect": [
+      120,
+      640,
+      130,
+      650
+     ],
+     "color": "#9b6840"
+    }
+   ]
+  },
+  {
+   "instancia": "Árbol de bloques",
+   "nombre": "arbol",
+   "en": [
+    780,
+    560
+   ],
+   "plano": -2
+  },
+  {
+   "nombre": "pico",
+   "en": [
+    720,
+    534
+   ],
+   "partes": [
+    {
+     "nombre": "pico_mango",
+     "rect": [
+      -3,
+      -6,
+      3,
+      46
+     ],
+     "color": "#8b6236",
+     "borde": "#5a3b22"
+    },
+    {
+     "nombre": "pico_cabeza",
+     "poligono": [
+      [
+       -26,
+       36
+      ],
+      [
+       -14,
+       30
+      ],
+      [
+       14,
+       30
+      ],
+      [
+       26,
+       36
+      ],
+      [
+       14,
+       42
+      ],
+      [
+       -14,
+       42
+      ]
+     ],
+     "color": "#b8c4cc",
+     "borde": "#6c7a84"
+    }
+   ],
+   "plano": -1,
+   "rotacion": -70
+  },
+  {
+   "instancia": "Minero",
+   "nombre": "minero",
+   "en": [
+    -80,
+    560
+   ],
+   "evento": "Quieto",
+   "acciones": [
+    [
+     7000,
+     "Picar"
+    ],
+    [
+     9200,
+     "Quieto"
+    ]
+   ]
+  }
+ ],
+ "efectos": [
+  {
+   "tipo": "particulas",
+   "nombre": "hojas",
+   "en": [
+    780,
+    330
+   ],
+   "inicio": 6900,
+   "fin": 9300,
+   "tasa": 14,
+   "vida": 2200,
+   "velocidad": 40,
+   "angulo": 90,
+   "dispersion": 140,
+   "gravedad": 60,
+   "tam_ini": 7,
+   "tam_fin": 6,
+   "color_ini": "#4ea546",
+   "color_fin": "#337a30"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "astillas",
+   "en": [
+    760,
+    490
+   ],
+   "inicio": 6900,
+   "fin": 9300,
+   "tasa": 18,
+   "vida": 600,
+   "velocidad": 160,
+   "angulo": -150,
+   "dispersion": 60,
+   "gravedad": 500,
+   "tam_ini": 5,
+   "tam_fin": 3,
+   "color_ini": "#9a6e3e",
+   "color_fin": "#5a3b22"
+  }
+ ],
+ "pasos": [
+  {
+   "caminar": "minero",
+   "a": [
+    700,
+    560
+   ],
+   "desde": 600,
+   "velocidad": 150,
+   "luego": "Quieto"
+  },
+  {
+   "plano": "medio",
+   "de": "minero",
+   "desde": 5400,
+   "hasta": 6300
+  },
+  {
+   "tomar": "minero",
+   "objeto": "pico",
+   "enganche": "mano",
+   "t": 6000
+  },
+  {
+   "plano": "general",
+   "de": [
+    "minero",
+    "arbol"
+   ],
+   "desde": 9400,
+   "hasta": 10400
+  },
+  {
+   "caminar": "minero",
+   "a": [
+    1400,
+    560
+   ],
+   "desde": 10600,
+   "velocidad": 320,
+   "luego": "Quieto"
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "MUNDO DE BLOQUES",
+   "desde": 300,
+   "hasta": 4600,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 46,
+   "color": "#ffffff",
+   "fuente": "mono",
+   "velocidad": 0,
+   "resplandor": 8
+  },
+  {
+   "texto": "Escena 1 · Amanecer",
+   "desde": 900,
+   "hasta": 4600,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "abajo-centro"
+   },
+   "tamano": 24,
+   "color": "#fff6e0",
+   "fuente": "mono",
+   "velocidad": 18
+  },
+  {
+   "quien": "minero",
+   "texto": "¡A trabajar!",
+   "desde": 6300,
+   "hasta": 8000,
+   "estilo": "grito"
+  }
+ ]
+}

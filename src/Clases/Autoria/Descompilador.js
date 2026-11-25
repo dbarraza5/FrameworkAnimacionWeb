@@ -14,7 +14,7 @@
 
 import {efectoDefecto} from "../EditorEvento/Fisica";
 
-const CONOCIDOS = new Set(["_id", "nombre", "nodo_padre", "visible", "color", "cx", "cy", "capa", "clases",
+const CONOCIDOS = new Set(["sin_giro", "_id", "nombre", "nodo_padre", "visible", "color", "cx", "cy", "capa", "clases",
     "lista_figuras", "lista_pintado", "transformacion", "claves", "claves_bucle", "camara", "instancia",
     "plano", "fisica", "efecto", "opacidad", "sonidos", "sonido_marca", "desenfoque", "mezcla", "forma_color", "ik", "inercia", "sombra"]);
 
@@ -189,9 +189,9 @@ function eventosDe(doc, def, avisos, esEsc) {
 
 export function esEscena(doc) {
     const gs = doc.grupos_figuras || [];
-    // (un asset puede tener escena.reacciones: los sonidos que heredan sus instancias)
+    // (un asset puede tener escena.reacciones, los sonidos que heredan sus instancias, escena.enganches y escena.caja)
     return gs.some((g) => g.instancia || g.efecto || (g.clases || []).includes("camara")) ||
-        Object.keys(doc.escena || {}).filter((k) => k !== "reacciones").length > 0;
+        Object.keys(doc.escena || {}).filter((k) => !["reacciones", "enganches", "caja", "notas"].includes(k)).length > 0;
 }
 
 // nombreSonido(id) -> nombre del sonido (para el formato simple); sin el, queda el id
@@ -210,6 +210,10 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
         const rx = reaccionesSimple((doc.escena || {}).reacciones, avisos);
         if (rx) def.reacciones = rx;
         def.partes = partesDe("root", hijos, avisos);
+        // enganches (IA-4): tal cual (en relativo a la parte)
+        const eng = (doc.escena || {}).enganches;
+        if (eng && Object.keys(eng).length) def.enganches = Object.fromEntries(Object.entries(eng).map(([n, e]) =>
+            [n, e.en && (e.en[0] || e.en[1]) ? {parte: e.parte, en: [e.en[0], e.en[1]]} : {parte: e.parte}]));
         return {def, avisos};
     }
 
@@ -226,7 +230,8 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
     if ((esc.dialogos || []).length) def.dialogos = JSON.parse(JSON.stringify(esc.dialogos));
     if (esc.estilo) def.estilo = JSON.parse(JSON.stringify(esc.estilo));
     if (esc.fps_animacion) def.fps_animacion = esc.fps_animacion;
-    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica", "sonidos", "sonido_marca", "reacciones", "precision", "dialogos", "estilo", "fps_animacion"].includes(k));
+    if (esc.zona_segura) def.zona_segura = {...esc.zona_segura};
+    const otros = Object.keys(esc).filter((k) => !["orden_profundidad", "fisica", "sonidos", "sonido_marca", "reacciones", "precision", "dialogos", "estilo", "fps_animacion", "zona_segura", "notas"].includes(k));   // (notas: correcciones del usuario, IA-6; no son parte del formato simple)
     if (otros.length) avisos.push(`escena: campos que el formato simple no guarda: ${otros.join(", ")}`);
 
     const esHijo = (g) => (g.clases || []).includes("objeto_hijo");
@@ -281,7 +286,13 @@ export function descompilar(doc, nombreAsset = () => null, nombreSonido = () => 
         } else {
             o.nombre = g.nombre;
         }
-        if (esHijo(g)) o.padre = g.nodo_padre;
+        if (esHijo(g)) {
+            // colgado de una parte de una instancia (IA-4): "<objeto>::<parte>" -> padre + enganche
+            const k = g.nodo_padre.indexOf("::");
+            if (k > 0) { o.padre = g.nodo_padre.slice(0, k); o.enganche = {parte: g.nodo_padre.slice(k + 2)}; }
+            else o.padre = g.nodo_padre;
+            if (g.sin_giro) o.girar = false;
+        }
         o.en = [r4(g.cx + ax), r4(g.cy + ay)];
         if (ax || ay) o.ancla = [ax, ay];
         const sx = t.escala_x ?? 1, sy = t.escala_y ?? 1;

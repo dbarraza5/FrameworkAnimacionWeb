@@ -1,0 +1,1560 @@
+{
+ "tipo": "escena",
+ "nombre": "Ciudad en ruinas (noche)",
+ "duracion": 18000,
+ "profundidad": true,
+ "sonido": "lleva",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "sonidos": [
+  {
+   "sonido": "Viento nocturno",
+   "t": 0,
+   "volumen": 0.5,
+   "bucle": true,
+   "fundido": {
+    "entrada": 1500,
+    "salida": 2000
+   }
+  },
+  {
+   "sonido": "Ambiente tenso",
+   "t": 0,
+   "volumen": 0.4,
+   "bucle": true,
+   "fundido": {
+    "entrada": 3000,
+    "salida": 2500
+   }
+  },
+  {
+   "sonido": "Fuego crepitando",
+   "t": 0,
+   "volumen": 0.35,
+   "bucle": true,
+   "pan": -0.5
+  },
+  {
+   "sonido": "Gemido de zombi",
+   "t": 2500,
+   "volumen": 0.5,
+   "pan": 0.6
+  },
+  {
+   "sonido": "Pasos sigilosos",
+   "t": 1500,
+   "volumen": 0.45
+  },
+  {
+   "sonido": "Pasos sigilosos",
+   "t": 3500,
+   "volumen": 0.45
+  },
+  {
+   "sonido": "Gemido grave",
+   "t": 4600,
+   "volumen": 0.6,
+   "pan": 0.5
+  },
+  {
+   "sonido": "Gemido de zombi",
+   "t": 6900,
+   "volumen": 0.7,
+   "pan": 0.4
+  },
+  {
+   "sonido": "Farola que se apaga",
+   "t": 6200,
+   "volumen": 0.8,
+   "pan": 0.3
+  },
+  {
+   "sonido": "Lanzamiento",
+   "t": 7850,
+   "volumen": 0.8
+  },
+  {
+   "sonido": "Bengala",
+   "t": 8800,
+   "volumen": 0.55,
+   "bucle": true,
+   "pan": 0.6,
+   "fundido": {
+    "entrada": 200,
+    "salida": 1500
+   }
+  },
+  {
+   "sonido": "Gemido grave",
+   "t": 9200,
+   "volumen": 0.8,
+   "pan": 0.6
+  },
+  {
+   "sonido": "Pasos sigilosos",
+   "t": 9700,
+   "volumen": 0.3
+  },
+  {
+   "sonido": "Gemido de zombi",
+   "t": 11000,
+   "volumen": 0.6,
+   "pan": 0.7
+  },
+  {
+   "sonido": "Pasos sigilosos",
+   "t": 11000,
+   "volumen": 0.3
+  },
+  {
+   "sonido": "Puerta",
+   "t": 12000,
+   "volumen": 0.8,
+   "pan": -0.1
+  },
+  {
+   "sonido": "Puerta",
+   "t": 13000,
+   "volumen": 0.7,
+   "pan": -0.1
+  },
+  {
+   "sonido": "Gemido grave",
+   "t": 15000,
+   "volumen": 0.6,
+   "pan": 0.5
+  }
+ ],
+ "camara": {
+  "centro": [
+   640,
+   360
+  ],
+  "zoom": 1,
+  "claves": {
+   "x": [
+    [
+     0,
+     640,
+     "suave"
+    ],
+    [
+     6000,
+     760,
+     "suave"
+    ],
+    [
+     7700,
+     820,
+     "suave"
+    ],
+    [
+     8800,
+     1250,
+     "suave"
+    ],
+    [
+     9600,
+     1150,
+     "suave"
+    ],
+    [
+     12200,
+     1050,
+     "suave"
+    ],
+    [
+     13800,
+     1050,
+     "suave"
+    ],
+    [
+     18000,
+     1500
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Cielo nocturno",
+   "nombre": "cielo",
+   "en": [
+    -200,
+    0
+   ],
+   "plano": -5,
+   "claves": {
+    "x": [
+     [
+      0,
+      -200,
+      "suave"
+     ],
+     [
+      6000,
+      -92,
+      "suave"
+     ],
+     [
+      7700,
+      -38,
+      "suave"
+     ],
+     [
+      8800,
+      349,
+      "suave"
+     ],
+     [
+      9600,
+      259,
+      "suave"
+     ],
+     [
+      12200,
+      169,
+      "suave"
+     ],
+     [
+      13800,
+      169,
+      "suave"
+     ],
+     [
+      18000,
+      574,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Luna",
+   "nombre": "luna",
+   "en": [
+    1010,
+    120
+   ],
+   "plano": -5,
+   "claves": {
+    "x": [
+     [
+      0,
+      1010,
+      "suave"
+     ],
+     [
+      6000,
+      1130,
+      "suave"
+     ],
+     [
+      7700,
+      1190,
+      "suave"
+     ],
+     [
+      8800,
+      1620,
+      "suave"
+     ],
+     [
+      9600,
+      1520,
+      "suave"
+     ],
+     [
+      12200,
+      1420,
+      "suave"
+     ],
+     [
+      13800,
+      1420,
+      "suave"
+     ],
+     [
+      18000,
+      1870,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Ruinas lejanas",
+   "nombre": "ruinas_lejanas",
+   "en": [
+    -300,
+    470
+   ],
+   "plano": -4,
+   "claves": {
+    "x": [
+     [
+      0,
+      -300,
+      "suave"
+     ],
+     [
+      6000,
+      -228,
+      "suave"
+     ],
+     [
+      7700,
+      -192,
+      "suave"
+     ],
+     [
+      8800,
+      66,
+      "suave"
+     ],
+     [
+      9600,
+      6,
+      "suave"
+     ],
+     [
+      12200,
+      -54,
+      "suave"
+     ],
+     [
+      13800,
+      -54,
+      "suave"
+     ],
+     [
+      18000,
+      216,
+      "suave"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Edificio en ruinas B",
+   "nombre": "edificio_0",
+   "en": [
+    -60,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "instancia": "Edificio en ruinas A",
+   "nombre": "edificio_1",
+   "en": [
+    170,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "instancia": "Edificio en ruinas C",
+   "nombre": "edificio_2",
+   "en": [
+    740,
+    585
+   ],
+   "plano": -3,
+   "espejo": true
+  },
+  {
+   "instancia": "Edificio en ruinas B",
+   "nombre": "edificio_3",
+   "en": [
+    750,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "instancia": "Edificio del refugio",
+   "nombre": "edificio_4",
+   "en": [
+    900,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "instancia": "Edificio en ruinas A",
+   "nombre": "edificio_5",
+   "en": [
+    1475,
+    585
+   ],
+   "plano": -3,
+   "espejo": true
+  },
+  {
+   "instancia": "Edificio en ruinas C",
+   "nombre": "edificio_6",
+   "en": [
+    1480,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "instancia": "Edificio en ruinas B",
+   "nombre": "edificio_7",
+   "en": [
+    1800,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "instancia": "Edificio en ruinas A",
+   "nombre": "edificio_8",
+   "en": [
+    2290,
+    585
+   ],
+   "plano": -3,
+   "espejo": true
+  },
+  {
+   "instancia": "Edificio en ruinas C",
+   "nombre": "edificio_9",
+   "en": [
+    2300,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "instancia": "Edificio en ruinas B",
+   "nombre": "edificio_10",
+   "en": [
+    2610,
+    585
+   ],
+   "plano": -3,
+   "espejo": false
+  },
+  {
+   "nombre": "ventana_refugio",
+   "en": [
+    1030,
+    400
+   ],
+   "plano": -3,
+   "rect": [
+    0,
+    0,
+    18,
+    26
+   ],
+   "color": "#f1b866",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      13800,
+      0
+     ],
+     [
+      14100,
+      0.9
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Calle en ruinas",
+   "nombre": "calle",
+   "en": [
+    0,
+    575
+   ],
+   "plano": -2
+  },
+  {
+   "instancia": "Escombros",
+   "nombre": "escombros_1",
+   "en": [
+    140,
+    600
+   ],
+   "plano": -1
+  },
+  {
+   "instancia": "Escombros",
+   "nombre": "escombros_2",
+   "en": [
+    2380,
+    605
+   ],
+   "escala": 1.2,
+   "plano": -1,
+   "espejo": true
+  },
+  {
+   "instancia": "Semáforo roto",
+   "nombre": "semaforo",
+   "en": [
+    1560,
+    598
+   ],
+   "plano": -1
+  },
+  {
+   "instancia": "Farola",
+   "nombre": "farola",
+   "en": [
+    1250,
+    590
+   ],
+   "plano": -1
+  },
+  {
+   "instancia": "Luz de farola",
+   "nombre": "luz_farola",
+   "en": [
+    1310,
+    330
+   ],
+   "plano": 1,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      6200,
+      0.15,
+      "mantener"
+     ],
+     [
+      6270,
+      1,
+      "mantener"
+     ],
+     [
+      6340,
+      0,
+      "mantener"
+     ],
+     [
+      6420,
+      0.7,
+      "mantener"
+     ],
+     [
+      6500,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bidón en llamas",
+   "nombre": "bidon",
+   "en": [
+    2130,
+    615
+   ],
+   "plano": -1
+  },
+  {
+   "instancia": "Auto quemado",
+   "nombre": "auto_quemado",
+   "en": [
+    380,
+    628
+   ],
+   "plano": -1
+  },
+  {
+   "instancia": "Puerta del refugio",
+   "nombre": "puerta_refugio_luz",
+   "en": [
+    1016,
+    585
+   ],
+   "plano": -3
+  },
+  {
+   "instancia": "Luz del refugio",
+   "nombre": "luz_refugio",
+   "en": [
+    1016,
+    585
+   ],
+   "plano": -2,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      12000,
+      0
+     ],
+     [
+      12300,
+      1,
+      "mantener"
+     ],
+     [
+      13100,
+      1
+     ],
+     [
+      13400,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Puerta del refugio",
+   "nombre": "puerta_refugio",
+   "en": [
+    1016,
+    585
+   ],
+   "plano": -2,
+   "claves": {
+    "escala_x": [
+     [
+      12000,
+      1
+     ],
+     [
+      12400,
+      0.08,
+      "salir"
+     ],
+     [
+      13000,
+      0.08
+     ],
+     [
+      13400,
+      1,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi A",
+   "nombre": "zombi_a_viene",
+   "en": [
+    1600,
+    650
+   ],
+   "espejo": true,
+   "claves": {
+    "x": [
+     [
+      0,
+      1700
+     ],
+     [
+      8900,
+      1250
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      8900,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi A",
+   "nombre": "zombi_a_va",
+   "en": [
+    1250,
+    650
+   ],
+   "desfase": 300,
+   "claves": {
+    "x": [
+     [
+      8900,
+      1250
+     ],
+     [
+      18000,
+      1960
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      8900,
+      1,
+      "mantener"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi B",
+   "nombre": "zombi_b_viene",
+   "en": [
+    1850,
+    668
+   ],
+   "espejo": true,
+   "claves": {
+    "x": [
+     [
+      0,
+      1900
+     ],
+     [
+      9100,
+      1420
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      9100,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi B",
+   "nombre": "zombi_b_va",
+   "en": [
+    1420,
+    668
+   ],
+   "desfase": 500,
+   "claves": {
+    "x": [
+     [
+      9100,
+      1420
+     ],
+     [
+      18000,
+      2010
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      9100,
+      1,
+      "mantener"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi arrastrándose",
+   "nombre": "arrastra_viene",
+   "en": [
+    2000,
+    640
+   ],
+   "espejo": true,
+   "claves": {
+    "x": [
+     [
+      0,
+      2000
+     ],
+     [
+      9400,
+      1700
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      9400,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi arrastrándose",
+   "nombre": "arrastra_va",
+   "en": [
+    1700,
+    640
+   ],
+   "claves": {
+    "x": [
+     [
+      9400,
+      1700
+     ],
+     [
+      18000,
+      1940
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      9400,
+      1,
+      "mantener"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi C",
+   "nombre": "zombi_c_fondo",
+   "en": [
+    2400,
+    598
+   ],
+   "escala": 0.8,
+   "plano": -1,
+   "espejo": true,
+   "claves": {
+    "x": [
+     [
+      0,
+      2500
+     ],
+     [
+      9000,
+      2240
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      9000,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Zombi C",
+   "nombre": "zombi_c_fondo_va",
+   "en": [
+    2240,
+    598
+   ],
+   "escala": 0.8,
+   "plano": -1,
+   "claves": {
+    "x": [
+     [
+      9000,
+      2240
+     ],
+     [
+      18000,
+      2090
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      9000,
+      1,
+      "mantener"
+     ]
+    ]
+   },
+   "espejo": true
+  },
+  {
+   "instancia": "Zombi B",
+   "nombre": "zombi_lejos",
+   "en": [
+    2750,
+    596
+   ],
+   "escala": 0.75,
+   "plano": -1,
+   "desfase": 200,
+   "espejo": true,
+   "claves": {
+    "x": [
+     [
+      0,
+      2780
+     ],
+     [
+      18000,
+      2450
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Niebla baja",
+   "nombre": "niebla_atras",
+   "en": [
+    -200,
+    600
+   ],
+   "plano": -1
+  },
+  {
+   "instancia": "Niebla baja",
+   "nombre": "niebla_frente",
+   "en": [
+    -100,
+    690
+   ],
+   "plano": 1,
+   "desfase": 2500,
+   "escala": [
+    1,
+    1.3
+   ]
+  },
+  {
+   "instancia": "Sobreviviente caminando",
+   "nombre": "sob_llega",
+   "en": [
+    -60,
+    655
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      -60
+     ],
+     [
+      6000,
+      720,
+      "salir"
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      1,
+      "mantener"
+     ],
+     [
+      6000,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Sobreviviente agachado",
+   "nombre": "sob_escondido",
+   "en": [
+    720,
+    655
+   ],
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      6000,
+      1,
+      "mantener"
+     ],
+     [
+      7700,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Sobreviviente lanzando",
+   "nombre": "sob_lanza",
+   "en": [
+    720,
+    655
+   ],
+   "bucle": false,
+   "desfase": 7700,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      7700,
+      1,
+      "mantener"
+     ],
+     [
+      8500,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Sobreviviente agachado",
+   "nombre": "sob_mira",
+   "en": [
+    720,
+    655
+   ],
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      8500,
+      1,
+      "mantener"
+     ],
+     [
+      9600,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Sobreviviente sigilo",
+   "nombre": "sob_se_escabulle",
+   "en": [
+    720,
+    655
+   ],
+   "claves": {
+    "x": [
+     [
+      9600,
+      720
+     ],
+     [
+      11400,
+      990
+     ],
+     [
+      12200,
+      1049
+     ],
+     [
+      12800,
+      1060
+     ]
+    ],
+    "y": [
+     [
+      11400,
+      655
+     ],
+     [
+      12200,
+      588
+     ]
+    ],
+    "escala_x": [
+     [
+      11400,
+      1
+     ],
+     [
+      12200,
+      0.9
+     ]
+    ],
+    "escala_y": [
+     [
+      11400,
+      1
+     ],
+     [
+      12200,
+      0.9
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      9600,
+      1
+     ],
+     [
+      12400,
+      1
+     ],
+     [
+      12800,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Auto volcado",
+   "nombre": "auto_volcado",
+   "en": [
+    820,
+    664
+   ],
+   "plano": 1
+  },
+  {
+   "instancia": "Bengala",
+   "nombre": "bengala_vuela",
+   "en": [
+    745,
+    545
+   ],
+   "plano": 1,
+   "claves": {
+    "x": [
+     [
+      7900,
+      745
+     ],
+     [
+      8800,
+      2050
+     ]
+    ],
+    "y": [
+     [
+      7900,
+      545
+     ],
+     [
+      8350,
+      300,
+      "salir"
+     ],
+     [
+      8800,
+      640,
+      "entrar"
+     ]
+    ],
+    "rotacion": [
+     [
+      7900,
+      0
+     ],
+     [
+      8800,
+      1080
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      7900,
+      1,
+      "mantener"
+     ],
+     [
+      8800,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bengala",
+   "nombre": "bengala_suelo",
+   "en": [
+    2050,
+    640
+   ],
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0,
+      "mantener"
+     ],
+     [
+      8800,
+      1,
+      "mantener"
+     ]
+    ]
+   }
+  }
+ ],
+ "efectos": [
+  {
+   "tipo": "particulas",
+   "nombre": "Fuego del auto",
+   "en": [
+    380,
+    560
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 70,
+   "vida": 750,
+   "velocidad": 90,
+   "angulo": -90,
+   "dispersion": 50,
+   "gravedad": -80,
+   "tam_ini": 16,
+   "tam_fin": 3,
+   "color_ini": "#ffd27a",
+   "color_fin": "#c0391b",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Humo del auto",
+   "en": [
+    380,
+    520
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 7,
+   "vida": 3400,
+   "velocidad": 45,
+   "angulo": -95,
+   "dispersion": 25,
+   "gravedad": -18,
+   "tam_ini": 21.599999999999998,
+   "tam_fin": 84,
+   "color_ini": "#3a3335",
+   "color_fin": "#0b0d14",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Fuego del bidón",
+   "en": [
+    2130,
+    552
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 40,
+   "vida": 750,
+   "velocidad": 90,
+   "angulo": -90,
+   "dispersion": 20,
+   "gravedad": -80,
+   "tam_ini": 10,
+   "tam_fin": 3,
+   "color_ini": "#ffd27a",
+   "color_fin": "#c0391b",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Humo del bidón",
+   "en": [
+    2130,
+    520
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 7,
+   "vida": 3400,
+   "velocidad": 45,
+   "angulo": -95,
+   "dispersion": 25,
+   "gravedad": -18,
+   "tam_ini": 12.6,
+   "tam_fin": 49,
+   "color_ini": "#3a3335",
+   "color_fin": "#0b0d14",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Fuego en el edificio",
+   "en": [
+    300,
+    300
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 20,
+   "vida": 600,
+   "velocidad": 50,
+   "angulo": -90,
+   "dispersion": 30,
+   "gravedad": -60,
+   "tam_ini": 9,
+   "tam_fin": 2,
+   "color_ini": "#ffd27a",
+   "color_fin": "#c0391b",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Humo del edificio",
+   "en": [
+    300,
+    270
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 7,
+   "vida": 3400,
+   "velocidad": 45,
+   "angulo": -95,
+   "dispersion": 25,
+   "gravedad": -18,
+   "tam_ini": 28.8,
+   "tam_fin": 112,
+   "color_ini": "#3a3335",
+   "color_fin": "#0b0d14",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Cenizas 1",
+   "en": [
+    300,
+    640
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 5,
+   "vida": 5000,
+   "velocidad": 30,
+   "angulo": -70,
+   "dispersion": 60,
+   "gravedad": -6,
+   "tam_ini": 2.5,
+   "tam_fin": 1,
+   "color_ini": "#f0a04a",
+   "color_fin": "#3a1a10",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Cenizas 2",
+   "en": [
+    1200,
+    640
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 5,
+   "vida": 5000,
+   "velocidad": 30,
+   "angulo": -70,
+   "dispersion": 60,
+   "gravedad": -6,
+   "tam_ini": 2.5,
+   "tam_fin": 1,
+   "color_ini": "#f0a04a",
+   "color_fin": "#3a1a10",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Cenizas 3",
+   "en": [
+    2100,
+    640
+   ],
+   "inicio": 0,
+   "fin": 18000,
+   "tasa": 5,
+   "vida": 5000,
+   "velocidad": 30,
+   "angulo": -70,
+   "dispersion": 60,
+   "gravedad": -6,
+   "tam_ini": 2.5,
+   "tam_fin": 1,
+   "color_ini": "#f0a04a",
+   "color_fin": "#3a1a10",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Chispas de la farola",
+   "en": [
+    1310,
+    334
+   ],
+   "inicio": 6200,
+   "fin": 6520,
+   "tasa": 120,
+   "vida": 600,
+   "velocidad": 140,
+   "angulo": 90,
+   "dispersion": 120,
+   "gravedad": 600,
+   "tam_ini": 3,
+   "tam_fin": 1,
+   "color_ini": "#fff4d0",
+   "color_fin": "#f0a04a",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Estela de la bengala",
+   "en": [
+    745,
+    545
+   ],
+   "inicio": 7900,
+   "fin": 8800,
+   "tasa": 90,
+   "vida": 400,
+   "velocidad": 20,
+   "angulo": -90,
+   "dispersion": 180,
+   "gravedad": 100,
+   "tam_ini": 5,
+   "tam_fin": 1,
+   "color_ini": "#fff0e8",
+   "color_fin": "#ff3b30",
+   "sonido": "no_lleva",
+   "claves": {
+    "x": [
+     [
+      7900,
+      745
+     ],
+     [
+      8800,
+      2050
+     ]
+    ],
+    "y": [
+     [
+      7900,
+      545
+     ],
+     [
+      8350,
+      300,
+      "salir"
+     ],
+     [
+      8800,
+      640,
+      "entrar"
+     ]
+    ]
+   }
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Chispas de la bengala",
+   "en": [
+    2062,
+    636
+   ],
+   "inicio": 8800,
+   "fin": 18000,
+   "tasa": 60,
+   "vida": 500,
+   "velocidad": 110,
+   "angulo": -80,
+   "dispersion": 70,
+   "gravedad": 300,
+   "tam_ini": 4,
+   "tam_fin": 1,
+   "color_ini": "#fff0e8",
+   "color_fin": "#ff3b30",
+   "sonido": "no_lleva"
+  },
+  {
+   "tipo": "particulas",
+   "nombre": "Humo de la bengala",
+   "en": [
+    2062,
+    630
+   ],
+   "inicio": 8800,
+   "fin": 18000,
+   "tasa": 9,
+   "vida": 3200,
+   "velocidad": 40,
+   "angulo": -95,
+   "dispersion": 25,
+   "gravedad": -15,
+   "tam_ini": 12,
+   "tam_fin": 60,
+   "color_ini": "#8a3a40",
+   "color_fin": "#120b10",
+   "sonido": "no_lleva"
+  }
+ ]
+}

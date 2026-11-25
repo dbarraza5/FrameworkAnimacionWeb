@@ -1,0 +1,98 @@
+{
+ "tipo": "asset",
+ "nombre": "Bengala",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "luz_suelo",
+   "en": [
+    0,
+    0
+   ],
+   "elipse": [
+    160,
+    22
+   ],
+   "color": "#ff3b30",
+   "opacidad": 0.18,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.2
+     ],
+     [
+      160,
+      0.12
+     ],
+     [
+      300,
+      0.22
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "halo",
+   "en": [
+    10,
+    -6
+   ],
+   "circulo": {
+    "r": 70,
+    "lados": 16
+   },
+   "color": "#ff3b30",
+   "opacidad": 0.14,
+   "claves": {
+    "escala_x": [
+     [
+      0,
+      1
+     ],
+     [
+      200,
+      1.15
+     ]
+    ],
+    "escala_y": [
+     [
+      0,
+      1
+     ],
+     [
+      200,
+      1.15
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "palo",
+   "rect": [
+    -8,
+    -5,
+    12,
+    0
+   ],
+   "color": "#b8221c"
+  },
+  {
+   "nombre": "punta",
+   "en": [
+    13,
+    -3
+   ],
+   "circulo": {
+    "r": 4,
+    "lados": 8
+   },
+   "color": "#fff0e8"
+  }
+ ]
+}

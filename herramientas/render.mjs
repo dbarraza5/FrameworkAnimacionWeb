@@ -7,6 +7,7 @@
 //
 // Opciones: --ancho 640 (alto segun la camara) · --todo (encuadra toda la escena en vez de la camara)
 //           --fondo "#ffffff" · --proyecto <id> (sin llave, para buscar la escena por nombre)
+//           --zona x,y,w,h | objeto:<nombre>[,margen] · --cajas [a,b] · --rejilla 100 · --lista  (ver lib/vista.mjs)
 // Con AUTORIA_LLAVE lee todo por la API /autoria (proyecto de la llave); sin llave, Mongo directo (desarrollo).
 // Corre dentro del contenedor del frontend (docker exec -w /home/app frontend_container node herramientas/render.mjs ...).
 import fs from "fs";
@@ -17,6 +18,7 @@ import {createCanvas} from "canvas";
 import gifenc from "gifenc";
 import {cargarMotor} from "./lib/motor.mjs";
 import {documentoEventos, cargadorAssets, cerrar} from "./lib/datos.mjs";
+import {cuadro, leerZona, proporcion, textoLista} from "./lib/vista.mjs";
 
 const {GIFEncoder, quantize, applyPalette} = gifenc;
 
@@ -64,10 +66,9 @@ export async function dibujarCuadro(m, ctx, w, h, t, opciones) {
     Render.dibujarCuadro(m, ctx, w, h, t, opciones);
 }
 
-function tamano(m, a) {
-    const r = m.rectCamara() || {w: 1280, h: 720};
+function tamano(m, a, zona) {
     const ancho = parseInt(a.ancho || "640", 10);
-    return {w: ancho, h: Math.round(ancho * (a.todo ? 9 / 16 : r.h / r.w))};
+    return {w: ancho, h: Math.round(ancho * (a.todo && !zona ? 9 / 16 : proporcion(m, zona)))};
 }
 
 async function principal() {
@@ -79,8 +80,13 @@ async function principal() {
     const inicio = Date.now();
     const {m, doc, errores} = await prepararEscena(a._[0], {proyecto: a.proyecto});
     if (errores.length) process.stdout.write(`AVISO: assets que no cargaron: ${errores.join("; ")}\n`);
-    const {w, h} = tamano(m, a);
-    const opciones = {todo: !!a.todo, fondo: a.fondo || "#ffffff"};
+    const {Render} = await cargarMotor();
+    const zona = leerZona(a.zona, Render);
+    const {w, h} = tamano(m, a, zona);
+    // IA-1: zona del mundo, cajas con nombre, rejilla y lista de lo que se ve (lib/vista.mjs)
+    const opciones = {todo: !!a.todo, fondo: a.fondo || "#ffffff", zona, cajas: a.cajas, rejilla: a.rejilla, lista: !!a.lista};
+    const listas = [];
+    const dibujarCuadro = async (m, ctx, w, h, t, o) => { const l = await cuadro(m, ctx, w, h, t, o); if (l) listas.push(l); };
 
     if (a.gif) {
         const desde = parseInt(a.desde || "0", 10);
@@ -124,6 +130,7 @@ async function principal() {
             process.stdout.write(`PNG ${salida}: "${doc.nombre}" en t=${tiempos[0]} ms (${w}x${h})\n`);
         }
     }
+    if (listas.length && !a.gif) process.stdout.write(listas.map(textoLista).join("\n") + "\n");
     await cerrar();
 }
 

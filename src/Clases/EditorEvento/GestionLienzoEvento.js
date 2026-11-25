@@ -1,5 +1,6 @@
 import ConfiguracionLienzoEvento from "./ConfiguracionLienzoEvento";
 import {TRABAJO_CONFIG_LIENZO_ATRIBUTOS, TRABAJO_CONFIG_LIENZO_IMAGENES} from "../EditorAnimacion/ConstanteAnimacion";
+import {dibujarNotas} from "./Notas";
 import TimelineCanvas from "./TimelineCanvas";
 import {
     MODALIDAD_MOVIMIENTOS, MOV_CIRCULAR, MOV_GRAVEDAD, MOV_LERP, MOV_OSCILATORIO, MOV_PARABOLICO_ANGULO,
@@ -436,6 +437,12 @@ class GestionLienzoEvento{
             this.eventos_.dibujarEfectos(ctx, cl.x_delta_original, cl.y_delta_original, 1 / (cl.escala || 1), !cl.vista_camara);
             // globos de dialogo (planeacion_zorro_cuervo.md, fase 2)
             if(this.eventos_.dibujarDialogos) this.eventos_.dibujarDialogos(ctx, cl.x_delta_original, cl.y_delta_original);
+            // IA-6: marcas de las notas de correccion (solo en el editor, con la pestana Notas abierta;
+            // this.notas las pone PanelNotas: no van en la escena editable ni en el historial)
+            if(this.notas_visibles && this.notas){
+                dibujarNotas(ctx, this.notas, this.eventos_.tiempoActualMs(),
+                    cl.x_delta_original, cl.y_delta_original, 1 / (cl.escala || 1), this.nota_seleccionada);
+            }
         }
 
         // 8A: fuera de lo que ve la camara, oscurecido (siempre un poco; en "Vista de
@@ -572,6 +579,11 @@ class GestionLienzoEvento{
                     this.eventoLienzoEvento.mouse_x, this.eventoLienzoEvento.mouse_y,
                     this.eventoLienzoEvento.mouse_click_up, this.eventoLienzoEvento.mouse_only_click
                 );
+            }else if(!click_en_boton && this.capturarClic && this.eventoLienzoEvento.mouse_only_click){
+                // IA-6: modo "nota": el clic marca un punto del dibujo (no selecciona ni panea)
+                const f = this.capturarClic;
+                this.capturarClic = null;
+                try { f({x: this.x_mouse, y: this.y_mouse, t: this.eventos_.tiempoActualMs()}); } catch(e){ console.error(e); }
             }else if(!click_en_boton){
                 let interactuo = this.procesoEdicionMovimientos();
                 // Fase 2: fuera de la modalidad Movimiento, el lienzo selecciona y

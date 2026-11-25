@@ -6,7 +6,9 @@
 // herramientas de Node (herramientas/autoria.mjs).
 //
 // ASSET
-//   {tipo: "asset", nombre, duracion?, partes: [PARTE...], eventos?: [...] (tal cual, si no es solo EventoGeneral)}
+//   {tipo: "asset", nombre, duracion?, partes: [PARTE...], eventos?: [...] (tal cual, si no es solo EventoGeneral),
+//    enganches?: {"<nombre>": {parte, en?: [x, y] (relativo al origen de la parte)}}  (IA-4: puntos donde se cuelgan objetos de la escena)}
+//    (el compilador agrega escena.caja: la caja del dibujo en reposo, para los planos de IA-5)
 // PARTE (un grupo; se anidan con `partes`)
 //   {nombre, en?: [x, y] (relativo al padre), capa?, color?, borde?, visible?, opacidad?,
 //    poligono?: [[x,y]...] | rect?: [x0,y0,x1,y1] | circulo?: r | {r, ry?, lados?} | elipse?: [rx, ry]
@@ -32,7 +34,13 @@
 //                 velocidad?: letras/s, lado?: arriba|abajo, desplazar?: [dx, dy], posicion?: arriba|abajo}]}  (globos, Dialogos.js)
 //                 estilo "texto": texto que vive EN la escena (un monitor, letras en el aire), sin globo: en: [x,y] (en el
 //                 dibujo; con quien, desde el centro de su caja o de su parte), tamano (px del dibujo), color?, fuente?:
-//                 sans|serif|mono, ancho? (corta lineas), alinear?: izquierda|centro|derecha, cursor?: true, resplandor?: px
+//                 sans|serif|mono, ancho? (corta lineas), alinear?: izquierda|centro|derecha, vertical?: arriba|centro|abajo
+//                 (sin vertical: la primera linea centrada en en), cursor?: true, resplandor?: px; en: {cuadro} lo pega a la pantalla
+//    formatos?: {"<formato>": {camara?, objetos?: {"<nombre>": parche | null}, dialogos?: {"<i>": parche | null}, agregar?, ...}},
+//    zona_segura?: {arriba, abajo, izquierda, derecha}  (IA-3, Formatos.js: se elige con compilar(..., {formato}))
+//    pasos?: [{caminar}, {mirar}, {tomar}, {soltar}, {plano}]  (IA-5, Pasos.js: acciones de alto nivel -> claves)
+//    En objetos, efectos y textos sin quien, en puede ser {cuadro: "arriba-centro" | [fx, fy], desplazar?, t?}: un punto
+//    de lo que ve la camara en t (Formatos.js); se resuelve al compilar.
 // OBJETO
 //   instancia: {instancia: "<nombre del asset>", nombre?, en: [x,y] (pies), ancla?: [x,y],
 //               escala?: n | [sx, sy], espejo?, rotacion?, plano?, capa?, borde?, fisica?: "fijo"|"rigido"|"desarmar"|{...},
@@ -41,6 +49,9 @@
 //               claves_partes?: {"<parte>": {rotacion|escala_x|escala_y|opacidad: [[t, v, interp?]], peso?: [[t, 0..1]]}}  (claves de una parte del asset en esta instancia; t de la escena; peso mezcla con la animacion del asset),
 //               claves?: {x|y: [[t, v_pies, interp?]], ...}, repetir?,
 //               padre?: "<otro objeto>" (en y claves relativos al origen del padre; hereda su movimiento),
+//               girar?: false  (con padre: sigue la posicion pero no el giro del padre; un farol que cuelga derecho),
+//               enganche?: "<enganche del asset del padre>" | {parte: "<parte>"}  (IA-4: va colgado de esa parte de la
+//                 instancia padre y sigue sus acciones; en y claves x / y, relativos al punto del enganche),
 //               desenfoque?, mezcla?,
 //               sombra?: true | {luz?: [x,y] | "<objeto>", angulo?, piso?, largo?, aplastar?, opacidad?, desenfoque?, color?} | [...]}
 //   dibujo:    {nombre, en, ancla?, una forma de PARTE y/o partes: [PARTE...], plano?, fisica?, claves?...}
@@ -54,6 +65,10 @@ import {normalizarEstilo} from "../EditorEvento/Estilo";
 import {PROPIEDADES, INTERPOLACIONES, MODOS_BUCLE, PISTA_FORMA, formasCompatibles, valorEn} from "../EditorEvento/Claves";
 import {GENERADORES, expandirGenerador, claveTemblor} from "./Generadores";
 import {PISTA_PESO} from "../EditorEvento/Ik";
+import {prepararFormato} from "./Formatos";
+import {expandirPasos} from "./Pasos";
+import {prepararGrupos, limitesGrupos} from "../EditorAnimacion/Miniatura";
+const SEP_INSTANCIA = "::";   // partes de una instancia en el motor: "<objeto>::<parte>" (GestionEvento.SEPARADOR_INSTANCIA)
 
 const FORMAS = ["poligono", "rect", "circulo", "elipse"];
 
@@ -412,7 +427,7 @@ function compilarAcciones(lista, asset, nombre, donde, E) {
 }
 
 const ESTILOS_DIALOGO = ["dialogo", "grito", "pensamiento", "narrador", "texto"];
-const CAMPOS_TEXTO = ["en", "tamano", "color", "fuente", "ancho", "alinear", "cursor", "resplandor"];
+const CAMPOS_TEXTO = ["en", "tamano", "color", "fuente", "ancho", "alinear", "vertical", "cursor", "resplandor", "entrada"];
 function compilarDialogos(lista, porNombre, dur, E) {
     if (lista === undefined) return null;
     if (!Array.isArray(lista)) { E.error("dialogos", "dialogos es una lista de {quien, texto, desde, hasta}"); return null; }
@@ -443,7 +458,9 @@ function compilarDialogos(lista, porNombre, dur, E) {
         const ajenos = CAMPOS_TEXTO.filter((k) => d[k] !== undefined);
         if (!esTexto && ajenos.length) E.error(donde, `${ajenos.join(", ")} solo valen con estilo "texto"`);
         if (esTexto) {
-            if (!par(d.en)) E.error(donde, "texto: en es [x, y] (en el dibujo; con quien, relativo al centro de su caja)");
+            // (en: {cuadro} = pegado a la pantalla; ya validado en Formatos.js)
+            if (!par(d.en) && !(d.en && typeof d.en === "object" && d.en.cuadro !== undefined)) E.error(donde, "texto: en es [x, y] (en el dibujo; con quien, relativo al centro de su caja) o {cuadro, desplazar?} (pegado a la pantalla)");
+            if (d.vertical !== undefined && !["arriba", "centro", "abajo"].includes(d.vertical)) E.error(donde, "texto: vertical es \"arriba\" (cuelga del punto), \"centro\" o \"abajo\" (crece hacia arriba)");
             if (!(num(d.tamano) && d.tamano > 0)) E.error(donde, "texto: tamano es el alto de la letra en px del dibujo (> 0)");
             if (d.color !== undefined && typeof d.color !== "string") E.error(donde, "texto: color es un texto (\"#7dff9a\")");
             if (d.fuente !== undefined && !["sans", "serif", "mono"].includes(d.fuente)) E.error(donde, 'texto: fuente es "sans", "serif" o "mono"');
@@ -451,6 +468,7 @@ function compilarDialogos(lista, porNombre, dur, E) {
             if (d.alinear !== undefined && !["izquierda", "centro", "derecha"].includes(d.alinear)) E.error(donde, 'texto: alinear es "izquierda", "centro" o "derecha"');
             if (d.cursor !== undefined && typeof d.cursor !== "boolean") E.error(donde, "texto: cursor es true o false");
             if (d.resplandor !== undefined && !(num(d.resplandor) && d.resplandor >= 0)) E.error(donde, "texto: resplandor es px (>= 0)");
+            if (d.entrada !== undefined && !(num(d.entrada) && d.entrada >= 0)) E.error(donde, "texto: entrada es el fundido de aparicion en ms (0 = de golpe)");
         }
         const g = d.quien !== undefined ? porNombre.get(d.quien) : null;
         if (esTexto && d.quien !== undefined && !g) E.error(donde, `quien "${d.quien}" no es un objeto de la escena`);
@@ -588,8 +606,34 @@ export function compilarAsset(def, buscarSonido) {
         const rx = S.reacciones(def.reacciones, REACCIONES_VALIDAS.objeto, "asset › reacciones");
         if (rx) escena.reacciones = rx;
     }
+    const eng = compilarEnganches(def && def.enganches, grupos, E);
+    if (eng) escena.enganches = eng;
+    // caja del dibujo en reposo (pies en [0, 0]): la usan los planos de la escena (IA-5, Pasos.js)
+    if (!E.errores.length) {
+        try {
+            const lim = limitesGrupos(prepararGrupos(grupos));
+            if (lim) escena.caja = {x0: Math.round(lim.x0), y0: Math.round(lim.y0), x1: Math.round(lim.x1), y1: Math.round(lim.y1)};
+        } catch (e) { /* sin caja: los planos suponen una */ }
+    }
     return {ok: !E.errores.length, errores: E.errores, avisos: E.avisos,
         resultado: {nombre: def && def.nombre, grupos_figuras: grupos, eventos, escena}};
+}
+
+// IA-4: enganches de un asset {"<nombre>": {parte, en?: [x, y]}}: en es relativo al ORIGEN DE LA PARTE (como el
+// en de sus partes hijas), asi que gira y se escala con ella.
+function compilarEnganches(enganches, grupos, E) {
+    if (enganches === undefined) return null;
+    if (!enganches || typeof enganches !== "object" || Array.isArray(enganches)) { E.error("enganches", 'enganches es {"<nombre>": {parte, en?: [x, y]}}'); return null; }
+    const partes = new Set(grupos.map((g) => g.nombre).filter((n) => n !== "default"));
+    const r = {};
+    for (const [nombre, e] of Object.entries(enganches)) {
+        const donde = `enganches.${nombre}`;
+        if (!e || typeof e.parte !== "string") { E.error(donde, "falta parte (el nombre de la parte que lo lleva, p. ej. \"mano\")"); continue; }
+        if (!partes.has(e.parte)) { E.error(donde, `la parte "${e.parte}" no existe (hay: ${[...partes].join(", ")})`); continue; }
+        if (e.en !== undefined && !par(e.en)) { E.error(donde, "en es [x, y] relativo al origen de la parte (como el en de una parte hija)"); continue; }
+        r[nombre] = {parte: e.parte, en: e.en ? [e.en[0], e.en[1]] : [0, 0]};
+    }
+    return Object.keys(r).length ? r : null;
 }
 
 // Temblor de camara: sin claves x / y es la receta tal cual (alrededor del centro). Si la camara
@@ -614,8 +658,18 @@ function temblorSobreClaves(claves, centro, temblor) {
 
 // ---------------- escena ----------------
 // buscarAsset(nombre) -> {id} | null  (lo da quien llama: la API o la herramienta)
-export function compilarEscena(def, buscarAsset, buscarSonido) {
+// opciones.formato: el de def.formatos a usar (Formatos.js); sin el, la escena base
+export function compilarEscena(def, buscarAsset, buscarSonido, opciones = {}) {
     const E = new Errores();
+    // IA-3: formato elegido y posiciones relativas al cuadro (en: {cuadro}) -> formato simple de siempre
+    const pf = prepararFormato(def, opciones.formato);
+    pf.errores.forEach((x) => E.error("formato", x));
+    def = pf.def;
+    // IA-5: acciones de alto nivel (caminar, mirar, tomar, soltar, plano) -> claves, acciones y objetos
+    const ps = expandirPasos(def, buscarAsset);
+    ps.errores.forEach((x) => E.error("pasos", x));
+    ps.avisos.forEach((x) => E.aviso("pasos", x));
+    def = ps.def;
     const S = new Sonidos(buscarSonido, E);
     if (!def || def.tipo !== "escena") E.error("escena", 'tipo debe ser "escena"');
     if (!def || !def.nombre) E.error("escena", "falta nombre");
@@ -624,7 +678,7 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
     const grupos = [grupoDefault()];
     const nombres = new Set(["default"]);
     let capa = 1;
-    const padres = [], porNombre = new Map();
+    const padres = [], porNombre = new Map(), assetDe = new Map();   // assetDe: objeto -> datos de su asset (catalogo)
     const unico = (base) => { let n = base, k = 2; while (nombres.has(n)) n = `${base}_${k++}`; nombres.add(n); return n; };
 
     // camara
@@ -669,6 +723,7 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
             const a = buscarAsset ? buscarAsset(o.instancia) : null;
             if (!a) { E.error(donde, `no existe el asset "${o.instancia}"`); return; }
             g = grupoBase(unico(o.nombre || o.instancia.replace(/[^A-Za-z0-9_-]+/g, "_")), "root", en[0] - ancla[0], en[1] - ancla[1], capa_o);
+            assetDe.set(g.nombre, a);
             g.instancia = {id_eventos: a.id, nombre: o.instancia, evento: o.evento || "EventoGeneral",
                 bucle: o.bucle !== false, desfase: num(o.desfase) ? o.desfase : 0};
             if (o.version) g.instancia.version = o.version;
@@ -739,7 +794,9 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
             else g.instancia.audio = {...(num(o.audio.volumen) ? {volumen: o.audio.volumen} : {}), ...(o.audio.silencio ? {silencio: true} : {})};
         }
         if (o.instancia) grupos.push(g);
-        if (o.padre !== undefined) padres.push({g, padre: o.padre, donde});
+        if (o.padre !== undefined) padres.push({g, padre: o.padre, enganche: o.enganche, girar: o.girar, donde});
+        else if (o.girar !== undefined) E.error(donde, "girar va con padre (lo colgado sigue o no el giro de su padre)");
+        else if (o.enganche !== undefined) E.error(donde, "enganche va con padre (la instancia que lo lleva)");
         porNombre.set(g.nombre, g);
         if (o.nombre && o.nombre !== g.nombre) porNombre.set(o.nombre, g);
     });
@@ -748,12 +805,29 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
     // x / y son relativos al origen del padre, y hereda su movimiento, rotacion, escala,
     // opacidad y visibilidad. Se dibuja junto con el padre (no se reordena por profundidad
     // entre los demas objetos).
-    for (const {g, padre, donde} of padres) {
+    for (const {g, padre, enganche, girar, donde} of padres) {
+        if (girar !== undefined && typeof girar !== "boolean") E.error(donde, "girar es true o false");
+        if (girar === false) g.sin_giro = true;        // sigue la posicion del padre, no su rotacion (un farol cuelga derecho)
         const p = typeof padre === "string" ? porNombre.get(padre) : null;
         if (!p) { E.error(donde, `padre "${padre}" no es un objeto de la escena`); continue; }
         if (p === g) { E.error(donde, "un objeto no puede ser su propio padre"); continue; }
         g.nodo_padre = p.nombre;
         g.clases = [...(g.clases || []), "objeto_hijo"];
+        // IA-4: enganche a una parte de la instancia padre (la mano, la cabeza): sigue su movimiento y sus acciones
+        if (enganche !== undefined) {
+            const a = assetDe.get(p.nombre);
+            if (!a) { E.error(donde, `enganche: el padre "${padre}" tiene que ser una instancia (de un asset)`); continue; }
+            const decl = a.enganches || {};
+            let parte, off = [0, 0];
+            if (typeof enganche === "string") {
+                if (!decl[enganche]) { E.error(donde, `el asset "${p.instancia.nombre}" no tiene el enganche "${enganche}" (tiene: ${Object.keys(decl).join(", ") || "ninguno"}; o usar {parte: "<parte>"})`); continue; }
+                parte = decl[enganche].parte; off = decl[enganche].en || [0, 0];
+            } else if (enganche && typeof enganche.parte === "string") parte = enganche.parte;
+            else { E.error(donde, `enganche es el nombre de un enganche del asset o {parte: "<parte>"}`); continue; }
+            if (Array.isArray(a.partes) && !a.partes.includes(parte)) { E.error(donde, `el asset "${p.instancia.nombre}" no tiene la parte "${parte}"`); continue; }
+            g.nodo_padre = `${p.nombre}${SEP_INSTANCIA}${parte}`;
+            g.cx += off[0]; g.cy += off[1];
+        }
     }
     for (const {g, donde} of padres) {
         const vistos = new Set();
@@ -805,6 +879,8 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
     }
     const dialogos = compilarDialogos(def && def.dialogos, porNombre, dur, E);
     if (dialogos) escena.dialogos = dialogos;
+    // zona segura (IA-3): la usan los textos pegados a la pantalla al dibujarse
+    if (def && def.zona_segura !== undefined && dialogos && dialogos.some((d) => (d.en && !Array.isArray(d.en)) || d.estilo === "narrador")) escena.zona_segura = def.zona_segura;
     // estilo de imagen (Estilo.js): duotono con tramado, pixelado...
     if (def && def.estilo !== undefined) {
         const {estilo, errores} = normalizarEstilo(def.estilo);
@@ -826,8 +902,9 @@ export function compilarEscena(def, buscarAsset, buscarSonido) {
 }
 
 // buscarSonido(nombre) -> {id} | null: solo hace falta si el documento usa sonidos
-export function compilar(def, buscarAsset, buscarSonido) {
+// opciones: {formato} (solo escenas, ver Formatos.js)
+export function compilar(def, buscarAsset, buscarSonido, opciones = {}) {
     if (def && def.tipo === "asset") return compilarAsset(def, buscarSonido);
-    if (def && def.tipo === "escena") return compilarEscena(def, buscarAsset, buscarSonido);
+    if (def && def.tipo === "escena") return compilarEscena(def, buscarAsset, buscarSonido, opciones);
     return {ok: false, errores: ['tipo debe ser "asset" o "escena"'], avisos: [], resultado: null};
 }

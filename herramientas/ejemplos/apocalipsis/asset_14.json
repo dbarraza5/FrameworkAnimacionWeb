@@ -1,0 +1,73 @@
+{
+ "tipo": "asset",
+ "nombre": "Farola",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "base",
+   "rect": [
+    -10,
+    -14,
+    10,
+    0
+   ],
+   "color": "#2d3139"
+  },
+  {
+   "nombre": "poste",
+   "rect": [
+    -4,
+    -252,
+    4,
+    -14
+   ],
+   "color": "#2d3139"
+  },
+  {
+   "nombre": "brazo",
+   "poligono": [
+    [
+     0.6,
+     -247.1
+    ],
+    [
+     60.6,
+     -259.1
+    ],
+    [
+     59.4,
+     -264.9
+    ],
+    [
+     -0.6,
+     -252.9
+    ]
+   ],
+   "color": "#2d3139"
+  },
+  {
+   "nombre": "cabeza",
+   "poligono": [
+    [
+     44,
+     -268
+    ],
+    [
+     76,
+     -268
+    ],
+    [
+     70,
+     -258
+    ],
+    [
+     50,
+     -258
+    ]
+   ],
+   "color": "#3a3f49"
+  }
+ ]
+}

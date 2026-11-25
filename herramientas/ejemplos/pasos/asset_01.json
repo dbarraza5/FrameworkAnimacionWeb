@@ -1,0 +1,385 @@
+{
+ "tipo": "asset",
+ "nombre": "Caminante",
+ "duracion": 2200,
+ "eventos": [
+  {
+   "nombre": "EventoGeneral",
+   "nodo_padre": "Nodo_Default",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 0,
+   "tiempo_final": 2200,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  },
+  {
+   "nombre": "Caminar",
+   "nodo_padre": "EventoGeneral",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 0,
+   "tiempo_final": 1000,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  },
+  {
+   "nombre": "Quieto",
+   "nodo_padre": "EventoGeneral",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 1200,
+   "tiempo_final": 2200,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  }
+ ],
+ "enganches": {
+  "mano": {
+   "parte": "brazo_del",
+   "en": [
+    0,
+    54
+   ]
+  },
+  "cabeza": {
+   "parte": "cabeza",
+   "en": [
+    0,
+    -16
+   ]
+  }
+ },
+ "partes": [
+  {
+   "nombre": "cuerpo",
+   "partes": [
+    {
+     "nombre": "brazo_tras",
+     "en": [
+      0,
+      -142
+     ],
+     "poligono": [
+      [
+       -5,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       4,
+       58
+      ],
+      [
+       -4,
+       58
+      ]
+     ],
+     "color": "#d9a866",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        22,
+        "suave"
+       ],
+       [
+        500,
+        -22,
+        "suave"
+       ],
+       [
+        1000,
+        22,
+        "lineal"
+       ],
+       [
+        1200,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        0,
+        "lineal"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "pierna_tras",
+     "en": [
+      0,
+      -70
+     ],
+     "poligono": [
+      [
+       -7,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       6,
+       66
+      ],
+      [
+       14,
+       70
+      ],
+      [
+       -7,
+       70
+      ]
+     ],
+     "color": "#1f2c4a",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        -25,
+        "suave"
+       ],
+       [
+        500,
+        25,
+        "suave"
+       ],
+       [
+        1000,
+        -25,
+        "lineal"
+       ],
+       [
+        1200,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        0,
+        "lineal"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "torso",
+     "poligono": [
+      [
+       -15,
+       -150
+      ],
+      [
+       15,
+       -150
+      ],
+      [
+       17,
+       -68
+      ],
+      [
+       -17,
+       -68
+      ]
+     ],
+     "color": "#2e86de"
+    },
+    {
+     "nombre": "pierna_del",
+     "en": [
+      0,
+      -70
+     ],
+     "poligono": [
+      [
+       -7,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       6,
+       66
+      ],
+      [
+       14,
+       70
+      ],
+      [
+       -7,
+       70
+      ]
+     ],
+     "color": "#2c3e66",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        25,
+        "suave"
+       ],
+       [
+        500,
+        -25,
+        "suave"
+       ],
+       [
+        1000,
+        25,
+        "lineal"
+       ],
+       [
+        1200,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        0,
+        "lineal"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "cabeza",
+     "en": [
+      2,
+      -170
+     ],
+     "circulo": 17,
+     "color": "#f1c27d",
+     "partes": [
+      {
+       "nombre": "pelo",
+       "poligono": [
+        [
+         -17,
+         -2
+        ],
+        [
+         -14,
+         -14
+        ],
+        [
+         -2,
+         -19
+        ],
+        [
+         12,
+         -16
+        ],
+        [
+         17,
+         -6
+        ],
+        [
+         4,
+         -9
+        ],
+        [
+         -10,
+         -6
+        ]
+       ],
+       "color": "#3b2414"
+      },
+      {
+       "nombre": "ojo",
+       "en": [
+        9,
+        -2
+       ],
+       "circulo": {
+        "r": 2,
+        "lados": 6
+       },
+       "color": "#111111"
+      }
+     ]
+    },
+    {
+     "nombre": "brazo_del",
+     "en": [
+      0,
+      -142
+     ],
+     "poligono": [
+      [
+       -5,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       4,
+       58
+      ],
+      [
+       -4,
+       58
+      ]
+     ],
+     "color": "#f1c27d",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        -22,
+        "suave"
+       ],
+       [
+        500,
+        22,
+        "suave"
+       ],
+       [
+        1000,
+        -22,
+        "lineal"
+       ],
+       [
+        1200,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        0,
+        "lineal"
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

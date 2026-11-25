@@ -34,11 +34,13 @@ export function normalizarTransformacion(t) {
         escala_y: num(t.escala_y, 1),
         ancla_x: num(t.ancla_x, 0),
         ancla_y: num(t.ancla_y, 0),
+        // traslacion extra (solo la usan los eslabones que arma cadenaTransformaciones para "sin_giro")
+        ...(t.tx || t.ty ? {tx: num(t.tx, 0), ty: num(t.ty, 0)} : {}),
     };
 }
 
 export function esNeutra(t) {
-    return !t || (t.rotacion === 0 && t.escala_x === 1 && t.escala_y === 1);
+    return !t || (t.rotacion === 0 && t.escala_x === 1 && t.escala_y === 1 && !t.tx && !t.ty);
 }
 
 // Grupos con transformacion (no neutra) que afectan a `grupo`: el mismo y sus
@@ -46,14 +48,24 @@ export function esNeutra(t) {
 export function cadenaTransformaciones(grupo, mapa) {
     const cadena = [];
     const vistos = new Set();
-    let g = grupo;
+    let g = grupo, sinGiro = null, interior = 0;
     while (g && !vistos.has(g.nombre)) {
         vistos.add(g.nombre);
         const t = normalizarTransformacion(g.transformacion);
         if (t && !esNeutra(t)) cadena.unshift({grupo: g, t});
+        // "sin_giro" (escena: girar: false; IA-4): sigue la posicion de sus padres pero no su rotacion
+        if (!sinGiro && g.sin_giro) { sinGiro = g; interior = cadena.length; }
         g = g.nodo_padre && g.nodo_padre !== "root" ? mapa.get(g.nodo_padre) : null;
     }
-    return cadena;
+    if (!sinGiro) return cadena;
+    const exterior = cadena.slice(0, cadena.length - interior), resto = cadena.slice(cadena.length - interior);
+    if (!exterior.some((e) => e.t.rotacion)) return cadena;
+    // el origen del grupo sin giro cae donde caeria con todo; sus padres le aplican solo escala (y espejo)
+    const O = {x: num(sinGiro.cx_solid ?? sinGiro.cx, 0), y: num(sinGiro.cy_solid ?? sinGiro.cy, 0)};
+    const sinRot = exterior.map((e) => ({grupo: e.grupo, t: {...e.t, rotacion: 0}}));
+    const P = transformarPunto(exterior, O), Q = transformarPunto(sinRot, O);
+    const mover = {grupo: {cx: 0, cy: 0}, t: {rotacion: 0, escala_x: 1, escala_y: 1, ancla_x: 0, ancla_y: 0, tx: P.x - Q.x, ty: P.y - Q.y}};
+    return [mover, ...sinRot, ...resto];
 }
 
 // Punto de anclaje en coordenadas del dibujo (depende de la posicion actual del
@@ -70,13 +82,13 @@ function aplicarUno(t, A, p) {
     const c = Math.cos(rad), s = Math.sin(rad);
     const dx = (p.x - A.x) * t.escala_x;
     const dy = (p.y - A.y) * t.escala_y;
-    return {x: A.x + dx * c - dy * s, y: A.y + dx * s + dy * c};
+    return {x: A.x + dx * c - dy * s + (t.tx || 0), y: A.y + dx * s + dy * c + (t.ty || 0)};
 }
 
 function invertirUno(t, A, p) {
     const rad = t.rotacion * Math.PI / 180;
     const c = Math.cos(rad), s = Math.sin(rad);
-    const dx = p.x - A.x, dy = p.y - A.y;
+    const dx = p.x - (t.tx || 0) - A.x, dy = p.y - (t.ty || 0) - A.y;
     const rx = dx * c + dy * s;      // rotar -angulo
     const ry = -dx * s + dy * c;
     return {
@@ -109,6 +121,7 @@ export function aplicarEnCanvas(ctx, cadena, ox = 0, oy = 0) {
     for (const eslabon of cadena) {                  // de afuera hacia adentro
         const A = anclaAbsoluta(eslabon);
         const ax = A.x + ox, ay = A.y + oy;
+        if (eslabon.t.tx || eslabon.t.ty) ctx.translate(eslabon.t.tx || 0, eslabon.t.ty || 0);
         ctx.translate(ax, ay);
         ctx.rotate(eslabon.t.rotacion * Math.PI / 180);
         ctx.scale(eslabon.t.escala_x, eslabon.t.escala_y);

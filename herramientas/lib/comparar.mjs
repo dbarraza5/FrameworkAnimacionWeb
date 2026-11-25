@@ -91,7 +91,9 @@ export function diferencias(a, b, opciones = {}) {
     }
     const ea = estable(sinIdClip(a.eventos)), eb = estable(sinIdClip(b.eventos));
     if (ea !== eb) d.push(`eventos distintos: ${ea.slice(0, 160)} != ${eb.slice(0, 160)}`);
-    const sa = estable(sinIdClip(a.escena || {})), sb = estable(sinIdClip(b.escena || {}));
+    // (escena.caja de un asset es derivada: el compilador la recalcula; no cuenta como diferencia)
+    const sinCaja = (e) => { const {caja, ...resto} = e || {}; return resto; };
+    const sa = estable(sinIdClip(sinCaja(a.escena))), sb = estable(sinIdClip(sinCaja(b.escena)));
     if (sa !== sb) d.push(`escena distinta: ${sa} != ${sb}`);
     return d;
 }

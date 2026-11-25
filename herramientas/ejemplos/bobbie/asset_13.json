@@ -1,0 +1,687 @@
+{
+ "tipo": "asset",
+ "nombre": "Fondo noche",
+ "partes": [
+  {
+   "nombre": "fondo_noche",
+   "partes": [
+    {
+     "nombre": "noc_cielo",
+     "rect": [
+      -460,
+      -1150,
+      460,
+      0
+     ],
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       -1150
+      ],
+      "a": [
+       0,
+       0
+      ],
+      "colores": [
+       [
+        0,
+        "#0b1430"
+       ],
+       [
+        0.7,
+        "#243a6a"
+       ],
+       [
+        1,
+        "#3e4a6a"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "noc_e0",
+     "en": [
+      -460,
+      -1120
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e1",
+     "en": [
+      -363,
+      -857
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e2",
+     "en": [
+      -266,
+      -594
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e3",
+     "en": [
+      -169,
+      -1031
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e4",
+     "en": [
+      -72,
+      -768
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e5",
+     "en": [
+      25,
+      -505
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e6",
+     "en": [
+      122,
+      -942
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e7",
+     "en": [
+      219,
+      -679
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e8",
+     "en": [
+      316,
+      -1116
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e9",
+     "en": [
+      413,
+      -853
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e10",
+     "en": [
+      -410,
+      -590
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e11",
+     "en": [
+      -313,
+      -1027
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e12",
+     "en": [
+      -216,
+      -764
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e13",
+     "en": [
+      -119,
+      -501
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e14",
+     "en": [
+      -22,
+      -938
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e15",
+     "en": [
+      75,
+      -675
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e16",
+     "en": [
+      172,
+      -1112
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e17",
+     "en": [
+      269,
+      -849
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e18",
+     "en": [
+      366,
+      -586
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e19",
+     "en": [
+      -457,
+      -1023
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e20",
+     "en": [
+      -360,
+      -760
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e21",
+     "en": [
+      -263,
+      -497
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e22",
+     "en": [
+      -166,
+      -934
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e23",
+     "en": [
+      -69,
+      -671
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e24",
+     "en": [
+      28,
+      -1108
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e25",
+     "en": [
+      125,
+      -845
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e26",
+     "en": [
+      222,
+      -582
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e27",
+     "en": [
+      319,
+      -1019
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e28",
+     "en": [
+      416,
+      -756
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e29",
+     "en": [
+      -407,
+      -493
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e30",
+     "en": [
+      -310,
+      -930
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e31",
+     "en": [
+      -213,
+      -667
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e32",
+     "en": [
+      -116,
+      -1104
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e33",
+     "en": [
+      -19,
+      -841
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e34",
+     "en": [
+      78,
+      -578
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e35",
+     "en": [
+      175,
+      -1015
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e36",
+     "en": [
+      272,
+      -752
+     ],
+     "circulo": {
+      "r": 2.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "noc_e37",
+     "en": [
+      369,
+      -489
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e38",
+     "en": [
+      -454,
+      -926
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#fff8e0"
+    },
+    {
+     "nombre": "noc_e39",
+     "en": [
+      -357,
+      -663
+     ],
+     "circulo": {
+      "r": 1.4,
+      "lados": 6
+     },
+     "color": "#cfe3ff"
+    },
+    {
+     "nombre": "luna",
+     "en": [
+      260,
+      -900
+     ],
+     "circulo": {
+      "r": 46,
+      "lados": 28
+     },
+     "color": "#f4ecd0",
+     "partes": [
+      {
+       "nombre": "luna_halo",
+       "circulo": {
+        "r": 90,
+        "lados": 28
+       },
+       "color": "rgba(244,236,208,0.12)"
+      }
+     ]
+    },
+    {
+     "nombre": "noc_campo",
+     "color": "#1e2a3e",
+     "poligono": [
+      [
+       -460,
+       40
+      ],
+      [
+       -460,
+       -46
+      ],
+      [
+       -420,
+       -50
+      ],
+      [
+       -380,
+       -55
+      ],
+      [
+       -340,
+       -55
+      ],
+      [
+       -300,
+       -51
+      ],
+      [
+       -260,
+       -45
+      ],
+      [
+       -220,
+       -41
+      ],
+      [
+       -180,
+       -42
+      ],
+      [
+       -140,
+       -48
+      ],
+      [
+       -100,
+       -55
+      ],
+      [
+       -60,
+       -59
+      ],
+      [
+       -20,
+       -59
+      ],
+      [
+       20,
+       -55
+      ],
+      [
+       60,
+       -51
+      ],
+      [
+       100,
+       -50
+      ],
+      [
+       140,
+       -55
+      ],
+      [
+       180,
+       -62
+      ],
+      [
+       220,
+       -68
+      ],
+      [
+       260,
+       -69
+      ],
+      [
+       300,
+       -65
+      ],
+      [
+       340,
+       -59
+      ],
+      [
+       380,
+       -55
+      ],
+      [
+       420,
+       -56
+      ],
+      [
+       460,
+       -60
+      ],
+      [
+       460,
+       40
+      ]
+     ]
+    },
+    {
+     "nombre": "noc_suelo",
+     "rect": [
+      -460,
+      0,
+      460,
+      520
+     ],
+     "degradado": {
+      "tipo": "lineal",
+      "de": [
+       0,
+       0
+      ],
+      "a": [
+       0,
+       520
+      ],
+      "colores": [
+       [
+        0,
+        "#1a2232"
+       ],
+       [
+        1,
+        "#0e131c"
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

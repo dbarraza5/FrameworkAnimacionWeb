@@ -1,0 +1,56 @@
+{
+ "tipo": "asset",
+ "nombre": "Luz del refugio",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "derrame",
+   "poligono": [
+    [
+     0,
+     0
+    ],
+    [
+     66,
+     0
+    ],
+    [
+     110,
+     26
+    ],
+    [
+     -44,
+     26
+    ]
+   ],
+   "color": "#f1b866",
+   "opacidad": 0.22
+  },
+  {
+   "nombre": "interior",
+   "rect": [
+    0,
+    -110,
+    66,
+    0
+   ],
+   "color": "#f1b866",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.95
+     ],
+     [
+      500,
+      0.8
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  }
+ ]
+}

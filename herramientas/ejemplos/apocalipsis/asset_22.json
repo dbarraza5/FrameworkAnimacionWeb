@@ -1,0 +1,460 @@
+{
+ "tipo": "asset",
+ "nombre": "Sobreviviente sigilo",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "pierna_tras",
+   "pivote": [
+    0,
+    -30
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      14
+     ],
+     [
+      640,
+      -14
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "pierna_tras_muslo",
+     "poligono": [
+      [
+       -1.6,
+       -23.7
+      ],
+      [
+       14.4,
+       -19.7
+      ],
+      [
+       17.6,
+       -32.3
+      ],
+      [
+       1.6,
+       -36.3
+      ]
+     ],
+     "color": "#22252a"
+    },
+    {
+     "nombre": "pierna_tras_canilla",
+     "poligono": [
+      [
+       11.5,
+       -29.1
+      ],
+      [
+       -4.5,
+       -6.1
+      ],
+      [
+       4.5,
+       0.1
+      ],
+      [
+       20.5,
+       -22.9
+      ]
+     ],
+     "color": "#22252a"
+    },
+    {
+     "nombre": "pierna_tras_pie",
+     "poligono": [
+      [
+       -7,
+       -9
+      ],
+      [
+       9,
+       -9
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       -7,
+       0
+      ]
+     ],
+     "color": "#121316"
+    }
+   ]
+  },
+  {
+   "nombre": "mochila",
+   "poligono": [
+    [
+     -24,
+     -74
+    ],
+    [
+     -8,
+     -76
+    ],
+    [
+     -6,
+     -36
+    ],
+    [
+     -24,
+     -38
+    ]
+   ],
+   "color": "#3b3226",
+   "borde": "#1e1a12"
+  },
+  {
+   "nombre": "saco_dormir",
+   "rect": [
+    -26,
+    -82,
+    -6,
+    -74
+   ],
+   "color": "#3a4452"
+  },
+  {
+   "nombre": "torso",
+   "poligono": [
+    [
+     -12,
+     -74
+    ],
+    [
+     12,
+     -74
+    ],
+    [
+     16,
+     -44
+    ],
+    [
+     12,
+     -28
+    ],
+    [
+     -12,
+     -28
+    ],
+    [
+     -15,
+     -44
+    ]
+   ],
+   "color": "#4a5238",
+   "borde": "#1c2014"
+  },
+  {
+   "nombre": "bolsillo",
+   "rect": [
+    2,
+    -50,
+    12,
+    -40
+   ],
+   "color": "#363c29"
+  },
+  {
+   "nombre": "cinturon",
+   "rect": [
+    -12,
+    -33,
+    12,
+    -28
+   ],
+   "color": "#1a1a1a"
+  },
+  {
+   "nombre": "pierna_frente",
+   "pivote": [
+    0,
+    -30
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -14
+     ],
+     [
+      640,
+      14
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "pierna_frente_muslo",
+     "poligono": [
+      [
+       -1.6,
+       -23.7
+      ],
+      [
+       14.4,
+       -19.7
+      ],
+      [
+       17.6,
+       -32.3
+      ],
+      [
+       1.6,
+       -36.3
+      ]
+     ],
+     "color": "#2a2d33"
+    },
+    {
+     "nombre": "pierna_frente_canilla",
+     "poligono": [
+      [
+       11.5,
+       -29.1
+      ],
+      [
+       -4.5,
+       -6.1
+      ],
+      [
+       4.5,
+       0.1
+      ],
+      [
+       20.5,
+       -22.9
+      ]
+     ],
+     "color": "#2a2d33"
+    },
+    {
+     "nombre": "pierna_frente_pie",
+     "poligono": [
+      [
+       -7,
+       -9
+      ],
+      [
+       9,
+       -9
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       -7,
+       0
+      ]
+     ],
+     "color": "#121316"
+    }
+   ]
+  },
+  {
+   "nombre": "capucha",
+   "poligono": [
+    [
+     -12,
+     -94
+    ],
+    [
+     6,
+     -96
+    ],
+    [
+     13,
+     -86
+    ],
+    [
+     13,
+     -74
+    ],
+    [
+     -11,
+     -72
+    ],
+    [
+     -15,
+     -82
+    ]
+   ],
+   "color": "#363c29"
+  },
+  {
+   "nombre": "cara",
+   "poligono": [
+    [
+     4,
+     -88
+    ],
+    [
+     13,
+     -86
+    ],
+    [
+     14,
+     -76
+    ],
+    [
+     8,
+     -73
+    ],
+    [
+     3,
+     -75
+    ]
+   ],
+   "color": "#c9a58a"
+  },
+  {
+   "nombre": "linterna",
+   "rect": [
+    4,
+    -92,
+    13,
+    -87
+   ],
+   "color": "#5a5e66"
+  },
+  {
+   "nombre": "foco",
+   "en": [
+    14,
+    -89.5
+   ],
+   "circulo": {
+    "r": 2.2,
+    "lados": 6
+   },
+   "color": "#ffeeb0"
+  },
+  {
+   "nombre": "haz",
+   "poligono": [
+    [
+     14,
+     -90
+    ],
+    [
+     430,
+     -178
+    ],
+    [
+     430,
+     6
+    ],
+    [
+     14,
+     -88
+    ]
+   ],
+   "color": "#ffeeb0",
+   "opacidad": 0.1
+  },
+  {
+   "nombre": "haz_centro",
+   "poligono": [
+    [
+     14,
+     -90
+    ],
+    [
+     300,
+     -128
+    ],
+    [
+     300,
+     -28
+    ],
+    [
+     14,
+     -88
+    ]
+   ],
+   "color": "#ffeeb0",
+   "opacidad": 0.08
+  },
+  {
+   "nombre": "brazo",
+   "pivote": [
+    2,
+    -66
+   ],
+   "rotacion": -45,
+   "partes": [
+    {
+     "nombre": "manga",
+     "poligono": [
+      [
+       -3.5,
+       -65.7
+      ],
+      [
+       -2.5,
+       -47.7
+      ],
+      [
+       8.5,
+       -48.3
+      ],
+      [
+       7.5,
+       -66.3
+      ]
+     ],
+     "color": "#4a5238"
+    },
+    {
+     "nombre": "antebrazo",
+     "poligono": [
+      [
+       -1.5,
+       -48.7
+      ],
+      [
+       -0.5,
+       -33.7
+      ],
+      [
+       8.5,
+       -34.3
+      ],
+      [
+       7.5,
+       -49.3
+      ]
+     ],
+     "color": "#363c29"
+    },
+    {
+     "nombre": "mano",
+     "en": [
+      4,
+      -31
+     ],
+     "circulo": {
+      "r": 4.5,
+      "lados": 8
+     },
+     "color": "#c9a58a"
+    }
+   ]
+  }
+ ]
+}

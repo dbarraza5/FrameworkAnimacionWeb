@@ -1,0 +1,112 @@
+{
+ "tipo": "asset",
+ "nombre": "Semáforo roto",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "poste",
+   "poligono": [
+    [
+     4,
+     0.6
+    ],
+    [
+     38,
+     -229.4
+    ],
+    [
+     30,
+     -230.6
+    ],
+    [
+     -4,
+     -0.6
+    ]
+   ],
+   "color": "#2d3139"
+  },
+  {
+   "nombre": "caja",
+   "poligono": [
+    [
+     22,
+     -280
+    ],
+    [
+     48,
+     -276
+    ],
+    [
+     44,
+     -206
+    ],
+    [
+     18,
+     -210
+    ]
+   ],
+   "color": "#22252c",
+   "borde": "#101216"
+  },
+  {
+   "nombre": "rojo",
+   "en": [
+    34,
+    -262
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 10
+   },
+   "color": "#3a1414"
+  },
+  {
+   "nombre": "ambar",
+   "en": [
+    32,
+    -243
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 10
+   },
+   "color": "#e0a030",
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.9
+     ],
+     [
+      500,
+      0.9
+     ],
+     [
+      520,
+      0.1
+     ],
+     [
+      1000,
+      0.1
+     ]
+    ]
+   },
+   "bucle": "repetir"
+  },
+  {
+   "nombre": "verde",
+   "en": [
+    30,
+    -224
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 10
+   },
+   "color": "#123018"
+  }
+ ]
+}

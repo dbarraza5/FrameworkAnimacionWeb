@@ -1,0 +1,502 @@
+{
+ "tipo": "escena",
+ "nombre": "3. Se pierde",
+ "duracion": 12500,
+ "precision": "decimal",
+ "zona_segura": {
+  "arriba": 0.1,
+  "abajo": 0.22,
+  "izquierda": 0.05,
+  "derecha": 0.14
+ },
+ "camara": {
+  "tamano": [
+   720,
+   1280
+  ],
+  "centro": [
+   360,
+   760
+  ],
+  "zoom": 1.15,
+  "temblor": {
+   "desde": 1700,
+   "hasta": 2500,
+   "amplitud": 6
+  },
+  "claves": {
+   "x": [
+    [
+     0,
+     360,
+     "mantener"
+    ],
+    [
+     4800,
+     1360,
+     "mantener"
+    ],
+    [
+     9800,
+     2360,
+     "mantener"
+    ]
+   ],
+   "y": [
+    [
+     0,
+     880,
+     "mantener"
+    ],
+    [
+     4800,
+     900,
+     "suave"
+    ],
+    [
+     9799,
+     890,
+     "mantener"
+    ],
+    [
+     9800,
+     880
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     1.15,
+     "mantener"
+    ],
+    [
+     4800,
+     1.5,
+     "suave"
+    ],
+    [
+     9799,
+     1.3,
+     "mantener"
+    ],
+    [
+     9800,
+     1.1
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Fondo estación",
+   "nombre": "fondo_estación_360",
+   "en": [
+    360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Auto 1920",
+   "nombre": "auto_a",
+   "en": [
+    540,
+    1000
+   ],
+   "escala": 0.9,
+   "plano": -3
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie",
+   "en": [
+    300,
+    1000
+   ],
+   "evento": "Cola"
+  },
+  {
+   "instancia": "Perro negro",
+   "nombre": "perro_negro",
+   "en": [
+    880,
+    1000
+   ],
+   "espejo": true,
+   "escala": 1.08,
+   "evento": "Quieto"
+  },
+  {
+   "instancia": "Perro manchado",
+   "nombre": "perro_manchado",
+   "en": [
+    960,
+    1000
+   ],
+   "espejo": true,
+   "escala": 0.95,
+   "evento": "Quieto"
+  },
+  {
+   "instancia": "Fondo noche",
+   "nombre": "fondo_noche_1360",
+   "en": [
+    1360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Elizabeth",
+   "nombre": "elizabeth",
+   "en": [
+    1270,
+    1000
+   ],
+   "evento": "Llamar"
+  },
+  {
+   "instancia": "Frank",
+   "nombre": "frank",
+   "en": [
+    1690,
+    1000
+   ],
+   "espejo": true,
+   "evento": "Quieto"
+  },
+  {
+   "nombre": "farol",
+   "padre": "frank",
+   "enganche": "mano",
+   "girar": false,
+   "partes": [
+    {
+     "nombre": "farol_luz",
+     "en": [
+      0,
+      22
+     ],
+     "circulo": {
+      "r": 120,
+      "lados": 28
+     },
+     "mezcla": "suma",
+     "degradado": {
+      "tipo": "radial",
+      "centro": [
+       0,
+       0
+      ],
+      "radio": 120,
+      "colores": [
+       [
+        0,
+        "rgba(255,210,120,0.55)"
+       ],
+       [
+        1,
+        "rgba(255,170,60,0)"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "farol_asa",
+     "rect": [
+      -1,
+      0,
+      1,
+      10
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "farol_vidrio",
+     "en": [
+      0,
+      22
+     ],
+     "circulo": {
+      "r": 9,
+      "lados": 14
+     },
+     "color": "#ffd36b"
+    },
+    {
+     "nombre": "farol_marco",
+     "en": [
+      0,
+      22
+     ],
+     "rect": [
+      -8,
+      -12,
+      8,
+      12
+     ],
+     "color": "rgba(0,0,0,0)",
+     "borde": "#3a3a3a"
+    }
+   ]
+  },
+  {
+   "instancia": "Fondo estación",
+   "nombre": "fondo_estación_2360",
+   "en": [
+    2360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "nombre": "amanecer",
+   "en": [
+    2360,
+    0
+   ],
+   "plano": -9,
+   "rect": [
+    -460,
+    -200,
+    460,
+    1100
+   ],
+   "color": "rgba(255,170,120,0.22)",
+   "mezcla": "multiplicar"
+  },
+  {
+   "instancia": "Auto 1920",
+   "nombre": "auto_c",
+   "en": [
+    2300,
+    1000
+   ],
+   "evento": "Quieto",
+   "acciones": [
+    [
+     10200,
+     "Andar"
+    ]
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      2300
+     ],
+     [
+      10200,
+      2300,
+      "entrar"
+     ],
+     [
+      12500,
+      3060
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Frank",
+   "nombre": "frank_c",
+   "padre": "auto_c",
+   "enganche": "asiento_del",
+   "en": [
+    0,
+    54
+   ],
+   "escala": 1,
+   "evento": "Sentado"
+  },
+  {
+   "instancia": "Elizabeth",
+   "nombre": "elizabeth_c",
+   "padre": "auto_c",
+   "enganche": "asiento_tras",
+   "en": [
+    -16,
+    54
+   ],
+   "escala": 1,
+   "evento": "Sentado"
+  },
+  {
+   "instancia": "Hija",
+   "nombre": "hija_c",
+   "padre": "auto_c",
+   "enganche": "asiento_tras",
+   "en": [
+    22,
+    43
+   ],
+   "escala": 0.8,
+   "evento": "Sentado"
+  }
+ ],
+ "pasos": [
+  {
+   "mirar": "bobbie",
+   "a": "derecha",
+   "t": 500
+  },
+  {
+   "caminar": "perro_negro",
+   "a": [
+    480,
+    1000
+   ],
+   "desde": 700,
+   "velocidad": 360,
+   "accion": "Correr",
+   "luego": "Quieto"
+  },
+  {
+   "caminar": "perro_manchado",
+   "a": [
+    560,
+    1000
+   ],
+   "desde": 900,
+   "velocidad": 330,
+   "accion": "Correr",
+   "luego": "Quieto"
+  },
+  {
+   "caminar": "bobbie",
+   "a": [
+    -240,
+    1000
+   ],
+   "desde": 2300,
+   "velocidad": 430,
+   "accion": "Correr"
+  },
+  {
+   "caminar": "perro_negro",
+   "a": [
+    -160,
+    1000
+   ],
+   "desde": 2700,
+   "velocidad": 400,
+   "accion": "Correr"
+  },
+  {
+   "caminar": "perro_manchado",
+   "a": [
+    -120,
+    1000
+   ],
+   "desde": 2900,
+   "velocidad": 380,
+   "accion": "Correr"
+  },
+  {
+   "caminar": "frank",
+   "a": [
+    1450,
+    1000
+   ],
+   "desde": 5100,
+   "velocidad": 70,
+   "accion": "Buscar",
+   "luego": "Quieto"
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Wolcott, Indiana",
+   "desde": 200,
+   "hasta": 4400,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 40,
+   "color": "#fff8e8",
+   "fuente": "serif",
+   "velocidad": 22,
+   "resplandor": 6
+  },
+  {
+   "texto": "En un pueblo de Indiana, unos perros lo atacaron… y Bobbie desapareció.",
+   "desde": 300,
+   "hasta": 4700,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 16
+  },
+  {
+   "quien": "elizabeth",
+   "texto": "¡Bobbie! ¡Bobbie!",
+   "desde": 5200,
+   "hasta": 7200,
+   "estilo": "grito"
+  },
+  {
+   "quien": "frank",
+   "texto": "Tenemos que volver… sin él.",
+   "desde": 7600,
+   "hasta": 9600
+  },
+  {
+   "texto": "Días después…",
+   "desde": 9900,
+   "hasta": 12400,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 40,
+   "color": "#fff8e8",
+   "fuente": "serif",
+   "velocidad": 22,
+   "resplandor": 6
+  },
+  {
+   "texto": "Lo buscaron por días. Nunca apareció.",
+   "desde": 10100,
+   "hasta": 12400,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 16
+  }
+ ],
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "BPwS5yO6aXvwg8auqNwS"
+  },
+  "frank": {
+   "motor": "elevenlabs",
+   "voz": "Yzf6MbjAm6T3WgC7SBWE",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "elizabeth": {
+   "motor": "elevenlabs",
+   "voz": "tbfu7H6JPPlpF9clW89V",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "hija": {
+   "motor": "elevenlabs",
+   "voz": "JLjbyFxQ9y50fnjDTvoD",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  }
+ }
+}

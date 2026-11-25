@@ -1,0 +1,351 @@
+{
+ "tipo": "escena",
+ "nombre": "2. Antes de todo",
+ "duracion": 13600,
+ "precision": "decimal",
+ "zona_segura": {
+  "arriba": 0.1,
+  "abajo": 0.22,
+  "izquierda": 0.05,
+  "derecha": 0.14
+ },
+ "camara": {
+  "tamano": [
+   720,
+   1280
+  ],
+  "centro": [
+   360,
+   700
+  ],
+  "zoom": 1.05,
+  "claves": {
+   "x": [
+    [
+     0,
+     330,
+     "suave"
+    ],
+    [
+     10300,
+     330,
+     "suave"
+    ],
+    [
+     11300,
+     400,
+     "suave"
+    ],
+    [
+     11900,
+     400,
+     "suave"
+    ],
+    [
+     13600,
+     520
+    ]
+   ],
+   "y": [
+    [
+     0,
+     860,
+     "suave"
+    ],
+    [
+     10300,
+     860,
+     "suave"
+    ],
+    [
+     11300,
+     940,
+     "suave"
+    ],
+    [
+     11900,
+     940,
+     "suave"
+    ],
+    [
+     13600,
+     900
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     1.05,
+     "suave"
+    ],
+    [
+     10300,
+     1.05,
+     "suave"
+    ],
+    [
+     11300,
+     1.9,
+     "suave"
+    ],
+    [
+     11900,
+     1.9,
+     "suave"
+    ],
+    [
+     13600,
+     1.25
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo_silverton_360",
+   "en": [
+    360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Auto 1920",
+   "nombre": "auto",
+   "en": [
+    430,
+    1000
+   ],
+   "evento": "Quieto",
+   "acciones": [
+    [
+     11600,
+     "Andar"
+    ]
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      430
+     ],
+     [
+      11600,
+      430,
+      "entrar"
+     ],
+     [
+      13600,
+      1250
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Frank",
+   "nombre": "frank",
+   "padre": "auto",
+   "enganche": "asiento_del",
+   "en": [
+    0,
+    54
+   ],
+   "escala": 1,
+   "evento": "Sentado"
+  },
+  {
+   "instancia": "Elizabeth",
+   "nombre": "elizabeth",
+   "padre": "auto",
+   "enganche": "asiento_tras",
+   "en": [
+    -16,
+    54
+   ],
+   "escala": 1,
+   "evento": "Sentado"
+  },
+  {
+   "instancia": "Hija",
+   "nombre": "hija",
+   "padre": "auto",
+   "enganche": "asiento_tras",
+   "en": [
+    22,
+    43
+   ],
+   "escala": 0.8,
+   "evento": "Sentado"
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie",
+   "en": [
+    -120,
+    1000
+   ],
+   "evento": "Quieto",
+   "claves": {
+    "y": [
+     [
+      0,
+      1000
+     ],
+     [
+      10400,
+      1000,
+      "salir"
+     ],
+     [
+      10580,
+      930,
+      "entrar"
+     ],
+     [
+      10700,
+      950
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      1
+     ],
+     [
+      10700,
+      1,
+      "mantener"
+     ],
+     [
+      10701,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie_estribo",
+   "padre": "auto",
+   "enganche": "estribo",
+   "evento": "Cola",
+   "escala": 0.85,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      10700,
+      0,
+      "mantener"
+     ],
+     [
+      10701,
+      1
+     ]
+    ]
+   }
+  }
+ ],
+ "pasos": [
+  {
+   "caminar": "bobbie",
+   "a": [
+    440,
+    1000
+   ],
+   "desde": 7100,
+   "hasta": 10400,
+   "accion": "Correr",
+   "luego": "Quieto"
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Agosto de 1923",
+   "desde": 200,
+   "hasta": 4200,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 40,
+   "color": "#fff8e8",
+   "fuente": "serif",
+   "velocidad": 22,
+   "resplandor": 6
+  },
+  {
+   "texto": "Silverton, Oregón",
+   "desde": 700,
+   "hasta": 4200,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro",
+    "desplazar": [
+     0,
+     56
+    ]
+   },
+   "tamano": 28,
+   "color": "#ffe9c4",
+   "fuente": "serif",
+   "velocidad": 22,
+   "resplandor": 6
+  },
+  {
+   "texto": "Agosto de 1923. La familia Brazier sale de viaje desde Oregón hasta Indiana. Y Bobbie, su perro, va con ellos.",
+   "desde": 400,
+   "hasta": 10200,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 16
+  },
+  {
+   "quien": "frank",
+   "texto": "¡Arriba, Bobbie!",
+   "desde": 9750,
+   "hasta": 11400,
+   "estilo": "grito"
+  }
+ ],
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "BPwS5yO6aXvwg8auqNwS"
+  },
+  "frank": {
+   "motor": "elevenlabs",
+   "voz": "Yzf6MbjAm6T3WgC7SBWE",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "elizabeth": {
+   "motor": "elevenlabs",
+   "voz": "tbfu7H6JPPlpF9clW89V",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "hija": {
+   "motor": "elevenlabs",
+   "voz": "JLjbyFxQ9y50fnjDTvoD",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  }
+ }
+}

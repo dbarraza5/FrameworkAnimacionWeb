@@ -2,11 +2,17 @@
 // Fase A4: reporte de una escena por codigo (para encontrar problemas sin mirar capturas).
 //
 //   node herramientas/reporte.mjs <escena: id o nombre> [--proyecto <id>] [--t 0,2000,4000] [--json]
+//   node herramientas/reporte.mjs --carpeta <dir> --escena historia_1.json [--formato vertical]   (archivos de un generador, SIN guardar)
+//
+// Fase IA-2 (planeacion_autoria_ia.md): ademas, lib/revisiones.mjs (textos y globos, voces que se pisan,
+// partes que se ocultan, claves de partes y acciones despues del final). Cada aviso tiene nivel:
+// error / aviso / revisar. Sale con codigo 1 si hay algun error (para usarlo antes de crear).
 //
 // Por defecto revisa un instante por segundo (y el final). Informa: objetos y su
 // relacion con la camara (dentro / parcial / fuera), objetos que NUNCA se ven, piezas
 // de la fisica que terminan fuera de cuadro, efectos que no afectan a nada, claves
 // despues del final, assets que no cargan. Cada aviso trae una sugerencia.
+import {createCanvas} from "canvas";
 import {cargarMotor} from "./lib/motor.mjs";
 import {cerrar, db, pedirApi, usaApi} from "./lib/datos.mjs";
 
@@ -18,6 +24,13 @@ async function sonidosDelProyecto(id_proyecto) {
     } catch (e) { return []; }
 }
 import {prepararEscena} from "./render.mjs";
+import {cargarCarpeta} from "./lib/memoria.mjs";
+import {revisar} from "./lib/revisiones.mjs";
+
+// voces de cualquier proyecto por nombre (para la duracion de los clips "voz ..." de una escena en memoria)
+async function sonidosPorNombre() {
+    try { return await (await db()).collection("sonidos").find({nombre: /^voz /}, {projection: {nombre: 1, duracion_ms: 1}}).toArray(); } catch (e) { return []; }
+}
 
 process.stdout.on("error", (e) => { if (e.code === "EPIPE") process.exit(0); });
 const salida = (s) => process.stdout.write(s + "\n");
@@ -42,24 +55,28 @@ const relacion = (c, r) => {
 };
 const red = (c) => c && {x0: Math.round(c.x0), y0: Math.round(c.y0), x1: Math.round(c.x1), y1: Math.round(c.y1)};
 
-export async function reportar(idONombre, {proyecto, tiempos} = {}) {
-    const {Render, Fisica, Seguimiento} = await cargarMotor();
-    const {m, doc, errores} = await prepararEscena(idONombre, {proyecto});
+// preparado (opcional): {m, doc, errores} ya listos (p. ej. de lib/memoria.mjs); entonces no se mira el sonido del proyecto
+export async function reportar(idONombre, {proyecto, tiempos, preparado} = {}) {
+    const motor = await cargarMotor();
+    const {Render, Fisica, Seguimiento} = motor;
+    const {m, doc, errores} = preparado || await prepararEscena(idONombre, {proyecto});
     const dur = Math.round((m.duracionReproduccion ? m.duracionReproduccion() : 0) * 1000);
     const ts = tiempos || [...Array(Math.floor(dur / 1000) + 1).keys()].map((s) => s * 1000).concat(dur % 1000 ? [dur] : []);
     const orig = m.gestion_grupos_originales.grupos_figuras.filter((g) => g.nodo_padre === "root" && !g._virtual);
     const objetos = orig.filter((g) => !(g.clases || []).includes("camara") && !Fisica.grupoEsEfecto(g) && g.nombre !== "default");
     const efectos = orig.filter((g) => Fisica.grupoEsEfecto(g));
     const avisos = [];
-    const aviso = (tipo, msj, sugerencia) => avisos.push({tipo, msj, sugerencia});
+    const aviso = (tipo, msj, sugerencia, nivel = tipo === "visibilidad" ? "revisar" : tipo === "asset" ? "error" : "aviso") => avisos.push({nivel, tipo, msj, sugerencia});
 
     for (const e of errores) aviso("asset", `no carga el asset ${e}`, "revisar que el documento exista y sea del proyecto");
 
     // instantes
     const instantes = [];
     const vistos = new Map(objetos.map((g) => [g.nombre, false]));
+    // lienzo real chico (uno falso se rompe con escena.estilo, que lee los pixeles)
+    const lienzo = createCanvas(16, 16).getContext("2d");
     for (const t of ts) {
-        Render.dibujarCuadro(m, fakeCtx(), 1, 1, t);              // lleva el motor a t (dibujo descartado)
+        Render.dibujarCuadro(m, lienzo, 16, 16, t);               // lleva el motor a t (dibujo descartado)
         const r = m.rectCamara() || {x0: 0, y0: 0, w: 1280, h: 720};
         const filas = objetos.map((g) => {
             const c = Render.cajaMundo(m, g.nombre);
@@ -105,11 +122,15 @@ export async function reportar(idONombre, {proyecto, tiempos} = {}) {
         }
         if (g.opacidad === 0 || g.visible === false) aviso("visibilidad", `"${g.nombre}" está oculto (visible=false u opacidad 0)`, "es intencional?");
     }
-    // sonido (planeacion_sonido.md): que suena y que falta
-    const sonidos = await sonidosDelProyecto(doc.id_proyecto);
+    // sonido (planeacion_sonido.md): que suena y que falta (en memoria no hay proyecto: solo las voces por nombre)
+    const sonidos = preparado ? await sonidosPorNombre() : await sonidosDelProyecto(doc.id_proyecto);
+    // IA-2: revisiones nuevas
+    for (const v of revisar(m, doc, motor, {dur, sonidos})) avisos.push(v);
+    const ORDEN = {error: 0, aviso: 1, revisar: 2};
+    avisos.sort((a, b) => ORDEN[a.nivel] - ORDEN[b.nivel] || (a.t ?? 0) - (b.t ?? 0));
     const nombre = new Map(sonidos.map((x) => [String(x._id), x.nombre]));
     const clips = m.clipsAudio(m.duracionEscenaMs());
-    const segui = Seguimiento.seguimiento({escena: doc.escena || {}, eventos: doc.eventos || [], grupos: doc.grupos_figuras || []}, sonidos);
+    const segui = preparado ? {avisos: [], resumen: {falta_subir: 0, sonido_borrado: 0, falta_sonido: 0, sin_decidir: 0}} : Seguimiento.seguimiento({escena: doc.escena || {}, eventos: doc.eventos || [], grupos: doc.grupos_figuras || []}, sonidos);
     for (const v of segui.avisos.filter((x) => x.nivel !== "sin_decidir")) {
         aviso("sonido", v.mensaje, v.nivel === "falta_subir" ? "subir el archivo en Proyecto → Sonido (o en el editor, pestaña Sonido)"
             : v.nivel === "sonido_borrado" ? "elegir otro sonido o quitar el clip" : 'ponerle un sonido o marcarlo "no lleva"');
@@ -119,21 +140,23 @@ export async function reportar(idONombre, {proyecto, tiempos} = {}) {
     return {escena: doc.nombre, id: String(doc._id), duracion_ms: dur, avisos, instantes, sonido};
 }
 
-// contexto 2D vacio (para mover el motor sin dibujar de verdad)
-function fakeCtx() {
-    const nada = () => {};
-    return new Proxy({}, {get: (o, k) => (k in o ? o[k] : nada), set: (o, k, v) => { o[k] = v; return true; }});
-}
 
 async function principal() {
     const a = argumentos(process.argv.slice(2));
-    if (!a._[0]) { salida("uso: reporte.mjs <escena> [--proyecto <id>] [--t 0,2000] [--json]"); process.exitCode = 2; return; }
+    if (!a._[0] && !a.carpeta) { salida("uso: reporte.mjs <escena> [--proyecto <id>] [--t 0,2000] [--json]  |  reporte.mjs --carpeta <dir> --escena x.json"); process.exitCode = 2; return; }
     const tiempos = a.t ? String(a.t).split(",").map((x) => parseInt(x, 10)) : null;
-    const r = await reportar(a._[0], {proyecto: a.proyecto, tiempos});
+    let preparado = null;
+    if (a.carpeta) {
+        const c = await cargarCarpeta(a.carpeta, {avisar: () => {}});
+        preparado = await c.preparar(typeof a.escena === "string" ? a.escena : "escena.json", {formato: typeof a.formato === "string" ? a.formato : undefined});
+    }
+    const r = await reportar(a._[0], {proyecto: a.proyecto, tiempos, preparado});
+    if (r.avisos.some((v) => v.nivel === "error")) process.exitCode = 1;
     if (a.json) { salida(JSON.stringify(r, null, 1)); return; }
     salida(`Escena "${r.escena}" (${r.id}), ${r.duracion_ms} ms, ${r.instantes.length} instantes revisados`);
-    salida(r.avisos.length ? `\nAVISOS (${r.avisos.length}):` : "\nSin avisos.");
-    for (const v of r.avisos) salida(`  [${v.tipo}] ${v.msj}\n      → ${v.sugerencia}`);
+    const cuenta = (n) => r.avisos.filter((v) => v.nivel === n).length;
+    salida(r.avisos.length ? `\nAVISOS: ${cuenta("error")} error(es) · ${cuenta("aviso")} aviso(s) · ${cuenta("revisar")} a revisar` : "\nSin avisos.");
+    for (const v of r.avisos) salida(`  ${v.nivel.toUpperCase().padEnd(7)} [${v.tipo}] ${v.msj}\n      → ${v.sugerencia}`);
     const rs = r.sonido.resumen;
     salida(`\nSonido: ${r.sonido.clips.length} clip(s) · falta subir ${rs.falta_subir} · borrados ${rs.sonido_borrado} · falta sonido ${rs.falta_sonido} · sin decidir ${rs.sin_decidir}`);
     for (const c of r.sonido.clips.slice(0, 30)) salida(`  ${String(c.t).padStart(6)} ms  ${c.sonido}  (${c.origen})`);

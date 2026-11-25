@@ -1,0 +1,296 @@
+{
+ "tipo": "asset",
+ "nombre": "Zombi arrastrándose",
+ "duracion": 2000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "piernas",
+   "pivote": [
+    -20,
+    -12
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -3
+     ],
+     [
+      900,
+      3
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "pierna_a",
+     "poligono": [
+      [
+       -20.6,
+       -17.5
+      ],
+      [
+       -78.6,
+       -11.5
+      ],
+      [
+       -77.4,
+       -0.5
+      ],
+      [
+       -19.4,
+       -6.5
+      ]
+     ],
+     "color": "#2b2a2e"
+    },
+    {
+     "nombre": "pierna_b",
+     "poligono": [
+      [
+       -20.2,
+       -21
+      ],
+      [
+       -72.2,
+       -19
+      ],
+      [
+       -71.8,
+       -9
+      ],
+      [
+       -19.8,
+       -11
+      ]
+     ],
+     "color": "#1f1e22"
+    },
+    {
+     "nombre": "pie",
+     "poligono": [
+      [
+       -84,
+       -12
+      ],
+      [
+       -74,
+       -12
+      ],
+      [
+       -74,
+       0
+      ],
+      [
+       -84,
+       0
+      ]
+     ],
+     "color": "#101012"
+    }
+   ]
+  },
+  {
+   "nombre": "brazo_tras",
+   "pivote": [
+    10,
+    -26
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -100
+     ],
+     [
+      900,
+      -40
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "brazo_tras_b",
+     "poligono": [
+      [
+       6,
+       -25.7
+      ],
+      [
+       8,
+       4.3
+      ],
+      [
+       16,
+       3.7
+      ],
+      [
+       14,
+       -26.3
+      ]
+     ],
+     "color": "#5b6b4c"
+    }
+   ]
+  },
+  {
+   "nombre": "torso",
+   "poligono": [
+    [
+     -24,
+     -10
+    ],
+    [
+     -20,
+     -28
+    ],
+    [
+     16,
+     -34
+    ],
+    [
+     22,
+     -18
+    ],
+    [
+     16,
+     -8
+    ]
+   ],
+   "color": "#4a3a3a",
+   "borde": "#121214"
+  },
+  {
+   "nombre": "cabeza",
+   "pivote": [
+    20,
+    -30
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -10
+     ],
+     [
+      1300,
+      8
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "craneo",
+     "poligono": [
+      [
+       18,
+       -42
+      ],
+      [
+       32,
+       -44
+      ],
+      [
+       38,
+       -34
+      ],
+      [
+       34,
+       -24
+      ],
+      [
+       22,
+       -24
+      ]
+     ],
+     "color": "#7d8f6a",
+     "borde": "#2a3322"
+    },
+    {
+     "nombre": "ojo",
+     "en": [
+      32,
+      -36
+     ],
+     "circulo": {
+      "r": 1.6,
+      "lados": 6
+     },
+     "color": "#d6e89a"
+    },
+    {
+     "nombre": "boca",
+     "poligono": [
+      [
+       30,
+       -29
+      ],
+      [
+       37,
+       -29
+      ],
+      [
+       35,
+       -25
+      ],
+      [
+       31,
+       -25
+      ]
+     ],
+     "color": "#1a0f0f"
+    }
+   ]
+  },
+  {
+   "nombre": "brazo_frente",
+   "pivote": [
+    14,
+    -28
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -40
+     ],
+     [
+      900,
+      -105
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "brazo_frente_b",
+     "poligono": [
+      [
+       10,
+       -27.7
+      ],
+      [
+       12,
+       2.3
+      ],
+      [
+       20,
+       1.7
+      ],
+      [
+       18,
+       -28.3
+      ]
+     ],
+     "color": "#7d8f6a"
+    }
+   ]
+  }
+ ]
+}

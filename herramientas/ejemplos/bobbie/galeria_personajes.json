@@ -1,0 +1,303 @@
+{
+ "tipo": "escena",
+ "nombre": "0. Galería de personajes",
+ "duracion": 17500,
+ "precision": "decimal",
+ "camara": {
+  "tamano": [
+   720,
+   1280
+  ],
+  "centro": [
+   360,
+   640
+  ]
+ },
+ "objetos": [
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo",
+   "en": [
+    360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Frank",
+   "nombre": "frank",
+   "en": [
+    110,
+    760
+   ],
+   "escala": 1.15,
+   "acciones": [
+    [
+     0,
+     "Quieto"
+    ],
+    [
+     3400,
+     "Caminar"
+    ],
+    [
+     6800,
+     "Llamar"
+    ],
+    [
+     10200,
+     "Buscar"
+    ],
+    [
+     13600,
+     "Abrazar"
+    ]
+   ]
+  },
+  {
+   "instancia": "Elizabeth",
+   "nombre": "elizabeth",
+   "en": [
+    330,
+    760
+   ],
+   "escala": 1.15,
+   "acciones": [
+    [
+     300,
+     "Quieto"
+    ],
+    [
+     3700,
+     "Caminar"
+    ],
+    [
+     7100,
+     "Llamar"
+    ],
+    [
+     10500,
+     "Buscar"
+    ],
+    [
+     13900,
+     "Abrazar"
+    ]
+   ]
+  },
+  {
+   "instancia": "Hija",
+   "nombre": "hija",
+   "en": [
+    540,
+    760
+   ],
+   "escala": 0.85,
+   "acciones": [
+    [
+     600,
+     "Quieto"
+    ],
+    [
+     4000,
+     "Caminar"
+    ],
+    [
+     7400,
+     "Llamar"
+    ],
+    [
+     10800,
+     "Buscar"
+    ],
+    [
+     14200,
+     "Abrazar"
+    ]
+   ]
+  },
+  {
+   "nombre": "farol",
+   "padre": "frank",
+   "enganche": "mano",
+   "partes": [
+    {
+     "nombre": "farol_asa",
+     "rect": [
+      -1,
+      0,
+      1,
+      10
+     ],
+     "color": "#3a3a3a"
+    },
+    {
+     "nombre": "farol_luz",
+     "en": [
+      0,
+      22
+     ],
+     "circulo": {
+      "r": 9,
+      "lados": 14
+     },
+     "color": "#ffd36b"
+    },
+    {
+     "nombre": "farol_marco",
+     "en": [
+      0,
+      22
+     ],
+     "rect": [
+      -8,
+      -12,
+      8,
+      12
+     ],
+     "color": "rgba(0,0,0,0)",
+     "borde": "#3a3a3a"
+    }
+   ]
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie",
+   "en": [
+    300,
+    1060
+   ],
+   "escala": 2.2,
+   "acciones": [
+    [
+     0,
+     "Quieto"
+    ],
+    [
+     2500,
+     "Caminar"
+    ],
+    [
+     5000,
+     "Correr"
+    ],
+    [
+     7500,
+     "Cola"
+    ],
+    [
+     10000,
+     "Sentado"
+    ],
+    [
+     12500,
+     "Cojear"
+    ],
+    [
+     15000,
+     "Nadar"
+    ]
+   ]
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Bobbie: Quieto",
+   "desde": 100,
+   "hasta": 2400,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Bobbie: Caminar",
+   "desde": 2600,
+   "hasta": 4900,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Bobbie: Correr",
+   "desde": 5100,
+   "hasta": 7400,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Bobbie: Cola",
+   "desde": 7600,
+   "hasta": 9900,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Bobbie: Sentado",
+   "desde": 10100,
+   "hasta": 12400,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Bobbie: Cojear",
+   "desde": 12600,
+   "hasta": 14900,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  },
+  {
+   "texto": "Bobbie: Nadar",
+   "desde": 15100,
+   "hasta": 17400,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 34,
+   "color": "#ffffff",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  }
+ ]
+}

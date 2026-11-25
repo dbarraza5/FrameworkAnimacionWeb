@@ -1,0 +1,604 @@
+{
+ "tipo": "escena",
+ "nombre": "2. Antes de todo",
+ "duracion": 14148,
+ "precision": "decimal",
+ "zona_segura": {
+  "arriba": 0.1,
+  "abajo": 0.22,
+  "izquierda": 0.05,
+  "derecha": 0.14
+ },
+ "camara": {
+  "tamano": [
+   720,
+   1280
+  ],
+  "centro": [
+   360,
+   700
+  ],
+  "zoom": 1.05,
+  "claves": {
+   "x": [
+    [
+     0,
+     330,
+     "suave"
+    ],
+    [
+     10300,
+     330,
+     "suave"
+    ],
+    [
+     11300,
+     400,
+     "suave"
+    ],
+    [
+     12448,
+     400,
+     "suave"
+    ],
+    [
+     14148,
+     520
+    ]
+   ],
+   "y": [
+    [
+     0,
+     860,
+     "suave"
+    ],
+    [
+     10300,
+     860,
+     "suave"
+    ],
+    [
+     11300,
+     940,
+     "suave"
+    ],
+    [
+     12448,
+     940,
+     "suave"
+    ],
+    [
+     14148,
+     900
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     1.05,
+     "suave"
+    ],
+    [
+     10300,
+     1.05,
+     "suave"
+    ],
+    [
+     11300,
+     1.9,
+     "suave"
+    ],
+    [
+     12448,
+     1.9,
+     "suave"
+    ],
+    [
+     14148,
+     1.25
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo_silverton_360",
+   "en": [
+    360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Auto 1920",
+   "nombre": "auto",
+   "en": [
+    430,
+    1000
+   ],
+   "evento": "Quieto",
+   "acciones": [
+    [
+     12148,
+     "Andar"
+    ]
+   ],
+   "claves": {
+    "x": [
+     [
+      0,
+      430
+     ],
+     [
+      12148,
+      430,
+      "entrar"
+     ],
+     [
+      14148,
+      1250
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Frank",
+   "nombre": "frank",
+   "padre": "auto",
+   "enganche": "asiento_del",
+   "en": [
+    0,
+    54
+   ],
+   "escala": 1,
+   "evento": "Sentado",
+   "claves_partes": {
+    "boca": {
+     "escala_y": [
+      [
+       9899,
+       0.6,
+       "lineal"
+      ],
+      [
+       9900,
+       0.6,
+       "lineal"
+      ],
+      [
+       9940,
+       1.24,
+       "lineal"
+      ],
+      [
+       9980,
+       2.26,
+       "lineal"
+      ],
+      [
+       10060,
+       1.88,
+       "lineal"
+      ],
+      [
+       10100,
+       1.86,
+       "lineal"
+      ],
+      [
+       10140,
+       1.68,
+       "lineal"
+      ],
+      [
+       10180,
+       2.2,
+       "lineal"
+      ],
+      [
+       10220,
+       2.5,
+       "lineal"
+      ],
+      [
+       10260,
+       2.44,
+       "lineal"
+      ],
+      [
+       10300,
+       1.88,
+       "lineal"
+      ],
+      [
+       10340,
+       2.36,
+       "lineal"
+      ],
+      [
+       10380,
+       2.52,
+       "lineal"
+      ],
+      [
+       10420,
+       2.58,
+       "lineal"
+      ],
+      [
+       10460,
+       2.44,
+       "lineal"
+      ],
+      [
+       10500,
+       2.38,
+       "lineal"
+      ],
+      [
+       10540,
+       2.3,
+       "lineal"
+      ],
+      [
+       10580,
+       2.06,
+       "lineal"
+      ],
+      [
+       10620,
+       1.4,
+       "lineal"
+      ],
+      [
+       10660,
+       1.9,
+       "lineal"
+      ],
+      [
+       10700,
+       2.34,
+       "lineal"
+      ],
+      [
+       10740,
+       2.54,
+       "lineal"
+      ],
+      [
+       10780,
+       2.46,
+       "lineal"
+      ],
+      [
+       10820,
+       1.76,
+       "lineal"
+      ],
+      [
+       10860,
+       1.74,
+       "lineal"
+      ],
+      [
+       10900,
+       2.22,
+       "lineal"
+      ],
+      [
+       10940,
+       2.16,
+       "lineal"
+      ],
+      [
+       10980,
+       1.88,
+       "lineal"
+      ],
+      [
+       11020,
+       1.6,
+       "lineal"
+      ],
+      [
+       11060,
+       1.44,
+       "lineal"
+      ],
+      [
+       11100,
+       1.18,
+       "lineal"
+      ],
+      [
+       11140,
+       0.92,
+       "lineal"
+      ],
+      [
+       11180,
+       0.78,
+       "lineal"
+      ],
+      [
+       11220,
+       0.7,
+       "lineal"
+      ],
+      [
+       11260,
+       0.6,
+       "lineal"
+      ]
+     ],
+     "peso": [
+      [
+       9839,
+       0,
+       "lineal"
+      ],
+      [
+       9899,
+       1,
+       "lineal"
+      ],
+      [
+       11260,
+       1,
+       "lineal"
+      ],
+      [
+       11320,
+       0,
+       "lineal"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "instancia": "Elizabeth",
+   "nombre": "elizabeth",
+   "padre": "auto",
+   "enganche": "asiento_tras",
+   "en": [
+    -16,
+    54
+   ],
+   "escala": 1,
+   "evento": "Sentado"
+  },
+  {
+   "instancia": "Hija",
+   "nombre": "hija",
+   "padre": "auto",
+   "enganche": "asiento_tras",
+   "en": [
+    22,
+    43
+   ],
+   "escala": 0.8,
+   "evento": "Sentado"
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie",
+   "en": [
+    -120,
+    1000
+   ],
+   "evento": "Quieto",
+   "claves": {
+    "y": [
+     [
+      0,
+      1000
+     ],
+     [
+      10400,
+      1000,
+      "salir"
+     ],
+     [
+      10580,
+      930,
+      "entrar"
+     ],
+     [
+      10700,
+      950
+     ]
+    ],
+    "opacidad": [
+     [
+      0,
+      1
+     ],
+     [
+      10700,
+      1,
+      "mantener"
+     ],
+     [
+      10701,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie_estribo",
+   "padre": "auto",
+   "enganche": "estribo",
+   "evento": "Cola",
+   "escala": 0.85,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0
+     ],
+     [
+      10700,
+      0,
+      "mantener"
+     ],
+     [
+      10701,
+      1
+     ]
+    ]
+   }
+  }
+ ],
+ "pasos": [
+  {
+   "caminar": "bobbie",
+   "a": [
+    440,
+    1000
+   ],
+   "desde": 7100,
+   "hasta": 10400,
+   "accion": "Correr",
+   "luego": "Quieto"
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Agosto de 1923",
+   "desde": 200,
+   "hasta": 4200,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 40,
+   "color": "#fff8e8",
+   "fuente": "serif",
+   "velocidad": 22,
+   "resplandor": 6
+  },
+  {
+   "texto": "Silverton, Oregón",
+   "desde": 700,
+   "hasta": 4200,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro",
+    "desplazar": [
+     0,
+     56
+    ]
+   },
+   "tamano": 28,
+   "color": "#ffe9c4",
+   "fuente": "serif",
+   "velocidad": 22,
+   "resplandor": 6
+  },
+  {
+   "texto": "Agosto de 1923. La familia Brazier sale de viaje desde Oregón hasta Indiana. Y Bobbie, su perro, va con ellos.",
+   "desde": 400,
+   "hasta": 10200,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 14
+  },
+  {
+   "quien": "frank",
+   "texto": "¡Arriba, Bobbie!",
+   "desde": 9750,
+   "hasta": 11948,
+   "estilo": "grito",
+   "velocidad": 13
+  }
+ ],
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "BPwS5yO6aXvwg8auqNwS"
+  },
+  "frank": {
+   "motor": "elevenlabs",
+   "voz": "Yzf6MbjAm6T3WgC7SBWE",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "elizabeth": {
+   "motor": "elevenlabs",
+   "voz": "tbfu7H6JPPlpF9clW89V",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "hija": {
+   "motor": "elevenlabs",
+   "voz": "JLjbyFxQ9y50fnjDTvoD",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  }
+ },
+ "sonidos": [
+  {
+   "sonido": "voz narrador bc23421c",
+   "t": 400,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz frank cdfd3e69",
+   "t": 9900,
+   "volumen": 1
+  },
+  {
+   "sonido": "Pájaros de verano",
+   "t": 0,
+   "volumen": 0.3,
+   "bucle": true,
+   "fundido": {
+    "entrada": 600,
+    "salida": 900
+   }
+  },
+  {
+   "sonido": "Ladrido feliz",
+   "t": 10301,
+   "volumen": 0.55
+  },
+  {
+   "sonido": "Auto antiguo",
+   "t": 9948,
+   "volumen": 0.55,
+   "fundido": {
+    "entrada": 400,
+    "salida": 1200
+   }
+  },
+  {
+   "sonido": "Música: Bobbie",
+   "t": 0,
+   "volumen": 0.32,
+   "recorte": [
+    7709,
+    21857
+   ],
+   "fundido": {
+    "entrada": 80,
+    "salida": 80
+   }
+  }
+ ]
+}

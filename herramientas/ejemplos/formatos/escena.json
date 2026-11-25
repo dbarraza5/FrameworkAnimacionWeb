@@ -1,0 +1,29 @@
+{
+ "tipo": "escena",
+ "nombre": "Atardecer",
+ "duracion": 5000,
+ "camara": {"centro": [640, 360], "zoom": 1, "claves": {"zoom": [[0, 1], [5000, 1.08, "suave"]]}},
+ "objetos": [
+  {"nombre": "cielo", "en": [0, 0], "plano": -10, "rect": [-1000, -1200, 2300, 1600],
+   "degradado": {"tipo": "lineal", "de": [0, -400], "a": [0, 600], "colores": [[0, "#2b1f5c"], [0.6, "#e0705a"], [1, "#ffcf8a"]]}},
+  {"nombre": "sol", "en": {"cuadro": "arriba-derecha", "desplazar": [-60, 70]}, "plano": -9, "circulo": {"r": 46, "lados": 40}, "color": "#ffe39a"},
+  {"nombre": "nube", "en": {"cuadro": [0.22, 0.3]}, "plano": -8, "opacidad": 0.85, "partes": [
+    {"nombre": "n1", "elipse": [60, 22], "color": "#fff1e6"}, {"nombre": "n2", "en": [40, -14], "elipse": [40, 20], "color": "#fff1e6"}]},
+  {"nombre": "suelo", "en": [0, 560], "plano": -5, "rect": [-1000, 0, 2300, 1200], "color": "#3b2a3f"},
+  {"nombre": "casa", "en": [640, 560], "partes": [
+    {"nombre": "muro", "rect": [-80, -120, 80, 0], "color": "#c98b6b"},
+    {"nombre": "techo", "poligono": [[-100, -120], [0, -200], [100, -120]], "color": "#7a3b3b"},
+    {"nombre": "ventana", "rect": [-25, -85, 25, -40], "color": "#ffd77a"}]}
+ ],
+ "dialogos": [
+  {"texto": "Atardecer", "desde": 300, "hasta": 4800, "estilo": "texto", "en": {"cuadro": "arriba-centro"}, "tamano": 54, "alinear": "centro", "color": "#ffffff", "velocidad": 0},
+  {"texto": "Formato horizontal 16:9", "desde": 800, "hasta": 4800, "estilo": "texto", "en": {"cuadro": "abajo-centro", "desplazar": [0, -10]}, "tamano": 26, "alinear": "centro", "color": "#ffe9d6", "velocidad": 0}
+ ],
+ "formatos": {
+  "vertical": {
+   "nombre": "Atardecer (vertical)",
+   "camara": {"tamano": [720, 1280], "centro": [640, 300]},
+   "dialogos": {"1": {"texto": "Formato vertical 9:16"}}
+  }
+ }
+}

@@ -79,6 +79,16 @@ test("insertar tiempo: tambien corre las claves_partes de una instancia", async 
     assert.deepEqual(r.objetos[0].claves_partes.copa.opacidad.map((c) => c[0]), [0, 8400, 8500]);
 });
 
+test("insertar tiempo: tambien corre los pasos de alto nivel (IA-5)", async () => {
+    const {insertarTiempo} = await import("../voces.mjs");
+    const esc = {duracion: 10000, objetos: [], pasos: [
+        {caminar: "a", a: [0, 0], desde: 1000, hasta: 6000},          // cruza el punto: se estira
+        {caminar: "a", a: [9, 0], desde: 6000, velocidad: 100},         // despues: se corre
+        {mirar: "a", a: "izquierda", t: 7000}, {plano: "medio", de: "a", desde: 2000, hasta: 3000}]};
+    const r = insertarTiempo(esc, 5000, 1500);
+    assert.deepEqual(r.pasos.map((p) => [p.t, p.desde, p.hasta]), [[undefined, 1000, 7500], [undefined, 7500, undefined], [8500, undefined, undefined], [undefined, 2000, 3000]]);
+});
+
 test("filtro de radio: recorta los graves y suma silencio con clic al principio y al final", async () => {
     const {radio} = await import("../voces.mjs");
     const SR = 24000, x = new Float32Array(SR / 2);

@@ -1,0 +1,1596 @@
+{
+ "tipo": "asset",
+ "nombre": "Auto 1920",
+ "duracion": 2000,
+ "eventos": [
+  {
+   "nombre": "EventoGeneral",
+   "nodo_padre": "Nodo_Default",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 0,
+   "tiempo_final": 2000,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  },
+  {
+   "nombre": "Quieto",
+   "nodo_padre": "EventoGeneral",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 0,
+   "tiempo_final": 1000,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  },
+  {
+   "nombre": "Andar",
+   "nodo_padre": "EventoGeneral",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 1200,
+   "tiempo_final": 1800,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  }
+ ],
+ "partes": [
+  {
+   "nombre": "auto",
+   "partes": [
+    {
+     "nombre": "carroceria",
+     "partes": [
+      {
+       "nombre": "capota",
+       "color": "#b8a47a",
+       "borde": "#7d6c4a",
+       "poligono": [
+        [
+         -152,
+         -246
+        ],
+        [
+         54,
+         -246
+        ],
+        [
+         58,
+         -236
+        ],
+        [
+         -148,
+         -236
+        ]
+       ]
+      },
+      {
+       "nombre": "capota_atras",
+       "color": "#a8946a",
+       "borde": "#7d6c4a",
+       "poligono": [
+        [
+         -156,
+         -104
+        ],
+        [
+         -152,
+         -246
+        ],
+        [
+         -138,
+         -246
+        ],
+        [
+         -140,
+         -104
+        ]
+       ]
+      },
+      {
+       "nombre": "poste_capota",
+       "color": "#3a3226",
+       "poligono": [
+        [
+         48,
+         -240
+        ],
+        [
+         52,
+         -240
+        ],
+        [
+         58,
+         -96
+        ],
+        [
+         54,
+         -96
+        ]
+       ]
+      },
+      {
+       "nombre": "poste_medio",
+       "color": "#3a3226",
+       "poligono": [
+        [
+         -46,
+         -240
+        ],
+        [
+         -42,
+         -240
+        ],
+        [
+         -42,
+         -104
+        ],
+        [
+         -46,
+         -104
+        ]
+       ]
+      },
+      {
+       "nombre": "asiento_tras",
+       "color": "#6b3a2a",
+       "poligono": [
+        [
+         -138,
+         -108
+        ],
+        [
+         -128,
+         -152
+        ],
+        [
+         -104,
+         -152
+        ],
+        [
+         -96,
+         -104
+        ]
+       ]
+      },
+      {
+       "nombre": "asiento_del",
+       "color": "#6b3a2a",
+       "poligono": [
+        [
+         -34,
+         -108
+        ],
+        [
+         -26,
+         -146
+        ],
+        [
+         -6,
+         -146
+        ],
+        [
+         4,
+         -104
+        ]
+       ]
+      },
+      {
+       "nombre": "parabrisas",
+       "color": "rgba(200,225,235,0.55)",
+       "borde": "#3a3a3a",
+       "poligono": [
+        [
+         56,
+         -200
+        ],
+        [
+         62,
+         -200
+        ],
+        [
+         64,
+         -96
+        ],
+        [
+         58,
+         -96
+        ]
+       ]
+      },
+      {
+       "nombre": "caja",
+       "color": "#22252b",
+       "borde": "#0f1014",
+       "poligono": [
+        [
+         -156,
+         -50
+        ],
+        [
+         -156,
+         -104
+        ],
+        [
+         -100,
+         -106
+        ],
+        [
+         -92,
+         -92
+        ],
+        [
+         40,
+         -92
+        ],
+        [
+         60,
+         -98
+        ],
+        [
+         140,
+         -96
+        ],
+        [
+         152,
+         -66
+        ],
+        [
+         152,
+         -50
+        ]
+       ],
+       "degradado": {
+        "tipo": "lineal",
+        "de": [
+         0,
+         -106
+        ],
+        "a": [
+         0,
+         -50
+        ],
+        "colores": [
+         [
+          0,
+          "#3a3f48"
+         ],
+         [
+          0.5,
+          "#22252b"
+         ],
+         [
+          1,
+          "#16181c"
+         ]
+        ]
+       }
+      },
+      {
+       "nombre": "brillo_caja",
+       "color": "rgba(255,255,255,0.18)",
+       "poligono": [
+        [
+         -150,
+         -98
+        ],
+        [
+         -100,
+         -100
+        ],
+        [
+         40,
+         -88
+        ],
+        [
+         140,
+         -90
+        ],
+        [
+         140,
+         -86
+        ],
+        [
+         40,
+         -84
+        ],
+        [
+         -150,
+         -92
+        ]
+       ]
+      },
+      {
+       "nombre": "puerta",
+       "color": "rgba(0,0,0,0)",
+       "borde": "#0f1014",
+       "poligono": [
+        [
+         -60,
+         -92
+        ],
+        [
+         -12,
+         -92
+        ],
+        [
+         -12,
+         -54
+        ],
+        [
+         -60,
+         -54
+        ]
+       ]
+      },
+      {
+       "nombre": "manija",
+       "color": "#c9a24a",
+       "poligono": [
+        [
+         -20,
+         -80
+        ],
+        [
+         -12,
+         -80
+        ],
+        [
+         -12,
+         -77
+        ],
+        [
+         -20,
+         -77
+        ]
+       ]
+      },
+      {
+       "nombre": "capot_rejilla",
+       "color": "#2e323a",
+       "poligono": [
+        [
+         70,
+         -90
+        ],
+        [
+         140,
+         -88
+        ],
+        [
+         140,
+         -84
+        ],
+        [
+         70,
+         -86
+        ]
+       ]
+      },
+      {
+       "nombre": "radiador",
+       "color": "#c9a24a",
+       "borde": "#8a6a24",
+       "poligono": [
+        [
+         148,
+         -102
+        ],
+        [
+         160,
+         -102
+        ],
+        [
+         160,
+         -56
+        ],
+        [
+         148,
+         -56
+        ]
+       ]
+      },
+      {
+       "nombre": "faro",
+       "en": [
+        164,
+        -86
+       ],
+       "circulo": {
+        "r": 9,
+        "lados": 16
+       },
+       "color": "#f6e7a8",
+       "borde": "#8a6a24"
+      },
+      {
+       "nombre": "guardabarros_tras",
+       "color": "#16181c",
+       "poligono": [
+        [
+         -146,
+         -52
+        ],
+        [
+         -136,
+         -72
+        ],
+        [
+         -100,
+         -80
+        ],
+        [
+         -66,
+         -72
+        ],
+        [
+         -58,
+         -50
+        ]
+       ]
+      },
+      {
+       "nombre": "guardabarros_del",
+       "color": "#16181c",
+       "poligono": [
+        [
+         62,
+         -52
+        ],
+        [
+         76,
+         -74
+        ],
+        [
+         108,
+         -80
+        ],
+        [
+         140,
+         -70
+        ],
+        [
+         156,
+         -48
+        ]
+       ]
+      },
+      {
+       "nombre": "estribo",
+       "color": "#4a4f57",
+       "poligono": [
+        [
+         -62,
+         -46
+        ],
+        [
+         66,
+         -46
+        ],
+        [
+         66,
+         -40
+        ],
+        [
+         -62,
+         -40
+        ]
+       ]
+      },
+      {
+       "nombre": "volante",
+       "en": [
+        16,
+        -122
+       ],
+       "elipse": [
+        3,
+        10
+       ],
+       "color": "#3a2a1a"
+      }
+     ],
+     "claves": {
+      "y": [
+       [
+        0,
+        0,
+        "lineal"
+       ],
+       [
+        50,
+        0,
+        "lineal"
+       ],
+       [
+        100,
+        0,
+        "lineal"
+       ],
+       [
+        150,
+        0,
+        "lineal"
+       ],
+       [
+        200,
+        0,
+        "lineal"
+       ],
+       [
+        250,
+        0,
+        "lineal"
+       ],
+       [
+        300,
+        0,
+        "lineal"
+       ],
+       [
+        350,
+        0,
+        "lineal"
+       ],
+       [
+        400,
+        0,
+        "lineal"
+       ],
+       [
+        450,
+        0,
+        "lineal"
+       ],
+       [
+        500,
+        0,
+        "lineal"
+       ],
+       [
+        550,
+        0,
+        "lineal"
+       ],
+       [
+        600,
+        0,
+        "lineal"
+       ],
+       [
+        650,
+        0,
+        "lineal"
+       ],
+       [
+        700,
+        0,
+        "lineal"
+       ],
+       [
+        750,
+        0,
+        "lineal"
+       ],
+       [
+        800,
+        0,
+        "lineal"
+       ],
+       [
+        850,
+        0,
+        "lineal"
+       ],
+       [
+        900,
+        0,
+        "lineal"
+       ],
+       [
+        950,
+        0,
+        "lineal"
+       ],
+       [
+        1000,
+        0,
+        "lineal"
+       ],
+       [
+        1200,
+        0,
+        "lineal"
+       ],
+       [
+        1250,
+        -0.75,
+        "lineal"
+       ],
+       [
+        1300,
+        -1.3,
+        "lineal"
+       ],
+       [
+        1350,
+        -1.5,
+        "lineal"
+       ],
+       [
+        1400,
+        -1.3,
+        "lineal"
+       ],
+       [
+        1450,
+        -0.75,
+        "lineal"
+       ],
+       [
+        1500,
+        0,
+        "lineal"
+       ],
+       [
+        1550,
+        -0.75,
+        "lineal"
+       ],
+       [
+        1600,
+        -1.3,
+        "lineal"
+       ],
+       [
+        1650,
+        -1.5,
+        "lineal"
+       ],
+       [
+        1700,
+        -1.3,
+        "lineal"
+       ],
+       [
+        1750,
+        -0.75,
+        "lineal"
+       ],
+       [
+        1800,
+        0,
+        "lineal"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "rueda_tras",
+     "en": [
+      -102,
+      -34
+     ],
+     "pivote": [
+      0,
+      0
+     ],
+     "partes": [
+      {
+       "nombre": "neumatico_tras",
+       "circulo": {
+        "r": 34,
+        "lados": 28
+       },
+       "color": "#1b1b1f"
+      },
+      {
+       "nombre": "llanta_tras",
+       "circulo": {
+        "r": 25,
+        "lados": 24
+       },
+       "color": "#e9dcc0",
+       "borde": "#b9a882"
+      },
+      {
+       "nombre": "rayo_tras_0",
+       "rotacion": 0,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_1",
+       "rotacion": 36,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_2",
+       "rotacion": 72,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_3",
+       "rotacion": 108,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_4",
+       "rotacion": 144,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_5",
+       "rotacion": 180,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_6",
+       "rotacion": 216,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_7",
+       "rotacion": 252,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_8",
+       "rotacion": 288,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_tras_9",
+       "rotacion": 324,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "cubo_tras",
+       "circulo": {
+        "r": 6,
+        "lados": 12
+       },
+       "color": "#b8902e"
+      }
+     ],
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        0,
+        "lineal"
+       ],
+       [
+        50,
+        0,
+        "lineal"
+       ],
+       [
+        100,
+        0,
+        "lineal"
+       ],
+       [
+        150,
+        0,
+        "lineal"
+       ],
+       [
+        200,
+        0,
+        "lineal"
+       ],
+       [
+        250,
+        0,
+        "lineal"
+       ],
+       [
+        300,
+        0,
+        "lineal"
+       ],
+       [
+        350,
+        0,
+        "lineal"
+       ],
+       [
+        400,
+        0,
+        "lineal"
+       ],
+       [
+        450,
+        0,
+        "lineal"
+       ],
+       [
+        500,
+        0,
+        "lineal"
+       ],
+       [
+        550,
+        0,
+        "lineal"
+       ],
+       [
+        600,
+        0,
+        "lineal"
+       ],
+       [
+        650,
+        0,
+        "lineal"
+       ],
+       [
+        700,
+        0,
+        "lineal"
+       ],
+       [
+        750,
+        0,
+        "lineal"
+       ],
+       [
+        800,
+        0,
+        "lineal"
+       ],
+       [
+        850,
+        0,
+        "lineal"
+       ],
+       [
+        900,
+        0,
+        "lineal"
+       ],
+       [
+        950,
+        0,
+        "lineal"
+       ],
+       [
+        1000,
+        0,
+        "lineal"
+       ],
+       [
+        1200,
+        0,
+        "lineal"
+       ],
+       [
+        1250,
+        30,
+        "lineal"
+       ],
+       [
+        1300,
+        60,
+        "lineal"
+       ],
+       [
+        1350,
+        90,
+        "lineal"
+       ],
+       [
+        1400,
+        120,
+        "lineal"
+       ],
+       [
+        1450,
+        150,
+        "lineal"
+       ],
+       [
+        1500,
+        180,
+        "lineal"
+       ],
+       [
+        1550,
+        210,
+        "lineal"
+       ],
+       [
+        1600,
+        240,
+        "lineal"
+       ],
+       [
+        1650,
+        270,
+        "lineal"
+       ],
+       [
+        1700,
+        300,
+        "lineal"
+       ],
+       [
+        1750,
+        330,
+        "lineal"
+       ],
+       [
+        1800,
+        360,
+        "lineal"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "rueda_del",
+     "en": [
+      108,
+      -34
+     ],
+     "pivote": [
+      0,
+      0
+     ],
+     "partes": [
+      {
+       "nombre": "neumatico_del",
+       "circulo": {
+        "r": 34,
+        "lados": 28
+       },
+       "color": "#1b1b1f"
+      },
+      {
+       "nombre": "llanta_del",
+       "circulo": {
+        "r": 25,
+        "lados": 24
+       },
+       "color": "#e9dcc0",
+       "borde": "#b9a882"
+      },
+      {
+       "nombre": "rayo_del_0",
+       "rotacion": 0,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_1",
+       "rotacion": 36,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_2",
+       "rotacion": 72,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_3",
+       "rotacion": 108,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_4",
+       "rotacion": 144,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_5",
+       "rotacion": 180,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_6",
+       "rotacion": 216,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_7",
+       "rotacion": 252,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_8",
+       "rotacion": 288,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "rayo_del_9",
+       "rotacion": 324,
+       "color": "#c9b88e",
+       "poligono": [
+        [
+         -1.6,
+         0
+        ],
+        [
+         1.6,
+         0
+        ],
+        [
+         1.2,
+         -24
+        ],
+        [
+         -1.2,
+         -24
+        ]
+       ]
+      },
+      {
+       "nombre": "cubo_del",
+       "circulo": {
+        "r": 6,
+        "lados": 12
+       },
+       "color": "#b8902e"
+      }
+     ],
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        0,
+        "lineal"
+       ],
+       [
+        50,
+        0,
+        "lineal"
+       ],
+       [
+        100,
+        0,
+        "lineal"
+       ],
+       [
+        150,
+        0,
+        "lineal"
+       ],
+       [
+        200,
+        0,
+        "lineal"
+       ],
+       [
+        250,
+        0,
+        "lineal"
+       ],
+       [
+        300,
+        0,
+        "lineal"
+       ],
+       [
+        350,
+        0,
+        "lineal"
+       ],
+       [
+        400,
+        0,
+        "lineal"
+       ],
+       [
+        450,
+        0,
+        "lineal"
+       ],
+       [
+        500,
+        0,
+        "lineal"
+       ],
+       [
+        550,
+        0,
+        "lineal"
+       ],
+       [
+        600,
+        0,
+        "lineal"
+       ],
+       [
+        650,
+        0,
+        "lineal"
+       ],
+       [
+        700,
+        0,
+        "lineal"
+       ],
+       [
+        750,
+        0,
+        "lineal"
+       ],
+       [
+        800,
+        0,
+        "lineal"
+       ],
+       [
+        850,
+        0,
+        "lineal"
+       ],
+       [
+        900,
+        0,
+        "lineal"
+       ],
+       [
+        950,
+        0,
+        "lineal"
+       ],
+       [
+        1000,
+        0,
+        "lineal"
+       ],
+       [
+        1200,
+        0,
+        "lineal"
+       ],
+       [
+        1250,
+        30,
+        "lineal"
+       ],
+       [
+        1300,
+        60,
+        "lineal"
+       ],
+       [
+        1350,
+        90,
+        "lineal"
+       ],
+       [
+        1400,
+        120,
+        "lineal"
+       ],
+       [
+        1450,
+        150,
+        "lineal"
+       ],
+       [
+        1500,
+        180,
+        "lineal"
+       ],
+       [
+        1550,
+        210,
+        "lineal"
+       ],
+       [
+        1600,
+        240,
+        "lineal"
+       ],
+       [
+        1650,
+        270,
+        "lineal"
+       ],
+       [
+        1700,
+        300,
+        "lineal"
+       ],
+       [
+        1750,
+        330,
+        "lineal"
+       ],
+       [
+        1800,
+        360,
+        "lineal"
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "enganches": {
+  "estribo": {
+   "parte": "estribo",
+   "en": [
+    10,
+    -46
+   ]
+  },
+  "asiento_tras": {
+   "parte": "asiento_tras",
+   "en": [
+    -110,
+    -104
+   ]
+  },
+  "asiento_del": {
+   "parte": "asiento_del",
+   "en": [
+    -10,
+    -104
+   ]
+  }
+ }
+}

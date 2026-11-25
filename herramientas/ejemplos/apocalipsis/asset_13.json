@@ -1,0 +1,81 @@
+{
+ "tipo": "asset",
+ "nombre": "Bidón en llamas",
+ "duracion": 1000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "resplandor",
+   "en": [
+    0,
+    -40
+   ],
+   "elipse": [
+    120,
+    70
+   ],
+   "color": "#f0a04a",
+   "opacidad": 0.1,
+   "claves": {
+    "opacidad": [
+     [
+      0,
+      0.12
+     ],
+     [
+      380,
+      0.06
+     ],
+     [
+      700,
+      0.1
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta"
+  },
+  {
+   "nombre": "cuerpo",
+   "rect": [
+    -20,
+    -58,
+    20,
+    0
+   ],
+   "color": "#5a3726",
+   "borde": "#2a1a10"
+  },
+  {
+   "nombre": "aro_1",
+   "rect": [
+    -21,
+    -44,
+    21,
+    -40
+   ],
+   "color": "#3a2416"
+  },
+  {
+   "nombre": "aro_2",
+   "rect": [
+    -21,
+    -18,
+    21,
+    -14
+   ],
+   "color": "#3a2416"
+  },
+  {
+   "nombre": "brasas",
+   "rect": [
+    -18,
+    -62,
+    18,
+    -56
+   ],
+   "color": "#c0391b"
+  }
+ ]
+}

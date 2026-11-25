@@ -1,0 +1,2 @@
+{"tipo": "asset", "nombre": "Paseante con vestido", "generador": "persona", "parametros": {"camina": true, "vestido": true, "peinado": "largo", "ropa": "#c0392b"},
+ "enganches": {"mano": {"parte": "brazo_del", "en": [0, 56]}, "cabeza": {"parte": "cabeza", "en": [0, -16]}}}

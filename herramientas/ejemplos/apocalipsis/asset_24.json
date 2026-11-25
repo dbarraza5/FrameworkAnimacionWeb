@@ -1,0 +1,637 @@
+{
+ "tipo": "asset",
+ "nombre": "Zombi A",
+ "duracion": 2000,
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "brazo_tras",
+   "pivote": [
+    3,
+    -88
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -83
+     ],
+     [
+      836.0000000000001,
+      -69
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "brazo_tras_manga",
+     "poligono": [
+      [
+       -2.5,
+       -87.7
+      ],
+      [
+       -1.5,
+       -71.7
+      ],
+      [
+       9.5,
+       -72.3
+      ],
+      [
+       8.5,
+       -88.3
+      ]
+     ],
+     "color": "#4a5a6a"
+    },
+    {
+     "nombre": "brazo_tras_brazo",
+     "poligono": [
+      [
+       0,
+       -72.8
+      ],
+      [
+       1,
+       -53.8
+      ],
+      [
+       9,
+       -54.2
+      ],
+      [
+       8,
+       -73.2
+      ]
+     ],
+     "color": "#5b6b4c"
+    },
+    {
+     "nombre": "brazo_tras_mano",
+     "poligono": [
+      [
+       1,
+       -56
+      ],
+      [
+       9,
+       -56
+      ],
+      [
+       10,
+       -48
+      ],
+      [
+       6,
+       -46
+      ],
+      [
+       2,
+       -49
+      ]
+     ],
+     "color": "#5b6b4c"
+    }
+   ]
+  },
+  {
+   "nombre": "pierna_tras",
+   "pivote": [
+    0,
+    -52
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -12
+     ],
+     [
+      760,
+      16
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "pierna_tras_muslo",
+     "poligono": [
+      [
+       -6.5,
+       -51.2
+      ],
+      [
+       -3.5,
+       -26.2
+      ],
+      [
+       9.5,
+       -27.8
+      ],
+      [
+       6.5,
+       -52.8
+      ]
+     ],
+     "color": "#1f1e22"
+    },
+    {
+     "nombre": "pierna_tras_canilla",
+     "poligono": [
+      [
+       -2.5,
+       -27.7
+      ],
+      [
+       -5.5,
+       -3.7
+      ],
+      [
+       5.5,
+       -2.3
+      ],
+      [
+       8.5,
+       -26.3
+      ]
+     ],
+     "color": "#1f1e22"
+    },
+    {
+     "nombre": "pierna_tras_pie",
+     "poligono": [
+      [
+       -7,
+       -9
+      ],
+      [
+       9,
+       -9
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       -7,
+       0
+      ]
+     ],
+     "color": "#101012"
+    }
+   ]
+  },
+  {
+   "nombre": "cuerpo",
+   "pivote": [
+    0,
+    -52
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      9
+     ],
+     [
+      760,
+      19
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "torso",
+     "poligono": [
+      [
+       -12,
+       -96
+      ],
+      [
+       11,
+       -96
+      ],
+      [
+       15,
+       -68
+      ],
+      [
+       12,
+       -50
+      ],
+      [
+       -12,
+       -50
+      ],
+      [
+       -14,
+       -68
+      ]
+     ],
+     "color": "#4a5a6a",
+     "borde": "#121214"
+    },
+    {
+     "nombre": "jirones",
+     "poligono": [
+      [
+       -12,
+       -54
+      ],
+      [
+       -6,
+       -44
+      ],
+      [
+       -2,
+       -52
+      ],
+      [
+       4,
+       -42
+      ],
+      [
+       8,
+       -51
+      ],
+      [
+       12,
+       -46
+      ],
+      [
+       12,
+       -52
+      ],
+      [
+       -12,
+       -52
+      ]
+     ],
+     "color": "#4a5a6a"
+    },
+    {
+     "nombre": "herida",
+     "poligono": [
+      [
+       -2,
+       -84
+      ],
+      [
+       8,
+       -82
+      ],
+      [
+       6,
+       -72
+      ],
+      [
+       -3,
+       -76
+      ]
+     ],
+     "color": "#5a1f1f"
+    },
+    {
+     "nombre": "cuello",
+     "rect": [
+      -4,
+      -100,
+      5,
+      -94
+     ],
+     "color": "#5b6b4c"
+    },
+    {
+     "nombre": "cabeza",
+     "pivote": [
+      0,
+      -98
+     ],
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        6.00014087464667
+       ],
+       [
+        1064,
+        25.15690691543599
+       ]
+      ]
+     },
+     "bucle": "ida_vuelta",
+     "partes": [
+      {
+       "nombre": "craneo",
+       "poligono": [
+        [
+         -11,
+         -118
+        ],
+        [
+         6,
+         -120
+        ],
+        [
+         13,
+         -110
+        ],
+        [
+         13,
+         -99
+        ],
+        [
+         6,
+         -95
+        ],
+        [
+         -9,
+         -96
+        ],
+        [
+         -13,
+         -106
+        ]
+       ],
+       "color": "#7d8f6a",
+       "borde": "#2a3322"
+      },
+      {
+       "nombre": "pelo",
+       "poligono": [
+        [
+         -11,
+         -118
+        ],
+        [
+         6,
+         -120
+        ],
+        [
+         8,
+         -115
+        ],
+        [
+         -2,
+         -114
+        ],
+        [
+         -8,
+         -110
+        ],
+        [
+         -13,
+         -108
+        ]
+       ],
+       "color": "#1c1a18"
+      },
+      {
+       "nombre": "cuenca",
+       "rect": [
+        4,
+        -112,
+        11,
+        -106
+       ],
+       "color": "#1c2116"
+      },
+      {
+       "nombre": "ojo",
+       "en": [
+        8,
+        -109
+       ],
+       "circulo": {
+        "r": 1.6,
+        "lados": 6
+       },
+       "color": "#d6e89a"
+      },
+      {
+       "nombre": "boca",
+       "poligono": [
+        [
+         5,
+         -102
+        ],
+        [
+         13,
+         -101
+        ],
+        [
+         12,
+         -96
+        ],
+        [
+         6,
+         -97
+        ]
+       ],
+       "color": "#1a0f0f"
+      },
+      {
+       "nombre": "mancha",
+       "en": [
+        -4,
+        -104
+       ],
+       "circulo": {
+        "r": 3,
+        "lados": 8
+       },
+       "color": "#5a1f1f",
+       "opacidad": 0.7
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "pierna_frente",
+   "pivote": [
+    0,
+    -52
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      14
+     ],
+     [
+      760,
+      -8
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "pierna_frente_muslo",
+     "poligono": [
+      [
+       -6.5,
+       -51.2
+      ],
+      [
+       -3.5,
+       -26.2
+      ],
+      [
+       9.5,
+       -27.8
+      ],
+      [
+       6.5,
+       -52.8
+      ]
+     ],
+     "color": "#2b2a2e"
+    },
+    {
+     "nombre": "pierna_frente_canilla",
+     "poligono": [
+      [
+       -2.5,
+       -27.7
+      ],
+      [
+       -5.5,
+       -3.7
+      ],
+      [
+       5.5,
+       -2.3
+      ],
+      [
+       8.5,
+       -26.3
+      ]
+     ],
+     "color": "#2b2a2e"
+    },
+    {
+     "nombre": "pierna_frente_pie",
+     "poligono": [
+      [
+       -7,
+       -9
+      ],
+      [
+       9,
+       -9
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       -7,
+       0
+      ]
+     ],
+     "color": "#101012"
+    }
+   ]
+  },
+  {
+   "nombre": "brazo_frente",
+   "pivote": [
+    3,
+    -88
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      -93
+     ],
+     [
+      684,
+      -75
+     ]
+    ]
+   },
+   "bucle": "ida_vuelta",
+   "partes": [
+    {
+     "nombre": "brazo_frente_manga",
+     "poligono": [
+      [
+       -2.5,
+       -87.7
+      ],
+      [
+       -1.5,
+       -71.7
+      ],
+      [
+       9.5,
+       -72.3
+      ],
+      [
+       8.5,
+       -88.3
+      ]
+     ],
+     "color": "#4a5a6a"
+    },
+    {
+     "nombre": "brazo_frente_brazo",
+     "poligono": [
+      [
+       0,
+       -72.8
+      ],
+      [
+       1,
+       -53.8
+      ],
+      [
+       9,
+       -54.2
+      ],
+      [
+       8,
+       -73.2
+      ]
+     ],
+     "color": "#7d8f6a"
+    },
+    {
+     "nombre": "brazo_frente_mano",
+     "poligono": [
+      [
+       1,
+       -56
+      ],
+      [
+       9,
+       -56
+      ],
+      [
+       10,
+       -48
+      ],
+      [
+       6,
+       -46
+      ],
+      [
+       2,
+       -49
+      ]
+     ],
+     "color": "#7d8f6a"
+    }
+   ]
+  }
+ ]
+}

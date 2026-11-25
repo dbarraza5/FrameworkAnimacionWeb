@@ -21,6 +21,7 @@ export * as Dialogos from "./src/Clases/EditorEvento/Dialogos.js";
 export * as Estilo from "./src/Clases/EditorEvento/Estilo.js";
 export * as Facetas from "./src/Clases/Autoria/Facetas.js";
 export * as Capitulo from "./src/Clases/Autoria/Capitulo.js";
+export * as Notas from "./src/Clases/EditorEvento/Notas.js";
 export * as Estimador from "./src/Clases/Autoria/Estimador.js";
 export * as Generadores from "./src/Clases/Autoria/Generadores.js";
 export * as Descompilador from "./src/Clases/Autoria/Descompilador.js";

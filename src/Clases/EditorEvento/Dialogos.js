@@ -26,6 +26,7 @@
 // herramientas/pruebas/dialogos.test.mjs.
 
 import {cajaMundo} from "../Autoria/Render";
+import {fraccionCuadro, alineacionLugar} from "../Autoria/Formatos";
 
 export const ESTILOS_GLOBO = ["dialogo", "grito", "pensamiento", "narrador"];
 const FUENTES_TEXTO = {sans: '"Trebuchet MS", "Segoe UI", Arial, sans-serif', serif: 'Georgia, "Times New Roman", serif', mono: '"Courier New", Consolas, monospace'};
@@ -98,36 +99,61 @@ export function estadoTexto(d, t) {
     const total = letras(d.texto).length, dt = t - d.desde;
     const vel = typeof d.velocidad === "number" ? d.velocidad : VELOCIDAD_DEFECTO;
     const escrito = vel <= 0 ? total : Math.min(total, Math.floor(dt * vel / 1000));
-    const alfa = Math.max(0, Math.min(1, dt / 120, (d.hasta - t) / SALIDA_MS));
+    // entrada: ms del fundido de aparicion (120 por defecto; 0 = de golpe, p. ej. el gancho del primer cuadro)
+    const entrada = typeof d.entrada === "number" && d.entrada >= 0 ? d.entrada : 120;
+    const alfa = Math.max(0, Math.min(1, entrada > 0 ? dt / entrada : 1, (d.hasta - t) / SALIDA_MS));
     // mientras escribe, el cursor queda fijo; al terminar, parpadea
     const fin = vel <= 0 ? 0 : total * 1000 / vel;
     const cursor = !!d.cursor && (dt < fin || Math.floor((dt - fin) / CURSOR_MS) % 2 === 0);
     return {letras: escrito, alfa, cursor};
 }
 
-function dibujarTexto(ctx, d, e, ox, oy, cajaDe) {
-    let x = d.en[0], y = d.en[1];
-    if (d.quien) {
-        const c = d.parte ? cajaDe(`${d.quien}${SEP}${d.parte}`) || cajaDe(d.quien) : cajaDe(d.quien);
-        if (!c) return;                                   // su objeto no se dibuja
-        x += (c.x0 + c.x1) / 2; y += (c.y0 + c.y1) / 2;
+// Devuelve la caja del texto completo en el dibujo (sin el paneo), o null si no se dibuja.
+// pantalla: {r, k, ancho, alto, zona} (lo que ve la camara) para textos con en: {cuadro} (IA-3, Formatos.js):
+// se ubican en cada cuadro y su tamano, ancho y desplazar van en px del video (por k = 1 / zoom).
+function dibujarTexto(ctx, d, e, ox, oy, cajaDe, pantalla) {
+    let x, y, k = 1, alinear = d.alinear, vertical = d.vertical;
+    if (Array.isArray(d.en)) {
+        x = d.en[0]; y = d.en[1];
+        if (d.quien) {
+            const c = d.parte ? cajaDe(`${d.quien}${SEP}${d.parte}`) || cajaDe(d.quien) : cajaDe(d.quien);
+            if (!c) return null;                              // su objeto no se dibuja
+            x += (c.x0 + c.x1) / 2; y += (c.y0 + c.y1) / 2;
+        }
+    } else {
+        const f = d.en && pantalla ? fraccionCuadro(d.en.cuadro, [pantalla.ancho, pantalla.alto], pantalla.zona) : null;
+        if (!f) return null;
+        const r = pantalla.r, dz = Array.isArray(d.en.desplazar) ? d.en.desplazar : [0, 0];
+        k = pantalla.k;
+        x = r.x0 + f[0] * r.w + dz[0] * k; y = r.y0 + f[1] * r.h + dz[1] * k;
+        const al = alineacionLugar(d.en.cuadro);
+        alinear = alinear || al.alinear; vertical = vertical || al.vertical;
     }
-    x += ox; y += oy;
-    const tam = d.tamano, alinear = d.alinear || "izquierda";
+    const tam = d.tamano * k;
+    alinear = alinear || "izquierda";
     ctx.save();
     ctx.globalAlpha *= e.alfa;
     ctx.font = `${tam}px ${FUENTES_TEXTO[d.fuente] || FUENTES_TEXTO.sans}`;
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
     const medir = (s) => ctx.measureText(s).width;
-    const lineas = d.ancho ? cortarLineas(d.texto, d.ancho, medir) : String(d.texto).split("\n");
+    const lineas = d.ancho ? cortarLineas(d.texto, d.ancho * k, medir) : String(d.texto).split("\n");
     const alto = tam * 1.25;
+    // vertical: sin el, la primera linea centrada en el punto; arriba: el texto cuelga; abajo: crece hacia arriba
+    if (vertical === "arriba") y += alto / 2;
+    else if (vertical === "abajo") y -= (lineas.length - 0.5) * alto;
+    else if (vertical === "centro") y -= (lineas.length - 1) * alto / 2;
+    const xm = x, ym = y;
+    x += ox; y += oy;
     const color = d.color || "#ffffff";
     ctx.fillStyle = color;
-    if (d.resplandor) { ctx.shadowColor = color; ctx.shadowBlur = d.resplandor; }
+    if (d.resplandor) { ctx.shadowColor = color; ctx.shadowBlur = d.resplandor * k; }
     let quedan = e.letras, cx = x, cy = y;
+    let bx0 = Infinity, bx1 = -Infinity;
     lineas.forEach((ln, i) => {
         const w = medir(ln);
+        const xl = alinear === "centro" ? xm - w / 2 : alinear === "derecha" ? xm - w : xm;
+        bx0 = Math.min(bx0, xl); bx1 = Math.max(bx1, xl + w);
         const x0 = alinear === "centro" ? x - w / 2 : alinear === "derecha" ? x - w : x;
         const ly = y + i * alto;
         if (quedan > 0) {
@@ -139,6 +165,7 @@ function dibujarTexto(ctx, d, e, ox, oy, cajaDe) {
     });
     if (e.cursor) ctx.fillRect(cx + tam * 0.08, cy - tam * 0.45, tam * 0.55, tam * 0.9);
     ctx.restore();
+    return lineas.length ? {x0: bx0, y0: ym - alto / 2, x1: bx1, y1: ym + (lineas.length - 0.5) * alto} : null;
 }
 
 const solapan = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
@@ -321,11 +348,16 @@ export function dibujarDialogos(m, ctx, ox, oy, t, cajaDe = (n) => cajaMundo(m, 
     const M0 = medidas(cam);
     const M = Object.fromEntries(Object.entries(M0).map(([n, v]) => [n, v * k]));
     const ocupados = [];
+    // m._registro_dialogos (opcional, lo usa el validador): donde quedo cada globo y texto,
+    // {i, tipo: "globo" | "texto" | "sin_hablante", caja} en el dibujo (sin el paneo)
+    const reg = Array.isArray(m._registro_dialogos) ? m._registro_dialogos : null;
     // textos en la escena (no son globos: no ocupan lugar ni se acomodan)
     for (const d of lista) {
-        if (d.estilo !== "texto" || !Array.isArray(d.en) || !(d.tamano > 0)) continue;
+        if (d.estilo !== "texto" || !d.en || !(d.tamano > 0)) continue;
         const e = estadoTexto(d, t);
-        if (e) dibujarTexto(ctx, d, e, ox, oy, cajaDe);
+        if (!e) continue;
+        const caja = dibujarTexto(ctx, d, e, ox, oy, cajaDe, {r, k, ancho: cam.ancho, alto: cam.alto, zona: m.escena && m.escena.zona_segura});
+        if (reg) reg.push(caja ? {i: lista.indexOf(d), tipo: "texto", caja} : {i: lista.indexOf(d), tipo: "sin_hablante"});
     }
     const activos = lista.filter((d) => d.estilo !== "texto").map((d) => ({d, e: estadoGlobo(d, t)})).filter((x) => x.e)
         .sort((a, b) => a.d.desde - b.d.desde);
@@ -346,11 +378,14 @@ export function dibujarDialogos(m, ctx, ox, oy, t, cajaDe = (n) => cajaMundo(m, 
         const h = lineas.length * M.linea + M.relleno * 1.4;
         let b, punta = null;
         if (estilo === "narrador") {
-            const y0 = d.posicion === "abajo" ? r.y0 + r.h - M.margen * 2 - h : r.y0 + M.margen * 2;
+            // con escena.zona_segura (IA-3) la franja queda dentro de ella (en vertical, sobre la interfaz de las apps)
+            const zs = m.escena && m.escena.zona_segura;
+            const y0 = zs ? (d.posicion === "abajo" ? r.y0 + r.h * (1 - (zs.abajo || 0)) - h : r.y0 + r.h * (zs.arriba || 0))
+                : d.posicion === "abajo" ? r.y0 + r.h - M.margen * 2 - h : r.y0 + M.margen * 2;
             b = {x0: r.x0 + M.margen, y0, x1: r.x0 + M.margen + w, y1: y0 + h};
         } else {
             const caja = d.quien ? cajaHablante(d, cajaDe) : null;
-            if (!caja) continue;                          // quien habla no esta (o no se dibuja)
+            if (!caja) { if (reg) reg.push({i: lista.indexOf(d), tipo: "sin_hablante"}); continue; }   // quien habla no esta (o no se dibuja)
             // lo que la forma sobresale de la caja del texto (para ubicarla entera dentro del cuadro)
             const [ex, ey] = estilo === "grito" ? [w * 0.28 + M.fuente * 0.3, h * 0.5 + M.fuente * 0.3]
                 : estilo === "pensamiento" ? extraNube(w, h, M)
@@ -361,6 +396,7 @@ export function dibujarDialogos(m, ctx, ox, oy, t, cajaDe = (n) => cajaMundo(m, 
             punta = u.punta;
             ocupados.push({x0: u.x0, y0: u.y0, x1: u.x1, y1: u.y1});
         }
+        if (reg) reg.push({i: lista.indexOf(d), tipo: "globo", estilo, caja: {...b}});
         // al dibujo del editor se le suma el paneo
         const mover = (o) => ({...o, x0: o.x0 + ox, x1: o.x1 + ox, y0: o.y0 + oy, y1: o.y1 + oy});
         b = mover(b);

@@ -1,0 +1,597 @@
+{
+ "tipo": "escena",
+ "nombre": "6. La leyenda",
+ "duracion": 11834,
+ "precision": "decimal",
+ "zona_segura": {
+  "arriba": 0.1,
+  "abajo": 0.22,
+  "izquierda": 0.05,
+  "derecha": 0.14
+ },
+ "camara": {
+  "tamano": [
+   720,
+   1280
+  ],
+  "centro": [
+   360,
+   880
+  ],
+  "zoom": 1.15,
+  "claves": {
+   "x": [
+    [
+     0,
+     380,
+     "mantener"
+    ],
+    [
+     3734,
+     1360,
+     "mantener"
+    ],
+    [
+     7397,
+     2430,
+     "suave"
+    ],
+    [
+     11834,
+     2436
+    ]
+   ],
+   "y": [
+    [
+     0,
+     880,
+     "mantener"
+    ],
+    [
+     3734,
+     760,
+     "mantener"
+    ],
+    [
+     7397,
+     880,
+     "suave"
+    ],
+    [
+     11834,
+     878
+    ]
+   ],
+   "zoom": [
+    [
+     0,
+     1.15,
+     "mantener"
+    ],
+    [
+     3734,
+     1,
+     "mantener"
+    ],
+    [
+     7397,
+     2.6,
+     "suave"
+    ],
+    [
+     11834,
+     2.75
+    ]
+   ]
+  }
+ },
+ "objetos": [
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo_silverton_360",
+   "en": [
+    360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "instancia": "Frank",
+   "nombre": "frank",
+   "en": [
+    160,
+    1000
+   ],
+   "evento": "Quieto"
+  },
+  {
+   "instancia": "Elizabeth",
+   "nombre": "elizabeth",
+   "en": [
+    230,
+    1000
+   ],
+   "evento": "Quieto"
+  },
+  {
+   "instancia": "Hija",
+   "nombre": "hija",
+   "en": [
+    310,
+    1000
+   ],
+   "escala": 0.85,
+   "evento": "Quieto"
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie",
+   "en": [
+    420,
+    1000
+   ],
+   "evento": "Sentado",
+   "acciones": [
+    [
+     1600,
+     "Cola"
+    ]
+   ]
+  },
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo_silverton_1360",
+   "en": [
+    1360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "nombre": "oscuro_diario",
+   "en": [
+    0,
+    0
+   ],
+   "plano": 4,
+   "rect": [
+    900,
+    -200,
+    1820,
+    1520
+   ],
+   "color": "rgba(30,20,12,0.7)"
+  },
+  {
+   "nombre": "diario",
+   "en": [
+    1360,
+    760
+   ],
+   "plano": 5,
+   "partes": [
+    {
+     "nombre": "diario_papel",
+     "rect": [
+      -190,
+      -250,
+      190,
+      250
+     ],
+     "color": "#efe6d2",
+     "borde": "#b9a882"
+    },
+    {
+     "nombre": "diario_cabecera",
+     "rect": [
+      -170,
+      -232,
+      170,
+      -196
+     ],
+     "color": "#2a2420"
+    },
+    {
+     "nombre": "diario_raya",
+     "rect": [
+      -170,
+      -188,
+      170,
+      -185
+     ],
+     "color": "#2a2420"
+    },
+    {
+     "nombre": "diario_foto",
+     "rect": [
+      -150,
+      -60,
+      150,
+      150
+     ],
+     "color": "#c9b48a",
+     "borde": "#6a5a40"
+    },
+    {
+     "nombre": "diario_linea_0",
+     "rect": [
+      -150,
+      166,
+      150,
+      172
+     ],
+     "color": "rgba(60,50,40,0.45)"
+    },
+    {
+     "nombre": "diario_linea_1",
+     "rect": [
+      -150,
+      178,
+      90,
+      184
+     ],
+     "color": "rgba(60,50,40,0.45)"
+    },
+    {
+     "nombre": "diario_linea_2",
+     "rect": [
+      -150,
+      190,
+      150,
+      196
+     ],
+     "color": "rgba(60,50,40,0.45)"
+    },
+    {
+     "nombre": "diario_linea_3",
+     "rect": [
+      -150,
+      202,
+      90,
+      208
+     ],
+     "color": "rgba(60,50,40,0.45)"
+    },
+    {
+     "nombre": "diario_linea_4",
+     "rect": [
+      -150,
+      214,
+      150,
+      220
+     ],
+     "color": "rgba(60,50,40,0.45)"
+    },
+    {
+     "nombre": "diario_linea_5",
+     "rect": [
+      -150,
+      226,
+      90,
+      232
+     ],
+     "color": "rgba(60,50,40,0.45)"
+    }
+   ],
+   "claves": {
+    "rotacion": [
+     [
+      0,
+      540
+     ],
+     [
+      3734,
+      540,
+      "salir"
+     ],
+     [
+      4634,
+      0
+     ]
+    ],
+    "escala_x": [
+     [
+      0,
+      0.05
+     ],
+     [
+      3734,
+      0.05,
+      "salir"
+     ],
+     [
+      4634,
+      1
+     ]
+    ],
+    "escala_y": [
+     [
+      0,
+      0.05
+     ],
+     [
+      3734,
+      0.05,
+      "salir"
+     ],
+     [
+      4634,
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie_foto",
+   "padre": "diario",
+   "en": [
+    -30,
+    140
+   ],
+   "escala": 1.25,
+   "evento": "Sentado"
+  },
+  {
+   "nombre": "foto_sepia",
+   "padre": "diario",
+   "en": [
+    0,
+    0
+   ],
+   "rect": [
+    -150,
+    -60,
+    150,
+    150
+   ],
+   "color": "rgba(150,110,60,0.35)",
+   "mezcla": "multiplicar"
+  },
+  {
+   "instancia": "Fondo Silverton",
+   "nombre": "fondo_silverton_2360",
+   "en": [
+    2360,
+    1000
+   ],
+   "plano": -10
+  },
+  {
+   "nombre": "atardecer",
+   "en": [
+    0,
+    0
+   ],
+   "plano": -9,
+   "rect": [
+    1900,
+    -200,
+    2820,
+    1520
+   ],
+   "color": "rgba(255,150,90,0.35)",
+   "mezcla": "multiplicar"
+  },
+  {
+   "nombre": "sol_bajo",
+   "en": [
+    2580,
+    620
+   ],
+   "plano": -9,
+   "circulo": {
+    "r": 140,
+    "lados": 30
+   },
+   "mezcla": "suma",
+   "degradado": {
+    "tipo": "radial",
+    "centro": [
+     0,
+     0
+    ],
+    "radio": 140,
+    "colores": [
+     [
+      0,
+      "rgba(255,220,150,0.7)"
+     ],
+     [
+      1,
+      "rgba(255,160,80,0)"
+     ]
+    ]
+   }
+  },
+  {
+   "instancia": "Bobbie",
+   "nombre": "bobbie_final",
+   "en": [
+    2360,
+    1000
+   ],
+   "evento": "Sentado",
+   "acciones": [
+    [
+     8297,
+     "Cola"
+    ]
+   ]
+  }
+ ],
+ "dialogos": [
+  {
+   "texto": "Bobbie se volvió una leyenda.",
+   "desde": 300,
+   "hasta": 3634,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 12
+  },
+  {
+   "quien": "diario",
+   "texto": "EL PERRO MARAVILLA",
+   "desde": 4734,
+   "hasta": 7034,
+   "estilo": "texto",
+   "en": [
+    0,
+    -100
+   ],
+   "tamano": 30,
+   "color": "#2a2420",
+   "fuente": "serif",
+   "velocidad": 0,
+   "alinear": "centro"
+  },
+  {
+   "quien": "diario",
+   "texto": "Caminó 4.000 km para volver a casa",
+   "desde": 4934,
+   "hasta": 7034,
+   "estilo": "texto",
+   "en": [
+    0,
+    -70
+   ],
+   "tamano": 17,
+   "color": "#4a3e34",
+   "fuente": "serif",
+   "velocidad": 0,
+   "alinear": "centro"
+  },
+  {
+   "texto": "Todavía hoy su pueblo lo recuerda.",
+   "desde": 4034,
+   "hasta": 7297,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 15
+  },
+  {
+   "texto": "Algunos amores no conocen distancia.",
+   "desde": 8597,
+   "hasta": 11397,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "centro",
+    "desplazar": [
+     0,
+     -260
+    ]
+   },
+   "tamano": 46,
+   "color": "#fff8e8",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 10,
+   "ancho": 520,
+   "alinear": "centro",
+   "entrada": 700
+  },
+  {
+   "texto": "Porque algunos amores… no conocen distancia.",
+   "desde": 7697,
+   "hasta": 11634,
+   "estilo": "narrador",
+   "posicion": "abajo",
+   "velocidad": 15
+  },
+  {
+   "texto": "Historia real · 1923–1924",
+   "desde": 9797,
+   "hasta": 11397,
+   "estilo": "texto",
+   "en": {
+    "cuadro": "arriba-centro"
+   },
+   "tamano": 24,
+   "color": "#ffe2a8",
+   "fuente": "serif",
+   "velocidad": 0,
+   "resplandor": 6
+  }
+ ],
+ "voces": {
+  "narrador": {
+   "motor": "elevenlabs",
+   "voz": "BPwS5yO6aXvwg8auqNwS"
+  },
+  "frank": {
+   "motor": "elevenlabs",
+   "voz": "Yzf6MbjAm6T3WgC7SBWE",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "elizabeth": {
+   "motor": "elevenlabs",
+   "voz": "tbfu7H6JPPlpF9clW89V",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  },
+  "hija": {
+   "motor": "elevenlabs",
+   "voz": "JLjbyFxQ9y50fnjDTvoD",
+   "boca": {
+    "parte": "boca",
+    "prop": "escala_y",
+    "cerrada": 0.6,
+    "abierta": 2.6
+   }
+  }
+ },
+ "sonidos": [
+  {
+   "sonido": "voz narrador 4c250841",
+   "t": 300,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz narrador edc31c8f",
+   "t": 4034,
+   "volumen": 1
+  },
+  {
+   "sonido": "voz narrador aa75d0c3",
+   "t": 7697,
+   "volumen": 1
+  },
+  {
+   "sonido": "Pájaros de verano",
+   "t": 0,
+   "volumen": 0.22,
+   "bucle": true,
+   "fundido": {
+    "entrada": 600,
+    "salida": 900
+   }
+  },
+  {
+   "sonido": "Diario girando",
+   "t": 3734,
+   "volumen": 0.7
+  },
+  {
+   "sonido": "Música: Bobbie",
+   "t": 0,
+   "volumen": 0.55,
+   "recorte": [
+    78868,
+    90702
+   ],
+   "fundido": {
+    "entrada": 80,
+    "salida": 1800
+   }
+  }
+ ]
+}

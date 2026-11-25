@@ -139,9 +139,39 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
     - Un pivote sin dibujo es `{nombre: "Cabeza", en, partes: [], claves}`.
     - Los hijos se dibujan junto con el padre, en el orden de su `capa`, y **no se reordenan por profundidad** con el resto. Así se resuelve el problema de Lía sin desactivar `profundidad`.
     - En el editor, los hijos se ven al "entrar" al padre.
+  - **Enganches** (IA-4): para que algo vaya **en la mano, la cabeza o el lomo** de un personaje, no se calcula su posición; se cuelga de esa parte.
+    - En el asset: `enganches: {"mano": {parte: "brazo_del", en: [0, 56]}}`, con `en` relativo al origen de la parte (como el `en` de una parte hija).
+    - En la escena: `{nombre: "copa", padre: "beto", enganche: "mano", partes: [...]}`, o `enganche: {parte: "cabeza"}` sin declararlo. El `en` del objeto es relativo al punto del enganche.
+    - Sigue la posición, el giro, la escala y el espejo de la parte, también durante las acciones del asset.
+    - **`girar: false`** (con `padre`): sigue la posición, pero no el giro de sus padres (conserva la escala y el espejo). Sirve para lo que **cuelga**: un farol, una bolsa, un cartel. Ejemplo: el farol de Frank en Bobbie (`ejemplos/bobbie/escenas.mjs`). Su `capa` lo ordena entre las partes hijas de esa parte (para que una copa quede detrás de los dedos).
+    - `autoria.mjs catalogo` y el compilador conocen los enganches y las partes de cada asset, y avisan si no existen.
+    - Ejemplo: `herramientas/ejemplos/enganches/`.
+  - **Pasos de alto nivel** (IA-5, `Pasos.js`): en vez de calcular claves, describir lo que pasa. El compilador lo traduce a claves, acciones y objetos.
+
+```json
+"pasos": [
+  {"caminar": "beto", "a": [580, 600], "desde": 300, "velocidad": 170, "luego": "Quieto"},
+  {"tomar": "beto", "objeto": "copa", "enganche": "mano", "t": 3400},
+  {"plano": "medio", "de": "beto", "desde": 3000, "hasta": 4000},
+  {"caminar": "ana", "a": "beto", "desde": 4600, "luego": "Quieto"},
+  {"mirar": "beto", "a": "ana", "t": 5200},
+  {"soltar": "beto", "objeto": "copa", "t": 8200, "en": [610, 472]}
+]
+```
+
+    - **`caminar`:** parte de donde esté (se encadenan) y se da vuelta solo. Pone "Caminar" si el asset la tiene; `luego` es la acción al llegar. Hacia un objeto, se detiene a `separacion` (120).
+    - **`tomar` / `soltar`:** crean la copia colgada `copa@beto` y prenden una u otra copia. `soltar` necesita `en` (donde queda). Solo para objetos dibujados.
+    - **`plano`:** `general` (cuerpo entero), `medio` (de la cintura arriba) o `primer` (cabeza). Usa la caja del asset; un asset guardado antes de IA-5 hay que recompilarlo para que la tenga.
+    - **Supuesto:** los assets miran a la derecha sin espejo.
+    - Si un paso se pisa con claves escritas a mano, es error: usar una cosa o la otra para cada propiedad.
+    - Ejemplo completo: `herramientas/ejemplos/pasos/generar.mjs` (asset con acciones "Caminar" y "Quieto", y la escena "La copa").
   - **Relleno degradado:** `degradado: {tipo: "lineal", de: [x,y], a: [x,y], colores: [[0, "#…"], [1, "#…"]]}` o `{tipo: "radial", centro, radio, colores}`, en coordenadas de la parte. Va en partes y en objetos dibujados.
   - **`desenfoque: px`** (luces, sombras suaves, niebla, fondo fuera de foco) y **`mezcla`**: `suma` o `pantalla` para brillos y luz, `multiplicar` para sombras, además de `superponer`, `aclarar` y `oscurecer`. Se heredan a las partes hijas y sirven también en instancias. Con desenfoque, el relleno sale de color plano (el degradado se ignora).
   - **Partículas:** `suave: "si"` (bordes difusos), `opacidad` (máxima, 0.9 por defecto) y `mezcla: "suma" | "pantalla"`. Con `suave` y `suma` la niebla y el fuego dejan de verse como manchas.
+    - **Ojo con el rendimiento en el editor:** cada partícula `suave` se dibuja con desenfoque, carísimo en el navegador. En "Mundo de bloques" (2026-11-25), el fuego y el polvo con `suave`, más una pared que se desarma, **congelaron el editor**, aunque el render de Node andaba. Sin `suave` va a unos 15 cuadros por segundo. Usar `suave` en pocas partículas y probar la escena en el navegador, no solo con `render_memoria`.
+    - **Lluvia:** las partículas son puntos redondos y no se leen como lluvia. Conviene usar trazos finos inclinados que caen en bucle, cada uno desfasado (`lluviaTrazos` en `ejemplos/bobbie/escenas.mjs`).
+    - **Rectángulos de niebla o luz:** las partes llevan borde; en un velo con degradado se ve como una línea. Usar `borde: "rgba(0,0,0,0)"`.
+    - **Decorados de muchos bloques:** una franja (suelo, muro) conviene como un rectángulo por fila, más líneas de grilla y unas manchas, y no como un bloque con textura por celda. Cada parte cuesta en cada cuadro (`ejemplos/bloques/generar.mjs`, `franja`).
   - **Boca desde un audio:** `node herramientas/labios.mjs voz.wav --formas a=a,e=e,i=i,o=o,u=u,m=m,f=f,cerrada= --desfase <ms>` devuelve `claves.forma` listas para pegar en la parte de la boca.
     - Detecta silencio, las 5 vocales (por formantes), las fricativas (f/s) y los cierres breves (m/b/p).
     - Solo lee **WAV**; un MP3 hay que convertirlo antes.
@@ -163,6 +193,15 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
 - Formato interno (por si hace falta tocarlo a mano): polígono = una RECTA por lado (`atributos: {x1, y1, x2, y2, cx, cy}` relativos a su centro) más un contorno `lista_pintado[0].elementos = [[{nombre, componente: "PUNTO1"}, …]]`.
 
 ## 5. Cómo verificar (y trampas conocidas)
+
+0. **Mirar con ayudas** (`planeacion_autoria_ia.md`, IA-1). `render.mjs` y `pruebas/render_memoria.mjs` aceptan:
+   - `--zona x,y,w,h`: una zona **del mundo**, dibujada a la resolución de salida (no un recorte en píxeles);
+   - `--zona objeto:<nombre>[,margen]`: sigue la caja del objeto en cada instante;
+   - `--cajas [a,b]`: caja y nombre de cada objeto; `--rejilla 100`: coordenadas del mundo;
+   - `--lista`: por instante, la cámara y los objetos que se ven (caja, plano, acción, opacidad).
+   Empezar por `--cajas --rejilla 200 --lista` en lugar de adivinar posiciones por el dibujo.
+000. **Correcciones del usuario** (IA-6): antes de corregir una escena, leer sus notas con `node herramientas/notas.mjs "<escena>" --recortes /tmp/render/notas`. Cada nota trae el instante, el punto, el objeto o la parte y una imagen de la zona. Al terminar, responder cada una: `notas.mjs "<escena>" --responder <id> --texto "qué se hizo" --resuelta` (con llave). `actualizar` no borra las notas.
+00. **Validar antes de crear** (IA-2): `node herramientas/reporte.mjs --carpeta <dir> --escena x.json` revisa los archivos del generador sin guardar nada (o `reporte.mjs "<escena>"` una ya guardada). Los avisos tienen nivel: `error` (sale con código 1), `aviso` y `revisar`. Revisa textos fuera de cuadro, globos que se tapan o de alguien que no se ve, voces que se pisan, partes que se ocultan y no vuelven, y claves después del final. Corregir los `error` antes de crear; los `revisar`, confirmarlos contra el guion.
 
 1. **Probar como el usuario:** abrir `/evento/:id` y **esperar a que cargue solo**. No forzar cuadros con `procesarEventoLienzo()`: eso escondió que el editor no cargaba ninguna escena (referencia circular en la copia JSON del motor).
 2. Chrome **frena la pestaña** si no está visible: las capturas fallan o el reloj va a 1–2 cuadros por segundo. Medir con `requestAnimationFrame` antes de culpar al editor.
@@ -221,6 +260,25 @@ $H "npm run pruebas"                     # pruebas del compilador/descompilador 
   - **Cursor:** `cursor: true` dibuja un bloque que sigue a la última letra y parpadea cuando termina de escribirse.
   - **Voz:** `voces.mjs` le da voz como a cualquier diálogo, según el reparto de `quien`.
 - **Para revisar:** `render_memoria` con `--t` o `--gif`; los globos salen igual que en el video.
+
+## Una escena, varios formatos y posiciones relativas al cuadro (planeacion_autoria_ia.md, IA-3)
+
+- **No copiar la escena para el vertical.** Usar `formatos`, con solo lo que cambia (ejemplo: `herramientas/ejemplos/formatos/escena.json`):
+
+```json
+"formatos": {"vertical": {"nombre": "Atardecer (vertical)", "camara": {"tamano": [720, 1280], "centro": [640, 300]},
+  "objetos": {"arbol_lejano": null, "casa": {"en": [600, 560]}}, "dialogos": {"1": {"texto": "Formato vertical"}}}}
+```
+
+  - Cada parche se mezcla con lo que reemplaza (un nivel: `claves` reemplaza todas las claves). `null` lo quita y `agregar: {objetos, efectos, dialogos}` suma.
+  - Se crea con `autoria.mjs crear escena.json --formato vertical` y se revisa con `--formato vertical` en `render_memoria.mjs` y `reporte.mjs --carpeta`.
+- **Posiciones relativas al cuadro:** `en: {cuadro: "arriba-derecha", desplazar: [-60, 70]}`.
+  - Lugares: `arriba|centro|abajo` - `izquierda|centro|derecha` (y `centro`), en el borde de la **zona segura**. `[fx, fy]` es una fracción del cuadro entero.
+  - **Objetos y efectos:** el punto es de lo que ve la cámara en `t` (0 por defecto), y queda fijo en el mundo. En instancias, son los pies.
+  - **Textos sin `quien`:** quedan **pegados a la pantalla** (títulos, créditos, subtítulos). Su tamaño, `ancho` y `desplazar` van en px del video y se alinean según el lugar.
+  - Usar `cuadro` para todo lo que depende del encuadre (sol, títulos, estrellas en las esquinas). Así no hay que recalcularlo en cada formato.
+- **Zona segura** (`zona_segura: {arriba, abajo, izquierda, derecha}` en fracción): por defecto 5 % en horizontal; en vertical 6 % a los lados, 12 % arriba y 20 % abajo.
+- **Textos:** `vertical: "arriba" | "centro" | "abajo"` decide si el texto cuelga del punto, se centra o crece hacia arriba. Sin `vertical`, la primera línea queda centrada en `en`, como antes.
 
 ## Acciones de una instancia (planeacion_zorro_cuervo.md, fase 3)
 

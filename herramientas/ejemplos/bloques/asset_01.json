@@ -1,0 +1,522 @@
+{
+ "tipo": "asset",
+ "nombre": "Minero",
+ "duracion": 2800,
+ "eventos": [
+  {
+   "nombre": "EventoGeneral",
+   "nodo_padre": "Nodo_Default",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 0,
+   "tiempo_final": 2800,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  },
+  {
+   "nombre": "Caminar",
+   "nodo_padre": "EventoGeneral",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 0,
+   "tiempo_final": 800,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  },
+  {
+   "nombre": "Quieto",
+   "nodo_padre": "EventoGeneral",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 1000,
+   "tiempo_final": 2000,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  },
+  {
+   "nombre": "Picar",
+   "nodo_padre": "EventoGeneral",
+   "visible": true,
+   "bucle": false,
+   "tiempo_bucle": 0,
+   "tiempo_inicio": 2200,
+   "tiempo_final": 2800,
+   "x": 0,
+   "y": 0,
+   "reposicionar": true,
+   "tiempo_relativo": 0,
+   "objetos": [],
+   "macros": [],
+   "script": null
+  }
+ ],
+ "enganches": {
+  "mano": {
+   "parte": "brazo_del",
+   "en": [
+    0,
+    50
+   ]
+  },
+  "cabeza": {
+   "parte": "cabeza",
+   "en": [
+    0,
+    -40
+   ]
+  }
+ },
+ "partes": [
+  {
+   "nombre": "cuerpo",
+   "partes": [
+    {
+     "nombre": "brazo_tras",
+     "en": [
+      0,
+      -112
+     ],
+     "rect": [
+      -7,
+      0,
+      7,
+      52
+     ],
+     "color": "#8e2b23",
+     "borde": "#5e1a14",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        25,
+        "suave"
+       ],
+       [
+        400,
+        -25,
+        "suave"
+       ],
+       [
+        800,
+        25,
+        "lineal"
+       ],
+       [
+        1000,
+        0,
+        "lineal"
+       ],
+       [
+        2000,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        0,
+        "lineal"
+       ],
+       [
+        2800,
+        0,
+        "lineal"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "pierna_tras",
+     "en": [
+      0,
+      -60
+     ],
+     "rect": [
+      -9,
+      0,
+      9,
+      60
+     ],
+     "color": "#5c4326",
+     "borde": "#3d2c18",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        -28,
+        "suave"
+       ],
+       [
+        400,
+        28,
+        "suave"
+       ],
+       [
+        800,
+        -28,
+        "lineal"
+       ],
+       [
+        1000,
+        0,
+        "lineal"
+       ],
+       [
+        2000,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        0,
+        "lineal"
+       ],
+       [
+        2800,
+        0,
+        "lineal"
+       ]
+      ]
+     }
+    },
+    {
+     "nombre": "torso",
+     "rect": [
+      -12,
+      -116,
+      12,
+      -58
+     ],
+     "color": "#c0392b",
+     "borde": "#7a1f17",
+     "partes": [
+      {
+       "nombre": "cuadro_1",
+       "rect": [
+        -12,
+        -106,
+        12,
+        -102
+       ],
+       "color": "#7a1f17"
+      },
+      {
+       "nombre": "cuadro_2",
+       "rect": [
+        -12,
+        -90,
+        12,
+        -86
+       ],
+       "color": "#7a1f17"
+      },
+      {
+       "nombre": "cuadro_3",
+       "rect": [
+        -2,
+        -116,
+        2,
+        -58
+       ],
+       "color": "#7a1f17"
+      },
+      {
+       "nombre": "overol",
+       "rect": [
+        -12,
+        -80,
+        12,
+        -58
+       ],
+       "color": "#7a5a33",
+       "borde": "#4d381f"
+      },
+      {
+       "nombre": "tirante",
+       "rect": [
+        4,
+        -116,
+        9,
+        -80
+       ],
+       "color": "#7a5a33"
+      },
+      {
+       "nombre": "boton",
+       "rect": [
+        4,
+        -84,
+        9,
+        -80
+       ],
+       "color": "#e9c46a"
+      }
+     ]
+    },
+    {
+     "nombre": "pierna_del",
+     "en": [
+      0,
+      -60
+     ],
+     "rect": [
+      -9,
+      0,
+      9,
+      60
+     ],
+     "color": "#7a5a33",
+     "borde": "#4d381f",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        28,
+        "suave"
+       ],
+       [
+        400,
+        -28,
+        "suave"
+       ],
+       [
+        800,
+        28,
+        "lineal"
+       ],
+       [
+        1000,
+        0,
+        "lineal"
+       ],
+       [
+        2000,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        0,
+        "lineal"
+       ],
+       [
+        2800,
+        0,
+        "lineal"
+       ]
+      ]
+     },
+     "partes": [
+      {
+       "nombre": "bota",
+       "rect": [
+        -9,
+        50,
+        12,
+        60
+       ],
+       "color": "#3b2a1e"
+      }
+     ]
+    },
+    {
+     "nombre": "cabeza",
+     "en": [
+      0,
+      -116
+     ],
+     "rect": [
+      -20,
+      -40,
+      20,
+      0
+     ],
+     "color": "#e0aa7e",
+     "borde": "#b8845c",
+     "partes": [
+      {
+       "nombre": "pelo_nuca",
+       "rect": [
+        -20,
+        -36,
+        -8,
+        -14
+       ],
+       "color": "#b5651d"
+      },
+      {
+       "nombre": "barba",
+       "rect": [
+        -4,
+        -14,
+        20,
+        0
+       ],
+       "color": "#b5651d"
+      },
+      {
+       "nombre": "bigote",
+       "rect": [
+        6,
+        -16,
+        20,
+        -12
+       ],
+       "color": "#8a4b12"
+      },
+      {
+       "nombre": "nariz",
+       "rect": [
+        18,
+        -24,
+        24,
+        -16
+       ],
+       "color": "#d4906a"
+      },
+      {
+       "nombre": "ojo",
+       "rect": [
+        8,
+        -28,
+        14,
+        -22
+       ],
+       "color": "#2b2b2b"
+      },
+      {
+       "nombre": "ceja",
+       "rect": [
+        6,
+        -32,
+        16,
+        -30
+       ],
+       "color": "#8a4b12"
+      },
+      {
+       "nombre": "casco",
+       "rect": [
+        -22,
+        -50,
+        22,
+        -36
+       ],
+       "color": "#ffd23f",
+       "borde": "#c9a020"
+      },
+      {
+       "nombre": "visera",
+       "rect": [
+        12,
+        -40,
+        30,
+        -36
+       ],
+       "color": "#ffd23f",
+       "borde": "#c9a020"
+      },
+      {
+       "nombre": "lampara",
+       "rect": [
+        -2,
+        -48,
+        8,
+        -40
+       ],
+       "color": "#fffbe0"
+      }
+     ]
+    },
+    {
+     "nombre": "brazo_del",
+     "en": [
+      0,
+      -112
+     ],
+     "rect": [
+      -7,
+      0,
+      7,
+      52
+     ],
+     "color": "#c0392b",
+     "borde": "#7a1f17",
+     "claves": {
+      "rotacion": [
+       [
+        0,
+        -25,
+        "suave"
+       ],
+       [
+        400,
+        25,
+        "suave"
+       ],
+       [
+        800,
+        -25,
+        "lineal"
+       ],
+       [
+        1000,
+        0,
+        "lineal"
+       ],
+       [
+        2000,
+        0,
+        "lineal"
+       ],
+       [
+        2200,
+        160,
+        "entrar"
+       ],
+       [
+        2450,
+        320,
+        "salir"
+       ],
+       [
+        2800,
+        160,
+        "lineal"
+       ]
+      ]
+     },
+     "partes": [
+      {
+       "nombre": "guante",
+       "rect": [
+        -8,
+        40,
+        8,
+        54
+       ],
+       "color": "#6b4a2b"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

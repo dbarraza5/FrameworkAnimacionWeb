@@ -1,0 +1,603 @@
+{
+ "tipo": "asset",
+ "nombre": "Árbol de bloques",
+ "partes": [
+  {
+   "nombre": "arbol",
+   "partes": [
+    {
+     "nombre": "tronco_0",
+     "en": [
+      -20,
+      -40
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#8b6236",
+     "borde": "#7a5530",
+     "partes": [
+      {
+       "nombre": "tronco_0_m0",
+       "rect": [
+        0,
+        30,
+        10,
+        40
+       ],
+       "color": "#7a5530"
+      },
+      {
+       "nombre": "tronco_0_m1",
+       "rect": [
+        0,
+        20,
+        10,
+        30
+       ],
+       "color": "#9a6e3e"
+      }
+     ]
+    },
+    {
+     "nombre": "tronco_1",
+     "en": [
+      -20,
+      -80
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#8b6236",
+     "borde": "#7a5530",
+     "partes": [
+      {
+       "nombre": "tronco_1_m0",
+       "rect": [
+        10,
+        30,
+        20,
+        40
+       ],
+       "color": "#9a6e3e"
+      },
+      {
+       "nombre": "tronco_1_m1",
+       "rect": [
+        20,
+        20,
+        30,
+        30
+       ],
+       "color": "#9a6e3e"
+      }
+     ]
+    },
+    {
+     "nombre": "tronco_2",
+     "en": [
+      -20,
+      -120
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#8b6236",
+     "borde": "#7a5530",
+     "partes": [
+      {
+       "nombre": "tronco_2_m0",
+       "rect": [
+        30,
+        0,
+        40,
+        10
+       ],
+       "color": "#7a5530"
+      },
+      {
+       "nombre": "tronco_2_m1",
+       "rect": [
+        20,
+        20,
+        30,
+        30
+       ],
+       "color": "#7a5530"
+      }
+     ]
+    },
+    {
+     "nombre": "tronco_3",
+     "en": [
+      -20,
+      -160
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#8b6236",
+     "borde": "#7a5530",
+     "partes": [
+      {
+       "nombre": "tronco_3_m0",
+       "rect": [
+        20,
+        10,
+        30,
+        20
+       ],
+       "color": "#9a6e3e"
+      },
+      {
+       "nombre": "tronco_3_m1",
+       "rect": [
+        30,
+        0,
+        40,
+        10
+       ],
+       "color": "#9a6e3e"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_0",
+     "en": [
+      -100,
+      -200
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_0_m0",
+       "rect": [
+        30,
+        20,
+        40,
+        30
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_0_m1",
+       "rect": [
+        20,
+        30,
+        30,
+        40
+       ],
+       "color": "#4ea546"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_1",
+     "en": [
+      -60,
+      -200
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_1_m0",
+       "rect": [
+        10,
+        10,
+        20,
+        20
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_1_m1",
+       "rect": [
+        10,
+        0,
+        20,
+        10
+       ],
+       "color": "#337a30"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_2",
+     "en": [
+      -20,
+      -200
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_2_m0",
+       "rect": [
+        10,
+        10,
+        20,
+        20
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_2_m1",
+       "rect": [
+        20,
+        20,
+        30,
+        30
+       ],
+       "color": "#4ea546"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_3",
+     "en": [
+      20,
+      -200
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_3_m0",
+       "rect": [
+        0,
+        10,
+        10,
+        20
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_3_m1",
+       "rect": [
+        20,
+        10,
+        30,
+        20
+       ],
+       "color": "#337a30"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_4",
+     "en": [
+      -100,
+      -240
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_4_m0",
+       "rect": [
+        30,
+        0,
+        40,
+        10
+       ],
+       "color": "#337a30"
+      },
+      {
+       "nombre": "hoja_4_m1",
+       "rect": [
+        10,
+        20,
+        20,
+        30
+       ],
+       "color": "#4ea546"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_5",
+     "en": [
+      -60,
+      -240
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_5_m0",
+       "rect": [
+        20,
+        0,
+        30,
+        10
+       ],
+       "color": "#337a30"
+      },
+      {
+       "nombre": "hoja_5_m1",
+       "rect": [
+        10,
+        10,
+        20,
+        20
+       ],
+       "color": "#337a30"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_6",
+     "en": [
+      -20,
+      -240
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_6_m0",
+       "rect": [
+        10,
+        20,
+        20,
+        30
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_6_m1",
+       "rect": [
+        0,
+        30,
+        10,
+        40
+       ],
+       "color": "#337a30"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_7",
+     "en": [
+      20,
+      -240
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_7_m0",
+       "rect": [
+        30,
+        20,
+        40,
+        30
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_7_m1",
+       "rect": [
+        20,
+        20,
+        30,
+        30
+       ],
+       "color": "#4ea546"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_8",
+     "en": [
+      -60,
+      -280
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_8_m0",
+       "rect": [
+        30,
+        10,
+        40,
+        20
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_8_m1",
+       "rect": [
+        10,
+        20,
+        20,
+        30
+       ],
+       "color": "#337a30"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_9",
+     "en": [
+      -20,
+      -280
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_9_m0",
+       "rect": [
+        10,
+        10,
+        20,
+        20
+       ],
+       "color": "#4ea546"
+      },
+      {
+       "nombre": "hoja_9_m1",
+       "rect": [
+        30,
+        0,
+        40,
+        10
+       ],
+       "color": "#4ea546"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_10",
+     "en": [
+      -140,
+      -200
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_10_m0",
+       "rect": [
+        0,
+        10,
+        10,
+        20
+       ],
+       "color": "#337a30"
+      },
+      {
+       "nombre": "hoja_10_m1",
+       "rect": [
+        0,
+        30,
+        10,
+        40
+       ],
+       "color": "#337a30"
+      }
+     ]
+    },
+    {
+     "nombre": "hoja_11",
+     "en": [
+      60,
+      -200
+     ],
+     "rect": [
+      0,
+      0,
+      40,
+      40
+     ],
+     "color": "#3f8f3a",
+     "borde": "#337a30",
+     "partes": [
+      {
+       "nombre": "hoja_11_m0",
+       "rect": [
+        20,
+        0,
+        30,
+        10
+       ],
+       "color": "#337a30"
+      },
+      {
+       "nombre": "hoja_11_m1",
+       "rect": [
+        20,
+        0,
+        30,
+        10
+       ],
+       "color": "#4ea546"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

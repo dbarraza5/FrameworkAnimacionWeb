@@ -8,6 +8,7 @@ import NavEventos from "./SeccionEventos/NavEventos";
 import Inspector from "./SeccionEventos/Inspector";
 import PanelObjetosEscena from "./SeccionEventos/PanelObjetosEscena";
 import PanelHistorial from "./SeccionEventos/PanelHistorial";
+import PanelNotas from "./SeccionEventos/PanelNotas";
 import ModalExportarVideo from "./ModalExportarVideo";
 import PanelSonido from "../Sonido/PanelSonido";
 import {listarSonidos, cargarArchivo} from "../Sonido/apiSonido";
@@ -103,6 +104,9 @@ function EditorEvento(props){
     const [versionHist, setVersionHist] = useState(0);
     const [recuperable, setRecuperable] = useState(null);   // autoguardado local para ofrecer recuperar
     const [verExportar, setVerExportar] = useState(false);  // Archivo -> Exportar video (A7)
+    // IA-6: notas de correccion (escena.notas). Van APARTE de la escena editable: no entran al historial
+    // ni a "Subir"; se guardan al tiro por su propia ruta (el backend las conserva al subir la escena).
+    const [notas, setNotas] = useState([]);
     const dispatch = useDispatch();
 
     const [tipoModalidadTrabajo, setTipoModalidadTrabajo] = useState(tipo_modalidad_trabajo);
@@ -171,7 +175,11 @@ function EditorEvento(props){
                     // Fase 8A: toda escena tiene camara (se crea si falta; se guarda con Subir)
                     eventoAnimacion.edicion.asegurarCamara();
                     // Fase 8B: configuracion de la escena (orden por profundidad...)
-                    eventoAnimacion.edicion.escena = response.data.escena || {};
+                    {
+                        const {notas: ns, ...esc} = response.data.escena || {};
+                        eventoAnimacion.edicion.escena = esc;
+                        setNotas(Array.isArray(ns) ? ns : []);
+                    }
                     // datos para "Guardar como"
                     eventoAnimacion.edicion.id_proyecto = response.data.id_proyecto;
                     setIdProyecto(response.data.id_proyecto);
@@ -526,6 +534,12 @@ function EditorEvento(props){
     };
 
     // Exporta el mismo contenido que se sube al backend (eventos + grupos de figuras).
+    // IA-6: guarda la lista de notas en el servidor (ruta propia) y la deja en el estado
+    const guardarNotas = async (lista) => {
+        const r = await axios(configApi("put", "/api/evento/id/" + refEvento.current.edicion._id + "/notas", {notas: lista}));
+        setNotas(r.data.notas || lista);
+    };
+
     // ---------------- Historial, restaurar, importar, guardar como ----------------
 
     // Revisa cada 250 ms si el estado cambio (el historial registra solo los cambios
@@ -645,7 +659,9 @@ function EditorEvento(props){
         if (h.sinGuardar() && !window.confirm("¿Descartar los cambios sin subir y volver a lo guardado en el servidor? (Se puede deshacer con Ctrl+Z)")) return;
         try {
             const r = await axios(configApi("get", "/api/evento/id/" + refEvento.current.edicion._id));
-            refEvento.current.edicion.restaurarEstado({eventos: r.data.eventos, grupos: r.data.grupos_figuras, escena: r.data.escena});
+            const {notas: ns, ...esc} = r.data.escena || {};
+            refEvento.current.edicion.restaurarEstado({eventos: r.data.eventos, grupos: r.data.grupos_figuras, escena: esc});
+            setNotas(Array.isArray(ns) ? ns : []);
             h.registrarAhora("Restaurar lo guardado");
             h.marcarGuardado();
             refrescarPaneles();
@@ -676,7 +692,9 @@ function EditorEvento(props){
             try {
                 const d = JSON.parse(lector.result);
                 if (!Array.isArray(d.grupos_figuras) || !Array.isArray(d.eventos)) throw new Error("el archivo no tiene eventos y grupos_figuras");
-                refEvento.current.edicion.restaurarEstado({eventos: d.eventos, grupos: d.grupos_figuras, escena: d.escena || {}});
+                // (las notas del archivo no se importan: las de esta escena siguen igual)
+                const {notas: _ns, ...esc} = d.escena || {};
+                refEvento.current.edicion.restaurarEstado({eventos: d.eventos, grupos: d.grupos_figuras, escena: esc});
                 refHistorial.current && refHistorial.current.registrarAhora(`Importar ${archivo.name}`);
                 refrescarPaneles();
             } catch (e) {
@@ -904,11 +922,14 @@ function EditorEvento(props){
                 <div className="ed-cabecera ed-pestanas">
                     <div className="d-flex h-100">
                         {[["objetos", "bi-boxes", "Objetos"], ["eventos", "bi-calendar-event", "Eventos"],
-                          ["historial", "bi-clock-history", "Historial"]].map(([clave, icono, texto]) => (
+                          ["historial", "bi-clock-history", "Historial"], ["notas", "bi-pin-angle", "Notas"]].map(([clave, icono, texto]) => (
                             <button key={clave} type="button"
                                     className={`ed-pestana ${(layout.pestana_izq || "objetos") === clave ? "activa" : ""}`}
                                     onClick={() => setLayout((l) => ({...l, pestana_izq: clave}))}>
                                 <i className={`bi ${icono} me-1`}/>{texto}
+                                {clave === "notas" && notas.some((n) => !n.resuelta) && (
+                                    <span className="badge rounded-pill text-bg-warning ms-1">{notas.filter((n) => !n.resuelta).length}</span>
+                                )}
                             </button>
                         ))}
                     </div>
@@ -926,6 +947,10 @@ function EditorEvento(props){
                 <div className={`ed-cuerpo ${layout.pestana_izq === "historial" ? "" : "d-none"}`}>
                     <PanelHistorial historial={refHistorial.current} version={versionHist}
                                     onDeshacer={deshacer} onRehacer={rehacer} onRestaurar={restaurarGuardado}/>
+                </div>
+                <div className={`ed-cuerpo ${layout.pestana_izq === "notas" ? "" : "d-none"}`}>
+                    <PanelNotas refEvento={refEvento} refLienzo={refLienzo} notas={notas} guardar={guardarNotas}
+                                activo={!!layout.ver_izq && layout.pestana_izq === "notas"}/>
                 </div>
                 <Separador orientacion="vertical" titulo="Arrastrar para cambiar el ancho"
                            onArrastrar={(d) => redimensionar("izq", d, 220, 640)}/>

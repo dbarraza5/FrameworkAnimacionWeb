@@ -1,0 +1,76 @@
+{
+ "tipo": "asset",
+ "nombre": "Puerta del refugio",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "hoja",
+   "rect": [
+    0,
+    -110,
+    66,
+    0
+   ],
+   "color": "#3a3d44",
+   "borde": "#1c1e22"
+  },
+  {
+   "nombre": "tabla_1",
+   "poligono": [
+    [
+     2.7,
+     -92.2
+    ],
+    [
+     60.7,
+     -72.2
+    ],
+    [
+     63.3,
+     -79.8
+    ],
+    [
+     5.3,
+     -99.8
+    ]
+   ],
+   "color": "#4a3a2a"
+  },
+  {
+   "nombre": "tabla_2",
+   "poligono": [
+    [
+     5.3,
+     -30.2
+    ],
+    [
+     63.3,
+     -50.2
+    ],
+    [
+     60.7,
+     -57.8
+    ],
+    [
+     2.7,
+     -37.8
+    ]
+   ],
+   "color": "#4a3a2a"
+  },
+  {
+   "nombre": "pomo",
+   "en": [
+    56,
+    -54
+   ],
+   "circulo": {
+    "r": 3,
+    "lados": 8
+   },
+   "color": "#8a8f99"
+  }
+ ]
+}

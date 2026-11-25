@@ -26,12 +26,14 @@ const esId = (s) => /^[0-9a-f]{24}$/i.test(String(s));
 // ---------------- API con llave ----------------
 export const usaApi = () => !!process.env.AUTORIA_LLAVE;
 
-export async function pedirApi(ruta) {
+export async function pedirApi(ruta, metodo = "GET", cuerpo) {
     const base = (process.env.AUTORIA_URL || "http://backend_container:5000/autoria").replace(/\/$/, "");
-    const r = await fetch(base + ruta, {headers: {"X-Llave-Autoria": process.env.AUTORIA_LLAVE}});
+    const r = await fetch(base + ruta, {method: metodo, headers: {"X-Llave-Autoria": process.env.AUTORIA_LLAVE, ...(cuerpo ? {"Content-Type": "application/json"} : {})},
+        ...(cuerpo ? {body: JSON.stringify(cuerpo)} : {})});
     const texto = await r.text();
     let datos; try { datos = JSON.parse(texto); } catch (e) { datos = {error: texto}; }
-    if (!r.ok) throw new Error(`API GET ${ruta} (${r.status}): ${datos.error && (datos.error.msj || datos.error) || "error"}`);
+    const msj = datos.error ? (datos.error.msj || datos.error) : Array.isArray(datos.errores) ? datos.errores.join("; ") : "error";
+    if (!r.ok) throw new Error(`API ${metodo} ${ruta} (${r.status}): ${msj}`);
     return datos;
 }
 

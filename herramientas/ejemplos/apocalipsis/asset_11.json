@@ -1,0 +1,208 @@
+{
+ "tipo": "asset",
+ "nombre": "Auto quemado",
+ "marcas": {
+  "EventoGeneral": "no_lleva"
+ },
+ "partes": [
+  {
+   "nombre": "carroceria",
+   "poligono": [
+    [
+     -120,
+     -18
+    ],
+    [
+     -118,
+     -52
+    ],
+    [
+     -70,
+     -58
+    ],
+    [
+     -40,
+     -92
+    ],
+    [
+     50,
+     -94
+    ],
+    [
+     85,
+     -60
+    ],
+    [
+     120,
+     -52
+    ],
+    [
+     122,
+     -18
+    ]
+   ],
+   "color": "#2a2624",
+   "borde": "#141212"
+  },
+  {
+   "nombre": "ventana_tras",
+   "poligono": [
+    [
+     -62,
+     -60
+    ],
+    [
+     -36,
+     -86
+    ],
+    [
+     0,
+     -87
+    ],
+    [
+     0,
+     -60
+    ]
+   ],
+   "color": "#0a0a0b"
+  },
+  {
+   "nombre": "ventana_del",
+   "poligono": [
+    [
+     8,
+     -60
+    ],
+    [
+     8,
+     -88
+    ],
+    [
+     46,
+     -88
+    ],
+    [
+     72,
+     -60
+    ]
+   ],
+   "color": "#0a0a0b"
+  },
+  {
+   "nombre": "oxido_1",
+   "poligono": [
+    [
+     -110,
+     -48
+    ],
+    [
+     -80,
+     -54
+    ],
+    [
+     -70,
+     -30
+    ],
+    [
+     -104,
+     -24
+    ]
+   ],
+   "color": "#5a3726",
+   "opacidad": 0.8
+  },
+  {
+   "nombre": "oxido_2",
+   "poligono": [
+    [
+     60,
+     -50
+    ],
+    [
+     110,
+     -46
+    ],
+    [
+     100,
+     -26
+    ],
+    [
+     70,
+     -30
+    ]
+   ],
+   "color": "#5a3726",
+   "opacidad": 0.7
+  },
+  {
+   "nombre": "ceniza",
+   "poligono": [
+    [
+     -20,
+     -92
+    ],
+    [
+     30,
+     -94
+    ],
+    [
+     20,
+     -80
+    ],
+    [
+     -10,
+     -82
+    ]
+   ],
+   "color": "#3b3836"
+  },
+  {
+   "nombre": "rueda_tras",
+   "en": [
+    -70,
+    -16
+   ],
+   "circulo": {
+    "r": 18,
+    "lados": 12
+   },
+   "color": "#0e0e10"
+  },
+  {
+   "nombre": "rueda_del",
+   "en": [
+    72,
+    -16
+   ],
+   "circulo": {
+    "r": 18,
+    "lados": 12
+   },
+   "color": "#0e0e10"
+  },
+  {
+   "nombre": "llanta_tras",
+   "en": [
+    -70,
+    -16
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 8
+   },
+   "color": "#3a3532"
+  },
+  {
+   "nombre": "llanta_del",
+   "en": [
+    72,
+    -16
+   ],
+   "circulo": {
+    "r": 7,
+    "lados": 8
+   },
+   "color": "#3a3532"
+  }
+ ]
+}

@@ -30,7 +30,10 @@ export function limitesEscena(m) {
 }
 
 // Lleva el motor al instante t (ms) y dibuja el cuadro en ctx (w x h pixeles).
-export function dibujarCuadro(m, ctx, w, h, t, {todo = false, fondo = "#ffffff"} = {}) {
+// zona (opcional): rectangulo del mundo {x0, y0, w, h} a dibujar en vez de lo que ve la camara,
+// o una funcion (m) => rectangulo, evaluada ya en el instante t (p. ej. la caja de un objeto).
+// Devuelve como paso del mundo al cuadro: {r, esc, ox, oy} (pixel = mundo * esc + o).
+export function dibujarCuadro(m, ctx, w, h, t, {todo = false, fondo = "#ffffff", zona = null} = {}) {
     // tiempo FORZADO (no los relojes del editor: pausar/buscar se pisan entre si)
     const forzado_antes = m._t_forzado;
     // stop-motion (escena.fps_animacion): el instante se redondea hacia abajo a pasos de 1/fps
@@ -40,17 +43,20 @@ export function dibujarCuadro(m, ctx, w, h, t, {todo = false, fondo = "#ffffff"}
     try { m.procesandoEventos(); } finally { m._t_forzado = forzado_antes; }
     m.gestion_grupos.procesarPosicionFinalFiguras();
     let r = m.rectCamara();
-    if (todo || !r) {
+    const z = typeof zona === "function" ? zona(m) : zona;
+    if (z && z.w > 0 && z.h > 0) r = {x0: z.x0, y0: z.y0, w: z.w, h: z.h};
+    else if (todo || !r) {
         const lim = limitesEscena(m);
         r = lim ? {x0: lim.x0, y0: lim.y0, w: lim.x1 - lim.x0, h: lim.y1 - lim.y0} : {x0: 0, y0: 0, w: 1280, h: 720};
     }
     const esc = Math.min(w / r.w, h / r.h);
+    const ox = (w - r.w * esc) / 2 - r.x0 * esc, oy = (h - r.h * esc) / 2 - r.y0 * esc;
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
     ctx.fillStyle = fondo;
     ctx.fillRect(0, 0, w, h);
-    ctx.setTransform(esc, 0, 0, esc, (w - r.w * esc) / 2 - r.x0 * esc, (h - r.h * esc) / 2 - r.y0 * esc);
+    ctx.setTransform(esc, 0, 0, esc, ox, oy);
     // el dibujo del motor suma el paneo del editor a cada coordenada: aqui va en 0
     const imp = m.imprimir_animacion;
     const cfg = imp.configuracion_lienzo || m.configuracion_lienzo;
@@ -72,6 +78,7 @@ export function dibujarCuadro(m, ctx, w, h, t, {todo = false, fondo = "#ffffff"}
         cfg.x_delta_original = dx; cfg.y_delta_original = dy;
         ctx.restore();
     }
+    return {r, esc, ox, oy};
 }
 
 // Tamano de salida: ancho dado, alto segun la proporcion de la camara.
